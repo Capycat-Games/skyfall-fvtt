@@ -1,0 +1,15 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	<ul class="trait-list flexcol">
+		<li class="flexrow">
+			<div></div>
+			<div>{{localize "SKYFALL.VALUE"}} (m)</div>
+		</li>
+		{{#each movement as | move key |}}
+		<li class="item flexrow">
+			<div>{{localize move.label}}</div>
+			<div><input type="number" name="system.movement.{{key}}" value="{{move.value}}" step="1.5"></div>
+		</li>
+		{{/each}}
+	</ul>
+	<button type="submit" name="submit" value="1"><i class="far fa-save"></i> {{ localize "SKYFALL.SHEET.SUBMIT"}}</button>
+</form>

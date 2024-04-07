@@ -1,0 +1,68 @@
+<form class="{{cssClass}} algo" autocomplete="off">
+	<header class="sheet-header">
+		<img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+		<div class="header-fields">
+			<h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+		</div>
+	</header>
+
+	{{!-- Sheet Tab Navigation --}}
+	<nav class="sheet-tabs tabs" data-group="primary">
+		{{#each tabs as | label tab |}}
+		<a class="item" data-tab="{{tab}}">{{localize label}}</a>
+		{{/each}}
+	</nav>
+
+	{{!-- Sheet Body --}}
+	<section class="sheet-body">
+		{{#with partials.description as | partial | }}
+			{{> (partial)}}
+		{{/with}}
+		{{#with partials.type as | partial | }}
+			{{> (partial)}}
+		{{/with}}
+		{{#with partials.effects as | partial | }}
+			{{> (partial)}}
+		{{/with}}
+		
+		{{#if (eq item.type "curse")}}
+		{{!-- FEATURES TAB --}}
+		{{!-- type= list= target= --}}
+		<div class="tab flexrow" data-group="primary" data-tab="features">
+			{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=features target="system.features"}}
+		</div>
+		{{!-- FEATS TAB --}}
+		{{!-- type= list= target= --}}
+		<div class="tab flexrow" data-group="primary" data-tab="feats">
+			{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feat" list=feats target="system.feats"}}
+		</div>
+		{{/if}}
+		{{!-- ABILITIES TAB --}}
+		{{!-- type= list= target= --}}
+		<div class="tab flexrow" data-group="primary" data-tab="abilities">
+			{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="ability" list=abilities target="system.abilities"}}
+		</div>
+		{{!-- EFFECTS TAB --}}
+		<div class="tab flexrow" data-group="primary" data-tab="efeitos">
+
+		</div>
+	</section>
+</form>
+
+<style>
+	form.algo {
+		width: 520px;
+	}
+	.editor, .editor-content {
+		min-height: 100px;
+	}
+	.editor.prosemirror {
+		min-height: 300px;
+	}
+	.item .item-icon {
+		background-size: cover;
+		flex: 0 0 36px;
+		width: 36px;
+		height: 36px;
+	}
+</style>

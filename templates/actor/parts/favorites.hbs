@@ -1,0 +1,13 @@
+<ul class="list-items favorites flexrow">
+	{{#each items.favorites as | item |}}
+	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
+		<div class="item-name">{{item.name}}</div>
+		<div class="item-xxx">{{item.name}}</div>
+		<div class="item-controls">
+			<a class="control" data-action="toggle" data-target="favorite">
+				{{{../SYSTEM.icons.star}}}
+			</a>
+		</div>
+	</li>
+	{{/each}}
+</ul>

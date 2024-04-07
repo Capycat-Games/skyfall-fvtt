@@ -1,0 +1,21 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	<ul class="trait-list flexcol">
+		<li class="flexrow">
+			<div class="flex2">{{localize "SKYFALL.DESCRIPTOR"}}</div>
+			{{#each SYSTEM.damageModifiers as | rank r | }}
+				<div class="text-center" data-tooltip="{{localize rank.label}}">{{localize rank.abbr}}</div>
+			{{/each}}
+		</li>
+		{{#each damageTypes as | damage key |}}
+		<li class="item flexrow">
+			<div class="flex2">{{localize damage.label}}</div>
+			{{#each ../SYSTEM.damageModifiers as | rank r | }}
+			<div class="text-center">
+				<input type="radio" name="system.modifiers.{{@root.target}}.{{key}}" value="{{r}}" {{checked (eq damage.dealt r) }}>
+			</div>
+			{{/each}}
+		</li>
+		{{/each}}
+	</ul>
+	<button type="submit" name="submit" value="1"><i class="far fa-save"></i> {{ localize "SKYFALL.SHEET.SUBMIT"}}</button>
+</form>

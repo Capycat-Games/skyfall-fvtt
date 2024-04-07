@@ -1,0 +1,19 @@
+{{!-- CONTEXT list= tab= type= target= --}}
+{{!-- <div class="tab flexrow" data-group="primary" data-tab="{{tab}}"> --}}
+<ul class="list-items {{type}} drop flexcol" data-type="{{type}}" data-target="{{target}}">
+	{{#each list as | item index | }}
+	<li class="item {{type}} entry draggable flexrow" data-entry-id="{{item.uuid}}">
+		<div class="item-icon" style="background-image:url({{item.img}})"></div>
+		<div class="item-name flex3">{{item.name}}</div>
+		<div class="item-controls">
+			<a data-action="delete" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+	</li>
+	{{/each}}
+	{{#unless list }}
+	<li>
+		{{localize "SKYFALL.SHEET.DROPITEM"}}
+	</li>
+	{{/unless}}
+</ul>
+{{!-- </div> --}}

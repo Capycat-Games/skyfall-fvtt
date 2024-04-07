@@ -1,0 +1,19 @@
+<ul class="list-items spells flexrow">
+	{{#each items.spells as | spell |}}
+	<li class="item spell flexcol" data-item-id="{{spell.id}}">
+		<div class="item-name">{{spell.name}}</div>
+		<div class="item-xxx">{{spell.name}}</div>
+		<div class="item-controls">
+			<a class="control" data-action="toggle" data-target="favorite">
+				{{{../SYSTEM.icons.star}}}
+			</a>
+			<a class="control" data-action="edit" data-target="item">
+				{{{../SYSTEM.icons.edit}}}
+			</a>
+			<a class="control" data-action="delete" data-target="item">
+				{{{../SYSTEM.icons.delete}}}
+			</a>
+		</div>
+	</li>
+	{{/each}}
+</ul>

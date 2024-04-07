@@ -1,0 +1,85 @@
+<div class="tab" data-group="primary" data-tab="traits">
+	{{!-- LEVEL --}}
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ACTOR.LEVEL" }}</label>
+		<div class="form-fields">
+			<input type="number" name="system.level" value="{{@root.system.level}}">
+			<label>{{ localize "SKYFALL.ITEM.CLASS.INITIAL" }}
+				<input type="checkbox" name="system.initial" {{checked system.initial}}>
+			</label>
+		</div>
+	</div>
+	{{!-- HITDIE --}}
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.CLASS.HITDIE" }}</label>
+		<div class="form-fields">
+			<select name="system.hitDie">
+				{{#select @root.system.hitDie}}
+					<option value="1d6">1d6</option>
+					<option value="1d8">1d8</option>
+					<option value="1d10">1d10</option>
+				{{/select}}
+			</select>
+		</div>
+	</div>
+
+	<h3>{{ localize "SKYFALL.ACTOR.PROFICIENCIES" }}</h3>
+	{{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+	
+	{{#if WIP }}
+	{{!-- HITDIE --}}
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.ARMORPLURAL" }}</label>
+		<div class="form-fields">
+			{{#each SYSTEM.armors as | armor key |}}
+			<label for=""> {{localize armor.label}}
+				<input type="checkbox" name="system.proficiencies.armor" value="{{key}}">
+			</label>
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.WEAPONPLURAL" }}</label>
+		<div class="form-fields">
+			{{#each SYSTEM.weapons as | weapon key |}}
+			<label for=""> {{localize weapon.label}}
+				<input type="checkbox" name="system.proficiencies.weapon" value="{{key}}">
+			</label>
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.PROTECTIONS" }}</label>
+		<div class="form-fields">
+			{{#each SYSTEM.abilities as | abl key |}}
+			<label for=""> {{localize abl.label}}
+				<input type="checkbox" name="system.proficiencies.protection" value="{{key}}">
+			</label>
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.PROTECTIONS" }}</label>
+		<div class="form-fields">
+			{{#each SYSTEM.abilities as | abl key |}}
+			<label for=""> {{localize abl.label}}
+				<input type="checkbox" name="system.proficiencies.protection" value="{{key}}">
+			</label>
+			{{/each}}
+		</div>
+	</div>
+	{{/if}}
+</div>
+
+{{!-- LIST FEATURES --}}
+<div class="tab" data-group="primary" data-tab="features">
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=@root.features target="system.features"}}
+</div>
+
+{{!-- LIST FEATS --}}
+<div class="tab flexrow" data-group="primary" data-tab="feats">
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feat" list=@root.feats target="system.feats"}}
+</div>

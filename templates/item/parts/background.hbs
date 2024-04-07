@@ -1,0 +1,10 @@
+<div class="tab" data-group="primary" data-tab="description">
+	{{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=@root.features target="system.features"}}
+</div>
+{{!-- FEATURES TAB --}}
+{{!-- type= list= target= --}}
+{{!-- <div class="tab flexrow" data-group="primary" data-tab="features">
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=features target="system.features"}}
+</div> --}}

@@ -1,0 +1,28 @@
+:root {
+  scrollbar-color: #182657 transparent;
+  scrollbar-width: thin;
+}
+.skyfall > * {
+  scrollbar-width: thin;
+}
+  
+.skyfall .text-center {
+  text-align: center;
+}
+
+.skyfall .sf-icon {
+  display: inline-flex;
+  align-self: center;
+}
+
+.skyfall .sf-icon svg, .skyfall .sf-icon svg image {
+  width: 1em;
+  height: 1em;
+}
+/*
+.system-skyfall *, .skyfall * {
+  scrollbar-color: #182657 transparent;
+  scrollbar-width: thin;
+}
+.window-header { }
+*/

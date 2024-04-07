@@ -1,0 +1,99 @@
+{
+	"TYPES": {
+		"Actor": {
+			"criatura": "Criatura",
+			"personagem": "Personagem"
+		},
+		"Item": {
+			"legado": "Legado",
+			"maldicao": "Maldição",
+			"antecedente": "Antecedente",
+			"classe": "Classe",
+			"trilha": "Trilha",
+			"caracteristica": "Característica",
+			"talento": "Talento",
+			"habilidade": "Habilidade",
+			"magia": "Magia",
+			"arma": "Arma",
+			"armadura": "Armadura",
+			"equipamento": "Equipamento",
+			"consumivel": "Consumível",
+			"tesouro": "Tesouro"
+		}
+	},
+	"SKYFALL": {
+		"ACTOR": {
+			"ATRIBUTO": {
+				"FOR": {
+					"LONG":"Força",
+					"ABBR":"str"
+				}
+			},
+			"PERICIA": {
+				"APRE": {
+					"LONG":"Apresentação",
+					"ABBR":"apre"
+				}
+			}
+		},
+		"ITEM": {
+			"MAGIA": {
+				"CAMPO": "TRADUÇÃO"
+			}
+		},
+		"EFFECT": {
+			"CORE": {
+				"CAMPO": "TRADUÇÃO"
+			},
+			"USO": {
+				"CAMPO": "TRADUÇÃO"
+			}
+		},
+		"DESCRITORES": {
+			"Adaptavel": "Adaptavel",
+			"AdaptavelHint": "Uma arma de uma mão com esta habilidade pode ser usada com as duas mãos para aumentar seu dano (em parênteses).",
+			"Alongada": "Alongada",
+			"AlongadaHint": "Alcança um espaço adicional (geralmente de adjacente para 1,5m a mais).",
+			"Arremessavel": "Arremessavel",
+			"ArremessavelHint": "Ataques realizados com esse descritor podem ser realizados a distância usando a FOR para ataque e dano. Elas são arremessadas e caem no mesmo espaço do alvo. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
+			"Barulhenta": "Barulhenta",
+			"BarulhentaHint": "Enquanto estiver sendo empunhado ou vestido, esse equipamento concede desvantagem em todos os testes que envolvam Furtividade.",
+			"Composto": "Composto",
+			"CompostoHint": "Ataques a distância realizados com essa arma permitem que você aplique sua FOR às jogadas de dano.",
+			"Espalhafatosa": "Espalhafatosa",
+			"EspalhafatosaHint": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
+			"Contundente": "Contundente",
+			"ContundenteHint": "Uma arma, magia ou talento com esse descritor causa dano contundente.",
+			"Cortante": "Cortante",
+			"CortanteHint": "Uma arma, magia ou talento com esse descritor causa dano cortante.",
+			"Disparavel": "Disparavel",
+			"DisparavelHint": "Ataques realizados com esse descritor podem ser realizados a distância usando munição. A munição é perdida depois do ataque. Estas armas usam o valor de DES ao invés de FOR para calcular ataque e dano. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
+			"Dupla": "Dupla",
+			"DuplaHint": "Você pode usar a ação Atacar com Duas Armas para atacar com o outro lado da arma como se estivesse empunhando duas armas.",
+			"Eficiente": "Eficiente",
+			"EficienteHint": "Você recebe vantagens no teste da perícia indicada enquanto estiver empunhando a arma.",
+			"Leve": "Leve",
+			"LeveHint": "Uma arma ou poder com esse descritor pode utilizar DES ao invés de FOR em testes de ataque. O dano ainda é calculado com FOR.",
+			"Letal": "Letal",
+			"LetalHint": "Ao ter um acerto crítico com essa arma, você causa um dado de dano adicional (além de dobrar os dados).",
+			"Montada": "Montada",
+			"MontadaHint": "Armas montadas foram feitas para serem utilizadas por combatentes montados. Personagens montadas que atacarem com essa arma causam +1d6 de dano.",
+			"Perfurante": "Perfurante",
+			"PerfuranteHint": "Uma arma, magia ou talento com esse descritor causa dano perfurante.",
+			"Pesada": "Pesada",
+			"PesadaHint": "São armas que precisam de grande força física para serem utilizadas corretamente. Algumas habilidades fazem referência a armas pesadas.",
+			"Preciso": "Preciso",
+			"PrecisoHint": "Recebe +2 em jogadas de ataque se o atacante não se moveu antes de atacar.",
+			"Quebradico": "Quebradico",
+			"QuebradicoHint": "O objeto está quebrando. Se for uma arma, quebra quando o atacante tiver uma falha crítica. Se for uma armadura ou escudo, quebra quando um atacante conseguir um sucesso crítico.",
+			"Recarregavel": "Recarregavel",
+			"RecarregavelHint": "Ataques realizados com esse descritor utilizam munição e precisam ser recarregados depois de alguns usos usando uma ação específica. O número diz a quantidade de disparos que podem ser feitos e a letra seguinte diz a ação necessária: (L) para uma ação livre, (B) para ação bônus, (A) para uma ação e (C) para um turno completo, usando tanto ação bônus quanto a ação. Uma arma Recarregável (3 A) precisa ser recarregada com a ação depois de 3 disparos.",
+			"Retornavel": "Retornavel",
+			"RetornavelHint": "A arma retorna para a mão de seu dono no final do turno que foi arremessada.",
+			"Superior": "Superior",
+			"SuperiorHint": "O atacante é considerado expert em testes de “Ataque de Superioridade”.",
+			"Versatil": "Versatil",
+			"VersatilHint": "Fornece +2 em testes de ataque de superioridade. Equipamentos Diversos e Serviços"
+		}
+	}
+}

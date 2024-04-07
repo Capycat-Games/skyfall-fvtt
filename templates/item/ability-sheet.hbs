@@ -1,0 +1,365 @@
+<form class="{{cssClass}} ability flexrow" autocomplete="off">
+		{{log this}}
+
+	{{!-- Ability Card --}}
+	<div class="sheet-card flexcol" data-group="primary">
+		<div class="ability-header flexrow"> 
+			{{!-- {{{SYSTEM.icons.sfaction}}} --}}
+			{{{labels.action.icon}}}
+			<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name"/>
+			<span>{{{labels.cost}}}</span>
+
+			<a class="isEditing" data-edit="toggle">{{{SYSTEM.icons.gear}}}</a>
+		</div>
+		<hr>
+		<div class="ability-descriptors">
+			{{#each system.descriptors as | desc |}}
+			<label class="descriptor" >{{desc}}</label>
+			{{/each}}
+		</div>
+		<hr>
+		<div class="ability-traits">
+			<ul style="columns: 2;">
+				{{#each labels.traits as | trait |}}
+				<li><label>{{{localize trait.label}}}.</label> {{trait.descriptive}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<hr>
+		{{#with labels.attack }}
+		<div class="ability-attack">
+			<ul>
+				{{#each this as | attack |}}
+				<li><label>{{{localize attack.label}}}.</label> {{attack.descriptive}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<hr>
+		{{/with}}
+		{{#with labels.effect}}
+		<div class="ability-effect">
+			<span><label>{{{localize label}}}.</label> {{descriptive}}</span>
+		</div>
+		<hr>
+		{{/with}}
+		{{#with labels.special}}
+		<div class="ability-special">
+			<span><label>{{{localize label}}}.</label> {{descriptive}}</span>
+		</div>
+		<hr>
+		{{/with}}
+		{{!-- MODIFICATIONS --}}
+		<div class="ability-modification">
+			{{#each modifications as | mod |}}
+			<div class="ability-modification-header">
+				{{{SYSTEM.icons.sfmod}}}
+				{{mod.cost}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}} {{mod.type}}
+			</div>
+			<hr>
+			<div class="ability-modification-changes">
+				{{#each mod.changes as | change |}}
+				<span><label>{{change.label}}.</label> {{change.descriptive}}</span>
+				{{/each}}
+			</div>
+			<hr>
+			{{/each}}
+		</div>
+	</div>
+	{{#if isEditing }}
+	{{!-- Edition Tabs --}}
+	<div class="sheet-editable">
+		<nav class="editable-tabs tabs" data-group="ability">
+			{{!-- Default tab is specified in actor-sheet.mjs --}}
+			<a class="item" data-tab="traits">{{localize "SKYFALL.SHEET.CONFIG"}}</a>
+			<a class="item" data-tab="descriptors">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</a>
+			<a class="item" data-tab="modification">{{localize "SKYFALL.ITEM.MODIFICATIONS"}}</a>
+		</nav>
+		<div class="sheet-edit">
+			<div class="tab sheet-edition" data-group="ability" data-tab="traits">
+				<h3>{{localize "SKYFALL.ITEM.ABILITY.ACTIVATION"}}</h3>
+				{{!-- ACTION --}}
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.ACTION" }}</label>
+					<div class="form-fields">
+						<select name="system.activation.type">
+							{{selectOptions SYSTEM.activations blank="" nameAttr="id" labelAttr="label" selected=system.activation.type  localize=true}}
+						</select>
+					</div>
+				</div>
+				{{!-- COST --}}
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.COST" }}</label>
+					<div class="form-fields">
+						<input type="number" class="flex0" name="system.activation.cost" value="{{system.activation.cost}}">
+						<label>{{ localize "SKYFALL.ITEM.ABILITY.REPEATABLE" }} <input type="checkbox" name="system.activation.repeatable" {{checked system.activation.repeatable}}></label>
+					</div>
+				</div>
+				{{#if (eq item.type "spell") }}
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.SPELL.COMPONENTS" }}</label>
+					<div class="form-fields">
+					{{#each SYSTEM.spellComponents as | comp key | }}
+						<label for=""> {{localize comp.label}}
+							<input type="checkbox" name="system.components" value="{{key}}" {{checked (lookup @root.components key)}}>
+						</label>
+					{{/each}}
+					</div>
+				</div>
+				{{/if}}
+				{{!-- RANGE / Alcance --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.RANGE" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.range.descriptive" value="{{system.range.descriptive}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.VALUE" }}</label>
+					<div class="form-fields">
+						<input type="number" name="system.range.value" value="{{system.range.value}}">
+						<select name="system.range.units" title="{{localize "SKYFALL.ITEM.ABILITY.UNITS" }}">
+							{{selectOptions SYSTEM.ranges blank="" nameAttr="id" labelAttr="label" selected=system.range.units localize=true}}
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="form-fields">
+					</div>
+				</div>
+				{{!-- TARGET / Alvo --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.TARGET" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.target.descriptive" value="{{system.target.descriptive}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.QUANTITYABBR" }} / {{ localize "SKYFALL.TYPE" }}</label>
+					<div class="form-fields">
+						<input type="number" name="system.target.quantity" value="{{system.target.quantity}}">
+						<select name="system.target.type">
+							{{selectOptions SYSTEM.individualTargets blank="" nameAttr="id" labelAttr="label" selected=system.target.type localize=true}}
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="form-fields"></div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.SHAPE" }}</label>
+					<div class="form-fields">
+						<select name="system.target.shape">
+							{{selectOptions SYSTEM.areaTargets blank="" nameAttr="id" labelAttr="label" selected=system.target.shape localize=true}}
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label></label>
+					{{!-- {{ localize "SKYFALL.ITEM.ABILITY.LENGTH" }} --}}
+					<div class="form-fields">
+						<input type="number" name="system.target.length" value="{{system.target.length}}">
+						<label for="">x</label>
+						<input type="number" name="system.target.width" value="{{system.target.width}}">
+						<select name="system.target.units" title="{{localize "SKYFALL.ITEM.ABILITY.UNITS" }}">
+							{{selectOptions SYSTEM.movementUnits blank=""  selected=system.target.units localize=true}}
+						</select>
+					</div>
+				</div>
+				{{!-- DURATION / Duração --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.DURATION" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.duration.descriptive" value="{{system.duration.descriptive}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.VALUE" }}</label>
+					<div class="form-fields">
+						<input type="number" name="system.duration.value" value="{{system.duration.value}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.UNITS" }}</label>
+					<div class="form-fields">
+						<select name="system.duration.units">
+							{{selectOptions SYSTEM.durations blank="" nameAttr="id" labelAttr="label" selected=system.duration.units localize=true}}
+						</select>
+					</div>
+				</div>
+				{{!-- ATTACK / Ataque --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.ATTACK" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.attack.descriptive" value="{{system.attack.descriptive}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.HIT" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.attack.hit" value="{{system.attack.hit}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.MISS" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.attack.miss" value="{{system.attack.miss}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.ATTACK" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.attack.type" value="{{system.attack.type}}">
+						<label for="">vs</label>
+						<select name="system.attack.protection">
+							{{selectOptions SYSTEM.abilities blank="" nameAttr="id" labelAttr="abbr" selected=system.attack.protection localize=true}}
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.DAMAGE" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.attack.damage" value="{{system.attack.damage}}">
+					</div>
+				</div>
+				{{!-- TRIGGER / Gatilho --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.TRIGGER" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.activation.trigger" value="{{system.activation.trigger}}">
+					</div>
+				</div>
+				
+				{{!-- EFFECT / Efeito --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.EFFECT" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.effect.descriptive" value="{{system.effect.descriptive}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.ITEM.ABILITY.DAMAGE" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.effect.damage" value="{{system.effect.damage}}">
+					</div>
+				</div>
+				
+				{{!-- SPECIAL / Especial --}}
+				<h3>{{ localize "SKYFALL.ITEM.ABILITY.SPECIAL" }}</h3>
+				<div class="form-group">
+					<label>{{ localize "SKYFALL.DESCRIPTION" }}</label>
+					<div class="form-fields">
+						<input type="text" name="system.special.descriptive" value="{{system.special.descriptive}}">
+					</div>
+				</div>
+			</div>
+			{{!-- <div class="tab sheet-edition" data-group="primary" data-tab="traits"></div> --}}
+			{{!-- <div class="tab sheet-edition" data-group="primary" data-tab="effect"></div> --}}
+			{{!-- <div class="tab sheet-edition" data-group="primary" data-tab="special"></div> --}}
+			<div class="tab sheet-edition" data-group="ability" data-tab="descriptors">
+				<h3>{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</h3>
+				<label for="">
+					<input type="text" name="_descriptor" >
+				</label>
+				<div class="form-group">
+					{{#each descriptors as | tag key |}}
+					<div class="form-fields flexrow" style="flex-wrap: wrap;">
+						<label class="descriptor" data-tooltip="{{tag.type}}">
+							{{key}}
+							<input type="checkbox" name="system.descriptors" value="{{key}}" {{checked tag.value}}>
+						</label>
+					</div>
+					{{/each}}
+				</div>
+			</div>
+			<div class="tab sheet-edition" data-group="ability" data-tab="modification">
+				TODO
+			</div>
+			<div class="tab sheet-edition" data-group="ability" data-tab="debug">
+			</div>
+		</div>
+	</div>
+	{{/if }}
+</form>
+
+<style>
+	form.ability {
+		flex-wrap: nowrap;
+		max-height: 600px;
+	}
+	.sheet-card {
+		width: 420px;
+		flex: 0 0 420px;
+	}
+	.sheet-edit .tab2 {
+	}
+	.sheet-edit .tab2.active {
+		display: flex;
+		max-width: 320px;
+		min-width: 320px;
+		flex: 0 0 320px;
+		flex-direction: column;
+		flex-wrap: wrap;
+	}
+
+	.sheet-edit .tab2 {
+		flex-direction: column;
+		flex-wrap: nowrap;
+	}
+
+	.ability-header, .ability-descriptors, .ability-attack, .ability-traits, .ability-effect, .ability-special, .ability-modification {
+		/*min-height: 30px;*/
+		padding: 5px;
+		margin-right: 1rem;
+		border: 1px solid black;
+		position: relative;
+	}
+
+	label.descriptor {
+		padding: 5px;
+		margin: 2px 2px;
+		background-color: #182657;
+		color: white;
+		text-transform: uppercase;
+		opacity: 0.6;
+	}
+
+	label.descriptor:has(input[type="checkbox"]:checked) {
+		opacity: 1;
+	}
+
+	label.descriptor input[type="checkbox"] {
+		display: none;
+	}
+
+	.section-edit .item2 {
+		border: 1px solid black;
+	}
+	.sheet-card hr, .section-edit hr {
+		flex: 0;
+	}
+	form.ability a.item2 {
+		width: 1rem;
+		align-content: center;
+		position: absolute;
+		right: -1rem;
+		top: 0;
+		height: 100%;
+		text-align: center;
+	}
+
+	.sheet-edit .tab2 {
+		display: none;
+		flex: 0;
+	}
+
+	.sheet-edit .tab2.active {
+		display: flex;
+	}
+
+</style>

@@ -1,0 +1,72 @@
+{{log this }}
+<div class="tab" data-group="primary" data-tab="traits">
+	<h3>{{localize "SKYFALL.ITEM.LEGACY.LEGACYTRAITS" name=@root.item.name}}</h3>
+	<label>{{localize "SKYFALL.ITEM.LEGACY.AGE"}}</label>
+	{{editor @root.enriched.age target="system.traits.age" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+	<label>{{localize "SKYFALL.ITEM.LEGACY.MOVEMENT"}}</label>
+	{{editor @root.enriched.movement target="system.traits.movement" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+	<label>{{localize "SKYFALL.ITEM.LEGACY.SIZE"}}</label>
+	{{editor @root.enriched.size target="system.traits.size" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+</div>
+<div class="tab" data-group="primary" data-tab="features">
+	<label>{{localize "SKYFALL.ITEM.LEGACY.MELANCHOLY"}}</label>
+	{{editor @root.enriched.melancholy target="system.traits.melancholy" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+	{{!-- LIST FEATURES --}}
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=@root.features target="system.features"}}
+</div>
+<div class="tab flexrow" data-group="primary" data-tab="heritage">
+	<nav class="heritage-tabs tabscol flexcol flex0" data-group="secondary">
+		{{#each @root.heritages as | item |}}
+		<a class="item flex0" data-tab="{{item.key}}">{{item.name}}</a>
+		{{/each}}
+		<a data-action="create" data-type="heritage">ADD</a>
+	</nav>
+	<div class="heritage-body">
+		{{#each @root.heritages as | item tab |}}
+		<div class="tab flexcol" data-group="secondary" data-tab="{{item.key}}">
+			<div class="input-fields">
+				<label>{{localize "SKYFALL.NAME"}}</label>
+				<input type="text" name="system.heritages.{{item.key}}.name" value="{{item.name}}">
+			</div>
+			<div class="input-fields">
+				<label>{{localize "SKYFALL.DESCRIPTION"}}</label>
+				{{!-- <input type="text" name="system.heritages.{{item.key}}.description" value="{{item.description}}"> --}}
+				<textarea name="system.heritages.{{item.key}}.description" cols="30" rows="2">{{item.description}}</textarea>
+			</div>
+			<div class="input-fields">
+				<label>{{localize "SKYFALL.CHOSEN"}}</label>
+				<input type="checkbox" name="system.heritages.{{item.key}}.chosen" {{checked item.chosen}}>
+			</div>
+			
+			{{!-- LIST FEATURES --}}
+			{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=item.features target=(concat "system.heritages." item.key ".features")}}
+		</div>
+		{{/each}}
+	</div>
+</div>
+{{!-- LIST FEATS --}}
+<div class="tab flexrow" data-group="primary" data-tab="feats">
+	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feat" list=@root.feats target="system.feats"}}
+</div>
+
+<style>
+	.list-items.heritages {
+		position: relative;
+		min-height:400px;
+	}
+
+	.list-items.heritages .control-add {
+		position: absolute;
+		bottom: 0;
+	}
+
+	.list-items.heritages .entry {
+		flex: 0 0 30px;
+		width: 180px;
+	}
+	.list-items.heritages .heritage-dados {
+		flex: 0 0 auto;
+		width: 300px;
+		right: 0;
+	}
+</style>

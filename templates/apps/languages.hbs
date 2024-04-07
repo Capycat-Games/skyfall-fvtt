@@ -1,0 +1,11 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	<ul class="trait-list flexcol">
+		{{#each languages as | language key |}}
+		<li class="item flexrow">
+			<input type="checkbox" id={{key}} name="system.languages" value="{{key}}" {{checked language.value}}>
+			<label for={{key}}>{{localize language.label}}</label>
+		</li>
+		{{/each}}
+	</ul>
+	<button type="submit" name="submit" value="1"><i class="far fa-save"></i> {{ localize "SKYFALL.SHEET.SUBMIT"}}</button>
+</form>
