@@ -12,7 +12,6 @@ export default class Equipment extends PhysicalItemData {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.consumables, initial: "municao"}),
 			uses: new fields.SchemaField({
 				value: new fields.NumberField({
 					required: true, min: 0, integer: true, label: "SKYFALL.ITEM.LIMITEDUSES"

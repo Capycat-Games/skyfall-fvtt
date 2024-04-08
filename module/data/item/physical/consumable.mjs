@@ -13,7 +13,10 @@ export default class Consumable extends PhysicalItemData {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.consumables, initial: "ammo"}),
-			damage: new fields.StringField({required: true, blank: false}),
+			damage: new fields.SchemaField({
+				formula: new fields.StringField({required: true, blank: true}),
+				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
+			}),
 			uses: new fields.SchemaField({
 				value: new fields.NumberField({
 					required: true, min: 0, integer: true, label: "SKYFALL.ITEM.LIMITEDUSES"

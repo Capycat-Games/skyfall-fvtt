@@ -67,7 +67,7 @@ export const actorSizes = Object.freeze({
 		id: "med",
 		label: "SKYFALL.ACTOR.SIZES.MEDIUM",
 		abbr: "SKYFALL.ACTOR.SIZES.MEDIUMABBR",
-		gridScale: 0.8
+		gridScale: 1
 	},
 	lg: {
 		id: "lg",

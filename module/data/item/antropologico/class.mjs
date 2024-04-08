@@ -11,7 +11,7 @@ export default class Class extends Antropologia {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			level: new fields.NumberField({required:true, integer: true, min: 1, max: 12}),
 			initial: new fields.BooleanField({required: true, initial:false}),
 			hitDie: new fields.StringField({required: true, choices:["1d6","1d8","1d10"], initial: "1d6"}),

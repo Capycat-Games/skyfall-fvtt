@@ -60,6 +60,7 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["spell"] = models.item.Spell;
 	CONFIG.Item.dataModels["weapon"] = models.item.Weapon;
 	CONFIG.Item.dataModels["armor"] = models.item.Armor;
+	CONFIG.Item.dataModels["clothing"] = models.item.Clothing;
 	CONFIG.Item.dataModels["equipment"] = models.item.Equipment;
 	CONFIG.Item.dataModels["consumable"] = models.item.Consumable;
 	CONFIG.Item.dataModels["loot"] = models.item.Loot;
@@ -74,7 +75,7 @@ Hooks.once('init', function () {
 	
 	// Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("skyfall", sheets.SkyfallItemSheet, {
-		types: ['legacy','background','class','path','feature','curse','feat','ability','spell'],
+		types: ['legacy','background','class','path','feature','curse','feat','ability','spell','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: true,
 	});
 

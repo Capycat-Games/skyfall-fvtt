@@ -44,11 +44,11 @@ export default class SkyfallActor extends Actor {
 		for (const [key, abl] of Object.entries(systemData.abilities)) {
 			abl.protection = 10 + abl.value + (abl.proficient ? systemData.proficiency : 0);
 		}
-		// PREPARE VOLUME
+		// PREPARE CAPACITY
 		const str = systemData.abilities.str.value;
 		systemData.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
 		
-		// PREPARE FRAGMENTO
+		// PREPARE FRAGMENTS LIMIT
 		const cha = systemData.abilities.cha.value;
 		systemData.fragments.max = cha + (systemData.proficiency * 2);
 		
@@ -91,6 +91,7 @@ export default class SkyfallActor extends Actor {
 
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
+		console.log(data, options, user);
 		await super._preCreate(data, options, user);
 	}
 

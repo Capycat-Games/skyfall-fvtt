@@ -13,7 +13,7 @@ export default class ActorTraits extends DocumentSheet {
 
 	/** @override */
 	static get defaultOptions() {
-		return mergeObject(super.defaultOptions, {
+		return foundry.utils.mergeObject(super.defaultOptions, {
 			classes: ["skyfall"],
 			width: 400,
 			height: "auto"

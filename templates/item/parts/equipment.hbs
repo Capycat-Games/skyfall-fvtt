@@ -1,0 +1,156 @@
+
+<div class="tab" data-group="primary" data-tab="traits">
+	{{!-- OTHER --}}
+	{{#if (eq @root.item.type 'equipment')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.USES" }}</label>
+		<div class="form-fields">
+			<input type="number" name="system.uses.value" value="{{@root.system.uses.value}}">
+			/
+			<input type="number" name="system.uses.max" value="{{@root.system.uses.max}}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.USESRECHARGE" }}</label>
+		<div class="form-fields">
+			<select name="system.type">
+				{{selectOptions @root.SYSTEM.consumables nameAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
+			</select>
+		</div>
+	</div>
+	{{/if}}
+
+	{{!-- CONSUMABLE --}}
+	{{#if (eq @root.item.type 'consumable')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.TYPE" }}</label>
+		<div class="form-fields">
+			<select name="system.type">
+				{{selectOptions @root.SYSTEM.consumables nameAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.DAMAGE" }}</label>
+		<div class="form-fields">
+			<input type="text" name="system.damage.formula" value="{{@root.system.damage.formula}}">
+			<select name="system.damage.abl">
+				{{selectOptions @root.SYSTEM.abilities nameAttr="id" labelAttr="label" selected=@root.system.damage.abl localize=true}}
+			</select>
+		</div>
+	</div>
+	{{/if}}
+
+	{{!-- CLOTHING --}}
+	{{#if (eq @root.item.type 'clothing')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.TYPE" }}</label>
+		<div class="form-fields">
+			<select name="system.type">
+				{{selectOptions @root.SYSTEM.clothings nameAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
+			</select>
+		</div>
+	</div>
+	{{/if}}
+	
+	{{!-- ARMOR & SHIELD --}}
+	{{#if (eq @root.item.type 'armor')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.TYPE" }}</label>
+		<div class="form-fields">
+			<select name="system.type">
+				{{selectOptions @root.SYSTEM.armors nameAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ACTOR.DR" }}</label>
+		<div class="form-fields">
+			<input type="number" name="system.dr" value="{{@root.system.dr}}">
+		</div>
+	</div>
+	{{/if}}
+
+	{{!-- WEAPON / SHIELD / CONSUMABLE --}}
+	{{#if (or (eq @root.item.type 'weapon') (eq @root.system.type 'shield')) }}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.EQUIPMENT.CATEGORY" }}</label>
+		<div class="form-fields">
+			<select name="system.category">
+				{{selectOptions @root.SYSTEM.weapons nameAttr="id" labelAttr="label" selected=@root.system.category localize=true}}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.WEAPON.WIELD" }}</label>
+		<div class="form-fields">
+			<select name="system.wield">
+				{{#select @root.system.wield}}
+				<option value="1">{{localize "SKYFALL.ITEM.WEAPON.ONEHANDED"}}</option>
+				<option value="2">{{localize "SKYFALL.ITEM.WEAPON.TWOHANDED"}}</option>
+				{{/select}}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.DAMAGE" }}</label>
+		<div class="form-fields">
+			<input type="text" name="system.damage.formula" value="{{@root.system.damage.formula}}">
+			<select name="system.damage.abl">
+				{{selectOptions @root.SYSTEM.abilities nameAttr="id" labelAttr="label" selected=@root.system.damage.abl localize=true}}
+			</select>
+		</div>
+	</div>
+	{{/if}}
+
+	{{!-- WEAPON --}}
+	{{#if (eq @root.item.type 'weapon')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL.ITEM.EQUIPMENT.RANGE" }}</label>
+		<div class="form-fields">
+			<input type="number" name="system.range" value="{{@root.system.range}}">
+		</div>
+	</div>
+	{{/if}}
+</div>
+
+<style>
+	.field-tag {
+	}
+	.tags-options {
+		display: none;
+	}
+
+	.tags-options:hover,
+	.field-tag:focus + .tags-options {
+		display: flex;
+		background-color: white;
+		z-index: 3;
+		position: absolute;
+		height: 200px;
+		top: 2em;
+		/*bottom: -210px*/;
+		overflow-y: auto;
+		right: 10px;
+		width: 350px;
+	}
+
+	label.descriptor {
+		padding: 5px;
+		margin: 2px 2px;
+		background-color: #182657;
+		color: white;
+		text-transform: uppercase;
+		opacity: 0.6;
+	}
+
+	label.descriptor:has(input[type="checkbox"]:checked) {
+		opacity: 1;
+	}
+
+	label.descriptor input[type="checkbox"] {
+		display: none;
+	}
+
+
+</style>

@@ -28,7 +28,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 
 	async getData() {
 		const context = super.getData();
-		console.log(context);
+		context.user = game.user;
 		context.SYSTEM = SYSTEM;
 		context.system = this.item.system;
 		context.tabs = {}
@@ -43,6 +43,17 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			description: await TextEditor.enrichHTML(context.system.description.value, this.enrichmentOptions),
 		}
 		switch( this.item.type ) {
+			case 'loot':
+				context.tabs.description = "SKYFALL.DESCRIPTION";
+				context.partials.description = "systems/skyfall/templates/item/parts/description-physical.hbs";
+				break
+			case 'weapon':
+			case 'armor':
+			case 'clothing':
+			case 'consumable':
+			case 'equipment':
+				await this.getEquipmentData(context);
+				break;
 			case 'legacy':
 				await this.getLegacyData(context);
 				break;
@@ -87,12 +98,26 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			}
 		}
 	}
+	
+	async getEquipmentData(context) {
+		context.partials.description = "systems/skyfall/templates/item/parts/description-physical.hbs";
+		context.partials.type = "systems/skyfall/templates/item/parts/equipment.hbs";
+		context.tabs = {
+			description: "SKYFALL.DESCRIPTION",
+			traits: "SKYFALL.ITEM.LEGACY.TRAITS",
+			effects: "SKYFALL.SHEET.EFFECTS",
+		}
+		if ( context.system.unidentified.value ) {
+			context.enriched.description = await TextEditor.enrichHTML(context.system.unidentified.description, this.enrichmentOptions);
+		}
+		this.getDescriptors(context, "equipment");
+	}
 
 	async getLegacyData(context) {
 		// Rendering Data
 		context.partials.type = "systems/skyfall/templates/item/parts/legacy.hbs";
 		context.tabs = {
-			// description: "SKYFALL.ITEM.DESCRIPTION",
+			// description: "SKYFALL.DESCRIPTION",
 			traits: "SKYFALL.ITEM.LEGACY.TRAITS",
 			features: "SKYFALL.ITEM.FEATURES",
 			heritage: "SKYFALL.ITEM.LEGACY.HERITAGE",
@@ -107,7 +132,6 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		// Heritage
 		context.heritage = false;
 		context.heritages = [];
-		console.log( this.item.system )
 		for (const [key, value] of Object.entries(this.item.system.heritages)) {
 			const heritage = {
 				key: key,
@@ -188,27 +212,10 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		// Rendering Data
 		context.partials.type = "systems/skyfall/templates/item/parts/ability.hbs";
 		context.partials.description = null;
-		// context.enriched.aaa = await TextEditor.enrichHTML(context.system.aaa, this.enrichmentOptions);
-		// console.log(this.system);
 		context.labels = context.system._labels;
-		context.descriptors = context.system.descriptors.reduce((acc, key) => {
-			acc[key] = true;
-			return acc;
-		}, {});
-		const _descriptors = [ ...context.system.descriptors , ...Object.keys(SYSTEM.DESCRIPTORS) ];
-		context.descriptors = _descriptors.reduce((acc, key) => {
-			acc[key] = {
-				value: (context.system.descriptors.includes(key)),
-				...SYSTEM.DESCRIPTORS['acid'] ?? {
-					id: key, hint: "", type: "origin", label: key.toUpperCase(),
-				}
-			}
-			return acc;
-		}, {});
-		context.customDescriptor = context.system.descriptors.filter( i => !(i in SYSTEM.DESCRIPTORS));
+		this.getDescriptors(context);
 		
-
-		if (  context.item.type == 'spell' ) {
+		if ( context.item.type == 'spell' ) {
 			context.components = context.system.components.reduce((acc, key) => {
 				acc[key] = true;
 				return acc;
@@ -231,13 +238,33 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		]
 	}
 
+
+	async getDescriptors(context, type) {
+		context.descriptors = context.system.descriptors.reduce((acc, key) => {
+			acc[key] = true;
+			return acc;
+		}, {});
+		
+		const _descriptors = [ ...context.system.descriptors , ...Object.keys(SYSTEM.DESCRIPTORS) ];
+		context.descriptors = _descriptors.reduce((acc, key) => {
+			if ( !SYSTEM.DESCRIPTORS[key]?.type.includes(type) ) return acc;
+			acc[key] = {
+				value: (context.system.descriptors.includes(key)),
+				...SYSTEM.DESCRIPTORS[key] ?? {
+					id: key, hint: "", type: "origin", label: key.toUpperCase(),
+				}
+			}
+			return acc;
+		}, {});
+	}
+
 	/** @inheritdoc */
 	async _updateObject(event, formData) {
 		if ( formData['system.descriptors'] ) formData['system.descriptors'] = formData['system.descriptors'].filter(Boolean);
 		if ( formData['_descriptor'] ) {
 			formData['system.descriptors'] = [formData['_descriptor'], ...formData['system.descriptors']];
 		}
-		console.log( event, formData );
+		// console.log( event, formData );
 		return super._updateObject(event, formData);
 	}
 }

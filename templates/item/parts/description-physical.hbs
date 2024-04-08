@@ -1,0 +1,77 @@
+<div class="tab" data-group="primary" data-tab="description">
+	<div class="flexrow">
+		<div class="flexcol" style="align-self: flex-start;">
+			<div class="form-group slim">
+				<label>{{localize "SKYFALL.QUANTITYABBR" }}</label>
+				<div class="form-fields flex0">
+					<input type="number" name="system.quantity" value="{{@root.system.quantity}}">
+				</div>
+			</div>
+			<div class="form-group slim">
+				<label>{{localize "SKYFALL.PRICE" }}</label>
+				<div class="form-fields flex0">
+					<input type="number" name="system.price" value="{{@root.system.price}}">
+				</div>
+			</div>
+			<div class="form-group slim">
+				<label>{{localize "SKYFALL.CAPACITY" }}</label>
+				<div class="form-fields flex0">
+					<input type="number" name="system.capacity" value="{{@root.system.capacity}}">
+				</div>
+			</div>
+			{{#if (or (eq @root.item.type 'weapon') (eq @root.system.type 'shield') (eq @root.item.type 'clothing')) }}
+			<div class="form-group">
+				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.EQUIPPED" }}
+					<input type="checkbox" name="system.equipped" {{checked @root.system.equipped}}>
+				</label>
+			</div>
+			<div class="form-group">
+				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.ATTUNED" }}
+					<input type="checkbox" name="system.attuned" {{checked @root.system.attuned}}>
+				</label>
+			</div>
+			{{#if @root.user.isGM}}
+			<div class="form-group">
+				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.UNIDENTIFIED" }}
+					<input type="checkbox" name="system.unidentified.value" {{checked @root.system.unidentified.value}}>
+				</label>
+			</div>
+			{{/if}}
+			{{/if}}
+		</div>
+		<div class="flexcol flex3">
+			{{#if (or (eq @root.item.type 'weapon') (eq @root.item.type 'armor')) }}
+			<div class="form-group flex0">
+				<label for="">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</label>
+				<div class="form-fields2 flexcol" style="position:relative;">
+					<input type="text" class="field-tag " name="_descriptor" >
+					<div class="tags-options flexrow">
+						{{#each @root.descriptors as | tag key |}}
+						<div class="form-fields" style="flex-wrap: wrap;">
+							<label class="descriptor" data-tooltip="{{tag.type}}">
+								{{key}}
+								<input type="checkbox" name="system.descriptors" value="{{key}}" {{checked tag.value}}>
+							</label>
+						</div>
+						{{/each}}
+					</div>
+					<div class="flexrow">
+						{{#each @root.descriptors as | tag key |}}
+						{{#if tag.value }}
+						<div class="form-fields" style="flex-wrap: wrap;">
+							<label class="descriptor" data-tooltip="{{tag.type}}">{{key}}</label>
+						</div>
+						{{/if}}
+						{{/each}}
+					</div>
+				</div>
+			</div>
+			{{/if}}
+			{{#if @root.system.unidentified.value }}
+				{{editor @root.enriched.description target="system.unidentified.description" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+			{{else}}
+				{{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
+			{{/if}}
+		</div>
+	</div>
+</div>

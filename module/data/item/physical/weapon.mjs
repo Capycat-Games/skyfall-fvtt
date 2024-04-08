@@ -13,11 +13,13 @@ export default class Weapon extends PhysicalItemData {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			/* simples | marciais | fogo | regional */
-			category: new fields.StringField({required: true, blank: false, choices: SYSTEM.ARMASTIPO, initial: "simples"}),
+			category: new fields.StringField({required: true, blank: false, choices: SYSTEM.weapons, initial: "simple"}),
 			/* uma mão | duas mãos */
 			wield: new fields.NumberField({required: true, integer: true, min: 1, max: 2}),
-			damage: new fields.StringField({required: true, blank: false}),
-			damageAbl: new fields.StringField({required: true, blank: false, choices: SYSTEM.ATRIBUTOS, initial: "str"}),
+			damage: new fields.SchemaField({
+				formula: new fields.StringField({required: true, blank: true}),
+				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
+			}),
 			range: new fields.NumberField({required: true, integer: true, min: 0}),
 		})
 	}

@@ -11,7 +11,7 @@ export default class Background extends Antropologia {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			traits: new fields.SchemaField({
 				proficiencies: new fields.StringField({required: true, blank: true}),
 				languages: new fields.StringField({required: true, blank: true}),

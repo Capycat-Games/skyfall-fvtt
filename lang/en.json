@@ -16,6 +16,7 @@
 			"spell": "Magia",
 			"weapon": "Arma",
 			"armor": "Armadura",
+			"clothing": "Vestimenta",
 			"equipment": "Equipamento",
 			"consumable": "Consumível",
 			"loot": "Tesouro"
@@ -27,8 +28,10 @@
 		"TOTAL": "Totais",
 		"LIMIT": "Limite",
 		"CURRENT": "Atual",
+		"CAPACITY": "Volume",
 		"QUANTITY": "Quantidade",
 		"QUANTITYABBR": "Qtd.",
+		"PRICE": "Preço",
 		"POINTS": "Pontos",
 		"CHOSEN": "Escolhida",
 		"DESCRIPTOR": "Descritores",
@@ -59,7 +62,7 @@
 			"PROFICIENCIES": "Proficiências",
 			"LANGUAGE": "Idiomas",
 			"PROTECTION": "Proteção",
-			"RD": "Redução de Dano",
+			"DR": "Redução de Dano",
 			"RDABBR": "RD",
 			"DEATHSAVES": "Testes de Morte",
 			"FAILURES": "Falhas",
@@ -185,6 +188,9 @@
 			"ABILITIES": "Habilidades",
 			"MODIFICATIONS": "Modificações",
 			"DESCRIPTORS": "Descritores",
+			"DAMAGE": "Dano",
+			"USES": "Usos",
+			"CHARGES": "Cargas",
 			"LEGACY": {
 				"TRAITS": "Tracos",
 				"AGE": "Idade",
@@ -231,6 +237,27 @@
 			"SPELL": {
 				"LAYER": "Camada",
 				"COMPONENTS": "Componentes"
+			},
+			"EQUIPMENT": {
+				"EQUIP": "Equipar",
+				"EQUIPPED": "Equipado",
+				"STASHED": "Guardado",
+				"ATTUNE": "Sintonizar",
+				"ATTUNED": "Sintonizado",
+				"UNIDENTIFIED": "Não-identificado",
+				"RANGE": "Alcance",
+				"CATEGORY": "Categoria"
+			},
+			"WEAPON": {
+				"EQUIP": "Equipar",
+				"EQUIPPED": "Equipado",
+				"STASHED": "Guardado",
+				"ATTUNE": "Sintonizar",
+				"ATTUNED": "Sintonizado",
+				"RANGE": "Alcance",
+				"WIELD": "Empunhadura",
+				"ONEHANDED": "Uma Mão",
+				"TWOHANDED": "Duas Mãos"
 			},
 			"ACTIVATIONS": {
 				"ACTION": "Ação",
@@ -287,13 +314,6 @@
 				"CREATUREOROBJECT": "Criatura ou Objeto",
 				"ANY": "Qualquer",
 				"WILLING": "Criatura vonluntária"
-			},
-			"EQUIPMENT": {
-				"EQUIP": "Equipar",
-				"EQUIPPED": "Equipado",
-				"STASHED": "Guardado",
-				"ATTUNE": "Sintonizar",
-				"ATTUNED": "Sintonizado"
 			},
 			"WEAPONTYPES": {
 				"SIMPLE": "Arma Simples",

@@ -21,7 +21,9 @@ export const preloadHandlebarsTemplates = async function () {
 		'systems/skyfall/templates/item/parts/background.hbs',
 		'systems/skyfall/templates/item/parts/class.hbs',
 		'systems/skyfall/templates/item/parts/path.hbs',
+		'systems/skyfall/templates/item/parts/equipment.hbs',
 		'systems/skyfall/templates/item/parts/description.hbs',
+		'systems/skyfall/templates/item/parts/description-physical.hbs',
 		'systems/skyfall/templates/item/parts/items-list.hbs',
 		
 	]);

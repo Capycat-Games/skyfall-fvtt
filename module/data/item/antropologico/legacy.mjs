@@ -11,7 +11,7 @@ export default class Legacy extends Antropologia {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			traits: new fields.SchemaField({
 				age: new fields.HTMLField({required: true, blank: true}),
 				movement: new fields.HTMLField({required: true, blank: true}),

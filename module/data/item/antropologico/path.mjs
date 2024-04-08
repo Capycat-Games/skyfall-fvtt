@@ -11,7 +11,7 @@ export default class Path extends Antropologia {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			type: new fields.StringField({required: true, choices:["specialized","war","mystic"], initial: "specialized"}),
 			featuresAdv: new fields.SetField(new fields.StringField({required: true}, {validate: Antropologia.validateUuid})),
 		});

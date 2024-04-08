@@ -12,7 +12,7 @@ export default class Curse extends Antropologia {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return super.defineSchema();
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			// NÃO TEM NADA DE MAIS
 		});
 	}

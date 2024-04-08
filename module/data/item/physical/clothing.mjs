@@ -13,7 +13,7 @@ export default class Clothing extends PhysicalItemData {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.clothings, initial: "cabeca"}),
+			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.clothings, initial: "head"}),
 		})
 	}
 }

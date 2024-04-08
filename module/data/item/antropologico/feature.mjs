@@ -11,7 +11,7 @@ export default class Feature extends Antropologia {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return mergeObject(super.defineSchema(), {
+		return foundry.utils.mergeObject(super.defineSchema(), {
 			origin: new fields.StringField({required: true}, {validate: Antropologia.validateUuid}),
 		})
 	}

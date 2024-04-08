@@ -101,11 +101,11 @@ export const DESCRIPTOR = {
 	DIVERSE: {},
 };
 
-let categoriaKeys = ["attack", "weapon", "alchemy", "aura", "inspiration", "magical", "prototype", "control", "ofensive", "utility"];
-categoriaKeys.reduce((obj, key) => {
+let categoryKeys = ["attack", "weapon", "alchemy", "aura", "inspiration", "magical", "prototype", "control", "ofensive", "utility"];
+categoryKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		type: "categoria",
+		type: ["category"],
 		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
 	}
 	return obj;
@@ -116,7 +116,7 @@ let equipmentKeys = ["adaptable", "reach", "thrown", "noisy", "composite", "espa
 equipmentKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		type: "equipment",
+		type: ["equipment"],
 		equipment: ( key == "noisy" ? "armor" : "weapon"),
 		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
 		hint: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}HINT`,
@@ -124,12 +124,13 @@ equipmentKeys.reduce((obj, key) => {
 	return obj;
 }, DESCRIPTOR.EQUIPMENT);
 
-let damageTypes = ["acid", "bludgeoning", "slashing", "lightning", "energy", "cold", "fire", "necrotic", "piercing", "psychic", "radiant", "thunder", "poison", "especial"];
-let elementalDamage = ["acid","lightning","cold","fire"]
+let damageTypes = ["acid", "bludgeoning", "slashing", "lightning", "energy", "cold", "fire", "necrotic", "piercing", "psychic", "radiant", "thunder", "poison", "special"];
+let physicalDamage = ["bludgeoning","slashing","piercing"];
+let elementalDamage = ["acid","lightning","cold","fire"];
 damageTypes.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		type: "damage",
+		type: physicalDamage.includes(key) ? ["damage","equipment"] : ["damage"],
 		subtype: elementalDamage.includes(key) ? 'elemental' : null,
 		label: `SKYFALL.DESCRIPTORS.DAMAGE.${key.toUpperCase()}`,
 		hint: `SKYFALL.DESCRIPTORS.DAMAGE.${key.toUpperCase()}HINT`,
@@ -141,7 +142,7 @@ let diverseKeys = ["aspect", "creation", "elemental", "inspiration"];
 diverseKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		type: "diverse",
+		type: ["diverse"],
 		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
 		hint: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}Hint`,
 	}
