@@ -20,6 +20,7 @@ export default class Antropologia extends foundry.abstract.TypeDataModel {
 			abilities: new fields.SetField(new fields.StringField({required: true}, {validate: Antropologia.validateUuid})),
 			feats: new fields.SetField(new fields.StringField({required: true}, {validate: Antropologia.validateUuid})),
 			modification: new fields.SetField(new fields.StringField({required: true}, {validate: Antropologia.validateUuid})),
+			favorite: new fields.BooleanField({initial: false}),
 		}
 	}
 

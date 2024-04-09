@@ -10,7 +10,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 	/** @inheritdoc */
 	static get defaultOptions() {
 		return foundry.utils.mergeObject(super.defaultOptions, {
-			dragDrop: [{dragSelector: 'draggable', dropSelector: ".list-items.drop"}]
+			dragDrop: [{dragSelector: '.draggable', dropSelector: ".list-items.drop"}]
 		});
 	}
 

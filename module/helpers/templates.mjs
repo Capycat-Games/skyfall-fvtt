@@ -13,6 +13,7 @@ export const preloadHandlebarsTemplates = async function () {
 		'systems/skyfall/templates/actor/parts/inventory.hbs',
 		'systems/skyfall/templates/actor/parts/spells.hbs',
 		'systems/skyfall/templates/actor/parts/skills.hbs',
+		'systems/skyfall/templates/actor/parts/header-field.hbs',
 
 		'systems/skyfall/templates/actor/parts/actor-effects.hbs',
 		// Item partials

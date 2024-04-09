@@ -1,14 +1,14 @@
 <ul class="list-items features flexrow">
-	{{#each items.features as | feature |}}
-	<li class="item feature flexcol" data-item-id="{{feature.id}}">
-		<div class="item-name">{{feature.name}}</div>
-		<div class="item-xxx">{{feature.name}}</div>
+	{{#each features as | item |}}
+	<li class="item entry flexcol" data-entry-id="{{item._id}}">
+		<div class="item-name">{{item.name}}</div>
+		<div class="item-xxx">{{item.name}}</div>
 		<div class="item-controls">
 			<a class="control" data-action="toggle" data-target="favorite">
 				{{{../SYSTEM.icons.star}}}
 			</a>
-			<a class="control" data-action="edit">{{{../SYSTEM.icons.edit}}}</a>
-			<a class="control" data-action="delete">{{{../SYSTEM.icons.delete}}}</a>
+			<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+			<a class="control" data-action="delete" data-target="item">{{{../SYSTEM.icons.delete}}}</a>
 		</div>
 	</li>
 	{{/each}}

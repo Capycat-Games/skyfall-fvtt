@@ -33,20 +33,45 @@ export default class SkyfallActor extends Actor {
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};
 		
-		// PREPARE VIDA
+		// PREPARE HIT POINTS
+		if ( true ) {
+			const hitDie = systemData.resources.hitDie.die.replace(/\d+d/,'');
+			let levels = [];
+			if ( flags.hpPerLevel == 'roll' ) levels = [];
+			else { //if ( flags.hpPerLevel == 'mean') {
+				let mean = (((Number(hitDie)) / 2) + 1);
+				levels = Array.fromRange(systemData.level.value).fill(mean, 0, 12);
+			}
+			levels[0] = Number(hitDie);
+			systemData.resources.hp.max = levels.reduce((acc,i)=> acc+i) ?? 1;
+		}
+
+		// PREPARE HITDIE
+		systemData.resources.hitDie.max = systemData.level.value;
 		
-		// PREPARE ENFASE
-		
+		// PREPARE EMPHASYS POINTS
+		systemData.resources.ep.max = systemData.level.value * 3;
+
 		// PREPARE PROFICIENCIA
 		
-		// PREPARE PROTECOES
-		console.log(systemData)
+		// PREPARE PROTECTIONS
 		for (const [key, abl] of Object.entries(systemData.abilities)) {
 			abl.protection = 10 + abl.value + (abl.proficient ? systemData.proficiency : 0);
 		}
+
+		// PREPARE DAMAGE REDUCTION
+		systemData.dr = actorData.items.filter( i => 'dr' in i.system && i.system.equipped ).reduce((acc, i) => {
+			acc += i.system.dr;
+			return acc;
+		}, 0);
+
 		// PREPARE CAPACITY
 		const str = systemData.abilities.str.value;
 		systemData.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
+		systemData.capacity.value = actorData.items.filter( i => 'capacity' in i.system ).reduce((acc, i) => {
+			acc += i.system.capacity;
+			return acc;
+		}, 0);
 		
 		// PREPARE FRAGMENTS LIMIT
 		const cha = systemData.abilities.cha.value;
@@ -91,8 +116,21 @@ export default class SkyfallActor extends Actor {
 
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
-		console.log(data, options, user);
 		await super._preCreate(data, options, user);
+
+		// SET DEFAULT TOKEN
+		const prototypeToken = {};
+		if ( this.system.size ) {
+			const size = SYSTEM.actorSizes[this.system.size].gridScale ?? 1;
+			if ( !foundry.utils.hasProperty(data, "prototypeToken.width") ) prototypeToken.width = size;
+			if ( !foundry.utils.hasProperty(data, "prototypeToken.height") ) prototypeToken.height = size;
+		}
+		if ( this.type === "character" ) {
+			prototypeToken.sight = { enabled: true };
+			prototypeToken.actorLink = true;
+			prototypeToken.disposition = CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+		}
+		this.updateSource({ prototypeToken });
 	}
 
 	/* -------------------------------------------- */
@@ -107,6 +145,15 @@ export default class SkyfallActor extends Actor {
 	/** @inheritdoc */
 	async _preUpdate(data, options, userId) {
 		console.log( data, options, userId );
+		// SET DEFAULT TOKEN
+		const prototypeToken = {};
+		if ( data.system.size ) {
+			const size = SYSTEM.actorSizes[data.system.size].gridScale ?? 1;
+			data.prototypeToken = {
+				width: size,
+				height: size
+			}
+		}
 		return await super._onUpdate(data, options, userId);
 	}
 

@@ -19,7 +19,7 @@
 					<input type="number" name="system.capacity" value="{{@root.system.capacity}}">
 				</div>
 			</div>
-			{{#if (or (eq @root.item.type 'weapon') (eq @root.system.type 'shield') (eq @root.item.type 'clothing')) }}
+			{{#if (or (eq @root.item.type 'weapon') (eq @root.item.type 'armor') (eq @root.item.type 'clothing')) }}
 			<div class="form-group">
 				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.EQUIPPED" }}
 					<input type="checkbox" name="system.equipped" {{checked @root.system.equipped}}>

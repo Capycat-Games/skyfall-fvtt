@@ -1,0 +1,20 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	{{#each steps as | step s |}}
+	<div class="tab active" data-tab="{{step.id}}">
+		<h5>{{localize step.name}}</h5>
+		
+		<ul class="list-items flexcol">
+			{{#each step.itemList as | item index | }}
+			<li class="item entry flexrow">
+				<div class="item-icon" style="background-image:url({{item.img}})"></div>
+				<div class="item-name flex3">{{item.name}}</div>
+				<div class="item-controls hidden2">
+					<input type="checkbox" name="item_create" value="{{item.id}}" {{checked true}}>
+				</div>
+			</li>
+			{{/each}}
+		</ul>
+	</div>
+	{{/each}}
+	<button type="submit" name="submit" value="1"><i class="far fa-save"></i> {{ localize "SKYFALL.SHEET.SUBMIT"}}</button>
+</form>

@@ -11,40 +11,43 @@ export const abilities = _abilities.reduce((obj, key) => {
 }, {});
 
 /**
- * "APRE": "Apresentacao",			"Pre": Presentation,
- * "APTI": "Aptidao",						"Apt": Aptitude,
- * "ARCA": "Arcanismo",					"Arc": Arcanum,
- * "CULT": "Cultura",						"Cul": Culture,
- * "DIPL": "Diplomacia",				"Dip": Diplomacy,
- * "DOUT": "Doutrinas",					"Doc": Doctrines,
- * "FURT": "Furtividade",				"Ste": Stealth,
- * "INTI": "Intimidacao",				"Int": Intimidation,
- * "INTU": "Intuicao",					"Ins": Insight,
- * "MAGI": "Magitec",						"Mag": Magitech,
- * "MALA": "Malandragem",				"Rog": Roguery,
- * "MANI": "Manipulacao",				"Man": Manipulation,
- * "MEDI": "Medicina",					"Med": Medicine,
- * "NATU": "Natureza",					"Nat": Nature,
- * "PERC": "Percepcao",					"Per": Perception,
- * "PREP": "Preparo Físico",		"Fit": Fitness,
+ * "APRE": "Apresentacao",			"Pres": Presentation,
+ * "APTI": "Aptidao",						"Apti": Aptitude,
+ * "ARCA": "Arcanismo",					"Arca": Arcanum,
+ * "CULT": "Cultura",						"Cult": Culture,
+ * "DIPL": "Diplomacia",				"Dipl": Diplomacy,
+ * "DOUT": "Doutrinas",					"Doct": Doctrines,
+ * "FURT": "Furtividade",				"Stea": Stealth,
+ * "INTI": "Intimidacao",				"Inti": Intimidation,
+ * "INTU": "Intuicao",					"Insi": Insight,
+ * "MAGI": "Magitec",						"Magi": Magitech,
+ * "MALA": "Malandragem",				"Rogu": Roguery,
+ * "MANI": "Manipulacao",				"Mani": Manipulation,
+ * "MEDI": "Medicina",					"Medi": Medicine,
+ * "NATU": "Natureza",					"Natu": Nature,
+ * "PERC": "Percepcao",					"Perc": Perception,
+ * "PREP": "Preparo Físico",		"Fitn": Fitness,
  * 
- * "For" Forja									"For": Forging
- * "Ven" Veneno									"Poi": Poison
- * "Pes" Pescaria								"Fis": Fishing
- * "Alq" Alquimia								"Alc": Alchemy
- * "Des" Destilação							"Dis": Distillation
- * "Car" Cartografia						"Car": Cartography
- * "Alf" Alfaiataria						"Tai": Tailoring
- * "Cul" Culinária							"Coo": Cooking
- * "Pin" Pintura								"Pai": Painting
- * "Art" Artesanato							"Cra": Craftsmanship
- * "Nav" Navegação							"Nav": Navigation
- * "Ins" Instrumentos						"Ins": Instruments
+ * "For" Forja									"Forg": Forging
+ * "Ven" Veneno									"Pois": Poison
+ * "Pes" Pescaria								"Fish": Fishing
+ * "Alq" Alquimia								"Alch": Alchemy
+ * "Des" Destilação							"Dist": Distillation
+ * "Car" Cartografia						"Cart": Cartography
+ * "Alf" Alfaiataria						"Tail": Tailoring
+ * "Cul" Culinária							"Cook": Cooking
+ * "Pin" Pintura								"Pain": Painting
+ * "Art" Artesanato							"Craf": Craftsmanship
+ * "Nav" Navegação							"Navi": Navigation
+ * "Ins" Instrumentos						"Inst": Instruments
  */
-let _skills = ["pre","apt","arc","cul","dip","doc","ste","int","ins","mag","rog","man","med","nat","per","fit"];
+let _skills = ["pres","apti","forg","pois","fish","alch","dist","cart","tail","cook","pain","craf","navi","inst","arca","cult","dipl","doct","stea","inti","insi","magi","rogu","mani","medi","natu","perc","fitn"];
+let _coreSkills = ["pres","apti","arca","cult","dipl","doct","stea","inti","insi","magi","rogu","mani","medi","natu","perc","fitn"];
+let _aptiSkills = ["forg","pois","fish","alch","dist","cart","tail","cook","pain","craf","navi","inst"];
 export const skills = _skills.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
+		type: (_coreSkills.includes(key) ? 'core' :  (_aptiSkills.includes(key) ? 'apti' : 'custom')),
 		label: `SKYFALL.ACTOR.SKILLS.${key.toUpperCase()}`,
 	}
 	return obj;

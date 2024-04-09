@@ -25,7 +25,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 	get template() {
 		return `systems/skyfall/templates/actor/actor-${this.actor.type}.hbs`;
 	}
-
+	rolling = null;
 	/* -------------------------------------------- */
 
 	/** @override */
@@ -36,8 +36,11 @@ export default class SkyfallActorSheet extends ActorSheet {
 		context.flags = actorData.flags;
 		context.rollData = context.actor.getRollData();
 		context.SYSTEM = SYSTEM;
+		context.rolling = this.rolling;
 		context.VARIAVEL = true;
 
+		// Prepare header data
+		this._prepareHeaderData(context);
 		// Prepare data
 		this._prepareSystemData(context);
 		// Prepare INVENTORY Inventory
@@ -53,6 +56,55 @@ export default class SkyfallActorSheet extends ActorSheet {
 		return context;
 	}
 
+	_prepareHeaderData(context){
+		const items = {};
+		items.legacy = context.actor.items.find(i => i.type == 'legacy');
+		items.curse = context.actor.items.find(i => i.type == 'curse');
+		items.background = context.actor.items.find(i => i.type == 'background');
+		items.classes = context.actor.items.filter(i => i.type == 'class');
+		items.paths = context.actor.items.filter(i => i.type == 'path');
+		
+		context.actorHeader = {};
+		context.actorHeader.legacy = {};
+		if ( items.legacy ) {
+			context.actorHeader.legacy.id = items.legacy.id;
+			context.actorHeader.legacy.name = items.legacy.name;
+			let heritage = Object.values(items.legacy.system.heritages).find(i => i.chosen );
+			context.actorHeader.legacy.heritage = heritage?.name ?? 'N/A';
+		}
+		context.actorHeader.curse = {};
+		if ( items.curse ) {
+			context.actorHeader.curse.id = items.curse.id;
+			context.actorHeader.curse.name = items.curse.name;
+		}
+		context.actorHeader.background = {};
+		if ( items.background ) {
+			context.actorHeader.background.id = items.background.id;
+			context.actorHeader.background.name = items.background.name;
+		}
+		context.actorHeader.class = {};
+		for (const cls of items.classes ) {
+			// TODO MANAGE MULTICLASS
+			context.actorHeader.class.id = cls.id;
+			context.actorHeader.class.name = cls.name;
+
+			// context.actorHeader.class.id = [];
+			// context.actorHeader.class.id.push(cls.id);
+			// context.actorHeader.class.name = [];
+			// context.actorHeader.class.name.push(cls.name);
+		}
+		context.actorHeader.path = {};
+		for (const pth of items.paths ) {
+			// TODO MANAGE MULTIPATH
+			context.actorHeader.path.id = pth.id;
+			context.actorHeader.path.name = pth.name;
+			// context.actorHeader.path.id = [];
+			// context.actorHeader.path.id.push(pth.id);
+			// context.actorHeader.path.name = [];
+			// context.actorHeader.path.name.push(pth.name);
+		}
+	}
+
 	_prepareSystemData(context){
 		// ABILITIES
 		for (let [key, abl] of Object.entries(context.system.abilities)) {
@@ -60,10 +112,12 @@ export default class SkyfallActorSheet extends ActorSheet {
 		}
 
 		// SKILLS
+		console.log( context.system.skills );
 		for (let [key, skill] of Object.entries(context.system.skills)) {
 			skill.id = key;
-			skill.label = skill.custom ? (skill.label || "SKILL") : game.i18n.localize(SYSTEM.skills[key].label);
+			skill.label = skill.type ? (skill.label || "SKILL") : game.i18n.localize(SYSTEM.skills[key].label);
 			skill.icon = [SYSTEM.icons.square, SYSTEM.icons.check, SYSTEM.icons.checkdouble][skill.value];
+			skill.type = SYSTEM.skills[key].type;
 		}
 		// SORT SKILLS
 		let coreSkill = Object.values(context.system.skills).filter((p)=> !p.custom);
@@ -74,7 +128,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		context.movement = {};
 		for (let [key, movement] of Object.entries(context.system.movement)) {
 			if ( movement == 0 ) continue;
-			if ( !hasProperty(context.movement, key ) ) context.movement[key] = {};
+			if ( !foundry.utils.hasProperty(context.movement, key ) ) context.movement[key] = {};
 			context.movement[key].value = movement;
 			context.movement[key].label = SYSTEM.movement[key].label;
 			context.movement[key].icon = SYSTEM.icons[key];
@@ -93,6 +147,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		const list = ['weapon','armor','equipment','vestiment','loot','consumable','']
 		context.inventory = context.items.filter( i => list.includes(i.type));
 	}
+
 	_prepareAbilities(context) {
 		context.abilities = context.items.filter( i => ['ability'].includes(i.type));
 		context.features = context.items.filter( i => ['feature','feat'].includes(i.type));
@@ -169,8 +224,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let id = button.closest('.entry').dataset.entryId;
 		let document = this.actor.items.get(id) ?? this.actor;
 		// if ( !document ) this.actor;
-		console.log( target, id, document, hasProperty(document, target) );
-		if ( !target || !id || !hasProperty(document, target) ) return;
+		if ( !target || !id || !foundry.utils.hasProperty(document, target) ) return;
 		const updateData = {};
 		updateData[target] = !getProperty(document, target);
 		console.log(updateData);
@@ -184,7 +238,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		// TODO CHANGE ITEM
 		let document = this.actor.items.get(id) ?? this.actor;
 		console.log(target, id, document);
-		if ( !target || !id || !hasProperty(document, target) ) return;
+		if ( !target || !id || !foundry.utils.hasProperty(document, target) ) return;
 		let updateData = {};
 		updateData[target] = Number(getProperty(document, target));
 		button.event == 'click' ? updateData[target]++ : updateData[target]-- ;
@@ -225,6 +279,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let id = button.closest('.entry').dataset.entryId; //TYPE
 		if ( !target || !id  ) return;
 		if ( target == "skill" ) {
+			let type = 'apti'; //taget.dataset.type;
 			const label = await Dialog.prompt({
 				title: game.i18n.localize("SKYFALL.SHEET.NEWSKILL"),
 				content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL.SHEET.NAME")}</label><input type="text" name="skill" value="Pericia"></div></form>`,
@@ -233,11 +288,12 @@ export default class SkyfallActorSheet extends ActorSheet {
 				},
 				options: {width: 260}
 			});
+			
 			let key = label.slice(0,4).toLowerCase();
 			if ( key in this.actor.system.skills ) return ui.notifications.warn("SKYFALL.ALERTS.DUPLICATESKILL");
 			// "JÁ EXISTE UMA PERICIA COM A MESMA KEY (4 PRIMEIRAS LETRAS)"
 			let updateData = {system: {skills: {}}};
-			updateData.system.skills[key] = {label: label, custom: true};
+			updateData.system.skills[key] = {label: label, type: type};
 			await this.actor.update(updateData);
 		} else {
 			const embedded = ( target == "effect" ? "ActiveEffect" : "Item" );
@@ -279,9 +335,10 @@ export default class SkyfallActorSheet extends ActorSheet {
 
 	#onActionRoll(button) {
 		let target = button.dataset.target;
+		let type = button.dataset.type;
 		let options = {type: target};
 		let id;
-		if ( target == "init" ) {
+		if ( type == "init" ) {
 			id = 'des';
 		} else {
 			id = button.closest('.entry').dataset.entryId;

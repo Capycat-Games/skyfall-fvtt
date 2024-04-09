@@ -1,17 +1,20 @@
 <div class="skills flexcol">
 	<ul class="list-skills flexcol">
 	{{#each skills as | skill |}}
+		{{#if (eq skill.id "apti")}}
 		<li class="skill entry flexrow" data-entry-id="{{skill.id}}">
-			{{#if (eq skill.id "apti")}}
 			<span>-</span>
 			<h4 class="flex3">{{skill.label}}</h4>
 			<a data-action="create" data-target="skill">{{{@root.SYSTEM.icons.create}}}</a>
-			{{else}}
+		</li>
+		{{else if (and (eq skill.type "apti") (eq skill.value 0))}}
+		{{else}}
+		<li class="skill entry flexrow" data-entry-id="{{skill.id}}">
 			<a data-action="vary" data-target="system.skills.{{skill.id}}.value">{{{skill.icon}}}</a>
 			<h4 class="flex3"><a data-action="roll" data-target="skill">{{skill.label}}</a></h4>
 			<input type="number" name="system.skills.{{skill.id}}.other" value="{{skill.outros}}" data-tooltip="{{localize "SKYFALL.ROLL.OTHER"}}">
-			{{/if}}
 		</li>
+		{{/if}}
 	{{/each}}
 	</ul>
 </div>

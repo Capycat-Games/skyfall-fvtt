@@ -1,17 +1,25 @@
 <ul class="list-items inventory flexrow">
 	{{#each inventory as | item |}}
-	<li class="item entry flexcol" data-entry-id="{{item._id}}">
+	<li class="item entry flexcol" data-entry-id="{{item._id}}" data-entry-type="item">
 		<div class="item-name flexrow">
 			<div class="item-icon" style="background-image:url({{item.img}})"></div>
 			<span>{{item.name}}</span>
 		</div>
 		<div class="item-xxx">{{item.type}}</div>
 		<div class="item-controls">
-			<a class="control" data-action="toggle" data-target="favorite">
+			<a class="control" data-action="toggle" data-target="system.favorite">
+				{{#if item.system.favorite }}
+				{{{../SYSTEM.icons.starfill}}}
+				{{else }}
 				{{{../SYSTEM.icons.star}}}
+				{{/if}}
 			</a>
-			<a class="control" data-action="toggle" data-target="equipped">
+			<a class="control" data-action="toggle" data-target="system.equipped">
+				{{#if item.system.equipped }}
+				{{{../SYSTEM.icons.on}}}
+				{{else }}
 				{{{../SYSTEM.icons.off}}}
+				{{/if}}
 			</a>
 			<a class="control" data-action="edit" data-target="item">
 				{{{../SYSTEM.icons.edit}}}
@@ -30,6 +38,8 @@
 	.list-items .item {
 		border: 1px solid black;
 		margin: 5px 0;
+	}
+	.list-items.inventory .item {
 		flex: 0 0 240px
 	}
 	.item .item-icon {

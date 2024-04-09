@@ -6,5 +6,8 @@
   "Item": {
     "types": ["legacy", "curse", "background", "class", "path", "feature", "feat", "ability", "spell", "weapon", "armor", "clothing", "equipment", "consumable","loot"],
     "typesOld": ["legado", "heranca", "maldicao", "antecedente", "classe", "trilha", "caracteristica", "talento", "habilidade", "magia", "arma", "armadura", "equipamento", "consumivel", "tesouro"]
+  },
+  "ChatMessage": {
+    "types": ["usage"]
   }
 }

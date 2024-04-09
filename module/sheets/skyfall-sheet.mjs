@@ -78,10 +78,10 @@ export default function SkyfallSheetMixin(Base) {
 			html.on("click", ".isEditing", this.#onClickToggleEditing.bind(this));
 			// html.on("click", ".edit-section.active", this.#onClickCloseTab.bind(this));
 			// let handler = ev => this._onDragStart(ev);
-			html.find('li.draggable').each((i, li) => {
-				if (!li.hasAttribute("data-entry-id")) return;
-				li.addEventListener("dragstart", this._onDragStart(event), false);
-			});
+			// html.find('li.draggable').each((i, li) => {
+			// 	if (!li.hasAttribute("data-entry-id")) return;
+			// 	li.addEventListener("dragstart", this._onDragStart(event), false);
+			// });
 			html.on("click", "[data-action]", this.#onClickControl.bind(this));
 
 			// console.log(x);
@@ -233,8 +233,16 @@ export default function SkyfallSheetMixin(Base) {
 		}
 
 		/** @override */
-		_onDragStart(event) {
-			console.log("_onDragStart");
+		async _onDragStart(event) {
+			const li = event.currentTarget;
+			console.log("_onDragStart", li);
+			if ( li.dataset.entryId ) {
+				const entry = await fromUuid( li.dataset.entryId );
+				if ( entry ) event.dataTransfer.setData("text/plain", JSON.stringify(entry.toDragData()));
+				return;
+			}
+			
+			super._onDragStart(event);
 		}
 
 		/** @inheritdoc */

@@ -1,0 +1,26 @@
+<div class="header-fields entry" data-entry-id="{{field.id}}">
+	<label>{{localize label}}
+		<span class="item-controls">
+			{{#if field.id }}
+			<a class="control" data-action="edit" data-target="item">
+				{{{@root.SYSTEM.icons.edit}}}
+			</a>
+			<a class="control" data-action="delete" data-target="item">
+				{{{@root.SYSTEM.icons.delete}}}
+			</a>
+			{{else}}
+			<a class="control" data-action="search" data-target="item">
+				{{{@root.SYSTEM.icons.search}}}
+			</a>
+			{{/if}}
+		</span>
+	</label>
+	{{#if level}}
+	<input type="number" name="system.level.value" value="{{@root.system.level.value}}" style="width: 15%;">
+	{{/if}}
+	{{#if field.heritage}}
+	<input type="text" value="{{field.name}} ( {{field.name}} )" disabled  style="width: 80%;">
+	{{else}}
+	<input type="text" value="{{field.name}}" disabled style="width: 80%;">
+	{{/if}}
+</div>

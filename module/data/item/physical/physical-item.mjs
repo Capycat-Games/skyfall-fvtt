@@ -23,6 +23,7 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 			capacity: new fields.NumberField({required: true, integer: true, min: 0}),
 			equipped: new fields.BooleanField({initial: false}),
 			attuned: new fields.BooleanField({initial: false}),
+			favorite: new fields.BooleanField({initial: false}),
 		}
 	}
 }
