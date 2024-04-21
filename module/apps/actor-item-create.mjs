@@ -104,6 +104,7 @@ export default class ActorItemCreate extends FormApplication {
 		if ( !formData['item_create'] ) formData['item_create'] = [];
 		for (const uuid of formData['item_create']) {
 			const item = await fromUuid(uuid);
+			console.log(uuid, item);
 			if ( !item ) continue;
 			createItems.push(item.toObject());
 		}

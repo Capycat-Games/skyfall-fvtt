@@ -1,4 +1,5 @@
 import ActorTraits from '../apps/actor-traits.mjs';
+import D20Roll from '../dice/d20-roll.mjs';
 import {
 	onManageActiveEffect,
 	prepareActiveEffectCategories,
@@ -124,6 +125,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let aptitudeSkills = Object.values(context.system.skills).filter((p)=> p.custom);
 		context.skills = [...coreSkill.slice(0,2), ...aptitudeSkills, ...coreSkill.slice(2)];
 		
+		context.system.initiative = context.system.abilities.dex.value;
 		// MOVEMENT
 		context.movement = {};
 		for (let [key, movement] of Object.entries(context.system.movement)) {
@@ -333,16 +335,108 @@ export default class SkyfallActorSheet extends ActorSheet {
 		// new UseConfigDialog({this.actor, id,options});
 	}
 
-	#onActionRoll(button) {
-		let target = button.dataset.target;
-		let type = button.dataset.type;
-		let options = {type: target};
-		let id;
-		if ( type == "init" ) {
-			id = 'des';
-		} else {
-			id = button.closest('.entry').dataset.entryId;
+	async #onActionRoll(button) {
+		// let target = button.dataset.type;
+		let type = button.closest('.entry').dataset.type;
+		let id = button.closest('.entry').dataset.entryId;
+		console.log( 'ROLLING', this.rolling );
+		console.log(id, type);
+		if ( button.event == 'contextmenu' ) {
+			this.rolling = null;
+			return this.render(true);
 		}
-		// new UseConfigDialog({this.actor, id, options});
+		
+		if ( type == 'levelHitDie' ) {
+			return;
+		} else if ( type == 'healHitDie' ) {
+			return;
+		} else if ( type == 'deathSave' ) {
+			return;
+		}
+		if ( !this.rolling ) {
+			if ( type == 'ability') this.rolling = {type:null, id: null, abl: id};
+			else this.rolling = {type: type, id: id, abl: null};
+		} else if ( this.rolling.type && type !== 'ability' ) {
+			this.rolling = {type: type, id: id, abl: null};
+		} else if ( this.rolling.type && type == 'ability' ) {
+			this.rolling.abl = id;
+		} else {
+			this.rolling.type = type;
+			this.rolling.id = id;
+		}
+		if ( this.rolling.abl && this.rolling.type && this.rolling.id ) {
+			await this.actor.rollCheck(this.rolling);
+			this.rolling = null;
+		}
+		console.log( 'ROLLING', this.rolling );
+		this.render(true);
+	}
+
+	async #OldonActionRoll(button) {
+		return;
+
+		let rollConfig = {
+			// types: [type, id],
+			types: {[type]: id}, // abl: '', skill: '', initiative: true, movement: true
+			advantage: 0,
+			disadvantage: 0,
+			terms: [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ],
+			rollData: rollData,
+		}
+		if ( type == 'ability') {
+			if ( this.rolling == id ) {
+				rollConfig.terms = [ ...rollConfig.terms,
+					{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
+				];
+				rollData['abl'] = rollData.abilities[id].value;
+			} else { 
+				this.rolling = id;
+				this.rooooooling = new D20Roll('1d20', rollData, {type:null,id:null,abl:null});
+				return this.render(true);
+			}
+		} else if ( type == 'skill') {
+			rollConfig.types.ability = this.rolling ?? 'str';
+			rollConfig.terms = [ ...rollConfig.terms,
+				{term: '@prof', options: {flavor: '', name: 'proficiency', source: ''}},
+				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
+			];
+			rollData['prof'] = rollData.proficiency * rollData.skills[id].value;
+			rollData['abl'] = rollData.abilities[this.rolling ?? 'str'].value;
+		} else if ( type == 'initiative' ) {
+			rollConfig.types.ability = this.rolling ?? id;
+			rollConfig.terms = [ ...rollConfig.terms,
+				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
+			];
+			rollData['abl'] = rollData.abilities[this.rolling ?? id].value;
+		} else if ( type == 'movement' ) {
+			rollConfig.types.ability = this.rolling ?? id;
+			rollConfig.terms = [ ...rollConfig.terms,
+				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
+			];
+			rollData['abl'] = rollData.abilities[this.rolling ?? id].value;
+		}
+		
+		
+		const roll = D20Roll.fromConfig( rollConfig );
+		console.log({title:"SKYFALL.ROLL.ABILITY", type:type, ability: id});
+		await roll.configureDialog({title:"SKYFALL.ROLL.ABILITY", type:type, ability: id});
+		await roll.toMessage();
+		this.rolling = null;
+		return;
+		if ( !this.rolling && !this.rollAbl ) {
+			if ( type == 'ability' ) this.rollAbl = id;
+			else this.rolling = type;
+		} else if ( this.rolling && !this.rollAbl  ) {
+			if ( type !== 'ability' ) this.rolling = type;
+			else this.rollAbl = id;
+		} else if ( !this.rolling && this.rollAbl ) {
+			if ( type == 'ability' ) {}
+			else if ( type == 'skill' ) {}
+			else if ( type == 'initiative' ) {}
+			else if ( type == 'movement' ) {}
+		}
+		if ( !complete ) return;
+		this.rolling = null;
+		this.rollAbl = null;
 	}
 }

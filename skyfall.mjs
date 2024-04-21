@@ -7,6 +7,8 @@ import * as applications from "./module/apps/_module.mjs";
 import * as documents from "./module/documents/_module.mjs";
 import * as models from "./module/data/_module.mjs";
 import * as sheets from "./module/sheets/_module.mjs";
+import * as dice from "./module/dice/_module.mjs";
+
 
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
@@ -65,7 +67,9 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["consumable"] = models.item.Consumable;
 	CONFIG.Item.dataModels["loot"] = models.item.Loot;
 
-	// CONFIG.Item.dataModels["item"] = models.actor.Personagem;
+	// Register Roll Extensions
+	CONFIG.Dice.rolls.push(dice.D20Roll);
+	// CONFIG.Dice.legacyParsing = true; // TODO REMOVE
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);

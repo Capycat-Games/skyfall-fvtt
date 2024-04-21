@@ -1,3 +1,5 @@
+import D20Roll from "../dice/d20-roll.mjs";
+
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
  * @extends {Actor}
@@ -59,6 +61,15 @@ export default class SkyfallActor extends Actor {
 			abl.protection = 10 + abl.value + (abl.proficient ? systemData.proficiency : 0);
 		}
 
+		// PREPARE SKILLS
+		for (const [key, skill] of Object.entries(systemData.skills)) {
+			skill.roll = {};
+			skill.roll['pro'] = systemData.proficiency * skill.value;
+			for (const [abl, ability] of Object.entries(systemData.abilities)) {
+				skill.roll[abl] = (systemData.proficiency * skill.value) + ability.value;
+			}
+		}
+
 		// PREPARE DAMAGE REDUCTION
 		systemData.dr = actorData.items.filter( i => 'dr' in i.system && i.system.equipped ).reduce((acc, i) => {
 			acc += i.system.dr;
@@ -105,7 +116,9 @@ export default class SkyfallActor extends Actor {
 	 */
 	getRollData() {
 		const data = { ...super.getRollData() };
-
+		for (const [key, abl] of Object.entries(data.abilities)) {
+			data[key] = abl.value;
+		}
 		return data;
 	}
 
@@ -195,5 +208,58 @@ export default class SkyfallActor extends Actor {
 			// PROMPT FEAT CHOICE
 			// ADD TO CREATELIST
 		}
+	}
+	
+
+	/* -------------------------------------------- */
+	/*  Actions                                     */
+	/* -------------------------------------------- */
+	
+	async rollCheck({type='ability',id='str',abl='str'}){
+		const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
+		const rollData = this.getRollData();
+		terms.push( {term: `@${abl}`, options: {flavor: '', name: 'ability', source: ''}} );
+
+		if ( type == 'skill' ) {
+			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
+			rollData['prof'] = this.system.skills[id].roll.pro;
+		}
+		let rollConfig = {
+			advantage: 0, disadvantage: 0,
+			rollData: rollData,
+			terms: terms,
+		}
+		if ( false ) {
+			/** TODO - USAGE EFFECTS DIALOG
+			 * Prepare available UsageEffects Apply to to
+			 * config = UsageEffectsConfig(this, rollConfig);
+			 * config.apply(target);
+			 */
+		} else {
+			const roll = D20Roll.fromConfig( rollConfig );
+			console.log( roll );
+			await roll.configureDialog({title:"SKYFALL.ROLL.CONFIG", type:type, ability: abl});
+			await roll.toMessage({
+				flavor: game.i18n.format( `SKYFALL.ROLL.${type.toUpperCase()}`, {
+					skill: id ? game.i18n.localize(`SKYFALL.ACTOR.SKILLS.${id.toUpperCase()}`) : '',
+					abl: game.i18n.localize(`SKYFALL.ACTOR.ABILITIES.${abl.toUpperCase()}`),
+				})
+			});
+			if ( type='initiative' && roll ) {
+				try {
+					let combat = game.combats.active;
+					if (!combat) return;
+					let combatant = combat.combatants.find(
+						(c) => c.actor.id === this.id
+					);
+					if ( !combatant || combatant.initiative != null ) return;
+					combat.setInitiative(combatant.id, roll.total);
+					console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
+				} catch (error) {
+					console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
+				}
+			}
+		}
+
 	}
 }

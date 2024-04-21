@@ -1,0 +1,31 @@
+<form>
+	<label for="">{{localize "SKYFALL.ROLL.CHECK" type=rolltype abl=ability}}</label>
+	<input type="hidden" name="type" value="{{rolltype}}">
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ROLL.FORMULA" }}</label>
+		<input type="text" name="formula" value="{{formula}}" disabled>
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ROLL.ABILITY" }}</label>
+		{{!-- <input type="text" name="ability" value="{{ability}}"> --}}
+		<select name="ability">
+			{{selectOptions SYSTEM.abilities nameAttr="id" labelAttr="abbr" selected=ability localize=true}}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ROLL.MODIFIER" }}: {{bonus}}</label>
+		<input type="text" name="bonus" value="">
+	</div>
+
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ROLL.ADVANTAGE" }}: {{advantage}}</label>
+		<input type="number" name="advantage" value="0">
+	</div>
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ROLL.DISADVANTAGE" }}: {{disadvantage}}</label>
+		<input type="number" name="disadvantage" value="0">
+	</div>
+</form>

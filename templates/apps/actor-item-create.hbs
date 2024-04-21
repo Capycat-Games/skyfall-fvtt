@@ -4,6 +4,7 @@
 		<h5>{{localize step.name}}</h5>
 		
 		<ul class="list-items flexcol">
+			<input type="hidden" name="item_create">
 			{{#each step.itemList as | item index | }}
 			<li class="item entry flexrow">
 				<div class="item-icon" style="background-image:url({{item.img}})"></div>

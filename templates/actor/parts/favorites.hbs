@@ -1,4 +1,39 @@
-<ul class="list-items favorites flexrow">
+<ul class="list-items actions flexrow">
+	{{#each items.actions as | item |}}
+	{{#if (eq item.type 'weapon')}}
+	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
+		<div class="item-name">{{item.name}}</div>
+		<div class="item-damage">{{item.damage}}</div>
+		<div class="item-controls">
+			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
+			<a class="control" data-action="usage" data-target="item">
+				{{{../SYSTEM.icons.star}}}
+			</a>
+		</div>
+	</li>
+	{{#else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
+	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
+		<div class="item-controls">
+			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
+			<a class="control" data-action="usage" data-target="item">
+				{{{../SYSTEM.icons.star}}}
+			</a>
+		</div>
+	</li>
+	{{#else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
+	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
+		<div class="item-name">{{item.name}}</div>
+		<div class="item-controls">
+			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
+			<a class="control" data-action="usage" data-target="item">
+				{{{../SYSTEM.icons.star}}}
+			</a>
+		</div>
+	</li>
+	{{/if}}
+	{{/each}}
+</ul>
+<ul class="list-items favorites flexrow hidden">
 	{{#each items.favorites as | item |}}
 	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
 		<div class="item-name">{{item.name}}</div>

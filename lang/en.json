@@ -475,14 +475,21 @@
 			"SHIELD": "Escudo"
 		},
 		"ROLL": {
-			"BONUS": "Bônus",
-			"PENALTY": "Penalidade",
-			"OTHER": "Outros",
+			"CHECK": "Teste",
+			"FORMULA": "Formula",
+			"ABILITY": "Teste de Atributo ({abl})",
+			"SKILL": "Teste de Perícia - {skill} ({abl})",
+			"INITIATIVE": "Iniciativa ({abl})",
+			"MOVEMENT": "Deslocamento ({abl})",
+			"MODIFIER": "Modificador",
 			"ADVANTAGE": "Vantagem",
-			"DESADVANTAGE": "Desvantagem",
+			"DISADVANTAGE": "Desvantagem",
 			"DC": "Dificuldade",
 			"DCABBR": "CD",
-			"TESTE": "TESTE"
+			
+			"BONUS": "Bônus",
+			"PENALTY": "Penalidade",
+			"OTHER": "Outros"
 		},
 		"CONDITIONS": {
 			"GRAPPLED": "GRAPPLED",
