@@ -1,0 +1,108 @@
+<div class="skyfall chat-card usage-card ability-card" data-actor-id="{{actor.id}}" data-item-id="{ {itemId} }">
+	{{!-- usage == message.system --}}
+	<header class="card-header flexrow">
+		{{!-- Ability Image | Ability Name | Item Image --}}
+		{{#if usage.item.img2}}
+		<img src="{{usage.abilityState.img}}" width="36" height="36" style="flex:0" />
+		{{/if}}
+		<h3 class="icon" >{{{usage.item.system._labels.action.icon}}} </h3>
+		<h3 class="item-name">{{usage.abilityState.name}}</h3>
+	</header>
+	<aside class="card-aside flexcol">
+		{{#if usage.itemState.img}}
+			<img src="{{usage.itemState.img}}" width="36" height="36" style="flex:0" />
+		{{else if (eq usage.item.type 'ability')}}
+			<img src="{{usage.abilityState.img}}" width="36" height="36" style="flex:0" />
+		{{else if (eq usage.item.type 'spell')}}
+			<h2>{{{usage.item.system._labels.spell.icon}}}</h2>
+		{{/if}}
+		<h4>{{{usage.item.system._labels.cost}}}</h4>
+	</aside>
+	
+	{{#if (gte usage.status.phase 0)}}
+	<div class="ability-descriptors">
+		{{#each usage.item.system._labels.descriptors as | tag i | }}
+		<label class="descriptor active" >{{tag.label}}</label>
+		{{/each}}
+	</div>
+	{{/if}}
+
+	{{#if (gte usage.status.phase 0)}}
+	<em class="ability-flavor">
+		{{usage.item.system.flavor}}
+	</em>
+	{{/if}}
+
+	{{#if (gte usage.status.phase 0)}}
+	<div class="ability-properties">
+		{{#each usage.item.system._labels.properties as | prop | }}
+		<p><label>{{{localize prop.label}}}.</label> {{prop.descriptive}}</p>
+		{{/each}}
+	</div>
+	{{/if}}
+
+	{{#if (gte usage.status.phase 0)}}
+	<ul class="list-items modifications">
+		{{#each usage.modifications as | mod | }}
+		<li>
+			<b>{{mod.cost}}</b>
+			{{{mod.description}}}
+		</li>
+		{{/each}}
+	</ul>
+	{{/if}}
+
+	{{#if (gte usage.status.phase 0)}}
+	{{#each usage.rolls as |r id|}}
+	{{#if r.evaluated }} 
+	<div class="evaluated-roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+		{{{r.template}}}
+	</div>
+	{{else }}
+	<div class="roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+		<div class="dice-roll">
+			<div class="dice-flavor">{{r.options.flavor}}</div>
+			<div class="dice-result">
+				<div class="dice-formula">{{r.formula}}</div>
+			</div>
+		</div>
+	</div>
+	{{/if}}
+	{{/each}}
+	{{/if}}
+	
+	<hr>
+	<div class="chat-actions flexrow">
+		{{!-- PHASE 1 BUTTONS | configure - aid --}}
+		{{!-- PHASE 2 BUTTONS | NONE --}}
+		{{!-- PHASE 3 BUTTONS | catharsis (ON ROLL) - placeTemplate - applyCost --}}
+		{{!-- PHASE 4 BUTTONS | applyDamage (ON ROLL) - applyEffect --}}
+		
+		<button class="chat-action" data-action="configure">
+			{{localize "SKYFALL.CHATMESSAGE.USAGE.CONFIGURE"}}
+		</button>
+		{{#if (eq usage.status.phase 1)}}
+		<button class="chat-action hidden" data-action="aid">
+			{{localize "SKYFALL.CHATMESSAGE.USAGE.AID"}}
+		</button>
+		{{/if}}
+
+		{{#if (eq usage.status.phase 3)}}
+		{{#each usage.templates as | temp i | }}
+		<button class="chat-action" data-action="placeTemplate">
+			<i class="fa-solid fa-ruler-combined"></i>
+			{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
+		</button>
+		{{/each}}
+		{{/if}}
+
+		{{#if (eq usage.status.phase 4)}}
+			{{#each usage.effects as | ef i | }}
+			<button class="chat-action" data-action="applyEffect" data-effect-index="{{i}}">
+				<img src="{{ef.icon}}">
+				{{{ef.name}}}
+			</button>
+			{{/each}}
+		{{/if}}
+	</div>
+</div>

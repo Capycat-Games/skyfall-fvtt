@@ -1,6 +1,6 @@
 
 /**
- * Add common functionalities to every Crucible Sheet application which alters their visual style.
+ * Add common functionalities to every Skyfall Sheet application which alters their visual style.
  * @param {typeof Application} Base     The base Application class being extended
  * @returns {typeof Application}        The extended SkyfallSheet class
  */
@@ -13,19 +13,19 @@ export default function SkyfallSheetMixin(Base) {
 		 */
 		static documentType = "";
 
-		abilitySection = false;
-		isEditing = false;
-		
 		/**
 		 * Keep what section of ability Sheet is beeing edited
 		 * @type {string}
 		 */
+		abilitySection = false;
+		isEditing = false;
+		
 		/** @inheritDoc */
 		static get defaultOptions() {
 			return Object.assign(super.defaultOptions, {
-				classes: ["skyfall", "sheet", this.documentType],
-				template: `systems/${SYSTEM.id}/templates/item/${this.documentType}.hbs`,
-				width: "auto",// 520,
+				classes: ["skyfall", "sheet"], //, this.documentType
+				// template: `systems/${SYSTEM.id}/templates/item/${this.documentType}.hbs`,
+				width: 'auto',
 				height: 'auto',
 				tabs: [
 					{navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description'},
@@ -38,8 +38,8 @@ export default function SkyfallSheetMixin(Base) {
 		/** @override */
 		get title() {
 			const {documentName, type, name} = this.object;
-			const typeLabel = type.titleCase();
-			//game.i18n.localize(CONFIG[documentName].typeLabels[type]);
+			// const typeLabel = type.titleCase();
+			const typeLabel = game.i18n.localize(`TYPES.Item.${type}`);
 			return `[${typeLabel}] ${name}`;
 		}
 
@@ -73,7 +73,7 @@ export default function SkyfallSheetMixin(Base) {
 		/** @inheritDoc */
 		activateListeners(html) {
 			super.activateListeners(html);
-			html.on("click", "details", this.#onClickSetPosition.bind(this));
+			
 			// Toggle Editing //Edited Tab
 			html.on("click", ".isEditing", this.#onClickToggleEditing.bind(this));
 			// html.on("click", ".edit-section.active", this.#onClickCloseTab.bind(this));
@@ -83,19 +83,9 @@ export default function SkyfallSheetMixin(Base) {
 			// 	li.addEventListener("dragstart", this._onDragStart(event), false);
 			// });
 			html.on("click", "[data-action]", this.#onClickControl.bind(this));
-
-			// console.log(x);
-			// let x = this.setPosition({width: "auto"});
-			// console.log(x);
-		}
-
-		#onClickSetPosition(){
-			console.log("onClickSetPosition");
-			this.setPosition({height: "auto"})
 		}
 
 		#onClickToggleEditing(event){
-			console.log( this.isEditing );
 			this.isEditing = !this.isEditing;
 			this.render().setPosition({width: "auto"});
 		}
@@ -168,7 +158,15 @@ export default function SkyfallSheetMixin(Base) {
 		/* -------------------------------------------- */
 
 		#onActionToggle(button) {
-
+			let target = button.dataset.target;
+			let id = button.closest('.entry').dataset.entryId;
+			let document = this.document.effects.get(id) ?? this.document;
+			if ( !target || !id ) return;
+			if ( foundry.utils.hasProperty(document, target) ) {
+				const updateData = {};
+				updateData[target] = !foundry.utils.getProperty(document, target);
+				document.update(updateData);
+			}
 		}
 
 		#onActionVary(button) {
@@ -179,40 +177,66 @@ export default function SkyfallSheetMixin(Base) {
 
 		}
 
+		#onActionUpdate(button) {
+			let target = button.dataset.target;
+			let id = button.closest('.entry').dataset.entryId;
+			let item = this.actor.items.get(id);
+			if ( !target || !id || !item ) return;
+			let updateData = {};
+			updateData[target] = button.value;
+			item.update(updateData);
+		}
+
 		async #onActionCreate(button) {
-			console.log(button);
-			const type = button.dataset.type;
-			if ( type == "heritage" ) {
+			const create = button.dataset.create;
+			if ( create == "heritage" ) {
 				const updateData = {}
-				// TODO DIALOG
 				const key = Object.keys(this.document.system.heritages).length;
 				updateData[`system.heritages.her${key}`] = {name: game.i18n.localize("SKYFALL.ITEM.LEGACY.HERITAGE")};
-				console.log(updateData);
 				this.document.update( updateData );
+			} else if ( create == "ActiveEffect" ) {
+				let type = button.closest('section')?.dataset?.type ?? 'base';
+				let category = button.dataset.category;
+				const effectData = {
+					type: type,
+					name: game.i18n.format("DOCUMENT.Create", {
+						type: game.i18n.localize(`TYPES.ActiveEffect.${type.titleCase()}`)
+					}),
+					img: ['modification','sigil'].includes(type) ? 'icons/svg/upgrade.svg' : 'icons/svg/aura.svg',
+					disabled: category == 'inactive',
+					duration: category == 'temporary' ? {rounds:1} : {},
+				}
+				this.document.createEmbeddedDocuments( create, [effectData] );
 			}
 		}
 
 		#onActionDelete(button) {
-			console.log(button);
-			const type = button.closest('ul').dataset.type;
-			const target = button.closest('ul').dataset.target;
-			const entry = button.closest(".entry").dataset.entryId;
-			
-			if ( parseUuid(entry) ) { // Uuid Set
+			const _delete = button.dataset.delete;
+			const id = button.closest(".entry").dataset.entryId;
+
+			if ( _delete == 'id' ) {
+				const target = button.closest('ul').dataset.target;
 				const updateData = {}
 				const list = getProperty(this.document, target);
-				console.log( type, target, entry, list );
-				list.delete(entry);
+				list.delete(id);
 				updateData[target] = [...list];
-				console.log(updateData);
 				this.document.update( updateData );
-			} else if ( type == "heritage" ) {
-			} else {
+			} else if ( _delete == 'heritage' ) {
+				// TODO
+			} else if ( _delete == 'ActiveEffect' ) {
+				this.document.deleteEmbeddedDocuments( _delete, [id] );
 			}
 		}
 
 		#onActionEdit(button) {
-
+			let target = button.dataset.target;
+			let id = button.closest('.entry').dataset.entryId;
+			let doc;
+			if ( !target || !id ) return;
+			if ( target == "effect" ) doc = this.document.effects.get(id);
+			else doc = this.document.items.get(id);
+			if ( !doc ) return;
+			doc.sheet.render(true);
 		}
 
 		#onActionUse(button) {
@@ -235,7 +259,6 @@ export default function SkyfallSheetMixin(Base) {
 		/** @override */
 		async _onDragStart(event) {
 			const li = event.currentTarget;
-			console.log("_onDragStart", li);
 			if ( li.dataset.entryId ) {
 				const entry = await fromUuid( li.dataset.entryId );
 				if ( entry ) event.dataTransfer.setData("text/plain", JSON.stringify(entry.toDragData()));
@@ -250,10 +273,8 @@ export default function SkyfallSheetMixin(Base) {
 			if ( !this.isEditable ) return;
 			// Try to extract the data
 			const data = TextEditor.getDragEventData(event);
-			console.log("_onDrop", [event, data]);
 			if ( data.type !== "Item" ) return;
 			const item = await fromUuid(data.uuid);
-			console.log("item", [event, data, item]);
 			if ( !item ) return;
 			const parent = event.target.closest("ul");
 			const type = parent.dataset.type;
@@ -262,7 +283,6 @@ export default function SkyfallSheetMixin(Base) {
 				const updateData = {};
 				const lista = [...getProperty(this.document, target), data.uuid];
 				updateData[target] = lista;
-				console.log("item", [event, data, item, updateData]);
 				this.document.update(updateData);
 			};
 			if ( item?.type == "other" ) {

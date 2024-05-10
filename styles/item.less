@@ -1,0 +1,93 @@
+/* ----------------------------------------- */
+/*  Item Styles                              */
+/* ----------------------------------------- */
+
+.skyfall.sheet {
+	.window-content {
+		:has(> .ability) {
+			overflow-y: hidden;
+		}
+		
+		.ability {
+			flex-wrap: nowrap;
+			max-height: 600px;
+
+			.sheet-editable {
+				overflow-y: scroll;
+				min-width: 300px
+			}
+			
+			.sheet-card {
+				width: 420px;
+				flex: 0 0 420px;
+				> div {
+					padding: 5px;
+					margin-right: 1rem;
+					border: 1px solid black;
+					position: relative;
+					flex: 0;
+					background-color: #e7e8ed;
+					label {
+						font-weight: bold;
+						color: @colorSFPlayer;
+					}
+					ul, ol {
+						list-style: none;
+						padding: 0;
+					}
+				}
+				> figure.content-embed {
+					margin: 0;
+					margin-right: 1rem;
+				}
+				.ability-header {
+					background-color: @colorSFPlayer;
+					align-items: center;
+					> * {
+						color: white;
+					}
+					.skyfall-icon {
+						flex: 0 0 25px;
+						text-align: center;
+					}
+					.cost {
+						flex: 0 0 50px;
+						text-align: center;
+					}
+				}
+				.ability-descriptors {
+					padding: 10px;
+
+					label.descriptor {
+						border: 1px solid gray;
+						color: white;
+					}
+				}
+				.ability-properties {
+					background-color: @colorSFPlayerFaint;
+				}
+				.sheet-card hr {
+					display: none;
+				}
+			}
+			
+
+			.sheet-card hr, .section-edit hr {
+				flex: 0;
+			}
+		}
+		.legacy {
+		}
+
+		.item .item-icon {
+			background-size: cover;
+			flex: 0 0 36px;
+			width: 36px;
+			height: 36px;
+		}
+
+		.heritage-tabs {
+			flex: 0 0 100px;
+		}
+	}
+}

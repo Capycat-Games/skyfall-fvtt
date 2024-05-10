@@ -24,7 +24,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 
 	/** @override */
 	get template() {
-		return `systems/skyfall/templates/actor/actor-${this.actor.type}.hbs`;
+		return `systems/${SYSTEM.id}/templates/actor/actor-${this.actor.type}.hbs`;
 	}
 	rolling = null;
 	/* -------------------------------------------- */
@@ -50,10 +50,18 @@ export default class SkyfallActorSheet extends ActorSheet {
 		this._prepareAbilities(context);
 		// Prepare SPELLS
 		this._prepareSpells(context);
+		// Prepare ACTIONS
+		this._prepareActions(context);
+		
 		// Prepare EFFECTS
-		context.effects = prepareActiveEffectCategories(
-			this.actor.allApplicableEffects()
-		);
+		context.effects = prepareActiveEffectCategories( this.actor.allApplicableEffects() );
+		context.modifications = prepareActiveEffectCategories( this.actor.allApplicableEffects('modification'), 'modification');
+		context.statusEffects = CONFIG.statusEffects.reduce((acc, ef)=>{
+			const statusData = this.actor.effects.find(e => e.statuses.has(ef.id) );
+			ef.disabled = statusData?.disabled ?? true;
+			acc.push(ef);
+			return acc;
+		}, []);
 		return context;
 	}
 
@@ -113,12 +121,11 @@ export default class SkyfallActorSheet extends ActorSheet {
 		}
 
 		// SKILLS
-		console.log( context.system.skills );
 		for (let [key, skill] of Object.entries(context.system.skills)) {
 			skill.id = key;
-			skill.label = skill.type ? (skill.label || "SKILL") : game.i18n.localize(SYSTEM.skills[key].label);
+			skill.label = SYSTEM.skills[key] ? game.i18n.localize(SYSTEM.skills[key].label) : (skill.label || "SKILL");
 			skill.icon = [SYSTEM.icons.square, SYSTEM.icons.check, SYSTEM.icons.checkdouble][skill.value];
-			skill.type = SYSTEM.skills[key].type;
+			skill.type = SYSTEM.skills[key]?.type ?? 'apti' ?? 'custom';
 		}
 		// SORT SKILLS
 		let coreSkill = Object.values(context.system.skills).filter((p)=> !p.custom);
@@ -156,6 +163,41 @@ export default class SkyfallActorSheet extends ActorSheet {
 	}
 	_prepareSpells(context) {
 		context.spells = context.items.filter( i => ['spell'].includes(i.type));
+	}
+
+	_prepareActions(context) {
+		context.actions = [];
+		
+		// Weapon Attack
+		const _weaponABL = context.actor.items.filter( i => i.type == 'ability' && i.system.descriptors.includes('weapon') );
+		// Weapons / Shield
+		const weapons = context.actor.items.filter( i => i.type == 'weapon' || (i.type == 'armor' && i.system.type == 'shield') );
+		for (const weapon of weapons) {
+			let item = {};
+			item.name = weapon.name;
+			item.type = 'weapon'; // weapon.type;
+			item.id = weapon.id;
+			item.img = weapon.img;
+			item.abilities = [];
+			// const wpnRollData = weapon.getRollData();
+			for (const ability of _weaponABL) {
+				// const ablRollData = ability.getRollData();
+				let action = {};
+				action.id = ability.id;
+				action.name = ability.name;
+				action.action = ability.system._labels.action;
+				action.cost = '' //ability.system.activation.cost ? ability.system._labels.cost : '';
+				action.extra = '';
+				item.abilities.push(action);
+			}
+			context.actions.push(item);
+		}
+
+		const abilities = context.actor.items.filter( i => i.type == 'ability' && !i.system.descriptors.includes('weapon') );
+		context.actions.push(...abilities);
+
+		const spells = context.actor.items.filter( i => i.type == 'spell' );
+		context.actions.push(...spells);
 	}
 
 	/* -------------------------------------------- */
@@ -224,14 +266,27 @@ export default class SkyfallActorSheet extends ActorSheet {
 	#onActionToggle(button) {
 		let target = button.dataset.target;
 		let id = button.closest('.entry').dataset.entryId;
-		let document = this.actor.items.get(id) ?? this.actor;
+		let document = this.actor.items.get(id) ?? this.actor.effects.get(id) ?? this.actor;
+		console.log(target, id, document);
 		// if ( !document ) this.actor;
-		if ( !target || !id || !foundry.utils.hasProperty(document, target) ) return;
-		const updateData = {};
-		updateData[target] = !getProperty(document, target);
-		console.log(updateData);
-		document.update(updateData);
-		this.render();
+		if ( !target || !id ) return;
+		if ( target == 'effect' && CONFIG.statusEffects.find( ef => ef.id==id ) ) {
+			const existing = this.actor.effects.find( ef => ef.statuses.has(id) );
+			console.log(existing);
+			if ( existing ) return this.actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id]);
+			else {
+				const effectData = {...CONFIG.statusEffects.find( ef => ef.id==id )};
+				effectData.id = null;
+				// effectData._id = null;
+				effectData.duration = {rounds: 1};
+				effectData.disabled = false;
+				this.actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
+			}
+		} else if ( foundry.utils.hasProperty(document, target) ) {
+			const updateData = {};
+			updateData[target] = !foundry.utils.getProperty(document, target);
+			document.update(updateData);
+		}
 	}
 
 	#onActionVary(button) {
@@ -239,13 +294,12 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let id = button.closest('.entry').dataset.entryId;
 		// TODO CHANGE ITEM
 		let document = this.actor.items.get(id) ?? this.actor;
-		console.log(target, id, document);
 		if ( !target || !id || !foundry.utils.hasProperty(document, target) ) return;
 		let updateData = {};
 		updateData[target] = Number(getProperty(document, target));
 		button.event == 'click' ? updateData[target]++ : updateData[target]-- ;
 		document.update(updateData);
-		this.render();
+		// this.render();
 	}
 
 	#onActionManage(button) {
@@ -277,11 +331,10 @@ export default class SkyfallActorSheet extends ActorSheet {
 	}
 
 	async #onActionCreate(button) {
-		let target = button.dataset.target;
-		let id = button.closest('.entry').dataset.entryId; //TYPE
-		if ( !target || !id  ) return;
-		if ( target == "skill" ) {
-			let type = 'apti'; //taget.dataset.type;
+		let create = button.dataset.create;
+		if ( !create ) return;
+		if ( create == "skill" ) {
+			let type = 'custom'; //taget.dataset.type;
 			const label = await Dialog.prompt({
 				title: game.i18n.localize("SKYFALL.SHEET.NEWSKILL"),
 				content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL.SHEET.NAME")}</label><input type="text" name="skill" value="Pericia"></div></form>`,
@@ -292,28 +345,47 @@ export default class SkyfallActorSheet extends ActorSheet {
 			});
 			
 			let key = label.slice(0,4).toLowerCase();
-			if ( key in this.actor.system.skills ) return ui.notifications.warn("SKYFALL.ALERTS.DUPLICATESKILL");
-			// "JÁ EXISTE UMA PERICIA COM A MESMA KEY (4 PRIMEIRAS LETRAS)"
+			
 			let updateData = {system: {skills: {}}};
-			updateData.system.skills[key] = {label: label, type: type};
+			updateData.system.skills[key] = {label: label, type: type, value: 1};
+
+			if ( SYSTEM.skills[key]?.type == 'apti' ) {
+				updateData.system.skills[key].label = null;
+			} else if ( key in this.actor.system.skills ) return ui.notifications.warn("SKYFALL.ALERTS.DUPLICATESKILL");
+			
 			await this.actor.update(updateData);
+		} else if ( create == "ActiveEffect" ) {
+			let type = button.closest('section')?.dataset?.type ?? 'base';
+			let category = button.dataset.category;
+			
+			const effectData = {
+				type: type,
+				name: game.i18n.format("DOCUMENT.Create", {
+					type: game.i18n.localize(`TYPES.ActiveEffect.${type.titleCase()}`)
+				}),
+				img: ['modification','sigil'].includes(type) ? 'icons/svg/upgrade.svg' : 'icons/svg/aura.svg',
+				disabled: category == 'inactive',
+				duration: category == 'temporary' ? {rounds:1} : {},
+			}
+
+			this.document.createEmbeddedDocuments( create, [effectData] );
 		} else {
-			const embedded = ( target == "effect" ? "ActiveEffect" : "Item" );
-			this.actor.createEmbeddedDocuments( embedded, [{name:"NOVO ITEM", type: target }] );
+			let type = button.closest('section')?.dataset?.type ?? 'feature';
+			this.document.createEmbeddedDocuments( create, [{name:"NOVO ITEM", type: type }] );
 		}
 	}
 
 	#onActionDelete(button) {
-		let target = button.dataset.target;
-		let id = button.closest('.entry').dataset.entryId;
-		if ( !target || !id ) return;
-		if ( target == "skill" ) {
+		const _delete = button.dataset.delete;
+		const id = button.closest('.entry').dataset.entryId;
+		console.log(_delete, id);
+		if ( !_delete || !id ) return;
+		if ( _delete == "skill" ) {
 			let deletekey = {system:{skills:{}}};
 			deletekey.system.skills[`-=${id}`] = null;
-			this.actor.update(deletekey);
+			this.document.update(deletekey);
 		} else {
-			const embedded = ( target == "effect" ? "ActiveEffect" : "Item" );
-			this.actor.deleteEmbeddedDocuments( embedded, [id] );
+			this.document.deleteEmbeddedDocuments( _delete, [id] );
 		}
 	}
 
@@ -328,19 +400,53 @@ export default class SkyfallActorSheet extends ActorSheet {
 		item.sheet.render(true)
 	}
 
-	#onActionUse(button) {
+	async #onActionUse(button) {
 		let target = button.dataset.target;
-		let id = button.closest('.entry').dataset.entryId;
+		let withId = button.closest('.entry').dataset.entryId;
+		let id = button.dataset.itemId;
+		if ( withId != id ) {}
+			const ability = this.actor.items.get(id);
+			if ( !ability ) return;
+			const item = this.actor.items.get(withId);
+			const usageData = {
+				...CONFIG.ChatMessage.dataModels.usage.schema.initial(),
+				abilityId: ability.id,
+				itemId: item ? item.id : null,
+				abilityState: ability.toObject(),
+				itemState: item ? item.toObject() : null,
+				actorState: ability.parent.toObject(),
+				item: ability.toObject(),
+				targets: [ ...game.user.targets.map( token => token.document.uuid ) ]
+			};
+			usageData.abilityState.system._labels = {...ability.system._labels};
+			if ( item ) {
+				usageData.itemState.system._labels = {...item.system._labels};
+			}
+			// usageData.item.system._labels = {...ability.system._labels};
+
+			const templateData = {
+				usage: usageData,
+			}
+			let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
+			const html = await renderTemplate(template, templateData);
+
+			const messageData = {
+				type: "usage",
+				content: html,
+				system: usageData,
+				speaker: ChatMessage.getSpeaker({actor: this}),
+			}
+
+			ChatMessage.applyRollMode(messageData, game.settings.get('core','rollMode'))
+			const message = await ChatMessage.create(messageData);
+			message.usageConfigurePhase();
 		
-		// new UseConfigDialog({this.actor, id,options});
 	}
 
 	async #onActionRoll(button) {
 		// let target = button.dataset.type;
 		let type = button.closest('.entry').dataset.type;
 		let id = button.closest('.entry').dataset.entryId;
-		console.log( 'ROLLING', this.rolling );
-		console.log(id, type);
 		if ( button.event == 'contextmenu' ) {
 			this.rolling = null;
 			return this.render(true);
@@ -368,75 +474,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 			await this.actor.rollCheck(this.rolling);
 			this.rolling = null;
 		}
-		console.log( 'ROLLING', this.rolling );
 		this.render(true);
 	}
 
-	async #OldonActionRoll(button) {
-		return;
-
-		let rollConfig = {
-			// types: [type, id],
-			types: {[type]: id}, // abl: '', skill: '', initiative: true, movement: true
-			advantage: 0,
-			disadvantage: 0,
-			terms: [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ],
-			rollData: rollData,
-		}
-		if ( type == 'ability') {
-			if ( this.rolling == id ) {
-				rollConfig.terms = [ ...rollConfig.terms,
-					{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
-				];
-				rollData['abl'] = rollData.abilities[id].value;
-			} else { 
-				this.rolling = id;
-				this.rooooooling = new D20Roll('1d20', rollData, {type:null,id:null,abl:null});
-				return this.render(true);
-			}
-		} else if ( type == 'skill') {
-			rollConfig.types.ability = this.rolling ?? 'str';
-			rollConfig.terms = [ ...rollConfig.terms,
-				{term: '@prof', options: {flavor: '', name: 'proficiency', source: ''}},
-				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
-			];
-			rollData['prof'] = rollData.proficiency * rollData.skills[id].value;
-			rollData['abl'] = rollData.abilities[this.rolling ?? 'str'].value;
-		} else if ( type == 'initiative' ) {
-			rollConfig.types.ability = this.rolling ?? id;
-			rollConfig.terms = [ ...rollConfig.terms,
-				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
-			];
-			rollData['abl'] = rollData.abilities[this.rolling ?? id].value;
-		} else if ( type == 'movement' ) {
-			rollConfig.types.ability = this.rolling ?? id;
-			rollConfig.terms = [ ...rollConfig.terms,
-				{term: '@abl', options: {flavor: '', name: 'ability', source: ''}},
-			];
-			rollData['abl'] = rollData.abilities[this.rolling ?? id].value;
-		}
-		
-		
-		const roll = D20Roll.fromConfig( rollConfig );
-		console.log({title:"SKYFALL.ROLL.ABILITY", type:type, ability: id});
-		await roll.configureDialog({title:"SKYFALL.ROLL.ABILITY", type:type, ability: id});
-		await roll.toMessage();
-		this.rolling = null;
-		return;
-		if ( !this.rolling && !this.rollAbl ) {
-			if ( type == 'ability' ) this.rollAbl = id;
-			else this.rolling = type;
-		} else if ( this.rolling && !this.rollAbl  ) {
-			if ( type !== 'ability' ) this.rolling = type;
-			else this.rollAbl = id;
-		} else if ( !this.rolling && this.rollAbl ) {
-			if ( type == 'ability' ) {}
-			else if ( type == 'skill' ) {}
-			else if ( type == 'initiative' ) {}
-			else if ( type == 'movement' ) {}
-		}
-		if ( !complete ) return;
-		this.rolling = null;
-		this.rollAbl = null;
-	}
 }

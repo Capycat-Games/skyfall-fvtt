@@ -20,7 +20,15 @@
 			"equipment": "Equipamento",
 			"consumable": "Consumível",
 			"loot": "Tesouro"
+		},
+		"ActiveEffect": {
+			"Base": "Efeito",
+			"Modification": "Modificação",
+			"Sigil": "Sigilo"
 		}
+	},
+	"DOCUMENT": {
+		"Create": "Novo {type}"
 	},
 	"SKYFALL": {
 		"NAME": "Nome",
@@ -39,7 +47,9 @@
 		"ADD": "Adicionar",
 		"CREATE": "Criar",
 		"DELETE": "Apagar",
+		"APPLY": "Aplicar",
 		"TYPE": "Tipo",
+		"RESOURCE": "Recurso",
 		"SHEET":{
 			"FACE": "Face",
 			"FEATURES": "Características",
@@ -58,6 +68,7 @@
 			"INITIATIVE": "Iniciativa",
 			"MOVEMENT": "Deslocamento",
 			"PROFICIENCY": "Proficiência",
+			"PROFBONUSABBR": "Bônus de Prof.",
 			"PROFBONUS": "Bônus de Proficiência",
 			"PROFICIENCIES": "Proficiências",
 			"LANGUAGE": "Idiomas",
@@ -215,7 +226,9 @@
 			},
 			"CLASS": {
 				"INITIAL": "Inicial",
-				"HITDIE": "Dados de Vida"
+				"HITDIE": "Dados de Vida",
+				"HITDIELEVEL": "DdV/Nível",
+				"SPELLCASTING": "Atributo Mágico"
 			},
 			"PATH": {
 				"INITFEATURES": "Características Iniciais",
@@ -248,7 +261,13 @@
 			},
 			"SPELL": {
 				"LAYER": "Camada",
-				"COMPONENTS": "Componentes"
+				"COMPONENTS": "Componentes",
+				"TYPES": {
+					"CANTRIP": "Truque",
+					"SUPERFICIAL": "Superficial",
+					"SHALLOW": "Rasa",
+					"DEEP": "Profunda"
+				}
 			},
 			"EQUIPMENT": {
 				"EQUIP": "Equipar",
@@ -370,22 +389,31 @@
 				"VOCAL": "Vocal",
 				"SOMATIC": "Somático",
 				"MATERIAL": "Material"
-			},
-			"MODIFICATION": {
-				"TYPES": {
-					"CHANGE": "change",
-					"ADD": "add",
-					"AMPLIFY": "amplify"
-				}
+			}
+		},
+		"MODIFICATION": {
+			"APPLYALWAYS": "Aplicar sempre",
+			"APPLYMULTIPLE": "Múltipla",
+			"APPLYTO": "Aplicável em:",
+			"APPLYTOSELF": "Próprio",
+			"ITEMNAME": "Item",
+			"ITEMTYPE": "Tipo",
+			"DESCRIPTOR": "Descritor",
+			"TYPES": {
+				"CHANGE": "Muda",
+				"ADD": "Adiciona",
+				"AMPLIFY": "Amplifica"
 			}
 		},
 		"EFFECT": {
-			"CORE": {
-				"CAMPO": "TRADUÇÃO"
-			},
-			"USO": {
-				"CAMPO": "TRADUÇÃO"
-			}
+			"MODIFICATION": "Modificação",
+			"MODIFICATIONTEMP": "Mod. Temp.",
+			"TEMPORARY": "Temporário",
+			"PASSIVE": "Passivo",
+			"INACTIVE": "Inativo",
+			"SOURCE": "Origem",
+			"DURATION": "Duração",
+			"CORE": "CORE"
 		},
 		"DESCRIPTORS": {
 			"DAMAGE": {
@@ -402,53 +430,71 @@
 				"RADIANT": "Radiante",
 				"THUNDER": "Trovejante",
 				"POISON": "Venenoso",
-				"ESPECIAL": "Especial"
+				"SPECIAL": "Especial"
 			},
 			"EQUIPMENT": {
-				"ADAPTAVEL": "Adaptavel",
-				"ADAPTAVELHINT": "Uma arma de uma mão com esta habilidade pode ser usada com as duas mãos para aumentar seu dano (em parênteses).",
-				"ALONGADA": "Alongada",
-				"ALONGADAHINT": "Alcança um espaço adicional (geralmente de adjacente para 1,5m a mais).",
-				"ARREMESSAVEL": "Arremessavel",
-				"ARREMESSAVELHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando a FOR para ataque e dano. Elas são arremessadas e caem no mesmo espaço do alvo. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
-				"BARULHENTA": "Barulhenta",
-				"BARULHENTAHINT": "Enquanto estiver sendo empunhado ou vestido, esse equipamento concede desvantagem em todos os testes que envolvam Furtividade.",
-				"COMPOSTO": "Composto",
-				"COMPOSTOHINT": "Ataques a distância realizados com essa arma permitem que você aplique sua FOR às jogadas de dano.",
+				"ADAPTABLE": "Adaptavel",
+				"ADAPTABLEHINT": "Uma arma de uma mão com esta habilidade pode ser usada com as duas mãos para aumentar seu dano (em parênteses).",
+				"REACH": "Alongada",
+				"REACHHINT": "Alcança um espaço adicional (geralmente de adjacente para 1,5m a mais).",
+				"THROWN": "Arremessavel",
+				"THROWNHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando a FOR para ataque e dano. Elas são arremessadas e caem no mesmo espaço do alvo. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
+				"NOISY": "Barulhenta",
+				"NOISYHINT": "Enquanto estiver sendo empunhado ou vestido, esse equipamento concede desvantagem em todos os testes que envolvam Furtividade.",
+				"COMPOSITE": "Composto",
+				"COMPOSITEHINT": "Ataques a distância realizados com essa arma permitem que você aplique sua FOR às jogadas de dano.",
 				"ESPALHAFATOSA": "Espalhafatosa",
 				"ESPALHAFATOSAHINT": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
-				"CONTUNDENTE": "Contundente",
-				"CONTUNDENTEHINT": "Uma arma, magia ou talento com esse descritor causa dano contundente.",
-				"CORTANTE": "Cortante",
-				"CORTANTEHINT": "Uma arma, magia ou talento com esse descritor causa dano cortante.",
+				"BLUDGEONING": "Contundente",
+				"BLUDGEONINGHINT": "Uma arma, magia ou talento com esse descritor causa dano contundente.",
+				"SLASHING": "Cortante",
+				"SLASHINGHINT": "Uma arma, magia ou talento com esse descritor causa dano cortante.",
 				"DISPARAVEL": "Disparavel",
 				"DISPARAVELHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando munição. A munição é perdida depois do ataque. Estas armas usam o valor de DES ao invés de FOR para calcular ataque e dano. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
-				"DUPLA": "Dupla",
-				"DUPLAHINT": "Você pode usar a ação Atacar com Duas Armas para atacar com o outro lado da arma como se estivesse empunhando duas armas.",
-				"EFICIENTE": "Eficiente",
-				"EFICIENTEHINT": "Você recebe vantagens no teste da perícia indicada enquanto estiver empunhando a arma.",
-				"LEVE": "Leve",
-				"LEVEHINT": "Uma arma ou poder com esse descritor pode utilizar DES ao invés de FOR em testes de ataque. O dano ainda é calculado com FOR.",
+				"DOUBLE": "Dupla",
+				"DOUBLEHINT": "Você pode usar a ação Atacar com Duas Armas para atacar com o outro lado da arma como se estivesse empunhando duas armas.",
+				"EFICIENT": "Eficiente",
+				"EFICIENTHINT": "Você recebe vantagens no teste da perícia indicada enquanto estiver empunhando a arma.",
+				"LIGHT": "Leve",
+				"LIGHTHINT": "Uma arma ou poder com esse descritor pode utilizar DES ao invés de FOR em testes de ataque. O dano ainda é calculado com FOR.",
 				"LETAL": "Letal",
 				"LETALHINT": "Ao ter um acerto crítico com essa arma, você causa um dado de dano adicional (além de dobrar os dados).",
-				"MONTADA": "Montada",
-				"MONTADAHINT": "Armas montadas foram feitas para serem utilizadas por combatentes montados. Personagens montadas que atacarem com essa arma causam +1d6 de dano.",
-				"PERFURANTE": "Perfurante",
-				"PERFURANTEHINT": "Uma arma, magia ou talento com esse descritor causa dano perfurante.",
-				"PESADA": "Pesada",
-				"PESADAHINT": "São armas que precisam de grande força física para serem utilizadas corretamente. Algumas habilidades fazem referência a armas pesadas.",
-				"PRECISO": "Preciso",
-				"PRECISOHINT": "Recebe +2 em jogadas de ataque se o atacante não se moveu antes de atacar.",
-				"QUEBRADICO": "Quebradico",
-				"QUEBRADICOHINT": "O objeto está quebrando. Se for uma arma, quebra quando o atacante tiver uma falha crítica. Se for uma armadura ou escudo, quebra quando um atacante conseguir um sucesso crítico.",
-				"RECARREGAVEL": "Recarregavel",
-				"RECARREGAVELHINT": "Ataques realizados com esse descritor utilizam munição e precisam ser recarregados depois de alguns usos usando uma ação específica. O número diz a quantidade de disparos que podem ser feitos e a letra seguinte diz a ação necessária: (L) para uma ação livre, (B) para ação bônus, (A) para uma ação e (C) para um turno completo, usando tanto ação bônus quanto a ação. Uma arma Recarregável (3 A) precisa ser recarregada com a ação depois de 3 disparos.",
-				"RETORNAVEL": "Retornavel",
-				"RETORNAVELHINT": "A arma retorna para a mão de seu dono no final do turno que foi arremessada.",
+				"MOUNTED": "Montada",
+				"MOUNTEDHINT": "Armas montadas foram feitas para serem utilizadas por combatentes montados. Personagens montadas que atacarem com essa arma causam +1d6 de dano.",
+				"PIERCING": "Perfurante",
+				"PIERCINGHINT": "Uma arma, magia ou talento com esse descritor causa dano perfurante.",
+				"HEAVY": "Pesada",
+				"HEAVYHINT": "São armas que precisam de grande força física para serem utilizadas corretamente. Algumas habilidades fazem referência a armas pesadas.",
+				"PRECISE": "Preciso",
+				"PRECISEHINT": "Recebe +2 em jogadas de ataque se o atacante não se moveu antes de atacar.",
+				"BRITTLE": "Quebradico",
+				"BRITTLEHINT": "O objeto está quebrando. Se for uma arma, quebra quando o atacante tiver uma falha crítica. Se for uma armadura ou escudo, quebra quando um atacante conseguir um sucesso crítico.",
+				"RELOAD": "Recarregavel",
+				"RELOADHINT": "Ataques realizados com esse descritor utilizam munição e precisam ser recarregados depois de alguns usos usando uma ação específica. O número diz a quantidade de disparos que podem ser feitos e a letra seguinte diz a ação necessária: (L) para uma ação livre, (B) para ação bônus, (A) para uma ação e (C) para um turno completo, usando tanto ação bônus quanto a ação. Uma arma Recarregável (3 A) precisa ser recarregada com a ação depois de 3 disparos.",
+				"RETURNING": "Retornavel",
+				"RETURNINGHINT": "A arma retorna para a mão de seu dono no final do turno que foi arremessada.",
 				"SUPERIOR": "Superior",
 				"SUPERIORHINT": "O atacante é considerado expert em testes de “Ataque de Superioridade”.",
-				"VERSATIL": "Versatil",
-				"VERSATILHINT": "Fornece +2 em testes de ataque de superioridade. Equipamentos Diversos e Serviços"
+				"VERSATILE": "Versatil",
+				"VERSATILEHINT": "Fornece +2 em testes de ataque de superioridade. Equipamentos Diversos e Serviços"
+			},
+			"CATEGORY": {
+				"ATTACK": "Ataque",
+				"WEAPON": "Arma",
+				"ALCHEMY": "Alquímico",
+				"AURA": "Aura",
+				"MAGICAL": "Mágico",
+				"PROTOTYPE": "Protótipo",
+				"CONTROL": "Controle",
+				"OFENSIVE": "Ofensiva",
+				"UTILITY": "Utilidade",
+				"SUPPORT": "Suporte"
+			},
+			"DIVERSE": {
+				"ASPECT": "Aspecto",
+				"CREATION": "Criação",
+				"ELEMENTAL": "Elemental",
+				"INSPIRATION": "Inspiração"
 			}
 		},
 		"LANGUAGES": {
@@ -491,50 +537,81 @@
 			"PENALTY": "Penalidade",
 			"OTHER": "Outros"
 		},
+		"CHATMESSAGE": {
+			"USAGE": {
+				"CONFIGURE": "Configurar",
+				"EXECUTE": "Executar",
+				"COMMIT": "Concluir",
+				"RESET": "Resetar",
+				"AID": "Ajudar",
+				"TARGETS": "Alvos",
+				"UPDATETARGETS": "Atualizar Alvos",
+				"TEMPLATES": "Áreas de Efeitos",
+				"PLACETEMPLATE": "Posicionar Área de Efeito",
+				"ADDCATHARSIS": "Adicionar Catarse",
+				"UPDATECOMMITED": "Não é permitido alterar uma Ação Concluída, o GM pode reseta-la para ser reconfigurada"
+			}
+		},
 		"CONDITIONS": {
-			"GRAPPLED": "GRAPPLED",
+			"GRAPPLED": "Agarrado",
 			"GRAPPLEDHINT": "GRAPPLEDHINT",
-			"GRAPPLING": "GRAPPLING",
+			"GRAPPLING": "Agarrando",
 			"GRAPPLINGHINT": "GRAPPLINGHINT",
-			"FRIGHTENED": "FRIGHTENED",
+			"FRIGHTENED": "Amedrontado",
 			"FRIGHTENEDHINT": "FRIGHTENEDHINT",
-			"STUNNED": "STUNNED",
+			"STUNNED": "Atordoado",
 			"STUNNEDHINT": "STUNNEDHINT",
-			"PRONE": "PRONE",
+			"PRONE": "Caído",
 			"PRONEHINT": "PRONEHINT",
-			"RESTRAINED": "RESTRAINED",
+			"RESTRAINED": "Contido",
 			"RESTRAINEDHINT": "RESTRAINEDHINT",
-			"UNPROTECTED": "UNPROTECTED",
+			"UNPROTECTED": "Desprotegido",
+			"UNPROTECTEDPHY": "Desprotegido (Físico)",
+			"UNPROTECTEDMEN": "Desprotegido (Mental)",
+			"UNPROTECTEDSTR": "Desprotegido (For)",
+			"UNPROTECTEDDEX": "Desprotegido (Des)",
+			"UNPROTECTEDCON": "Desprotegido (Con)",
+			"UNPROTECTEDINT": "Desprotegido (Int)",
+			"UNPROTECTEDWIS": "Desprotegido (Sab)",
+			"UNPROTECTEDCHA": "Desprotegido (Car)",
 			"UNPROTECTEDHINT": "UNPROTECTEDHINT",
-			"DISORIENTED": "DISORIENTED",
+			"DISORIENTED": "Desorientado",
 			"DISORIENTEDHINT": "DISORIENTEDHINT",
-			"BURNING": "BURNING",
+			"BURNING": "Em Chamas",
 			"BURNINGHINT": "BURNINGHINT",
-			"CHARMED": "CHARMED",
+			"CHARMED": "Encantado",
 			"CHARMEDHINT": "CHARMEDHINT",
-			"POISONED": "POISONED",
+			"POISONED": "Envenenado",
 			"POISONEDHINT": "POISONEDHINT",
-			"EXHAUSTION": "EXHAUSTION",
+			"EXHAUSTION": "Exaustão",
 			"EXHAUSTIONHINT": "EXHAUSTIONHINT",
-			"INCAPACITATED": "INCAPACITATED",
+			"INCAPACITATED": "Incapacitado",
 			"INCAPACITATEDHINT": "INCAPACITATEDHINT",
-			"UNCONSCIOUS": "UNCONSCIOUS",
+			"UNCONSCIOUS": "Inconsciente",
 			"UNCONSCIOUSHINT": "UNCONSCIOUSHINT",
-			"INSPIRED": "INSPIRED",
+			"INSPIRED": "Inspirado",
 			"INSPIREDHINT": "INSPIREDHINT",
-			"INVISIBLE": "INVISIBLE",
+			"INVISIBLE": "Invisível",
 			"INVISIBLEHINT": "INVISIBLEHINT",
-			"MARKED": "MARKED",
+			"MARKED": "Marcado",
 			"MARKEDHINT": "MARKEDHINT",
-			"HURT": "HURT",
+			"HURT": "Machucada",
 			"HURTHINT": "HURTHINT",
-			"PARALYZED": "PARALYZED",
+			"PARALYZED": "Paralisado",
 			"PARALYZEDHINT": "PARALYZEDHINT",
-			"PETRIFIED": "PETRIFIED",
+			"PETRIFIED": "Petrificado",
 			"PETRIFIEDHINT": "PETRIFIEDHINT",
-			"PROTECTED": "PROTECTED",
+			"PROTECTED": "Protegido",
+			"PROTECTEDPHY": "Protegido (Físico)",
+			"PROTECTEDMEN": "Protegido (Mental)",
+			"PROTECTEDSTR": "Protegido (For)",
+			"PROTECTEDDEX": "Protegido (Des)",
+			"PROTECTEDCON": "Protegido (Con)",
+			"PROTECTEDINT": "Protegido (Int)",
+			"PROTECTEDWIS": "Protegido (Sab)",
+			"PROTECTEDCHA": "Protegido (Car)",
 			"PROTECTEDHINT": "PROTECTEDHINT",
-			"PROVOKED": "PROVOKED",
+			"PROVOKED": "Provocado",
 			"PROVOKEDHINT": "PROVOKEDHINT"
 		}
 	}

@@ -1,5 +1,5 @@
+{{log this}}
 <form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
-	{{log this}}
 	{{log SYSTEM}}
 	{{!-- Sheet Header --}}
 	<header class="sheet-header flexrow">
@@ -19,7 +19,7 @@
 				<div class="header-fields flex0">
 					<label>{{localize "SKYFALL.ACTOR.SIZE"}}</label>
 					<select name="system.size">
-						{{selectOptions SYSTEM.actorSizes selected=system.size localize=true nameAttr="id" labelAttr="label"}}
+						{{selectOptions SYSTEM.actorSizes selected=system.size localize=true valueAttr="id" labelAttr="label"}}
 					</select>
 				</div>
 			</div>
@@ -57,26 +57,25 @@
 			{{!-- TOP SECTION --}}
 			<div class="flexrow">
 				{{> 'systems/skyfall/templates/actor/parts/ability-scores.hbs'}}
-				<div class="flexrow text-center">
-					<div class="initiative entry" data-type="initiative" data-entry-id="dex" >
-						<h4><a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a></h4>
-						<h1>{{system.initiative}}</h1>
+				<div class="background-box attributes flexrow text-center">
+					<div class="initiative attribute box flexcol entry" data-type="initiative" data-entry-id="dex">
+						<h5><a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a></h5>
+						<input type="number" disabled value="{{system.initiative}}">
 					</div>
-					<div class="damage-reduction flexcol">
-						<h4>{{localize "SKYFALL.ACTOR.DR"}}</h4>
-						<h1>{{system.dr}}</h1>
+					<div class="damage-reduction attribute box flexcol">
+						<h5>{{localize "SKYFALL.ACTOR.DR"}}</h5>
+						<input type="number" disabled value="{{system.dr}}">
 					</div>
-					<div class="flexcol">
-						<div class="movement flexcol">
-							<a data-action="manage" data-target="movement">
-								<h4>{{localize "SKYFALL.ACTOR.MOVEMENT"}}</h4>
-							</a>
-							{{log movement}}
-							{{#each movement as | move | }}
-							<span data-tooltip="{{localize move.label}}">
-								{{{move.icon}}} {{move.value}} 
-							</span>
-							{{/each}}
+					<div class="movement attribute box flex2 flexcol">
+						<a data-action="manage" data-target="movement">
+							<h5>{{localize "SKYFALL.ACTOR.MOVEMENT"}}</h5>
+						</a>
+						<div>
+						{{#each movement as | move | }}
+						<span data-tooltip="{{localize move.label}}">
+							{{{move.icon}}} {{move.value}} 
+						</span>
+						{{/each}}
 						</div>
 					</div>
 				</div>
@@ -85,13 +84,14 @@
 			<div class="flexrow">
 				{{!-- LEFT SECTION --}}
 				<div class="left flexcol">
-					<div class="box flexcol">
-						<div class="proficiency">
-							<h3><input type="number" style="width:32px" value="{{system.proficiency}}" disabled> {{localize "SKYFALL.ACTOR.PROFBONUS"}}</h3>
+					<div class="background-box flexcol">
+						<div class="proficiency flexrow">
+							<input type="number" value="{{system.proficiency}}" disabled>
+							<span>{{localize "SKYFALL.ACTOR.PROFBONUSABBR"}}</span>
 						</div>
 						{{> 'systems/skyfall/templates/actor/parts/skills.hbs'}}
 					</div>
-					<div class="box flexcol">
+					<div class="background-box flexcol">
 						<div class="languages">
 							<h4><a data-action="manage" data-target="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
 							{{#each languages as | language |}}
@@ -127,51 +127,51 @@
 				
 				{{!-- MIDDLE SECTION --}}
 				<div class="middle flexcol text-center">
-					<div class="resources flexcol">
-						<div class="flexrow">
-							<div class="resource catharsis flexcol">
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.CATHARSIS"}}</h4>
+					<div class="resources background-box flexcol">
+						<div class="group-a flexrow">
+							<div class="resource box catharsis flexcol">
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.CATHARSIS"}}</h6>
 								<input type="number" name="system.resources.catharsis.value" value="{{system.resources.catharsis.value}}">
 							</div>
-							<div class="resource ep flexcol">
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}</h4>
+							<div class="resource ep box flexcol">
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}</h6>
 								<div class="flexrow">
-									<input type="number" name="system.resources.ep.value" value="{{system.resources.ep.value}}">
-									<input type="number" name="system.resources.ep.max" value="{{system.resources.ep.max}}">
+									<input type="number" name="system.resources.ep.max" value="{{system.resources.ep.max}}" disabled>
 									<input type="number" name="system.resources.ep.temp" value="{{system.resources.ep.temp}}">
+									<input type="number" name="system.resources.ep.value" value="{{system.resources.ep.value}}" max="{{system.resources.ep.max}}">
 								</div>
 							</div>
 						</div>
-						<div class="resource hp flexrow">
-							<div class="max">
+						<div class="resource hp  flexrow">
+							<div class="max flexcol">
 								<input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" disabled>
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HP"}} {{localize "SKYFALL.TOTAL"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}} {{localize "SKYFALL.TOTAL"}}</h6>
 							</div>
-							<div class="temp">
+							<div class="temp flexcol">
 								<input type="number" name="system.resources.hp.temp" value="{{system.resources.hp.temp}}">
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}} {{localize "SKYFALL.ACTOR.RESOURCES.TEMPORARYABBR"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.TEMPORARYABBR"}}</h6>
 							</div>
-							<div class="current">
+							<div class="current flexcol">
 								<input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}">
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HP"}} {{localize "SKYFALL.CURRENT"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}} {{localize "SKYFALL.CURRENT"}}</h6>
 							</div>
 						</div>
 						<div class="resource hitDie flexrow">
-							<div class="max">
+							<div class="max flexcol">
 								<input type="number" name="system.resources.hitDie.max" value="{{system.resources.hitDie.max}}" disabled>
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIE"}} {{localize "SKYFALL.TOTAL"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}} {{localize "SKYFALL.TOTAL"}}</h6>
 							</div>
-							<div class="die">
+							<div class="die flexcol">
 								<input type="text" name="system.resources.hitDie.dado" value="{{system.resources.hitDie.die}}" disabled>
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIE"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}}</h6>
 							</div>
-							<div class="current">
+							<div class="current flexcol">
 								<input type="number" name="system.resources.hitDie.value" value="{{system.resources.hitDie.value}}">
-								<h4>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIE"}} {{localize "SKYFALL.CURRENT"}}</h4>
+								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}} {{localize "SKYFALL.CURRENT"}}</h6>
 							</div>
 						</div>
 					</div>
-					<div class="resources-check flexrow">
+					<div class="resources-check background-box flexrow">
 						<div class="shadow flexcol entry" data-entry-id="shadow">
 							<h4 data-tooltip="{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW.HINT"}}">{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW"}}</h4>
 							<a data-action="vary" data-target="system.resources.shadow.value">
@@ -211,6 +211,7 @@
 				</div>
 				{{!-- RIGHT SECTION --}}
 				<div class="favorites flexcol">
+					{{> 'systems/skyfall/templates/actor/parts/favorites.hbs'}}
 					<ul class="list-items favorites">
 						{{! #each items.favoritos as | favorito |}}
 							{{! > "favorito.hbs"}}
@@ -290,14 +291,14 @@
 			{{> 'systems/skyfall/templates/actor/parts/abilities.hbs'}}
 		</div>
 		<div class="tab spells" data-group="primary" data-tab="spells">
-			{{!> 'systems/skyfall/templates/actor/parts/spells.hbs'}}
+			{{> 'systems/skyfall/templates/actor/parts/spells.hbs'}}
 		</div>
 		<div class="tab debug" data-group="primary" data-tab="debug">
 		</div>
 		
 		{{!-- Active Effects Tab --}}
 		<div class="tab effects flexcol" data-group="primary" data-tab="effects">
-			{{> "systems/skyfall/templates/actor/parts/actor-effects.hbs"}}
+			{{> "systems/skyfall/templates/shared/active-effects.hbs"}}
 		</div>
 	</section>
 </form>

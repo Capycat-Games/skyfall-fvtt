@@ -20,7 +20,7 @@ export default class Weapon extends PhysicalItemData {
 				formula: new fields.StringField({required: true, blank: true}),
 				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
 			}),
-			range: new fields.NumberField({required: true, integer: true, min: 0}),
+			range: new fields.NumberField({required: true, min: 0}),
 		})
 	}
 }

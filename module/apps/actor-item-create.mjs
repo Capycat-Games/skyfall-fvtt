@@ -99,31 +99,15 @@ export default class ActorItemCreate extends FormApplication {
 
 	/** @inheritdoc */
 	async _updateObject(event, formData) {
-		console.log(formData);
 		const createItems = [];
 		if ( !formData['item_create'] ) formData['item_create'] = [];
 		for (const uuid of formData['item_create']) {
 			const item = await fromUuid(uuid);
-			console.log(uuid, item);
 			if ( !item ) continue;
 			createItems.push(item.toObject());
 		}
-		console.log(createItems);
+		
 		if ( createItems ) this.actor.createEmbeddedDocuments("Item", createItems);
 		return;
-		const updateData = {
-			"name": "Anuro Teste",
-			"system.abilities.cha.value": 3,
-			"items": [
-					{
-							"_id": "IGMHwDYm4vxYVNig",
-							"system.heritages.her0.chosen": true,
-					}
-			]
-		}
-		// if ( formData['system.languages'] ) formData['system.languages'] = formData['system.languages'].filter(Boolean);
-		// if ( formData['system.proficiencies'] ) formData['system.proficiencies'] = formData['system.proficiencies'].filter(Boolean);
-		// console.log( event, formData );
-		return super._updateObject(event, formData);
 	}
 }

@@ -121,6 +121,18 @@ export default class SkyfallItem extends Item {
 		}
 	}
 
+	/**
+	 * Override getRollData() that's supplied to rolls.
+	 */
+	getRollData() {
+		const data = { ...super.getRollData() };
+		if ( this.type == 'weapon' || (this.type == 'armor' && this.system.type == 'shield') ) {
+			data['weapon'] = {};
+			data.weapon = this.system.damage.formula;
+		}
+		return data;
+	}
+
 	/* -------------------------------------------- */
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
@@ -165,12 +177,9 @@ export default class SkyfallItem extends Item {
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
 		await super._onCreate(data, options, user);
-		console.log(data, options, user);
-		
 		let {features, abilities, heritages, feats} = data.system;
 		if ( features?.length || abilities?.length || heritages?.length || feats?.length ) {
-		// if ( [...features, ...abilities, ...heritages, ...feats].length ) {
-			console.log( features, abilities, heritages, feats );
+			// if ( [...features, ...abilities, ...heritages, ...feats].length ) {
 			// PROMPT LIST FEATURES
 			// PROMPT CHOOSE HERITAGE
 			return new ActorItemCreate(options.parent, data).render(true);

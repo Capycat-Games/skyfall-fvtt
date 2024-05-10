@@ -50,7 +50,7 @@ let _spells = ["cantrip", "superficial", "shallow", "deep"];
 export const spells = _spells.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		type: "category",
+		type: ["spell"],
 		label: `SKYFALL.ITEM.SPELL.TYPES.${key.toUpperCase()}`,
 	}
 	return obj;
@@ -101,12 +101,12 @@ export const DESCRIPTOR = {
 	DIVERSE: {},
 };
 
-let categoryKeys = ["attack", "weapon", "alchemy", "aura", "inspiration", "magical", "prototype", "control", "ofensive", "utility"];
+let categoryKeys = ["attack", "weapon", "alchemy", "aura", "inspiration", "magical", "prototype", "control", "ofensive", "utility", "support"];
 categoryKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
 		type: ["category"],
-		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
+		label: `SKYFALL.DESCRIPTORS.CATEGORY.${key.toUpperCase()}`,
 	}
 	return obj;
 }, DESCRIPTOR.CATEGORY);
@@ -118,8 +118,8 @@ equipmentKeys.reduce((obj, key) => {
 		id: key,
 		type: ["equipment"],
 		equipment: ( key == "noisy" ? "armor" : "weapon"),
-		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
-		hint: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}HINT`,
+		label: `SKYFALL.DESCRIPTORS.EQUIPMENT.${key.toUpperCase()}`,
+		hint: `SKYFALL.DESCRIPTORS.EQUIPMENT.${key.toUpperCase()}HINT`,
 	}
 	return obj;
 }, DESCRIPTOR.EQUIPMENT);
@@ -143,8 +143,8 @@ diverseKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
 		type: ["diverse"],
-		label: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}`,
-		hint: `SKYFALL.DESCRIPTORS.${key.toUpperCase()}Hint`,
+		label: `SKYFALL.DESCRIPTORS.DIVERSE.${key.toUpperCase()}`,
+		hint: `SKYFALL.DESCRIPTORS.DIVERSE.${key.toUpperCase()}Hint`,
 	}
 	return obj;
 }, DESCRIPTOR.DIVERSE);

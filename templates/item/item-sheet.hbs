@@ -1,4 +1,5 @@
-<form class="{{cssClass}} algo" autocomplete="off">
+{{log this}}
+<form class="{{cssClass}}" autocomplete="off">
 	<header class="sheet-header">
 		<img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
 		<div class="header-fields">
@@ -42,27 +43,9 @@
 		<div class="tab flexrow" data-group="primary" data-tab="abilities">
 			{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="ability" list=abilities target="system.abilities"}}
 		</div>
-		{{!-- EFFECTS TAB --}}
-		<div class="tab flexrow" data-group="primary" data-tab="efeitos">
-
+		{{!-- Active Effects Tab --}}
+		<div class="tab effects flexcol" data-group="primary" data-tab="effects">
+			{{> "systems/skyfall/templates/shared/active-effects.hbs"}}
 		</div>
 	</section>
 </form>
-
-<style>
-	form.algo {
-		width: 520px;
-	}
-	.editor, .editor-content {
-		min-height: 100px;
-	}
-	.editor.prosemirror {
-		min-height: 300px;
-	}
-	.item .item-icon {
-		background-size: cover;
-		flex: 0 0 36px;
-		width: 36px;
-		height: 36px;
-	}
-</style>

@@ -1,5 +1,5 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
-	<ul class="trait-list flexcol">
+	<ul class="list-items traits flexcol">
 		{{#each languages as | language key |}}
 		<li class="item flexrow">
 			<input type="checkbox" id={{key}} name="system.languages" value="{{key}}" {{checked language.value}}>

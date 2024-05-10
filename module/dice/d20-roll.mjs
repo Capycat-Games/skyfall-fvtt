@@ -15,7 +15,6 @@ export default class D20Roll extends Roll {
 	constructor(formula, data, options) {
 		super(formula, data, options);
 		this.original = formula;
-		console.log('options', options)
 		this.configureRoll();
 	}
 
@@ -49,7 +48,6 @@ export default class D20Roll extends Roll {
 	
 
 	async configureDialog({title, type, ability='str', options}){
-		console.log('configureDialog', this, title, type, ability, options);
 		// Render the Dialog inner HTML
 		const content = await renderTemplate(this.constructor.TEMPLATE, {
 			title: title,
@@ -62,7 +60,6 @@ export default class D20Roll extends Roll {
 			defaultRollMode: game.settings.get("core", "rollMode"),
 			SYSTEM
 		});
-		console.log(this);
 		// Create the Dialog window and await submission of the form
 		return new Promise(resolve => {
 			new Dialog({
@@ -109,20 +106,16 @@ export default class D20Roll extends Roll {
 
 	configureRoll() {
 		if ( !this.validD20Roll ) return;
-		console.log('configureRoll', this);
 		const d20 = this.terms[0];
 		d20.modifiers = [];
 
 		const advDice = 0 + Number(this.options.advantage) - Number(this.options.disadvantage);
-		console.log( this.options.advantage );
-		console.log( this.options.disadvantage );
 		if ( advDice > 0 ) d20.modifiers.push('kh');
 		else if ( advDice < 0 ) d20.modifiers.push('kl');
 		d20.number = 1 + Math.abs(advDice);
 
 		// Re-compile the underlying formula
 		this._formula = this.constructor.getFormula(this.terms);
-		console.log('configureRoll', this);
 	}
 
 	async testRoll(){

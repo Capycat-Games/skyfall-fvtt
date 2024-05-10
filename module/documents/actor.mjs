@@ -5,6 +5,23 @@ import D20Roll from "../dice/d20-roll.mjs";
  * @extends {Actor}
  */
 export default class SkyfallActor extends Actor {
+
+	/* -------------------------------------------- */
+	/*  Getters                                     */
+	/* -------------------------------------------- */
+
+	get allModifications(){
+		const mods = [];
+		mods.push( ...this.effects.filter(ef => ef.type == 'modification') );
+		this.items.reduce( (acc, item) => {
+			const efs = item.effects.filter(ef => ef.type == 'modification');
+			acc.push(...efs);
+			return acc;
+		}, mods);
+		return mods;
+		//this.effects.filter( ef => ef.type == 'modification');
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
@@ -12,25 +29,17 @@ export default class SkyfallActor extends Actor {
 	/** @override */
 	prepareData() {
 		super.prepareData();
-		console.log("ACTOR.prepareData()");
+		console.log(`${this.documentName}.prepareData()`);
 	}
 
 	/** @override */
 	prepareBaseData() {
-		console.log("ACTOR.prepareBaseData()");
-		if ( false ) {
-			const system = this.system;
-			for (const [key, abl] of Object.entries(system.abilities)) {
-				abl.protection = 10 + abl.value + (abl.proficiency ? system.proficiency : 0);
-			}
-		}
+		console.log(`${this.documentName}.prepareBaseData()`);
 	}
 
-	/**
-	 * @override
-	 */
+	/** @override */
 	prepareDerivedData() {
-		console.log("ACTOR.prepareDerivedData()");
+		console.log(`${this.documentName}.prepareDerivedData()`);
 		const actorData = this;
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};
@@ -46,6 +55,7 @@ export default class SkyfallActor extends Actor {
 			}
 			levels[0] = Number(hitDie);
 			systemData.resources.hp.max = levels.reduce((acc,i)=> acc+i) ?? 1;
+			systemData.resources.hp.max += systemData.level.value * systemData.abilities.con.value;
 		}
 
 		// PREPARE HITDIE
@@ -88,6 +98,16 @@ export default class SkyfallActor extends Actor {
 		const cha = systemData.abilities.cha.value;
 		systemData.fragments.max = cha + (systemData.proficiency * 2);
 		
+		// PREPARE DATA FROM CLASS
+		const iniClass = actorData.items.find( it => it.type == 'class' && it.system.initial );
+		if ( iniClass ) {
+			systemData.resources.hitDie.die = iniClass.system.hitDie;
+			// PREPARE SPELLCASTING ABILITY
+			if ( iniClass.system.spellcasting ) {
+				systemData.abilities[iniClass.system.spellcasting].spellcasting = true;
+			}
+		}
+		
 		this._prepareCharacterData(actorData);
 		this._prepareNpcData(actorData);
 	}
@@ -97,7 +117,7 @@ export default class SkyfallActor extends Actor {
 	 */
 	_prepareCharacterData(actorData) {
 		if (actorData.type !== 'character') return;
-		console.log("ACTOR._prepareCharacterData()");
+		console.log(`${this.documentName}._prepareCharacterData()`);
 		const systemData = actorData.system;
 	}
 
@@ -106,7 +126,7 @@ export default class SkyfallActor extends Actor {
 	 */
 	_prepareNpcData(actorData) {
 		if (actorData.type !== 'npc') return;
-		console.log("ACTOR._prepareNpcData()");
+		console.log(`${this.documentName}._prepareNpcData()`);
 		const systemData = actorData.system;
 		
 	}
@@ -150,24 +170,23 @@ export default class SkyfallActor extends Actor {
 
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
-		await super._preCreate(data, options, user);
+		await super._onCreate(data, options, user);
 	}
 
 	/* -------------------------------------------- */
 
 	/** @inheritdoc */
 	async _preUpdate(data, options, userId) {
-		console.log( data, options, userId );
 		// SET DEFAULT TOKEN
 		const prototypeToken = {};
-		if ( data.system.size ) {
+		if ( data.system?.size ) {
 			const size = SYSTEM.actorSizes[data.system.size].gridScale ?? 1;
 			data.prototypeToken = {
 				width: size,
 				height: size
 			}
 		}
-		return await super._onUpdate(data, options, userId);
+		return await super._preUpdate(data, options, userId);
 	}
 
 	/* -------------------------------------------- */
@@ -210,11 +229,93 @@ export default class SkyfallActor extends Actor {
 		}
 	}
 	
+	/** @inheritdoc */
+	*allApplicableEffects(type = 'base') {
+		for ( const effect of this.effects.filter( ef => ef.type == type ) ) {
+			yield effect;
+		}
+		if ( CONFIG.ActiveEffect.legacyTransferral ) return;
+		for ( const item of this.items ) {
+			for ( const effect of item.effects.filter( ef => ef.type == type ) ) {
+				if ( effect.transfer ) yield effect;
+			}
+		}
+	}
 
 	/* -------------------------------------------- */
 	/*  Actions                                     */
 	/* -------------------------------------------- */
 	
+	/**
+	* Apply a certain amount of damage or healing to the health pool for Actor
+	* @param {number} amount			 An amount of damage (positive) or healing (negative) to sustain
+	* @param {number} multiplier	 A multiplier which allows for resistance, vulnerability, or healing
+	* @return {Promise<Actor>}		 A Promise which resolves once the damage has been applied
+	*/
+	async applyDamage(roll, multiplier = 1, applyDR = false) {
+		console.groupCollapsed( 'applyDamage' );
+		console.log(roll, multiplier );
+		// Get current resource values
+		const hp = this.system.resources.hp;
+		const ep = this.system.resources.ep;
+		applyDR = multiplier == -1 ? false : applyDR;
+		const dr = this.system.dr;
+		let drTypes = this.system.modifiers.damage.taken;
+		const drMods = {nor:1, imu:0, res:0.5, vul:1.5 };
+		drTypes = Object.entries(drTypes).reduce( (acc, dr ) => {
+				acc[dr[0]] = drMods[dr[1]];
+				return acc;
+		}, {});
+		console.log(drTypes);
+
+		let damage, typeDamage;
+		
+		if( roll ){
+			let defaultDamage = 'slashing';
+			typeDamage = roll.terms.reduce( (acc, t, idx) =>{
+				if ( idx == 0 && t.options.flavor ) defaultDamage = t.options.flavor;
+				let dType = t.options.flavor ?? defaultDamage;
+				if ( !acc[dType] ) acc[dType] = 0;
+				if( Number(t.total) ) {
+					acc[dType] += t.total;
+				}
+				return acc;
+			}, {});
+		}
+		
+		if ( applyDR ) damage = 0 - dr;
+		else damage = 0;
+		// Apply Damage Reduction for each type of damage
+		for ( let [type, dmg] of Object.entries(typeDamage) ){
+			const typeMod = drTypes[type] ?? 1;
+			console.log(type, dmg, multiplier, typeMod);
+			dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
+			damage += dmg;
+		}
+		console.log( damage );
+		// Deduct value from temp resource first
+		let updHPT = hp.temp;
+		if ( damage > 0 ) {
+			updHPT = Math.max( (updHPT - damage), 0 );
+			if ( damage >= hp.temp  ) damage = damage - hp.temp;
+		}
+		// Remaining goes to resource
+		let updHPV = hp.value;
+		updHPV = Math.clamp( (updHPV - damage), (hp.max*-1), hp.max );
+		
+		// Update the Actor
+		const updateData = {
+			"system.resources.hp.temp": updHPT,
+			"system.resources.hp.value": updHPV,
+		};
+		console.log(updateData);
+
+		await this.update(updateData);
+		
+		console.groupEnd();
+		return;
+	}
+
 	async rollCheck({type='ability',id='str',abl='str'}){
 		const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
 		const rollData = this.getRollData();
@@ -237,7 +338,6 @@ export default class SkyfallActor extends Actor {
 			 */
 		} else {
 			const roll = D20Roll.fromConfig( rollConfig );
-			console.log( roll );
 			await roll.configureDialog({title:"SKYFALL.ROLL.CONFIG", type:type, ability: abl});
 			await roll.toMessage({
 				flavor: game.i18n.format( `SKYFALL.ROLL.${type.toUpperCase()}`, {

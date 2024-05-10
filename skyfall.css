@@ -1,28 +1,680 @@
-:root {
+/* ----------------------------------------- */
+/*  Fonts                                    */
+/* ----------------------------------------- */
+.skyfall-icon {
+  font-family: SkyfallIcons;
+}
+.skyfall-font {
+  font-family: Skyfall;
+}
+/* ----------------------------------------- */
+/*  Fonts Height                             */
+/* ----------------------------------------- */
+/* ----------------------------------------- */
+/*  Sheet Styles                             */
+/* ----------------------------------------- */
+/* ----------------------------------------- */
+/*  Flexbox                                  */
+/* ----------------------------------------- */
+.flexrow.space-around {
+  justify-content: space-around;
+}
+.flexrow.space-evenly {
+  justify-content: space-evenly;
+}
+.flexrow.space-between {
+  justify-content: space-between;
+}
+/* ----------------------------------------- */
+/*  Application Styles                       */
+/* ----------------------------------------- */
+.skyfall.sheet .modification-header,
+.journal-sheet.sheet .modification-header,
+.skyfall.sheet .modification-description,
+.journal-sheet.sheet .modification-description {
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+  flex: 0;
+  background-color: #e7e8ed;
+  color: #182657;
+}
+.skyfall.sheet .modification-header,
+.journal-sheet.sheet .modification-header {
+  font-weight: bold;
+  background-color: #babecd;
+}
+.skyfall.sheet .editor,
+.skyfall.sheet .editor-content {
+  min-height: 100px;
+  min-height: 6em;
+}
+.skyfall.sheet .editor.prosemirror {
+  min-height: 150px;
+}
+.skyfall.sheet .descriptors-field .tags-options {
+  display: none;
+}
+.skyfall.sheet .descriptors-field .tags-options + .chosen-tags {
+  align-self: flex-end;
+}
+.skyfall.sheet .descriptors-field .tags-options:hover,
+.skyfall.sheet .descriptors-field .field-tag:focus + .tags-options {
+  display: flex;
+  background-color: white;
+  z-index: 3;
+  position: absolute;
+  height: 200px;
+  top: 2em;
+  /*bottom: -210px*/
+  overflow-y: auto;
+  right: 10px;
+  width: 350px;
+}
+.skyfall.sheet .modification-effects .list-items .item .effect-name,
+.skyfall.sheet .base-effects .list-items .item .effect-name,
+.skyfall.sheet .modification-effects .list-items .items-header .effect-name,
+.skyfall.sheet .base-effects .list-items .items-header .effect-name {
+  flex: 2;
+}
+.skyfall.sheet .modification-effects .list-items .item,
+.skyfall.sheet .base-effects .list-items .item {
+  align-content: center;
+}
+.skyfall.sheet .modification-effects .list-items .item img,
+.skyfall.sheet .base-effects .list-items .item img {
+  width: 36px;
+  flex: 0 0 36px;
+  margin-right: 5px;
+}
+.skyfall.sheet .status-effects .list-items {
+  column-count: 3;
+}
+.skyfall.sheet .status-effects .list-items .item {
+  background-color: #182657;
+  color: white;
+  padding: 4px 8px 6px 8px;
+}
+.skyfall.sheet .status-effects .list-items .item img {
+  vertical-align: sub;
+  width: 20px;
+  flex: 0 0 20px;
+  border: none;
+  margin-right: 5px;
+}
+.skyfall.item-usage-config .header > * label {
+  align-content: center;
+  margin-left: 5px;
+}
+.skyfall.item-usage-config .header > * img {
+  flex: 0;
+}
+.skyfall.item-usage-config .modifications {
+  border: 1px dashed black;
+}
+.skyfall.item-usage-config .modifications .modification > * {
+  padding: 5px;
+  align-content: center;
+}
+.skyfall.item-usage-config .modifications .modification .controls,
+.skyfall.item-usage-config .modifications .modification .cost {
+  text-align: center;
+  flex: 0 0 70px;
+}
+.skyfall.item-usage-config .modifications .modification .name {
+  text-align: center;
+  flex: 0 0 70px;
+}
+/* ----------------------------------------- */
+/*  Actor Styles                             */
+/* ----------------------------------------- */
+.skyfall.sheet.actor input[type=number] {
+  font-family: "Signika", sans-serif;
+}
+.skyfall.sheet.actor label,
+.skyfall.sheet.actor input[type=text] {
+  font-size: 14px;
+}
+.skyfall.sheet.actor h1,
+.skyfall.sheet.actor h2,
+.skyfall.sheet.actor h3,
+.skyfall.sheet.actor h4,
+.skyfall.sheet.actor h5,
+.skyfall.sheet.actor h6 {
+  margin: 0;
+}
+.skyfall.sheet.actor .header-fields label {
+  display: block;
+}
+.skyfall.sheet.actor .header-fields label .item-controls {
+  float: right;
+  margin-right: 5px;
+}
+.skyfall.sheet.actor .header-fields input {
+  width: auto;
+  margin-right: 5px;
+}
+.skyfall.sheet.actor .abilities {
+  padding: 10px;
+  justify-content: space-around;
+  font-family: Skyfall;
+}
+.skyfall.sheet.actor .abilities .ability {
+  background-image: url(assets/sheet/abl-score.webp);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 5px 5px 0 5px;
+  flex: 0 0 70px;
+  max-width: 70px;
+}
+.skyfall.sheet.actor .abilities .ability .bottom {
+  margin-top: 14px;
+  transform: scale(0.7);
+  align-self: center;
+}
+.skyfall.sheet.actor .abilities .ability .bottom label {
+  font-size: 16px;
+}
+.skyfall.sheet.actor .abilities .ability .bottom span {
+  font-size: 26px;
+}
+.skyfall.sheet.actor .abilities .ability .top h4,
+.skyfall.sheet.actor .abilities .ability .bottom h4 {
+  margin: 0;
+}
+.skyfall.sheet.actor .abilities .ability .top .rolling,
+.skyfall.sheet.actor .abilities .ability .bottom .rolling {
+  color: red;
+}
+.skyfall.sheet.actor .abilities .ability .top input,
+.skyfall.sheet.actor .abilities .ability .bottom input {
+  width: 80%;
+}
+.skyfall.sheet.actor .abilities .ability .top .active,
+.skyfall.sheet.actor .abilities .ability .bottom .active {
+  font-weight: bold;
+}
+.skyfall.sheet.actor .proficiency {
+  width: 80%;
+  margin: 0 auto;
+  align-items: center;
+}
+.skyfall.sheet.actor .proficiency > * {
+  background-color: white;
+}
+.skyfall.sheet.actor .proficiency input {
+  text-align: center;
+  border: 2px solid #424f66;
+  border-radius: 0;
+  flex: 0 0 2em;
+}
+.skyfall.sheet.actor .proficiency span {
+  font-size: 10px;
+  padding: 0 5px;
+  border: 2px solid #424f66;
+  border-left: none;
+  line-height: 1em;
+  padding-bottom: 5px;
+}
+.skyfall.sheet.actor .resources > div {
+  margin-bottom: 5px;
+}
+.skyfall.sheet.actor .resources h6 {
+  line-height: 1em;
+}
+.skyfall.sheet.actor .resources .group-a {
+  justify-content: space-between;
+}
+.skyfall.sheet.actor .resources .catharsis,
+.skyfall.sheet.actor .resources .ep {
+  flex: 0 0 48%;
+  height: 65px;
+}
+.skyfall.sheet.actor .resources .catharsis input,
+.skyfall.sheet.actor .resources .ep input {
+  max-width: 50px;
+  margin: 5px auto;
+}
+.skyfall.sheet.actor .resources .hp {
+  background: url(assets/sheet/resource-a.webp) no-repeat;
+}
+.skyfall.sheet.actor .resources .hitDie {
+  background: url(assets/sheet/resource-b.webp) no-repeat;
+}
+.skyfall.sheet.actor .resources .hp,
+.skyfall.sheet.actor .resources .hitDie {
+  background-size: contain;
+  flex: 0 0 5em;
+}
+.skyfall.sheet.actor .resources .hp h6,
+.skyfall.sheet.actor .resources .hitDie h6 {
+  line-height: 1em;
+  width: 50px;
+  margin: auto;
+}
+.skyfall.sheet.actor .resources .hp input,
+.skyfall.sheet.actor .resources .hitDie input {
+  flex: 0;
+  width: 50px;
+  margin: 0.7em auto;
+}
+.skyfall.sheet.actor .resources .hp .temp,
+.skyfall.sheet.actor .resources .hitDie .temp,
+.skyfall.sheet.actor .resources .hp .die,
+.skyfall.sheet.actor .resources .hitDie .die {
+  height: 70px;
+  align-self: center;
+  position: relative;
+}
+.skyfall.sheet.actor .resources .hp .temp input,
+.skyfall.sheet.actor .resources .hitDie .temp input,
+.skyfall.sheet.actor .resources .hp .die input,
+.skyfall.sheet.actor .resources .hitDie .die input {
+  margin: 0 auto;
+  flex: 0;
+  border: 0;
+  border-radius: 50px;
+  flex: 0 0 56px;
+  width: 56px;
+}
+.skyfall.sheet.actor .resources .hp .temp h6,
+.skyfall.sheet.actor .resources .hitDie .temp h6 {
+  position: absolute;
+  bottom: 2em;
+  margin: 0 auto;
+  width: 100%;
+}
+.skyfall.sheet.actor .resources .hp .die,
+.skyfall.sheet.actor .resources .hitDie .die {
+  flex-direction: column-reverse;
+}
+.skyfall.sheet.actor .resources .hp .die h6,
+.skyfall.sheet.actor .resources .hitDie .die h6 {
+  position: absolute;
+  top: 1.5em;
+  margin: 0 auto;
+  width: 100%;
+}
+.skyfall.sheet.actor .resources-check .shadow a {
+  width: 60px;
+  margin: auto;
+}
+.skyfall.sheet.actor .list-items img {
+  width: 36px;
+  flex: 0 0 36px;
+}
+.skyfall.sheet.actor .list-items.skills {
+  width: 95%;
+  margin: 0.5em auto;
+  padding: 5px;
+  background-color: white;
+  border: 2px solid #424f66;
+}
+.skyfall.sheet.actor .list-items.skills .skill > a,
+.skyfall.sheet.actor .list-items.skills .skill > span {
+  text-align: center;
+  flex: 0 0 2em;
+}
+.skyfall.sheet.actor .list-items.skills .skill > h3 {
+  margin: 0;
+}
+.skyfall.sheet.actor .list-items.skills .skill input {
+  text-align: center;
+  border: 2px solid #424f66;
+  background-color: white;
+}
+.skyfall.sheet.actor .list-items.skills .skill .rolling {
+  color: red;
+}
+.skyfall.sheet.actor .middle {
+  flex: 0 0 265px;
+}
+.skyfall.sheet.actor .background-box {
+  background-image: url(assets/sheet/background-cut.png);
+  background-size: cover;
+  padding: 10px;
+}
+.skyfall.sheet.actor .background-box.attributes {
+  justify-content: space-around;
+}
+.skyfall.sheet.actor .background-box.attributes .attribute.box {
+  align-self: auto;
+  flex: 0 0 40%;
+  margin-bottom: 5px;
+}
+.skyfall.sheet.actor .background-box.attributes .attribute.box h5 {
+  align-content: center;
+}
+.skyfall.sheet.actor .background-box.attributes .attribute.box input,
+.skyfall.sheet.actor .background-box.attributes .attribute.box span {
+  flex: 0;
+  width: 80%;
+  margin: auto;
+  margin-bottom: 5px;
+}
+.skyfall.sheet.actor .background-box.attributes .movement.attribute.box {
+  flex: 0 0 90%;
+}
+.skyfall.sheet.actor .background-box .box {
+  background-color: white;
+  border: 2px solid #424f66;
+}
+/* ----------------------------------------- */
+/*  Item Styles                              */
+/* ----------------------------------------- */
+.skyfall.sheet .window-content :has(> .ability) {
+  overflow-y: hidden;
+}
+.skyfall.sheet .window-content .ability {
+  flex-wrap: nowrap;
+  max-height: 600px;
+}
+.skyfall.sheet .window-content .ability .sheet-editable {
+  overflow-y: scroll;
+  min-width: 300px;
+}
+.skyfall.sheet .window-content .ability .sheet-card {
+  width: 420px;
+  flex: 0 0 420px;
+}
+.skyfall.sheet .window-content .ability .sheet-card > div {
+  padding: 5px;
+  margin-right: 1rem;
+  border: 1px solid black;
+  position: relative;
+  flex: 0;
+  background-color: #e7e8ed;
+}
+.skyfall.sheet .window-content .ability .sheet-card > div label {
+  font-weight: bold;
+  color: #182657;
+}
+.skyfall.sheet .window-content .ability .sheet-card > div ul,
+.skyfall.sheet .window-content .ability .sheet-card > div ol {
+  list-style: none;
+  padding: 0;
+}
+.skyfall.sheet .window-content .ability .sheet-card > figure.content-embed {
+  margin: 0;
+  margin-right: 1rem;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-header {
+  background-color: #182657;
+  align-items: center;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-header > * {
+  color: white;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-header .skyfall-icon {
+  flex: 0 0 25px;
+  text-align: center;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-header .cost {
+  flex: 0 0 50px;
+  text-align: center;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-descriptors {
+  padding: 10px;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-descriptors label.descriptor {
+  border: 1px solid gray;
+  color: white;
+}
+.skyfall.sheet .window-content .ability .sheet-card .ability-properties {
+  background-color: #babecd;
+}
+.skyfall.sheet .window-content .ability .sheet-card .sheet-card hr {
+  display: none;
+}
+.skyfall.sheet .window-content .ability .sheet-card hr,
+.skyfall.sheet .window-content .ability .section-edit hr {
+  flex: 0;
+}
+.skyfall.sheet .window-content .item .item-icon {
+  background-size: cover;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+}
+.skyfall.sheet .window-content .heritage-tabs {
+  flex: 0 0 100px;
+}
+/* ----------------------------------------- */
+/*  Effects Styles                             */
+/* ----------------------------------------- */
+.skyfall.sheet.modification {
+  max-height: 700px;
+}
+.skyfall.sheet.modification .sheet-body {
+  max-width: 500px;
+}
+.skyfall.sheet.modification .details {
+  min-height: 500px;
+}
+/* ----------------------------------------- */
+/*  ChatMessage Styles                       */
+/* ----------------------------------------- */
+.chat-message:has( .skyfall ) {
+  background: url(assets/sheet/background.webp) repeat white;
+}
+.chat-message:has( .usage-card ) {
+  position: relative;
+}
+.chat-message:has( .usage-card ) .header-overlay {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url(assets/sheet/bg-top-right.svg) no-repeat;
+  background-size: 140%;
+  background-position: 30% -65px;
+}
+.chat-message:has( .usage-card ) .message-header {
+  color: white;
+  z-index: 2;
+}
+.skyfall.usage-card {
+  position: relative;
+  color: #182657;
+}
+.skyfall.usage-card .card-header {
+  font-family: Skyfall;
+  color: white;
+  position: relative;
+  width: 85%;
+  height: 3em;
+  max-height: 3em;
+  float: left;
+  top: -10px;
+  align-items: center;
+  align-content: center;
+}
+.skyfall.usage-card .card-header .icon {
+  flex: 0;
+}
+.skyfall.usage-card .card-header h1,
+.skyfall.usage-card .card-header h2,
+.skyfall.usage-card .card-header h3,
+.skyfall.usage-card .card-header h4,
+.skyfall.usage-card .card-header h5,
+.skyfall.usage-card .card-header h6 {
+  margin: 0;
+}
+.skyfall.usage-card .card-header .item-name {
+  margin-left: 10px;
+  line-height: 1em;
+  font-size: 20px;
+}
+.skyfall.usage-card .card-header .fonts22 {
+  font-size: 22px;
+}
+.skyfall.usage-card .card-header .fonts20 {
+  font-size: 20px;
+}
+.skyfall.usage-card .card-header .fonts18 {
+  font-size: 18px;
+}
+.skyfall.usage-card .card-header .fonts16 {
+  font-size: 16px;
+}
+.skyfall.usage-card .card-header .fonts14 {
+  font-size: 14px;
+}
+.skyfall.usage-card .card-header .fonts12 {
+  font-size: 12px;
+}
+.skyfall.usage-card .card-aside {
+  color: white;
+  position: relative;
+  width: 15%;
+  float: right;
+  align-items: center;
+}
+.skyfall.usage-card .ability-descriptors label.descriptor {
+  font-size: 12px;
+  padding: 2px;
+  line-height: 23px;
+}
+.skyfall.usage-card .ability-properties p {
+  margin: 0;
+}
+.skyfall.usage-card .ability-properties p label {
+  font-weight: bold;
+}
+.skyfall.usage-card .chat-actions {
+  width: 100%;
+}
+.skyfall.usage-card .evaluated-roll {
+  position: relative;
+}
+.skyfall.usage-card .roll-btns {
+  position: absolute;
+}
+.skyfall.usage-card .roll-btns.top {
+  top: 18px;
+}
+.skyfall.usage-card .roll-btns.bottom {
+  bottom: 0px;
+}
+.skyfall.usage-card .roll-btns.left {
+  float: left;
+  left: 0px;
+}
+.skyfall.usage-card .roll-btns.right {
+  float: right;
+  right: 0px;
+}
+.skyfall.usage-card .roll-btns button {
+  width: 28px;
+  font-size: 14px;
+  line-height: 22px;
+}
+/* ----------------------------------------- */
+/*  Journal Styles                           */
+/* ----------------------------------------- */
+/* ----------------------------------------- */
+/*  Skyfall Styles                           */
+/* ----------------------------------------- */
+:root,
+* {
   scrollbar-color: #182657 transparent;
   scrollbar-width: thin;
 }
 .skyfall > * {
   scrollbar-width: thin;
 }
-  
+.skyfall h1,
+.skyfall h2,
+.skyfall h3,
+.skyfall h4,
+.skyfall h5,
+.skyfall h6 {
+  border-bottom: none;
+  font-family: Skyfall;
+}
+.skyfall label.descriptor {
+  padding: 5px;
+  margin: 2px 2px;
+  background-color: #182657;
+  color: white;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.skyfall label.descriptor.active {
+  opacity: 1;
+}
+.skyfall label.descriptor input[type="checkbox"] {
+  display: none;
+}
 .skyfall .text-center {
   text-align: center;
 }
-
+.skyfall.sheet .window-content {
+  background: url(assets/sheet/background.webp) repeat white;
+}
+.skyfall .background {
+  background-image: url(assets/sheet/background-cut.png);
+  background-size: cover;
+}
+.skyfall .border {
+  border-image: url(assets/sheet/border.svg) 1;
+  border-image-repeat: stretch;
+  border-image-outset: 0;
+  border-image-slice: 10;
+  border-image-width: 10px;
+  padding: 10px;
+}
+.skyfall .list-items {
+  list-style: none;
+  padding: 0;
+}
+.skyfall .list-items li {
+  align-items: center;
+}
+.skyfall .list-items .item-controls {
+  text-align: center;
+}
 .skyfall .sf-icon {
   display: inline-flex;
   align-self: center;
 }
-
-.skyfall .sf-icon svg, .skyfall .sf-icon svg image {
+.skyfall .sf-icon svg,
+.skyfall .sf-icon svg image {
   width: 1em;
   height: 1em;
 }
-/*
-.system-skyfall *, .skyfall * {
-  scrollbar-color: #182657 transparent;
-  scrollbar-width: thin;
+#tooltip:has(.status-effect) {
+  background-color: #652657;
+  padding: 1em;
 }
-.window-header { }
-*/
+#tooltip section.status-effect {
+  color: white;
+  text-align: left;
+  position: relative;
+}
+#tooltip section.status-effect h1,
+#tooltip section.status-effect h2,
+#tooltip section.status-effect h3,
+#tooltip section.status-effect h4,
+#tooltip section.status-effect h5,
+#tooltip section.status-effect h6 {
+  position: relative;
+  border-bottom: none;
+  background: url(assets/sheet/box-purple-title.png) no-repeat;
+  line-height: 1.5em;
+  left: -1em;
+  padding-left: 1.5em;
+  color: #652657;
+}
+#tooltip section.status-effect ol,
+#tooltip section.status-effect ul {
+  list-style: none;
+  padding: 0;
+}
+/* BUG CORE */
+.sheet.journal-entry .scrollable {
+  position: relative;
+}

@@ -5,6 +5,7 @@ globalThis.SYSTEM = SYSTEM;
 // Import Modules.
 import * as applications from "./module/apps/_module.mjs";
 import * as documents from "./module/documents/_module.mjs";
+import {fields} from "./module/data/fields/custom.mjs";
 import * as models from "./module/data/_module.mjs";
 import * as sheets from "./module/sheets/_module.mjs";
 import * as dice from "./module/dice/_module.mjs";
@@ -14,35 +15,39 @@ import * as dice from "./module/dice/_module.mjs";
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
 import { registerHandlebarsHelpers } from "./module/helpers/handlebars.mjs";
 
+globalThis.skyfall = {
+	CONST: SYSTEM,
+	applications,
+	documents,
+	models,
+	sheets,
+	data: {
+		fields
+	}
+}
+
 Hooks.once('init', function () {
-	console.log(`Initializing Crucible Game System`);
+	console.log(`Initializing Skyfall Game System`);
   game.system.CONST = SYSTEM;
-	game.system.api = {
-		applications,
-		documents,
-		models,
-		sheets,
-	};
+	globalThis.skyfall = game.skyfall = Object.assign(game.system, globalThis.skyfall);
 
 	// Register System Settings
 	// SystemSettings();
 	// Add custom constants for configuration.
 	CONFIG.SKYFALL = SYSTEM;
 	CONFIG.time.roundTime = 6;
-	CONFIG.ActiveEffect.legacyTransferral = false;
+	CONFIG.ActiveEffect.legacyTransferral = true;
 	CONFIG.Combat.initiative.formula = '1d20 + @des';
 	CONFIG.Combat.initiative.decimals = 2;
 
-	// Define custom Document classes
+	// Define system Document classes
 	CONFIG.Actor.documentClass = documents.SkyfallActor;
 	CONFIG.Item.documentClass = documents.SkyfallItem;
-	// CONFIG.ActiveEffect.documentClass = documents.SkyfallActiveEffect;
-	// CONFIG.Token.documentClass = documents.Skyfall.SkyfallToken;
-
-	// REGISTER DOCUMENT CLASSES
-	CONFIG.Actor.documentClass = documents.SkyfallActor;
-	// CONFIG.Item.documentClass = documents.SkyfallItem;
-
+	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
+	// CONFIG.Token.documentClass = documents.SkyfallToken;
+	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
+	
+	
 	// DATA MODEL
 	CONFIG.Actor.dataModels["character"] = models.actor.Character;
 	CONFIG.Actor.dataModels["npc"] = models.actor.NPC;
@@ -67,9 +72,13 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["consumable"] = models.item.Consumable;
 	CONFIG.Item.dataModels["loot"] = models.item.Loot;
 
+	CONFIG.ActiveEffect.dataModels["modification"] = models.other.Modification;
+	CONFIG.ChatMessage.dataModels["usage"] = models.other.UsageMessage;
+
 	// Register Roll Extensions
 	CONFIG.Dice.rolls.push(dice.D20Roll);
 	// CONFIG.Dice.legacyParsing = true; // TODO REMOVE
+	CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/chat/roll.hbs';
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
@@ -82,15 +91,27 @@ Hooks.once('init', function () {
 		types: ['legacy','background','class','path','feature','curse','feat','ability','spell','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: true,
 	});
+	
+	Messages.registerSheet('skyfall', sheets.ItemUsageConfig, {
+		types: ['usage'],
+		makeDefault: true,
+	});
+
+	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheets.SkyfallModificationConfig, {
+		types: ['modification','sigil'],
+		makeDefault :true
+	});
 
 	// Status Effects
-  CONFIG.statusEffects = SYSTEM.statusEffects;
+	CONFIG.statusEffects = SYSTEM.statusEffects
 	// CONFIG.specialStatusEffects.INVISIBLE = "INVISIBLE";
 
 	// Preload Handlebars templates.
 	preloadHandlebarsTemplates();
 	// HELPERS
 	registerHandlebarsHelpers()
+	// Register Fonts
+	registerFonts();
 });
 
 /* -------------------------------------------- */
@@ -102,13 +123,65 @@ Handlebars.registerHelper('toLowerCase', function (str) {
 	return str.toLowerCase();
 });
 
+
+/**
+ * Registers all fonts used by the system so that they are available in the text editor.
+ */
+function registerFonts() {
+	let link = document.createElement('link');
+	link.type = 'text/css';
+	link.rel = 'stylesheet';
+	link.href = 'https://use.typekit.net/coc0chb.css';
+	document.head.appendChild(link);
+
+	const path = "systems/skyfall/fonts/";
+	CONFIG.fontDefinitions['SkyfallIcons'] = {
+		editor: true,
+		fonts: [
+			{urls: [`${path}skyfall-icons.ttf`], weight:'400'}
+		]
+	}
+
+	CONFIG.fontDefinitions['Skyfall'] = {
+		editor: true,
+		fonts: [
+			{urls: [`${path}NORTHWEST-Regular.woff`], weight:'400'},
+			{urls: [`${path}NORTHWEST-Light.woff`], weight:'200'},
+			{urls: [`${path}NORTHWEST-Bold.woff`], weight:'700'}
+		]
+	}
+
+	CONFIG.fontDefinitions['SkyfallRust'] = {
+		editor: true,
+		fonts: [
+			{urls: [`${path}NORTHWEST-RegularRust.otf`], weight:'400'},
+			{urls: [`${path}NORTHWEST-LightRust.otf`], weight:'200'},
+			{urls: [`${path}NORTHWEST-BoldRust.otf`], weight:'700'}
+		]
+	}
+
+	CONFIG.fontDefinitions['Teste'] = {
+		editor: true,
+		fonts: [
+			{urls: [`${path}teste/NORTHWEST-Rough.otf`], weight:'400'},
+		]
+	}
+}
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
 Hooks.once('ready', function () {
+	
 	// Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
 	Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
+
+	for (const [key, desc] of Object.entries(SYSTEM.DESCRIPTORS)) {
+		SYSTEM.DESCRIPTORS[key].label = game.i18n.localize( desc.label );
+	}
+
+	prepareSystemStatusEffects();
 });
 
 /* -------------------------------------------- */
@@ -149,6 +222,32 @@ async function createItemMacro(data, slot) {
 	}
 	game.user.assignHotbarMacro(macro, slot);
 	return false;
+}
+
+async function prepareSystemStatusEffects() {
+	let journalConditions;
+	if ( game.modules.has("skyfall-core") ) {
+		journalConditions = fromUuidSync(
+			"Compendium.skyfall-fastplay.regras.JournalEntry.65t2wLGXUdAgIIjm"
+		);
+	} else if ( game.modules.has("skyfall-fastplay") ) {
+		journalConditions = await fromUuid(
+			"Compendium.skyfall-fastplay.regras.JournalEntry.65t2wLGXUdAgIIjm"
+		);
+	}
+	for (const [i, ef] of CONFIG.statusEffects.entries()) {
+		ef.name = game.i18n.localize(ef.name);
+		// Search and include tooltips
+		let content = undefined;
+		if ( journalConditions ) {
+			let efName = ef.name.replace(/\(\w+\)/,'').trim();
+			let page = journalConditions.pages.find( p => p.name == efName);
+			if ( page ) {
+				content = `<section class='tooltip status-effect'><h3>${efName}</h3>${page.text.content}</section>`;
+			}
+		}
+		ef.tooltip = content;
+	}
 }
 
 /**

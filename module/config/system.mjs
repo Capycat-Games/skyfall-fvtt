@@ -23,9 +23,26 @@ const _SVGICONS = {
   sfspellutil: "systems/skyfall/assets/sheet/sfspellutil.svg",
 }
 
+const _FONTICONS = {
+  sfaction: '<span class="skyfall-icon">A</span>',
+  sfactive: '<span class="skyfall-icon">O</span>',
+  sfbonus: '<span class="skyfall-icon">B</span>',
+  sfdefense: '<span class="skyfall-icon">D</span>',
+  sfdr: '<span class="skyfall-icon">F</span>',
+  sffree: '<span class="skyfall-icon">L</span>',
+  sfheart: '<span class="skyfall-icon">V</span>',
+  sfmaction: '<span class="skyfall-icon">N</span>',
+  sfmod: '<span class="skyfall-icon">M</span>',
+  sfpassive: '<span class="skyfall-icon">P</span>',
+  sfreaction: '<span class="skyfall-icon">R</span>',
+  sfrepeatable: '<span class="skyfall-icon">T</span>',
+  sfspellattack: '<span class="skyfall-icon">J</span>',
+  sfspellcontrol: '<span class="skyfall-icon">K</span>',
+  sfspellutil: '<span class="skyfall-icon">H</span>',
+}
+
 const SVGICONS = {}
 Object.entries(_SVGICONS).reduce((acc, ent) => {
-  console.log(acc, ent);
   acc[ent[0]] = `<i class="sf-icon"><svg><image href="${ent[1]}"/></svg></i>`
   return acc;
 }, SVGICONS);
@@ -59,9 +76,9 @@ const SHEETICONS = {
   swim: '<i class="fa-solid fa-person-swimming"></i>',
   climb: '<i class="fa-solid fa-person-falling"></i>',
   dig: '<i class="fa-solid fa-person-digging"></i>',
-  
   // TODO
-  ...SVGICONS,
+  // ...SVGICONS,
+  ..._FONTICONS,
   
   skaction: '<i class="fa-solid fa-forward"></i>',
   skbonus: '<i class="fa-solid fa-angles-right"></i>',

@@ -1,30 +1,32 @@
-<ul class="list-items actions flexrow">
-	{{#each items.actions as | item |}}
+<ul class="list-items actions flexcol">
+	{{#each actions as | item |}}
 	{{#if (eq item.type 'weapon')}}
-	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
+	<li class="item {{item.type}} entry flexcol " data-entry-id="{{item.id}}">
 		<div class="item-name">{{item.name}}</div>
-		<div class="item-damage">{{item.damage}}</div>
-		<div class="item-controls">
+		<div class="item-controls flexcol">
 			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
-			<a class="control" data-action="usage" data-target="item">
+			{{#each item.abilities as | abl | }}
+			<a class="control ability" data-action="use" data-target="ability" data-item-id="{{abl.id}}">
+				{{{abl.action.icon}}} {{{ifThen abl.cost abl.cost ''}}} - {{abl.name}} {{{ifThen abl.extra abl.extra ''}}}
+			</a>
+			{{/each}}
+		</div>
+	</li>
+	{{else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
+	<li class="item {{item.type}} entry flexrow" data-entry-id2="{{item.id}}">
+		<div class="item-controls">
+			<a class="control ability" data-action="use" data-target="ability" data-item-id="{{item.id}}">
+				{{{item.system._labels.action.icon}}} {{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}
+			</a>
+			<a class="control hidden" data-action="usage" data-target="item">
 				{{{../SYSTEM.icons.star}}}
 			</a>
 		</div>
 	</li>
-	{{#else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
-	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
-		<div class="item-controls">
-			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
-			<a class="control" data-action="usage" data-target="item">
-				{{{../SYSTEM.icons.star}}}
-			</a>
-		</div>
-	</li>
-	{{#else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
+	{{else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
 	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
 		<div class="item-name">{{item.name}}</div>
 		<div class="item-controls">
-			{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
 			<a class="control" data-action="usage" data-target="item">
 				{{{../SYSTEM.icons.star}}}
 			</a>
@@ -33,7 +35,8 @@
 	{{/if}}
 	{{/each}}
 </ul>
-<ul class="list-items favorites flexrow hidden">
+
+<ul class="list-items favorites flexrow hidden" style="display: none;">
 	{{#each items.favorites as | item |}}
 	<li class="item {{item.type}} flexcol" data-item-id="{{item.id}}">
 		<div class="item-name">{{item.name}}</div>

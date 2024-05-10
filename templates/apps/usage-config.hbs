@@ -1,0 +1,72 @@
+<form>
+	<div class="usage-config header flexrow">
+		<div class="actor flexrow">
+			<img src="{{system.actorState.img}}" width="32" height="32">
+			<label>{{system.actorState.name}}</label>
+		</div>
+		<div class="item flexrow">
+			<img src="{{system.abilityState.img}}" width="32" height="32">
+			<label>{{system.abilityState.name}}</label>
+		</div>
+		{{#if system.itemState.name }}
+		<div class="item flexrow">
+			<img src="{{system.itemState.img}}" width="32" height="32">
+			<label>{{system.itemState.name}}</label>
+		</div>
+		{{/if}}
+	</div>
+
+	<div class="modifications flexcol">
+		<div class="modification header flexrow">
+			<div class="controls">{{localize "SKYFALL.APPLY"}}</div>
+			<div class="cost">{{localize "SKYFALL.ITEM.ABILITY.COST"}}</div>
+			<div class="name hidden">{{localize "SKYFALL.NAME"}}</div>
+			<div class="description">{{localize "SKYFALL.DESCRIPTION"}}</div>
+		</div>
+		{{#each modifications as | mod | }}
+		<div class="modification flexrow">
+			{{!-- ACTION - COST - TYPE  --}}
+			{{!-- DESCRIPTION  --}}
+			<div class="controls">
+				{{#if mod.system.cost.multiple }}
+				<input type="number" name="system.modifications.{{mod.id}}.apply" value="0">
+				{{else }}
+				<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply'))}}>
+				{{/if}}
+			</div>
+			<div class="cost">
+				{{mod.cost.label}}
+			</div>
+			<div class="name hidden">
+				{{mod.name}}
+			</div>
+			<div class="description">
+				{{mod.name}}
+				{{{mod.description}}}
+			</div>
+		</div>
+		{{/each}}
+	</div>
+
+	<div class="rolls">
+		{{#each system.rolls as | roll | }}
+		<div class="form-group">
+			<label for="">{{roll.options.flavor}}</label>
+			<input type="text" value="{{roll.formula}}" disabled >
+		</div>
+		{{/each}}
+	</div>
+
+	<div class="something">
+		<div class="form-group">
+			<label>FOO</label>
+			<input type="checkbox" name="system.status.configured" {{checked system.status.configured}}>
+		</div>
+	</div>
+
+	<footer class="form-footer">
+		<button data-action="execute">
+			{{localize "SKYFALL.CHATMESSAGE.USAGE.EXECUTE"}}
+		</button>
+	</footer>
+</form>

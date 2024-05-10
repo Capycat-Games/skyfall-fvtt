@@ -1,0 +1,27 @@
+{{!-- fieldPath == input name --}}
+{{!-- descriptors == list of descriptors --}}
+
+<div class="form-group descriptors-field flex0">
+	<div class="form-fields2 flexcol" style="position:relative;">
+		<input type="text" class="field-tag " name="_descriptor" >
+		<div class="tags-options flexrow">
+			{{#each descriptors as | tag key |}}
+			<div class="form-fields" style="flex-wrap: wrap;">
+				<label class="descriptor {{ifThen tag.value 'active' ''}}" data-tooltip="{{tag.type}}">
+					{{tag.label}}
+					<input type="checkbox" name="{{../fieldPath}}" value="{{key}}" {{checked tag.value}}>
+				</label>
+			</div>
+			{{/each}}
+		</div>
+		<div class="flexrow chosen-tags">
+			{{#each descriptors as | tag key |}}
+			{{#if tag.value }}
+			<div class="form-fields" style="flex-wrap: wrap;">
+				<label class="descriptor active" data-tooltip="{{tag.type}}">{{tag.label}}</label>
+			</div>
+			{{/if}}
+			{{/each}}
+		</div>
+	</div>
+</div>

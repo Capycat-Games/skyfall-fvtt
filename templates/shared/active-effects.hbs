@@ -1,0 +1,104 @@
+<section class="modification-effects" data-type="modification">
+	<ol class="list-items effects-list">
+		{{#each modifications as |section sid|}}
+		<li class="items-header entry flexrow" data-effect-type="{{section.type}}"  >
+			<h4 class="item-name effect-name flexrow">{{localize section.label}}</h4>
+			<div class="effect-source">{{localize "SKYFALL.EFFECT.SOURCE"}}</div>
+			{{#if (eq section.type 'temporary') }}
+			<div class="effect-source">{{localize "SKYFALL.EFFECT.DURATION"}}</div>
+			{{/if}}
+			<div class="item-controls effect-controls flexrow">
+				<a class="effect-control" data-action="create" data-create="ActiveEffect" data-category="{{sid}}" title="{{localize 'DOCUMENT.Create' type="Effect"}}">
+					<i class="fas fa-plus"></i> {{localize "DOCUMENT.New" type="Effect"}}
+				</a>
+			</div>
+		</li>
+
+		<ol class="list-items">
+			{{#each section.effects as |effect|}}
+			<li class="item effect entry flexrow" data-entry-id="{{effect.id}}" >
+				<div class="item-name effect-name flexrow">
+					<img class="item-image" src="{{effect.img}}"/>
+					<h4>{{effect.name}}</h4>
+				</div>
+				<div class="effect-source">{{effect.sourceName}}</div>
+				{{#if (eq section.type 'temporary') }}
+				<div class="effect-duration">{{effect.duration.label}}</div>
+				{{/if}}
+				<div class="item-controls effect-controls flexrow">
+					<a class="effect-control" data-action="toggle" data-target="system.apply.always" title="{{localize 'SKYFALL.EFFECT.TOGGLE'}}">
+						{{#if effect.system.apply.always}}{{{@root.SYSTEM.icons.on}}}{{else}}{{{@root.SYSTEM.icons.off}}}{{/if}}
+					</a>
+					<a class="effect-control" data-action="edit" data-target="effect"  title="{{localize 'DOCUMENT.Update' type="Effect"}}">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a class="effect-control" data-action="delete" data-delete="ActiveEffect" title="{{localize 'DOCUMENT.Delete' type="Effect"}}">
+						<i class="fas fa-trash"></i>
+					</a>
+				</div>
+			</li>
+			{{/each}}
+		</ol>
+		{{/each}}
+	</ol>
+</section>
+<section class="base-effects" data-type="base">
+	<ol class="list-items effects-list">
+		{{#each effects as |section sid|}}
+		<li class="items-header entry flexrow" data-effect-type="{{section.type}}"  >
+			<h4 class="item-name effect-name flexrow">{{localize section.label}}</h4>
+			<div class="effect-source">{{localize "SKYFALL.EFFECT.SOURCE"}}</div>
+			<div class="effect-source">{{localize "SKYFALL.EFFECT.DURATION"}}</div>
+			<div class="item-controls effect-controls flexrow">
+				<a class="effect-control" data-action="create" data-create="ActiveEffect" data-category="{{sid}}" title="{{localize 'DOCUMENT.Create' type="Effect"}}">
+					<i class="fas fa-plus"></i> {{localize "DOCUMENT.New" type="Effect"}}
+				</a>
+			</div>
+		</li>
+
+		<ol class="list-items">
+			{{#each section.effects as |effect|}}
+			<li class="item effect entry flexrow" data-entry-id="{{effect.id}}" >
+				<div class="item-name effect-name flexrow">
+					<img class="item-image" src="{{effect.img}}"/>
+					<h4>{{effect.name}}</h4>
+				</div>
+				<div class="effect-source">{{effect.sourceName}}</div>
+				<div class="effect-duration">{{effect.duration.label}}</div>
+				<div class="item-controls effect-controls flexrow">
+					<a class="effect-control" data-action="toggle" data-target="disabled" title="{{localize 'SKYFALL.EFFECT.TOGGLE'}}">
+						{{#if effect.disabled}}{{{@root.SYSTEM.icons.off}}}{{else}}{{{@root.SYSTEM.icons.on}}}{{/if}}
+					</a>
+					<a class="effect-control" data-action="edit" data-target="effect"  title="{{localize 'DOCUMENT.Update' type="Effect"}}">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a class="effect-control" data-action="delete" data-delete="ActiveEffect" title="{{localize 'DOCUMENT.Delete' type="Effect"}}">
+						<i class="fas fa-trash"></i>
+					</a>
+				</div>
+			</li>
+			{{/each}}
+		</ol>
+		{{/each}}
+	</ol>
+</section>
+{{#if (eq @root.document.documentName "Actor") }}
+<section class="status-effects">
+	<ol class="list-items">
+		{{#each statusEffects as | effect id | }}
+		<li class="item effect entry flexrow" data-entry-id="{{effect.id}}"  data-tooltip="{{{effect.tooltip}}}" data-tooltip-direction="RIGHT">
+			<div class="item-name effect-name flexrow">
+				<h5><img class="item-image" src="{{effect.img}}"/>{{effect.name}}</h5>
+			</div>
+			<div class="item-controls effect-controls flexrow flex0">
+				<h5>
+				<a class="effect-control" data-action="toggle" data-target="effect" title="{{localize 'SKYFALL.EFFECT.TOGGLE'}}">
+					{{#if effect.disabled}}{{{@root.SYSTEM.icons.off}}}{{else}}{{{@root.SYSTEM.icons.on}}}{{/if}}
+				</a>
+				</h5>
+			</div>
+		</li>
+		{{/each}}
+	</ol>
+</section>
+{{/if}}

@@ -5,7 +5,7 @@
 			<a class="control" data-action="edit" data-target="item">
 				{{{@root.SYSTEM.icons.edit}}}
 			</a>
-			<a class="control" data-action="delete" data-target="item">
+			<a class="control" data-action="delete" data-delete="Item">
 				{{{@root.SYSTEM.icons.delete}}}
 			</a>
 			{{else if (eq 1 2)}}
@@ -19,8 +19,8 @@
 	<input type="number" name="system.level.value" value="{{@root.system.level.value}}" style="width: 15%;">
 	{{/if}}
 	{{#if field.heritage}}
-	<input type="text" value="{{field.name}} ( {{field.heritage}} )" disabled  style="width: 80%;">
+	<input type="text" value="{{field.name}} ( {{field.heritage}} )" disabled >
 	{{else}}
-	<input type="text" value="{{field.name}}" disabled style="width: 80%;">
+	<input type="text" value="{{field.name}}" disabled>
 	{{/if}}
 </div>

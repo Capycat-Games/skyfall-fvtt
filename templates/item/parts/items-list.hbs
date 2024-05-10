@@ -6,7 +6,7 @@
 		<div class="item-icon" style="background-image:url({{item.img}})"></div>
 		<div class="item-name flex3">{{item.name}}</div>
 		<div class="item-controls">
-			<a data-action="delete" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
+			<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
 		</div>
 	</li>
 	{{/each}}

@@ -140,13 +140,10 @@ export default class Character extends foundry.abstract.TypeDataModel {
 	/** @override */
 	prepareData() {
 		super.prepareData();
-		console.log("DATAMODEL.prepareData()");
 	}
 
 	/** @override */
 	prepareBaseData() {
-		console.log("DATAMODEL.prepareBaseData()");
-		console.log(this);
 		const level = this.level.value;
 		this.proficiency = (level >= 9 ? 4 : (level >= 5 ? 3 : 2));
 		
@@ -156,6 +153,5 @@ export default class Character extends foundry.abstract.TypeDataModel {
 	 * @override
 	 */
 	prepareDerivedData() {
-		console.log("DATAMODEL.prepareDerivedData()");
 	}
 }

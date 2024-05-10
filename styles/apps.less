@@ -1,0 +1,124 @@
+/* ----------------------------------------- */
+/*  Application Styles                       */
+/* ----------------------------------------- */
+.skyfall.sheet, .journal-sheet.sheet {
+	.modification-header, .modification-description {
+		padding: 5px;
+		border: 1px solid black;
+		position: relative;
+		flex: 0;
+		background-color: #e7e8ed;
+		color: @colorSFPlayer;
+	}
+	.modification-header {
+		font-weight: bold;
+		background-color: @colorSFPlayerFaint;
+	}
+}
+.skyfall {
+	&.sheet {
+		
+		.editor, .editor-content {
+			min-height: 100px;
+			min-height: 6em;
+		}
+		.editor.prosemirror {
+			min-height: 150px;
+		}
+
+		.descriptors-field {
+			.tags-options {
+				display: none;
+	
+			}
+			.tags-options + .chosen-tags {
+				align-self: flex-end;
+			}
+		
+			.tags-options:hover,
+			.field-tag:focus + .tags-options {
+				display: flex;
+				background-color: white;
+				z-index: 3;
+				position: absolute;
+				height: 200px;
+				top: 2em;
+				/*bottom: -210px*/;
+				overflow-y: auto;
+				right: 10px;
+				width: 350px;
+			}
+		}
+
+		.modification-effects, .base-effects {
+			.list-items {
+				.item, .items-header {
+					.effect-name {
+						flex: 2;
+					}
+				}
+				.item {
+					align-content: center;
+					img {
+						width: 36px;
+						flex: 0 0 36px;
+						margin-right: 5px;
+					}
+				}
+			}
+		}
+	
+		.status-effects {
+			.list-items {
+				column-count: 3;
+				.item {
+					background-color: @colorSFPlayer;
+					color: white;
+					padding: 4px 8px 6px 8px;
+					img {
+						vertical-align: sub;
+						width: 20px;
+						flex: 0 0 20px;
+						border: none;
+						margin-right: 5px;
+					}
+					// font-size: 12px;
+				}
+			}
+		}
+	}
+	
+	&.item-usage-config {
+		.header > * {
+			label {
+				align-content: center;
+				margin-left: 5px;
+			}
+			img {
+				flex: 0;
+			}
+		}
+
+		.modifications {
+			border: 1px dashed black;
+			
+			.modification {
+				> * {
+					padding: 5px;
+					align-content: center;
+				}
+				.controls, .cost {
+					text-align: center;
+					flex: 0 0 70px;
+				}
+				.name {
+					text-align: center;
+					flex: 0 0 70px;
+				}
+				.description {
+
+				}
+			}
+		}
+	}
+}

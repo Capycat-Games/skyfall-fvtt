@@ -1,5 +1,5 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
-	<ul class="trait-list flexcol">
+	<ul class="list-items traits flexcol">
 		{{#each proficiencies as | proficiency key |}}
 		<li class="item flexrow">
 			<input type="checkbox" id="{{key}}" name="system.proficiencies" value="{{key}}" {{checked proficiency.value}}>

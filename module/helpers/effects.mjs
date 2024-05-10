@@ -4,33 +4,35 @@
  * @param {Actor|Item} owner      The owning document which manages this effect
  */
 export function onManageActiveEffect(event, owner) {
-  event.preventDefault();
-  const a = event.currentTarget;
-  const li = a.closest('li');
-  const effect = li.dataset.effectId
-    ? owner.effects.get(li.dataset.effectId)
-    : null;
-  switch (a.dataset.action) {
-    case 'create':
-      return owner.createEmbeddedDocuments('ActiveEffect', [
-        {
-          name: game.i18n.format('DOCUMENT.New', {
-            type: game.i18n.localize('DOCUMENT.ActiveEffect'),
-          }),
-          icon: 'icons/svg/aura.svg',
-          origin: owner.uuid,
-          'duration.rounds':
-            li.dataset.effectType === 'temporary' ? 1 : undefined,
-          disabled: li.dataset.effectType === 'inactive',
-        },
-      ]);
-    case 'edit':
-      return effect.sheet.render(true);
-    case 'delete':
-      return effect.delete();
-    case 'toggle':
-      return effect.update({ disabled: !effect.disabled });
-  }
+	event.preventDefault();
+	const a = event.currentTarget;
+	const li = a.closest('li');
+	const effect = li.dataset.effectId
+		? owner.effects.get(li.dataset.effectId)
+		: null;
+	const type = li.dataset.effectType;
+	const effectData = {
+		name: game.i18n.format('DOCUMENT.New', {
+			type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+		}),
+		origin: owner.uuid,
+	}
+	effectData.icon = (['modification','temporary_modification'].includes(type) ? 'icons/svg/upgrade.svg' : 'icons/svg/aura.svg');
+	effectData['duration.rounds'] = (['temporary','temporary_modification'].includes(type) ? 1 : undefined );
+	effectData.disabled = (['modification','temporary_modification','inactive'].includes(type));
+	
+	if ( ['modification','temporary_modification'].includes(type) ) effectData.type = 'modification';
+
+	switch (a.dataset.action) {
+		case 'create':
+			return owner.createEmbeddedDocuments('ActiveEffect', [effectData]);
+		case 'edit':
+			return effect.sheet.render(true);
+		case 'delete':
+			return effect.delete();
+		case 'toggle':
+			return effect.update({ disabled: !effect.disabled });
+	}
 }
 
 /**
@@ -38,31 +40,44 @@ export function onManageActiveEffect(event, owner) {
  * @param {ActiveEffect[]} effects    A collection or generator of Active Effect documents to prepare sheet data for
  * @return {object}                   Data for rendering
  */
-export function prepareActiveEffectCategories(effects) {
-  // Define effect header categories
-  const categories = {
-    temporary: {
-      type: 'temporary',
-      label: game.i18n.localize('BOILERPLATE.Effect.Temporary'),
-      effects: [],
-    },
-    passive: {
-      type: 'passive',
-      label: game.i18n.localize('BOILERPLATE.Effect.Passive'),
-      effects: [],
-    },
-    inactive: {
-      type: 'inactive',
-      label: game.i18n.localize('BOILERPLATE.Effect.Inactive'),
-      effects: [],
-    },
-  };
+export function prepareActiveEffectCategories(effects, type = 'base' ) {
+	// Define effect header categories
+	const categories = {};
+	foundry.utils.mergeObject( categories, (type == 'modification' ? {
+		modification: {
+			type: 'modification',
+			label: game.i18n.localize('SKYFALL.EFFECT.MODIFICATION'),
+			effects: [],
+		},
+		temporary: {
+			type: 'temporary',
+			label: game.i18n.localize('SKYFALL.EFFECT.MODIFICATIONTEMP'),
+			effects: [],
+		},
+	} : {
+		temporary: {
+			type: 'temporary',
+			label: game.i18n.localize('SKYFALL.EFFECT.TEMPORARY'),
+			effects: [],
+		},
+		passive: {
+			type: 'passive',
+			label: game.i18n.localize('SKYFALL.EFFECT.PASSIVE'),
+			effects: [],
+		},
+		inactive: {
+			type: 'inactive',
+			label: game.i18n.localize('SKYFALL.EFFECT.INACTIVE'),
+			effects: [],
+		},
+	}));
 
-  // Iterate over active effects, classifying them into categories
-  for (let e of effects) {
-    if (e.disabled) categories.inactive.effects.push(e);
-    else if (e.isTemporary) categories.temporary.effects.push(e);
-    else categories.passive.effects.push(e);
-  }
-  return categories;
+	// Iterate over active effects, classifying them into categories
+	for (let e of effects) {
+		if (e.type == 'modification') categories.modification.effects.push(e);
+		else if (e.disabled) categories.inactive.effects.push(e);
+		else if (e.isTemporary) categories.temporary.effects.push(e);
+		else categories.passive.effects.push(e);
+	}
+	return categories;
 }

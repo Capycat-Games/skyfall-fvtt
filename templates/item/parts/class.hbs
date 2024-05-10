@@ -14,11 +14,17 @@
 		<label>{{ localize "SKYFALL.ITEM.CLASS.HITDIE" }}</label>
 		<div class="form-fields">
 			<select name="system.hitDie">
-				{{#select @root.system.hitDie}}
-					<option value="1d6">1d6</option>
-					<option value="1d8">1d8</option>
-					<option value="1d10">1d10</option>
-				{{/select}}
+				{{selectOptions @root.hitDies valueAttr="id" labelAttr="label" selected=@root.system.hitDie}}
+			</select>
+		</div>
+	</div>
+
+	
+	<div class="form-group">
+		<label>{{ localize "SKYFALL.ITEM.CLASS.SPELLCASTING" }}</label>
+		<div class="form-fields">
+			<select name="system.spellcasting">
+				{{selectOptions @root.SYSTEM.abilities blank="" valueAttr="id" labelAttr="label" selected=@root.system.spellcasting localize=true}}
 			</select>
 		</div>
 	</div>

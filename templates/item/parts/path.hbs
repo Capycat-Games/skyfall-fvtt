@@ -4,7 +4,7 @@
 		<label>{{ localize "SKYFALL.TYPE" }}</label>
 		<div class="form-fields">
 			<select name="system.type">
-				{{selectOptions @root.SYSTEM.pathTypes nameAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
+				{{selectOptions @root.SYSTEM.pathTypes valueAttr="id" labelAttr="label" selected=@root.system.type localize=true}}
 			</select>
 		</div>
 	</div>

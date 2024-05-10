@@ -42,7 +42,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			}),
 			range: new fields.SchemaField({
 				descriptive: new fields.StringField({required: true, blank: true}),
-				value: new fields.NumberField({required: true, integer: true, min: 0}),
+				value: new fields.NumberField({required: true, min: 0}),
 				units: new fields.StringField({required: true, blank: true, choices: SYSTEM.ranges, initial: "self"}),
 			}),
 			
@@ -100,21 +100,17 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/** @override */
 	prepareData() {
 		super.prepareData();
-		console.log("DATAMODEL.prepareData()");
 	}
 
 	/**
 	 * @override
 	 */
 	prepareDerivedData() {
-		console.log("DATAMODEL.prepareDerivedData()");
 		this._labels = {};
-		console.log(this);
 
 		let actions = ['action','bonus','reaction','free'];
 		let action = this.activation.type;
 		if ( action && !actions.includes(action) ){
-			console.log(action, SYSTEM.activations)
 			this._labels.action = {
 				label: SYSTEM.activations[action].label,
 				icon: SYSTEM.icons.sfmaction,
@@ -136,16 +132,40 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				rsc: game.i18n.localize("SKYFALL.ACTOR.RESOURCES.EPABBR")
 			});
 		}
+		
+		// Prepare descriptor structure {id, type, label, hint, value}
+		if ( this.descriptors ) {
+			const _descriptors = [ ...this.descriptors ];
+			this._labels.descriptors = _descriptors.reduce((acc, key) => {
+				acc[key] = {
+					value: (this.descriptors.includes(key)),
+					...SYSTEM.DESCRIPTORS[key] ?? {
+						id: key, hint: "", type: "origin", label: key.toUpperCase(),
+					}
+				}
+				return acc;
+			}, {});
+		}
+		// Prepare spellIcon
+		const spellDescriptors = ['control','ofensive','utility'];
+		for ( const spelld of spellDescriptors ) {
+			if ( this.descriptors.includes(spelld) ) {
+				this._labels.spell = {
+					label: SYSTEM.DESCRIPTORS[spelld].label,
+					icon: SYSTEM.icons[`sfspell${spelld}`]
+				}
+			}
+		}
 
-		this._labels.traits = {};
+		this._labels.properties = {};
 		if ( this.range.descriptive ) {
-			this._labels.traits.range = {
+			this._labels.properties.range = {
 				label: "SKYFALL.ITEM.ABILITY.RANGE",
 				descriptive: this.range.descriptive,
 			}
 		} else {
 			let tileSize = canvas.grid?.options?.dimensions?.distance ?? 1.5;
-			this._labels.traits.range = {
+			this._labels.properties.range = {
 				label: "SKYFALL.ITEM.ABILITY.RANGE",
 				descriptive: game.i18n.format('{value} {unit} ({sqr} q)', {
 						value: this.range.value,
@@ -155,21 +175,21 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			}
 		}
 		if ( this.target.descriptive ) {
-			this._labels.traits.target = {
+			this._labels.properties.target = {
 				label: "SKYFALL.ITEM.ABILITY.TARGET",
 				descriptive: this.target.descriptive
 			}
 		} else {}
 
 		if ( this.duration.descriptive ) {
-			this._labels.traits.duration = {
+			this._labels.properties.duration = {
 				label: "SKYFALL.ITEM.ABILITY.DURATION",
 				descriptive: this.duration.descriptive
 			}
 		} else {}
 
 		if ( this.attack.descriptive ) {
-			this._labels.traits.attack = {
+			this._labels.properties.attack = {
 				label: "SKYFALL.ITEM.ABILITY.ATTACK",
 				descriptive: this.attack.descriptive,
 			}
@@ -186,7 +206,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		} else {}
 
 		if ( this.activation.trigger ) {
-			this._labels.traits.trigger = {
+			this._labels.properties.trigger = {
 				label: "SKYFALL.ITEM.ABILITY.TRIGGER",
 				descriptive: this.activation.trigger,
 			}
@@ -207,7 +227,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		} else {}
 
 		if ( this.components && this.components.length ) { 
-			this._labels.traits.components = {
+			this._labels.properties.components = {
 				label: "SKYFALL.ITEM.SPELL.COMPONENTS",
 				descriptive: this.components.map(i => i[0]).join(", ").toUpperCase(),
 			}

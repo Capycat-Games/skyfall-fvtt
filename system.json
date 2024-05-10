@@ -2,7 +2,7 @@
   "id": "skyfall",
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
-  "version": "0.0.1",
+  "version": "0.0.001",
   "manifest": "TODO/URL",
   "download": "TODO/URL",
   "url": "TODO/URL",
@@ -28,8 +28,8 @@
     }
   ],
   "compatibility": {
-    "minimum": 11,
-    "verified": "11.315"
+    "minimum": 12,
+    "verified": "12.320"
   },
   "esmodules": ["skyfall.mjs"],
   "styles": ["skyfall.css"],
@@ -47,9 +47,46 @@
   ],
   "packs": [],
   "packFolders": [],
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "npc": {},
+      "guild": {}
+    },
+    "Item": {
+      "legacy": {},
+      "curse": {},
+      "background": {},
+      "class": {},
+      "path": {},
+      "feature": {},
+      "feat": {},
+      "ability": {},
+      "spell": {},
+      "weapon": {},
+      "armor": {},
+      "clothing": {},
+      "equipment": {},
+      "consumable": {},
+      "loot": {}
+    },
+    "ActiveEffect": {
+      "modification": {},
+      "sigil": {}
+    },
+    "ChatMessage": {
+      "usage": {}
+    }
+  },
   "socket": true,
+  "flags": {
+    "hotReload": {
+      "extensions": ["css", "hbs"],
+      "paths": ["skyfall.css", "templates", "lang"]
+    }
+  },
   "gridDistance": 1.5,
   "gridUnits": "m",
-  "primaryTokenAttribute": "recurso.vida",
-  "secondaryTokenAttribute": "recurso.enfase"
+  "primaryTokenAttribute": "resource.hp",
+  "secondaryTokenAttribute": "resource.ep"
 }

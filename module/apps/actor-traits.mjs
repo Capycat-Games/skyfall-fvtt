@@ -88,7 +88,6 @@ export default class ActorTraits extends DocumentSheet {
 	#getDamage( context ){
 		let schema = getProperty(this.document.system.modifiers, this.target);
 		context.damageTypes = {};
-		console.log(schema, this.target);
 		for ( let [key, damage] of Object.entries(SYSTEM.DESCRIPTOR.DAMAGE) ) {
 			context.damageTypes[key] = {
 				taken: schema[key],
@@ -123,7 +122,6 @@ export default class ActorTraits extends DocumentSheet {
 	async _updateObject(event, formData) {
 		if ( formData['system.languages'] ) formData['system.languages'] = formData['system.languages'].filter(Boolean);
 		if ( formData['system.proficiencies'] ) formData['system.proficiencies'] = formData['system.proficiencies'].filter(Boolean);
-		console.log( event, formData );
 		return super._updateObject(event, formData);
 	}
 }

@@ -4,9 +4,9 @@ export default class SkyfallToken extends TokenDocument {
   static getTrackedAttributes(data, _path=[]) {
     return {
       bar: [
-        ["recurso", "vida"],
-        ["recurso", "enfase"],
-        ["recurso", "sombra"],
+        ["resource", "hp"],
+        ["resource", "ep"],
+        ["resource", "shadow"],
       ],
       value: []
     }

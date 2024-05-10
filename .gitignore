@@ -1,6 +1,7 @@
 # IDE
 .idea/
 .vs/
+.vscode/
 
 # Node Modules
 node_modules/
@@ -13,3 +14,4 @@ foundry
 
 # Skyfall
 build/
+_notes/

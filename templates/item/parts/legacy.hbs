@@ -15,23 +15,27 @@
 	{{> 'systems/skyfall/templates/item/parts/items-list.hbs' type="feature" list=@root.features target="system.features"}}
 </div>
 <div class="tab flexrow" data-group="primary" data-tab="heritage">
-	<nav class="heritage-tabs tabscol flexcol flex0" data-group="secondary">
+	<nav class="heritage-tabs tabscol flexcol" data-group="secondary">
+		<ul class="list-items">
 		{{#each @root.heritages as | item |}}
-		<a class="item flex0" data-tab="{{item.key}}">{{item.name}}</a>
+			<li>
+				<a class="item flex0" data-tab="{{item.key}}">{{item.name}}</a>
+			</li>
 		{{/each}}
-		<a data-action="create" data-type="heritage">ADD</a>
+		</ul>
+		<a class="flex0" data-action="create" data-create="heritage">{{localize "SKYFALL.ADD"}}</a>
 	</nav>
 	<div class="heritage-body">
 		{{#each @root.heritages as | item tab |}}
 		<div class="tab flexcol" data-group="secondary" data-tab="{{item.key}}">
-			<div class="input-fields">
+			<div class="input-fields form-field">
 				<label>{{localize "SKYFALL.NAME"}}</label>
 				<input type="text" name="system.heritages.{{item.key}}.name" value="{{item.name}}">
 			</div>
 			<div class="input-fields">
 				<label>{{localize "SKYFALL.DESCRIPTION"}}</label>
 				{{!-- <input type="text" name="system.heritages.{{item.key}}.description" value="{{item.description}}"> --}}
-				<textarea name="system.heritages.{{item.key}}.description" cols="30" rows="2">{{item.description}}</textarea>
+				<textarea name="system.heritages.{{item.key}}.description" cols="30" rows="3">{{item.description}}</textarea>
 			</div>
 			<div class="input-fields">
 				<label>{{localize "SKYFALL.CHOSEN"}}</label>

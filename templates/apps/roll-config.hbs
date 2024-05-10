@@ -11,7 +11,7 @@
 		<label>{{ localize "SKYFALL.ROLL.ABILITY" }}</label>
 		{{!-- <input type="text" name="ability" value="{{ability}}"> --}}
 		<select name="ability">
-			{{selectOptions SYSTEM.abilities nameAttr="id" labelAttr="abbr" selected=ability localize=true}}
+			{{selectOptions SYSTEM.abilities valueAttr="id" labelAttr="abbr" selected=ability localize=true}}
 		</select>
 	</div>
 

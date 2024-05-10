@@ -1,4 +1,5 @@
 import { SYSTEM } from "../config/system.mjs";
+import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import SkyfallSheetMixin from "./skyfall-sheet.mjs";
 
 /**
@@ -77,7 +78,11 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 				break;
 		}
 		await this.getListData(context);
-		console.log(context);
+
+		// Prepare EFFECTS
+		context.effects = prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'base') );
+		context.modifications = prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'modification'), 'modification' );
+
 		return context;
 	}
 
@@ -174,7 +179,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			feats: "SKYFALL.ITEM.FEATS",
 			effects: "SKYFALL.SHEET.EFFECTS",
 		}
-		context.hitDies = ['1d6', '1d8', '1d10'];
+		context.hitDies = {"1d6":'1d6', "1d8":'1d8', "1d10":'1d10'};
 	}
 	
 	async getPathData(context) {
@@ -221,7 +226,11 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 				return acc;
 			}, {});
 		}
-
+		let mods = this.document.effects.filter( ef => ef.type == 'modification' && ef.system.apply.itemType.includes('self') );
+		mods = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
+		context.enriched.modifications = await TextEditor.enrichHTML(`<div>${mods}</div>`);
+		console.log(mods);
+		console.log(context.enriched.modifications);
 		context.modifications = [
 			{
 				cost: 0, resource:'ep', type: "[AMPLIAR 15+]",
@@ -236,6 +245,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 				]
 			},
 		]
+		context.modifications = [];
 	}
 
 
@@ -244,10 +254,12 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			acc[key] = true;
 			return acc;
 		}, {});
-		
+		// if ( !type ) type = '*';
+		// getDescriptors( context, ['equipment'] )
+		// getDescriptors( context, ['damage','diverse',''] )
 		const _descriptors = [ ...context.system.descriptors , ...Object.keys(SYSTEM.DESCRIPTORS) ];
 		context.descriptors = _descriptors.reduce((acc, key) => {
-			if ( !SYSTEM.DESCRIPTORS[key]?.type.includes(type) ) return acc;
+			if ( type && !SYSTEM.DESCRIPTORS[key]?.type.includes(type) ) return acc;
 			acc[key] = {
 				value: (context.system.descriptors.includes(key)),
 				...SYSTEM.DESCRIPTORS[key] ?? {
@@ -264,7 +276,9 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		if ( formData['_descriptor'] ) {
 			formData['system.descriptors'] = [formData['_descriptor'], ...formData['system.descriptors']];
 		}
-		// console.log( event, formData );
+		if ( this.document.type == 'spell') {
+			formData['system.components'] = formData['system.components'].filter(Boolean);
+		}
 		return super._updateObject(event, formData);
 	}
 }

@@ -43,28 +43,7 @@
 			{{#if (or (eq @root.item.type 'weapon') (eq @root.item.type 'armor')) }}
 			<div class="form-group flex0">
 				<label for="">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</label>
-				<div class="form-fields2 flexcol" style="position:relative;">
-					<input type="text" class="field-tag " name="_descriptor" >
-					<div class="tags-options flexrow">
-						{{#each @root.descriptors as | tag key |}}
-						<div class="form-fields" style="flex-wrap: wrap;">
-							<label class="descriptor" data-tooltip="{{tag.type}}">
-								{{key}}
-								<input type="checkbox" name="system.descriptors" value="{{key}}" {{checked tag.value}}>
-							</label>
-						</div>
-						{{/each}}
-					</div>
-					<div class="flexrow">
-						{{#each @root.descriptors as | tag key |}}
-						{{#if tag.value }}
-						<div class="form-fields" style="flex-wrap: wrap;">
-							<label class="descriptor" data-tooltip="{{tag.type}}">{{key}}</label>
-						</div>
-						{{/if}}
-						{{/each}}
-					</div>
-				</div>
+				{{> "systems/skyfall/templates/shared/descriptor-field.hbs" fieldPath='system.descriptors' descriptors=descriptors }}
 			</div>
 			{{/if}}
 			{{#if @root.system.unidentified.value }}

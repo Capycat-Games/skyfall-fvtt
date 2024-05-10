@@ -1,5 +1,5 @@
 # CHANGELOG
 
-## 1.2.0
+## 0.0.001
 
-- Add support for Foundry v10
+- WIP

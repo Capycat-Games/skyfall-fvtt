@@ -1,5 +1,235 @@
-
+/* ----------------------------------------- */
+/*  Actor Styles                             */
+/* ----------------------------------------- */
 
 .skyfall.sheet.actor {
+	// font-family: Skyfall;
+	input[type=number] {
+		font-family: "Signika", sans-serif;
+	}
+	
+	label, input[type=text] {
+		font-size: 14px;
+	}
 
+	h1, h2, h3, h4, h5, h6 {
+		margin: 0;
+	}
+
+	.charname {
+		// background: url(./assets/sheet/name-title.svg) no-repeat;
+	}
+
+	.header-fields {
+		label {
+			display: block;
+			.item-controls {
+				float: right;
+				margin-right: 5px;
+			}
+		}
+		input {
+			width: auto;
+			margin-right: 5px;
+		}
+	}
+	.abilities {
+		padding: 10px;
+		justify-content: space-around;
+		font-family: Skyfall;
+		.ability {
+			background-image: url(./assets/sheet/abl-score.webp);
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			padding: 5px 5px 0 5px;
+			flex: 0 0 70px;
+			max-width: 70px;
+			.bottom {
+				margin-top: 14px;
+				transform: scale(0.7);
+				align-self: center;
+				label { font-size: 16px; }
+				span { font-size: 26px; }
+			}
+			.top, .bottom {
+				h4 {
+					margin: 0;
+				}
+				.rolling {
+					color: red;
+				}
+				input {
+					width: 80%;
+				}
+				.active {
+					font-weight: bold;
+				}
+			}
+
+		}
+	}
+	
+	.proficiency {
+		width: 80%;
+		margin: 0 auto;
+		align-items: center;
+		> * {
+			background-color: white;
+		}
+		input {
+			text-align: center;
+			border: 2px solid @colorSFGray;
+			border-radius: 0;
+			flex: 0 0 2em;
+		}
+		span {
+			font-size: 10px;
+			padding: 0 5px;
+			border: 2px solid @colorSFGray;
+			border-left: none;
+			line-height: 1em;
+			padding-bottom: 5px;
+		}
+	}
+
+	.resources {
+		> div {
+			margin-bottom: 5px;
+		}
+		h6 {
+			line-height: 1em;
+		}
+		.group-a {
+			justify-content: space-between;
+		}
+		.catharsis, .ep {
+			flex: 0 0 48%;
+			height: 65px;
+			input {
+				max-width: 50px;
+				margin: 5px auto;
+			}
+		}
+		.hp {
+			background: url(./assets/sheet/resource-a.webp) no-repeat;
+		}
+		.hitDie {
+			background: url(./assets/sheet/resource-b.webp) no-repeat;
+		}
+		.hp, .hitDie {
+			background-size: contain;
+			flex: 0 0 5em;
+			h6 {
+				line-height: 1em;
+				width: 50px;
+				margin: auto;
+			}
+			input {
+				flex: 0;
+				width: 50px;
+				margin: 0.7em auto;
+			}
+			.temp, .die {
+				height: 70px;
+				align-self: center;
+				position: relative;
+				input {
+					margin: 0 auto;
+					flex: 0;
+					border: 0;
+					border-radius: 50px;
+					flex: 0 0 56px;
+					width: 56px;
+				}
+			}
+			.temp h6 {
+				position: absolute;
+				bottom: 2em;
+				margin: 0 auto;
+				width: 100%;
+			}
+			.die {
+				flex-direction: column-reverse;
+				h6 {
+					position: absolute;
+					top: 1.5em;
+					margin: 0 auto;
+					width: 100%;
+				}
+			}
+		}
+	}
+	.resources-check {
+		.shadow a {
+			width: 60px;
+			margin: auto;
+		}
+	}
+	
+	.list-items {
+		img {
+			width: 36px;
+			flex: 0 0 36px;
+		}
+		&.skills {
+			width: 95%;
+			margin: 0.5em auto;
+			padding: 5px;
+			background-color: white;
+			border: 2px solid @colorSFGray;
+			.skill {
+				> a, > span {
+					text-align: center;
+					flex: 0 0 2em;
+				}
+				> h3 {
+					margin: 0;
+				}
+				input {
+					text-align: center;
+					border: 2px solid @colorSFGray;
+					background-color: white;
+				}
+
+				.rolling {
+					color: red;
+				}
+			}
+		}
+	}
+	.middle {
+		flex: 0 0 265px;
+	}
+	.background-box {
+		background-image: url(./assets/sheet/background-cut.png);
+		background-size: cover;
+		padding: 10px;
+		&.attributes {
+			justify-content: space-around;
+			.attribute.box {
+				align-self: auto;
+				flex: 0 0 40%;
+				margin-bottom: 5px;
+				h5 {
+					align-content: center;
+				}
+				input, span {
+					flex: 0;
+					width: 80%;
+					margin: auto;
+					margin-bottom: 5px;
+				}
+			}
+			.movement.attribute.box {
+				flex: 0 0 90%;
+			}
+		}
+		
+
+		.box {
+			background-color: white;
+			border: 2px solid #424f66;
+		}
+	}
 }

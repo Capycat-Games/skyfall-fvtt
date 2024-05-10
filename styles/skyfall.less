@@ -1,0 +1,123 @@
+// out: "../skyfall.css", compress: false, sourceMap: false
+@import "variables.less";
+@import "apps.less";
+@import "actor.less";
+@import "item.less";
+@import "effects.less";
+@import "chat.less";
+@import "journal.less";
+
+/* ----------------------------------------- */
+/*  Skyfall Styles                           */
+/* ----------------------------------------- */
+
+:root, * {
+	scrollbar-color: #182657 transparent;
+	scrollbar-width: thin;
+}
+.skyfall {
+	> * {
+		scrollbar-width: thin;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		border-bottom: none;
+		font-family: Skyfall;
+	}
+
+	label.descriptor {
+		padding: 5px;
+		margin: 2px 2px;
+		background-color: #182657;
+		color: white;
+		text-transform: uppercase;
+		opacity: 0.6;
+		
+		&.active {
+			opacity: 1;
+		}
+		
+		input[type="checkbox"] {
+			display: none;
+		}
+	}
+	
+	.text-center {
+		text-align: center;
+	}
+
+	&.sheet .window-content {
+		background: url(./assets/sheet/background.webp) repeat white;
+	}
+
+	.background {
+		background-image: url(./assets/sheet/background-cut.png);
+		background-size: cover;
+	}
+
+	.border {
+		border-image: url(./assets/sheet/border.svg) 1;
+		&.player { }
+
+		border-image-repeat: stretch;
+		border-image-outset: 0;
+		border-image-slice: 10;
+		border-image-width: 10px;
+		padding: 10px;
+	}
+
+	.list-items {
+		list-style: none;
+		padding: 0;
+		li {
+			align-items: center;
+		}
+		.item-controls {
+			text-align: center;
+		}
+	}
+
+	.sf-icon {
+		display: inline-flex;
+		align-self: center;
+	}
+	
+	.sf-icon svg, .sf-icon svg image {
+		width: 1em;
+		height: 1em;
+	}
+
+}
+
+#tooltip:has(.status-effect) {
+	// background: url(assets/sheet/box-purple.png) no-repeat;
+	// background-size: cover;
+	background-color: @colorSFOther;
+	padding: 1em;
+}
+
+#tooltip {
+	section.status-effect {
+		color: white;
+		text-align: left;
+		position: relative;
+		h1, h2, h3, h4, h5, h6 {
+			position: relative;
+			border-bottom: none;
+			background: url(assets/sheet/box-purple-title.png) no-repeat;
+			// background-image: ;
+			line-height: 1.5em;
+			left: -1em;
+			padding-left: 1.5em;
+			color: @colorSFOther;
+		}
+		ol, ul { 
+			list-style: none;
+			padding: 0;
+		}
+	}
+}
+/* BUG CORE */
+.sheet.journal-entry .scrollable {
+	position: relative;
+}
