@@ -35,6 +35,8 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		context.tabs = {}
 		context.isEditable = this.isEditable;
 		context.isEditing = this.isEditing;
+		// Get Data Fields
+		this.#getSystemFields(context);
 		context.partials = {
 			type: null, 
 			description: "systems/skyfall/templates/item/parts/description.hbs",
@@ -84,6 +86,18 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		context.modifications = prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'modification'), 'modification' );
 
 		return context;
+	}
+	
+	
+	#getSystemFields(context) {
+		let system = this.object.system.toObject();
+		const schema = this.object.system.schema;
+		system = foundry.utils.flattenObject(system);
+		
+		for (const path of Object.keys(system)) {
+			system[path] = schema.getField(path);
+		}
+		context.systemFields = foundry.utils.expandObject(system);
 	}
 
 	async getListData(context) {

@@ -3,21 +3,138 @@
 /* ----------------------------------------- */
 
 .skyfall.sheet.actor {
+	min-height: 630px;
 	// font-family: Skyfall;
 	input[type=number] {
 		font-family: "Signika", sans-serif;
 	}
-	
+	form {
+		position: relative;
+		overflow: hidden;
+	}
+	aside.sheet-header {
+		background-color: @colorSFPlayer;
+		background-opacity: 0.5;
+		button i {
+			margin: 0;
+		}
+		button, input, * {
+			color: white;
+		}
+		position: absolute;
+		float: left;
+		width: 180px;
+		margin-right: 10px;
+		height: 100%;
+		> * {
+			align-content: flex-start;
+		}
+		> div {
+			text-align: center;
+			align-self: center;
+			justify-content: center;
+			align-items: center;
+			h1, h2, h3, h4, h5, h6 {
+				// width: 80%;
+				min-height: 20px;
+				margin: auto;
+			}
+		}
+		.actor-actions {
+			line-height: 2em;
+			button {
+				font-size: 10px;
+				padding: 2px;
+				line-height: 1;
+				flex: 0 0 25px;
+				width: 25px;
+				height: 25px;
+			}
+			> * {
+				flex: 0;
+				font-size: 14px;
+			}
+		}
+		.resource-bar {
+			flex: 0;
+			.form-fields {
+				flex: 100%;
+			}
+		}
+		.shadow, .death {
+			text-align: center;
+			h3 {
+				height: 43px;
+				flex: 0 0 43px;
+				flex: 0;
+			}
+			
+		}
+	}
+	nav.sheet-tabs.tabs, section.sheet-body {
+		position: relative;
+		float: right;
+		width: calc(100% - 190px);
+	}
+	section.sheet-body {
+		height: -webkit-fill-available;
+    overflow: scroll;
+	}
 	label, input[type=text] {
 		font-size: 14px;
 	}
 
-	h1, h2, h3, h4, h5, h6 {
-		margin: 0;
-	}
-
 	.charname {
 		// background: url(./assets/sheet/name-title.svg) no-repeat;
+	}
+	
+	.actions {
+		.skills {
+			flex: 0 0 230px;
+			margin-right: 5px;
+		}
+		.list-items.actions{
+			li {
+				align-items: flex-start;
+			}
+			li.ability.weapon {
+				.item-controls {
+					width: 100%;	
+					text-align: right;
+					align-self: flex-end;
+					justify-content: flex-end;
+					a {
+						flex: 0;
+						padding: 0 5px;
+					}
+
+				}
+			}
+
+			.item-controls {
+				text-align: left;
+			}
+		}
+	}
+	.features {
+		.character-progression {
+			width: 160px;
+			flex: 0 0 200px;
+			margin-right: 5px;
+
+			input {
+				width: 100%;
+				margin: 0;
+			}
+			.class {
+				input.level {
+					width: 15%;
+					text-align: center;
+					float: left;
+				}
+				input { width: 85%;}
+			}
+		}
 	}
 
 	.header-fields {
@@ -84,6 +201,7 @@
 			flex: 0 0 2em;
 		}
 		span {
+			font-family: Skyfall;
 			font-size: 10px;
 			padding: 0 5px;
 			border: 2px solid @colorSFGray;
@@ -96,9 +214,10 @@
 	.resources {
 		> div {
 			margin-bottom: 5px;
-		}
-		h6 {
-			line-height: 1em;
+			width: 245px;
+			height: 87px;
+			min-height: 87px;
+			max-height: 87px;
 		}
 		.group-a {
 			justify-content: space-between;
@@ -121,7 +240,6 @@
 			background-size: contain;
 			flex: 0 0 5em;
 			h6 {
-				line-height: 1em;
 				width: 50px;
 				margin: auto;
 			}

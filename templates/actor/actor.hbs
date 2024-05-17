@@ -1,0 +1,56 @@
+<form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
+	{{!-- Sheet Header --}}
+	<header class="sheet-header flexrow hidden">
+		{{!-- IMG --}}
+		{{!-- NAME --}}
+		{{!-- HP/EP/CP/SP --}}
+		{{!-- ACTION REST --}}
+		{{!-- ACTION INIT --}}
+		{{!-- {{> "systems/skyfall/templates/actor/parts/header.hbs"}} --}}
+	</header>
+	<aside class="sheet-header flexcol">
+		{{!-- IMG --}}
+		{{!-- NAME --}}
+		{{!-- HP/EP/CP/SP --}}
+		{{!-- ACTION REST --}}
+		{{!-- ACTION INIT --}}
+		{{> "systems/skyfall/templates/actor/parts/aside.hbs"}}
+	</aside>
+
+	{{!-- Sheet Tab Navigation --}}
+	<nav class="sheet-tabs tabs" data-group="primary">
+	</nav>
+
+	{{!-- Sheet Body --}}
+	<section class="sheet-body flex3">
+		{{!-- Actions Tab --}}
+		<div class="tab actions flexcol" data-group="primary" data-tab="actions">
+			{{!-- {{> "systems/skyfall/templates/actor/parts/actions.hbs"}} --}}
+		</div>
+
+		{{!-- Features Tab --}}
+		<div class="tab features flexcol" data-group="primary" data-tab="features">
+			{{!-- {{> "systems/skyfall/templates/actor/parts/features.hbs"}} --}}
+		</div>
+		
+		{{!-- Abilities Tab --}}
+		<div class="tab abilities flexcol" data-group="primary" data-tab="abilities">
+			{{!-- {{> "systems/skyfall/templates/actor/parts/abilities.hbs"}} --}}
+		</div>
+
+		{{!-- Spells Tab --}}
+		<div class="tab spells flexcol" data-group="primary" data-tab="spells">
+			{{!-- {{> "systems/skyfall/templates/actor/parts/spells.hbs"}} --}}
+		</div>
+
+		{{!-- Inventory Tab --}}
+		<div class="tab inventory flexcol" data-group="primary" data-tab="inventory">
+			{{!-- {{> "systems/skyfall/templates/actor/parts/inventory.hbs"}} --}}
+		</div>
+
+		{{!-- Effecs Tab --}}
+		<div class="tab effect flexcol" data-group="primary" data-tab="effect">
+			{{!-- {{> "systems/skyfall/templates/shared/active-effects.hbs"}} --}}
+		</div>
+	</section>
+</form>

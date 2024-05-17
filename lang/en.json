@@ -50,8 +50,10 @@
 		"APPLY": "Aplicar",
 		"TYPE": "Tipo",
 		"RESOURCE": "Recurso",
+		"GIVECATHARSIS": "Conceder Catarse",
 		"SHEET":{
 			"FACE": "Face",
+			"ACTIONS": "Ações",
 			"FEATURES": "Características",
 			"INVENTORY": "Inventário",
 			"FEATS": "Talentos",

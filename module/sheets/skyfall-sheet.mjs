@@ -25,7 +25,7 @@ export default function SkyfallSheetMixin(Base) {
 			return Object.assign(super.defaultOptions, {
 				classes: ["skyfall", "sheet"], //, this.documentType
 				// template: `systems/${SYSTEM.id}/templates/item/${this.documentType}.hbs`,
-				width: 'auto',
+				width: 520,
 				height: 'auto',
 				tabs: [
 					{navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description'},

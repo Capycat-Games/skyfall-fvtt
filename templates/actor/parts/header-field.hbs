@@ -1,4 +1,4 @@
-<div class="header-fields entry" data-entry-id="{{field.id}}">
+<div class="header-fields entry {{#if level}}class{{/if}}" data-entry-id="{{field.id}}">
 	<label>{{localize label}}
 		<span class="item-controls">
 			{{#if field.id }}
@@ -16,7 +16,7 @@
 		</span>
 	</label>
 	{{#if level}}
-	<input type="number" name="system.level.value" value="{{@root.system.level.value}}" style="width: 15%;">
+	<input type="number" class="level" name="system.level.value" value="{{@root.system.level.value}}">
 	{{/if}}
 	{{#if field.heritage}}
 	<input type="text" value="{{field.name}} ( {{field.heritage}} )" disabled >

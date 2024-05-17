@@ -39,7 +39,8 @@ export default class SkyfallActorSheet extends ActorSheet {
 		context.SYSTEM = SYSTEM;
 		context.rolling = this.rolling;
 		context.VARIAVEL = true;
-
+		// Get Data Fields
+		this.#getSystemFields(context);
 		// Prepare header data
 		this._prepareHeaderData(context);
 		// Prepare data
@@ -63,6 +64,17 @@ export default class SkyfallActorSheet extends ActorSheet {
 			return acc;
 		}, []);
 		return context;
+	}
+
+	#getSystemFields(context) {
+		let system = this.object.system.toObject();
+		const schema = this.object.system.schema;
+		system = foundry.utils.flattenObject(system);
+		
+		for (const path of Object.keys(system)) {
+			system[path] = schema.getField(path);
+		}
+		context.systemFields = foundry.utils.expandObject(system);
 	}
 
 	_prepareHeaderData(context){
@@ -169,10 +181,16 @@ export default class SkyfallActorSheet extends ActorSheet {
 		context.actions = [];
 		
 		// Weapon Attack
-		const _weaponABL = context.actor.items.filter( i => i.type == 'ability' && i.system.descriptors.includes('weapon') );
-		// Weapons / Shield
+		const _weaponAbilities = context.actor.items.filter( i => i.type == 'ability' && i.system.descriptors.includes('weapon') );
+		// Attack with Weapon
 		const weapons = context.actor.items.filter( i => i.type == 'weapon' || (i.type == 'armor' && i.system.type == 'shield') );
-		for (const weapon of weapons) {
+		
+		for (const ability of _weaponAbilities) {
+			ability.weapons = weapons;
+			context.actions.push(ability);
+		}
+		
+		for (const weapon of []) {
 			let item = {};
 			item.name = weapon.name;
 			item.type = 'weapon'; // weapon.type;
@@ -402,8 +420,9 @@ export default class SkyfallActorSheet extends ActorSheet {
 
 	async #onActionUse(button) {
 		let target = button.dataset.target;
-		let withId = button.closest('.entry').dataset.entryId;
-		let id = button.dataset.itemId;
+		let id = button.closest('.entry').dataset.entryId;
+		let withId = button.dataset.itemId;
+		// let id = button.dataset.itemId;
 		if ( withId != id ) {}
 			const ability = this.actor.items.get(id);
 			if ( !ability ) return;

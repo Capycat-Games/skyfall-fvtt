@@ -88,7 +88,12 @@ Hooks.once('init', function () {
 	
 	// Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("skyfall", sheets.SkyfallItemSheet, {
-		types: ['legacy','background','class','path','feature','curse','feat','ability','spell','weapon','armor','clothing','equipment','consumable','loot'],
+		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
+		makeDefault: true,
+	});
+
+	Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
+		types: ['ability','spell'],
 		makeDefault: true,
 	});
 	
@@ -103,7 +108,7 @@ Hooks.once('init', function () {
 	});
 
 	// Status Effects
-	CONFIG.statusEffects = SYSTEM.statusEffects
+	CONFIG.statusEffects = SYSTEM.statusEffects;
 	// CONFIG.specialStatusEffects.INVISIBLE = "INVISIBLE";
 
 	// Preload Handlebars templates.
@@ -159,20 +164,13 @@ function registerFonts() {
 			{urls: [`${path}NORTHWEST-BoldRust.otf`], weight:'700'}
 		]
 	}
-
-	CONFIG.fontDefinitions['Teste'] = {
-		editor: true,
-		fonts: [
-			{urls: [`${path}teste/NORTHWEST-Rough.otf`], weight:'400'},
-		]
-	}
 }
 
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
-Hooks.once('ready', function () {
+Hooks.once('ready', async function () {
 	
 	// Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
 	Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
@@ -182,7 +180,63 @@ Hooks.once('ready', function () {
 	}
 
 	prepareSystemStatusEffects();
+
+	const svg = await fetchSVG("systems/skyfall/assets/skyfall-logo-h.svg");
+	svg.id = "logo";
+	$("#logo").replaceWith(svg);
+	// $(".ui-left")[0].insertAdjacentElement('afterbegin', svg);
 });
+
+Hooks.on("renderPlayerList", (app, html, data) => {
+	if ( !game.user.isGM ) return;
+	console.log('renderPlayerList', app, html, data)
+	html.find('li.player').each((i, player)=> {
+		if($(player).hasClass('gm')) return;
+		const userId = player.dataset.userId;
+		const character = game.users.get(userId).character;
+		if ( !character ) return;
+		const catharsis = character.system.resources.catharsis.value;
+		const playerName = $(player).find('.player-name').text();
+		// console.log()
+		$(player).find('.player-name').text(`${playerName} (${catharsis})`);
+		const btn = document.createElement("button");
+		btn.innerHTML = '<i class="fa-solid fa-bahai"></i>';
+		btn.className = "give-catharsis";
+		btn.title =  game.i18n.localize('SKYFALL.GIVECATHARSIS');
+		btn.dataset['action'] = 'catharsis';
+		player.appendChild(btn);
+	});
+	html.on('click', '.give-catharsis', _giveCatharsis.bind(this));
+});
+/* -------------------------------------------- */
+/*  Helpers                                     */
+/* -------------------------------------------- */
+
+function _giveCatharsis(event) {
+	event.preventDefault();
+	const button = event.currentTarget;
+	const userId = button.closest('li').dataset.userId;
+	const character = game.users.get(userId).character; 
+	const catharsis = character.system.resources.catharsis.value;
+	character.update({"system.resources.catharsis.value": catharsis + 1});
+	ChatMessage.create({content: `${character.name} recebeu 1 Ponto de Catarse`});
+}
+
+/**
+ * Fetch an SVG element from a source.
+ * @param {string} src                        Path of the SVG file to retrieve.
+ * @returns {SVGElement|Promise<SVGElement>}  Promise if the element is not cached, otherwise the element directly.
+ */
+function fetchSVG(src) {
+	return fetch(src)
+		.then(b => b.text())
+		.then(t => {
+			const temp = document.createElement("div");
+			temp.innerHTML = t;
+			const svg = temp.querySelector("svg");
+			return svg;
+		});
+}
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */

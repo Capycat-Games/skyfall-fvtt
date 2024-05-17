@@ -28,14 +28,14 @@ export default class Character extends foundry.abstract.TypeDataModel {
 			}),
 			resources: new fields.SchemaField({
 				hp: new fields.SchemaField({
-					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
-					max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1}),
-					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0}),
+					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL.CURRENT"}),
+					max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL.TOTAL"}),
+					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL.ACTOR.RESOURCES.TEMPORARYABBR"}),
 				}),
 				ep: new fields.SchemaField({
-					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
-					max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1}),
-					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0}),
+					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL.CURRENT"}),
+					max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL.TOTAL"}),
+					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL.ACTOR.RESOURCES.TEMPORARYABBR"}),
 				}),
 				hitDie: new fields.SchemaField({
 					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0}),

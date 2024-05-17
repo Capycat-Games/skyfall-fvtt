@@ -1,0 +1,80 @@
+<div class="flexrow flex100">
+	{{> 'systems/skyfall/templates/actor/parts/ability-scores.hbs'}}
+
+	<div class="background-box attributes flexrow text-center flex0">
+		<div class="initiative attribute box flexcol entry" data-type="initiative" data-entry-id="dex">
+			<h5><a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a></h5>
+			<input type="number" disabled value="{{system.initiative}}">
+			<div></div>
+		</div>
+	</div>
+</div>
+
+<div class="character-progression skills">
+	<div class="proficiency flexrow">
+		<input type="number" value="{{system.proficiency}}" disabled>
+		<span>{{localize "SKYFALL.ACTOR.PROFBONUSABBR"}}</span>
+	</div>
+	{{> 'systems/skyfall/templates/actor/parts/skills.hbs'}}
+</div>
+
+<div class="actions">
+	<div class="inventory-filters actions-filters flexrow">
+		<ul class="filter-list flexrow" data-filter="action">
+			<li class="filter-item" data-filter="action">{{{SYSTEM.icons.sfaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.ACTION"}}</li>
+			<li class="filter-item" data-filter="bonus">{{{SYSTEM.icons.sfbonus}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.BONUS"}}</li>
+			<li class="filter-item" data-filter="reaction">{{{SYSTEM.icons.sfreaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.REACTION"}}</li>
+			<li class="filter-item" data-filter="free">{{{SYSTEM.icons.sffree}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.FREE"}}</li>
+		</ul>
+	</div>
+
+	<ul class="list-items actions flexcol">
+		
+		{{#each actions as | item |}}
+		{{#if item.weapons}}
+		<li class="item {{item.type}} weapon entry flexcol " data-entry-id="{{item.id}}">
+			<div class="item-name">{{{item.system._labels.action.icon}}} {{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}</div>
+			<div class="item-controls flexrow flex100">
+				{{#each item.weapons as | weapon | }} 
+				<a data-action="use" data-target="ability" data-item-id="{{weapon.id}}" >
+					{{weapon.name}}
+				</a>
+				{{/each}}
+			</div>
+		</li>
+		{{else if (eq item.type 'weapon')}}
+		<li class="item {{item.type}} entry flexcol " data-entry-id="{{item.id}}">
+			<div class="item-name">{{item.name}}</div>
+			<div class="item-controls flexcol">
+				{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
+				{{#each item.abilities as | abl | }}
+				<a class="control ability" data-action="use" data-target="ability" data-ability-id="{{abl.id}}">
+					{{{abl.action.icon}}} {{{ifThen abl.cost abl.cost ''}}} - {{abl.name}} {{{ifThen abl.extra abl.extra ''}}}
+				</a>
+				{{/each}}
+			</div>
+		</li>
+		{{else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
+		<li class="item {{item.type}} entry flexrow" data-entry-id="{{item.id}}">
+			<div class="item-controls">
+				<a class="control ability" data-action="use" data-target="ability" data-item-id="{{item.id}}">
+					{{{item.system._labels.action.icon}}} {{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}
+				</a>
+				<a class="control hidden" data-action="usage" data-target="item">
+					{{{../SYSTEM.icons.star}}}
+				</a>
+			</div>
+		</li>
+		{{else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
+		<li class="item {{item.type}} flexcol" data-entry-id="{{item.id}}">
+			<div class="item-name">{{item.name}}</div>
+			<div class="item-controls">
+				<a class="control" data-action="usage" data-target="item">
+					{{{../SYSTEM.icons.star}}}
+				</a>
+			</div>
+		</li>
+		{{/if}}
+		{{/each}}
+	</ul>
+</div>

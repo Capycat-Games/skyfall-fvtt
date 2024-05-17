@@ -16,7 +16,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 			classes: ["skyfall", "item-usage-config"],
 			template: `systems/${SYSTEM.id}/templates/apps/usage-config.hbs`,
 			width: 600,
-			height: 400,
+			height: "auto", //400,
 			submitOnChange: true,
 			closeOnSubmit: false,
 		});
@@ -26,7 +26,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 	/*  Context Preparation                         */
 	/* -------------------------------------------- */
 
-	
+
 	/* -------------------------------------------- */
 
 	/** @override */
@@ -95,6 +95,17 @@ export default class ItemUsageConfig extends DocumentSheet {
 		}
 	}
 
+	
+	
+	get isEditable() {
+		return game.user.isGM || this.document.author == game.user;
+	}
+	
+	/** @inheritDoc */
+	_canUserView(user) {
+		return user.isGM || this.document.author == user;
+	}
+
 	/** @inheritdoc */
 	async _updateObject(event, formData) {
 		formData = foundry.utils.expandObject(formData);
@@ -112,4 +123,5 @@ export default class ItemUsageConfig extends DocumentSheet {
 		formData = foundry.utils.flattenObject(formData);
 		return super._updateObject(event, formData);
 	}
+
 }

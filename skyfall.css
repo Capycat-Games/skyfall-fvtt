@@ -25,6 +25,24 @@
 .flexrow.space-between {
   justify-content: space-between;
 }
+.flexrow.flex-start {
+  align-self: flex-start;
+}
+.flexrow .flex0 {
+  display: flex;
+}
+.flexrow .flex100 {
+  flex: 0 0 100%;
+}
+.flexcol.flex-start {
+  align-self: flex-start;
+}
+.flexcol .flex0 {
+  display: flex;
+}
+.flexcol .flex100 {
+  flex: 0 0 100%;
+}
 /* ----------------------------------------- */
 /*  Application Styles                       */
 /* ----------------------------------------- */
@@ -43,6 +61,28 @@
 .journal-sheet.sheet .modification-header {
   font-weight: bold;
   background-color: #babecd;
+}
+.skyfall.sheet h1,
+.skyfall.sheet h2,
+.skyfall.sheet h3,
+.skyfall.sheet h4,
+.skyfall.sheet h5,
+.skyfall.sheet h6 {
+  border-bottom: none;
+  font-family: Skyfall;
+  line-height: 1;
+  margin: 0;
+  align-self: baseline;
+}
+.skyfall.sheet input[type="text"],
+.skyfall.sheet input[type="number"],
+.skyfall.sheet input[type="password"],
+.skyfall.sheet input[type="date"],
+.skyfall.sheet input[type="time"],
+.skyfall.sheet input[type="search"],
+.skyfall.sheet select {
+  height: 22px;
+  font-size: 14px;
 }
 .skyfall.sheet .editor,
 .skyfall.sheet .editor-content {
@@ -88,7 +128,7 @@
   margin-right: 5px;
 }
 .skyfall.sheet .status-effects .list-items {
-  column-count: 3;
+  column-count: 2;
 }
 .skyfall.sheet .status-effects .list-items .item {
   background-color: #182657;
@@ -101,6 +141,9 @@
   flex: 0 0 20px;
   border: none;
   margin-right: 5px;
+}
+.skyfall.sheet .status-effects .list-items .item:first-child {
+  margin-top: 0px;
 }
 .skyfall.item-usage-config .header > * label {
   align-content: center;
@@ -128,20 +171,132 @@
 /* ----------------------------------------- */
 /*  Actor Styles                             */
 /* ----------------------------------------- */
+.skyfall.sheet.actor {
+  min-height: 630px;
+}
 .skyfall.sheet.actor input[type=number] {
   font-family: "Signika", sans-serif;
+}
+.skyfall.sheet.actor form {
+  position: relative;
+  overflow: hidden;
+}
+.skyfall.sheet.actor aside.sheet-header {
+  background-color: #182657;
+  background-opacity: 0.5;
+  position: absolute;
+  float: left;
+  width: 180px;
+  margin-right: 10px;
+  height: 100%;
+}
+.skyfall.sheet.actor aside.sheet-header button i {
+  margin: 0;
+}
+.skyfall.sheet.actor aside.sheet-header button,
+.skyfall.sheet.actor aside.sheet-header input,
+.skyfall.sheet.actor aside.sheet-header * {
+  color: white;
+}
+.skyfall.sheet.actor aside.sheet-header > * {
+  align-content: flex-start;
+}
+.skyfall.sheet.actor aside.sheet-header > div {
+  text-align: center;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+}
+.skyfall.sheet.actor aside.sheet-header > div h1,
+.skyfall.sheet.actor aside.sheet-header > div h2,
+.skyfall.sheet.actor aside.sheet-header > div h3,
+.skyfall.sheet.actor aside.sheet-header > div h4,
+.skyfall.sheet.actor aside.sheet-header > div h5,
+.skyfall.sheet.actor aside.sheet-header > div h6 {
+  min-height: 20px;
+  margin: auto;
+}
+.skyfall.sheet.actor aside.sheet-header .actor-actions {
+  line-height: 2em;
+}
+.skyfall.sheet.actor aside.sheet-header .actor-actions button {
+  font-size: 10px;
+  padding: 2px;
+  line-height: 1;
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+}
+.skyfall.sheet.actor aside.sheet-header .actor-actions > * {
+  flex: 0;
+  font-size: 14px;
+}
+.skyfall.sheet.actor aside.sheet-header .resource-bar {
+  flex: 0;
+}
+.skyfall.sheet.actor aside.sheet-header .resource-bar .form-fields {
+  flex: 100%;
+}
+.skyfall.sheet.actor aside.sheet-header .shadow,
+.skyfall.sheet.actor aside.sheet-header .death {
+  text-align: center;
+}
+.skyfall.sheet.actor aside.sheet-header .shadow h3,
+.skyfall.sheet.actor aside.sheet-header .death h3 {
+  height: 43px;
+  flex: 0 0 43px;
+  flex: 0;
+}
+.skyfall.sheet.actor nav.sheet-tabs.tabs,
+.skyfall.sheet.actor section.sheet-body {
+  position: relative;
+  float: right;
+  width: calc(100% - 190px);
+}
+.skyfall.sheet.actor section.sheet-body {
+  height: -webkit-fill-available;
+  overflow: scroll;
 }
 .skyfall.sheet.actor label,
 .skyfall.sheet.actor input[type=text] {
   font-size: 14px;
 }
-.skyfall.sheet.actor h1,
-.skyfall.sheet.actor h2,
-.skyfall.sheet.actor h3,
-.skyfall.sheet.actor h4,
-.skyfall.sheet.actor h5,
-.skyfall.sheet.actor h6 {
+.skyfall.sheet.actor .actions .skills {
+  flex: 0 0 230px;
+  margin-right: 5px;
+}
+.skyfall.sheet.actor .actions .list-items.actions li {
+  align-items: flex-start;
+}
+.skyfall.sheet.actor .actions .list-items.actions li.ability.weapon .item-controls {
+  width: 100%;
+  text-align: right;
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+.skyfall.sheet.actor .actions .list-items.actions li.ability.weapon .item-controls a {
+  flex: 0;
+  padding: 0 5px;
+}
+.skyfall.sheet.actor .actions .list-items.actions .item-controls {
+  text-align: left;
+}
+.skyfall.sheet.actor .features .character-progression {
+  width: 160px;
+  flex: 0 0 200px;
+  margin-right: 5px;
+}
+.skyfall.sheet.actor .features .character-progression input {
+  width: 100%;
   margin: 0;
+}
+.skyfall.sheet.actor .features .character-progression .class input.level {
+  width: 15%;
+  text-align: center;
+  float: left;
+}
+.skyfall.sheet.actor .features .character-progression .class input {
+  width: 85%;
 }
 .skyfall.sheet.actor .header-fields label {
   display: block;
@@ -210,6 +365,7 @@
   flex: 0 0 2em;
 }
 .skyfall.sheet.actor .proficiency span {
+  font-family: Skyfall;
   font-size: 10px;
   padding: 0 5px;
   border: 2px solid #424f66;
@@ -219,9 +375,10 @@
 }
 .skyfall.sheet.actor .resources > div {
   margin-bottom: 5px;
-}
-.skyfall.sheet.actor .resources h6 {
-  line-height: 1em;
+  width: 245px;
+  height: 87px;
+  min-height: 87px;
+  max-height: 87px;
 }
 .skyfall.sheet.actor .resources .group-a {
   justify-content: space-between;
@@ -249,7 +406,6 @@
 }
 .skyfall.sheet.actor .resources .hp h6,
 .skyfall.sheet.actor .resources .hitDie h6 {
-  line-height: 1em;
   width: 50px;
   margin: auto;
 }
@@ -420,6 +576,7 @@
 .skyfall.sheet .window-content .ability .sheet-card .ability-descriptors label.descriptor {
   border: 1px solid gray;
   color: white;
+  line-height: 2em;
 }
 .skyfall.sheet .window-content .ability .sheet-card .ability-properties {
   background-color: #babecd;
@@ -470,7 +627,7 @@
   height: 100%;
   background: url(assets/sheet/bg-top-right.svg) no-repeat;
   background-size: 140%;
-  background-position: 30% -65px;
+  background-position: 30% -75px;
 }
 .chat-message:has( .usage-card ) .message-header {
   color: white;
@@ -593,7 +750,6 @@
 .skyfall h5,
 .skyfall h6 {
   border-bottom: none;
-  font-family: Skyfall;
 }
 .skyfall label.descriptor {
   padding: 5px;
@@ -618,6 +774,10 @@
 .skyfall .background {
   background-image: url(assets/sheet/background-cut.png);
   background-size: cover;
+}
+.skyfall .border-1 {
+  border-image: url(assets/sheet/skyfall-border-1.png) 30 / 10px round;
+  padding: 10px;
 }
 .skyfall .border {
   border-image: url(assets/sheet/border.svg) 1;
@@ -645,6 +805,23 @@
 .skyfall .sf-icon svg image {
   width: 1em;
   height: 1em;
+}
+#logo .cls-1 {
+  fill: #182657;
+}
+#players {
+  width: 220px;
+}
+#players .give-catharsis {
+  max-width: 25px;
+  line-height: 1em;
+  font-size: 12px;
+  height: 20px;
+  text-align: center;
+  padding: 0;
+}
+#players .give-catharsis i {
+  margin: 0;
 }
 #tooltip:has(.status-effect) {
   background-color: #652657;

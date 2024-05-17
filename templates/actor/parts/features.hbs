@@ -1,8 +1,70 @@
-<ul class="list-items features flexrow">
+<div class="character-progression">
+	{{!-- LEGACY --}}
+	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.legacy label=(localize "{legacy} ( {heritage} )" legacy=(localize "TYPES.Item.legacy") heritage=(localize "SKYFALL.ITEM.LEGACY.HERITAGE"))}}
+	
+	{{!-- Curse --}}
+	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.curse label="TYPES.Item.curse"}}
+	
+	{{!-- Background --}}
+	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.background label="TYPES.Item.background"}}
+
+	{{!-- Classes --}}
+	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.class label=(localize "{level} / {class}" level=(localize "SKYFALL.ACTOR.LEVEL") class=(localize "TYPES.Item.class")) level=true}}
+	
+	{{!-- Paths --}}
+	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.path label="TYPES.Item.path"}}
+
+	<div class="header-fields">
+		<label>{{localize "SKYFALL.ACTOR.SIZE"}}</label>
+		<select name="system.size">
+			{{selectOptions SYSTEM.actorSizes selected=system.size localize=true valueAttr="id" labelAttr="label"}}
+		</select>
+	</div>
+
+	<div class="header-fields">
+		<label>{{localize "SKYFALL.ACTOR.DETAILS.PRONOUNS"}}</label>
+		<input type="text" name="system.details.pronouns" value="{{system.details.pronouns}}">
+	</div>
+
+	<div class="background-box flexcol">
+		<div class="languages">
+			<h4><a data-action="manage" data-target="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
+			{{#each languages as | language |}}
+				<span class="language">{{localize language}}</span>
+			{{/each}}
+		</div>
+		<div class="proficiencies">
+			<h4><a data-action="manage" data-target="proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
+			{{#each proficiencies as | proficiency |}}
+				<span class="proficiency">{{localize proficiency}}</span>
+			{{/each}}
+		</div>
+		<div class="modifiers-damage">
+			<h4><a data-action="manage" data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
+			{{#each system.modifiers.damage.taken as | damage key |}}
+				{{#unless (eq damage "nor") }}
+				<span class="modifiers-damage">
+					{{#if (eq damage "imu") }}
+					{{{../SYSTEM.icons.shield}}}
+					{{~else if (eq damage "res") }}
+					{{{../SYSTEM.icons.shieldhalf}}}
+					{{~else if (eq damage "vul") }}
+					{{{../SYSTEM.icons.heartcrack}}}
+					{{/if}}
+					{{localize (lookup (lookup @root.SYSTEM.DESCRIPTOR.DAMAGE key) "label")}}
+				</span>
+				{{/unless}}
+			{{/each}}
+			{{!-- <h4><a data-action="manage" data-target="modifiers-damage.dealt">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGEDEALT"}}</a></h4> --}}
+		</div>
+	</div>
+</div>
+
+<ul class="list-items features flex-start flexcol">
 	{{#each features as | item |}}
-	<li class="item entry flexcol" data-entry-id="{{item._id}}">
+	<li class="item entry flexrow" data-entry-id="{{item._id}}">
 		<div class="item-name">{{item.name}}</div>
-		<div class="item-xxx">{{item.name}}</div>
+		{{!-- <div class="item-xxx"></div> --}}
 		<div class="item-controls">
 			<a class="control" data-action="toggle" data-target="favorite">
 				{{{../SYSTEM.icons.star}}}

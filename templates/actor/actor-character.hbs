@@ -1,313 +1,58 @@
-{{log this}}
-<form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
-	{{log SYSTEM}}
+<form class="{{cssClass}} {{actor.type}} flexcol2" autocomplete="off">
 	{{!-- Sheet Header --}}
-	<header class="sheet-header flexrow">
-		<img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
-		<div class="flexcol">
-			<h2 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h2>
-			<div class="form-group flexrow">
-				{{!-- LEGACY --}}
-				{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.legacy label=(localize "{legacy} ( {heritage} )" legacy=(localize "TYPES.Item.legacy") heritage=(localize "SKYFALL.ITEM.LEGACY.HERITAGE"))}}
-				
-				{{!-- Curse --}}
-				{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.curse label="TYPES.Item.curse"}}
-				
-				{{!-- Background --}}
-				{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.background label="TYPES.Item.background"}}
-				
-				<div class="header-fields flex0">
-					<label>{{localize "SKYFALL.ACTOR.SIZE"}}</label>
-					<select name="system.size">
-						{{selectOptions SYSTEM.actorSizes selected=system.size localize=true valueAttr="id" labelAttr="label"}}
-					</select>
-				</div>
-			</div>
-			<div class="form-group flexrow">
-				{{!-- Classes --}}
-				{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.class label=(localize "{level} / {class}" level=(localize "SKYFALL.ACTOR.LEVEL") class=(localize "TYPES.Item.class")) level=true}}
-				
-				{{!-- Paths --}}
-				{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.path label="TYPES.Item.path"}}
-
-				<div class="header-fields flex0">
-					<label>{{localize "SKYFALL.ACTOR.DETAILS.PRONOUNS"}}</label>
-					<input type="text" name="system.details.pronouns" value="{{system.details.pronouns}}">
-				</div>
-			</div>
-		</div>
-	</header>
+	{{!-- <header class="sheet-header flexrow hidden"> --}}
+		{{!-- IMG --}}
+		{{!-- NAME --}}
+		{{!-- HP/EP/CP/SP --}}
+		{{!-- ACTION REST --}}
+		{{!-- ACTION INIT --}}
+		{{!-- {{> "systems/skyfall/templates/actor/parts/header.hbs"}} --}}
+	{{!-- </header> --}}
+	<aside class="sheet-header flexcol border-1">
+		{{> "systems/skyfall/templates/actor/parts/aside.hbs" }}
+	</aside>
 
 	{{!-- Sheet Tab Navigation --}}
 	<nav class="sheet-tabs tabs" data-group="primary">
 		{{!-- Default tab is specified in actor-sheet.mjs --}}
-		<a class="item" data-tab="face">{{localize "SKYFALL.SHEET.FACE"}}</a>
+		<a class="item" data-tab="actions">{{localize "SKYFALL.SHEET.ACTIONS"}}</a>
 		<a class="item" data-tab="features">{{localize "SKYFALL.SHEET.FEATURES"}}</a>
-		<a class="item" data-tab="inventory">{{localize "SKYFALL.SHEET.INVENTORY"}}</a>
 		<a class="item" data-tab="abilities">{{localize "SKYFALL.SHEET.ABILITIES"}}</a>
 		<a class="item" data-tab="spells">{{localize "SKYFALL.SHEET.SPELLS"}}</a>
+		<a class="item" data-tab="inventory">{{localize "SKYFALL.SHEET.INVENTORY"}}</a>
 		<a class="item" data-tab="effects">{{localize "SKYFALL.SHEET.EFFECTS"}}</a>
-		<a class="item" data-tab="debug">DEBUG</a>
 	</nav>
 
 	{{!-- Sheet Body --}}
 	<section class="sheet-body flex3">
-		{{!-- SHEET FACE --}}
-		<div class="tab face flexcol" data-group="primary" data-tab="face">
-			{{!-- TOP SECTION --}}
-			<div class="flexrow">
-				{{> 'systems/skyfall/templates/actor/parts/ability-scores.hbs'}}
-				<div class="background-box attributes flexrow text-center">
-					<div class="initiative attribute box flexcol entry" data-type="initiative" data-entry-id="dex">
-						<h5><a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a></h5>
-						<input type="number" disabled value="{{system.initiative}}">
-					</div>
-					<div class="damage-reduction attribute box flexcol">
-						<h5>{{localize "SKYFALL.ACTOR.DR"}}</h5>
-						<input type="number" disabled value="{{system.dr}}">
-					</div>
-					<div class="movement attribute box flex2 flexcol">
-						<a data-action="manage" data-target="movement">
-							<h5>{{localize "SKYFALL.ACTOR.MOVEMENT"}}</h5>
-						</a>
-						<div>
-						{{#each movement as | move | }}
-						<span data-tooltip="{{localize move.label}}">
-							{{{move.icon}}} {{move.value}} 
-						</span>
-						{{/each}}
-						</div>
-					</div>
-				</div>
-			</div>
-			{{!-- BOTTOM SECTION --}}
-			<div class="flexrow">
-				{{!-- LEFT SECTION --}}
-				<div class="left flexcol">
-					<div class="background-box flexcol">
-						<div class="proficiency flexrow">
-							<input type="number" value="{{system.proficiency}}" disabled>
-							<span>{{localize "SKYFALL.ACTOR.PROFBONUSABBR"}}</span>
-						</div>
-						{{> 'systems/skyfall/templates/actor/parts/skills.hbs'}}
-					</div>
-					<div class="background-box flexcol">
-						<div class="languages">
-							<h4><a data-action="manage" data-target="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
-							{{#each languages as | language |}}
-								<span class="language">{{localize language}}</span>
-							{{/each}}
-						</div>
-						<div class="proficiencies">
-							<h4><a data-action="manage" data-target="proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
-							{{#each proficiencies as | proficiency |}}
-								<span class="proficiency">{{localize proficiency}}</span>
-							{{/each}}
-						</div>
-						<div class="modifiers-damage">
-							<h4><a data-action="manage" data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
-							{{#each system.modifiers.damage.taken as | damage key |}}
-								{{#unless (eq damage "nor") }}
-								<span class="modifiers-damage">
-									{{#if (eq damage "imu") }}
-									{{{../SYSTEM.icons.shield}}}
-									{{~else if (eq damage "res") }}
-									{{{../SYSTEM.icons.shieldhalf}}}
-									{{~else if (eq damage "vul") }}
-									{{{../SYSTEM.icons.heartcrack}}}
-									{{/if}}
-									{{localize (lookup (lookup @root.SYSTEM.DESCRIPTOR.DAMAGE key) "label")}}
-								</span>
-								{{/unless}}
-							{{/each}}
-							{{!-- <h4><a data-action="manage" data-target="modifiers-damage.dealt">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGEDEALT"}}</a></h4> --}}
-						</div>
-					</div>
-				</div>
-				
-				{{!-- MIDDLE SECTION --}}
-				<div class="middle flexcol text-center">
-					<div class="resources background-box flexcol">
-						<div class="group-a flexrow">
-							<div class="resource box catharsis flexcol">
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.CATHARSIS"}}</h6>
-								<input type="number" name="system.resources.catharsis.value" value="{{system.resources.catharsis.value}}">
-							</div>
-							<div class="resource ep box flexcol">
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}</h6>
-								<div class="flexrow">
-									<input type="number" name="system.resources.ep.max" value="{{system.resources.ep.max}}" disabled>
-									<input type="number" name="system.resources.ep.temp" value="{{system.resources.ep.temp}}">
-									<input type="number" name="system.resources.ep.value" value="{{system.resources.ep.value}}" max="{{system.resources.ep.max}}">
-								</div>
-							</div>
-						</div>
-						<div class="resource hp  flexrow">
-							<div class="max flexcol">
-								<input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" disabled>
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}} {{localize "SKYFALL.TOTAL"}}</h6>
-							</div>
-							<div class="temp flexcol">
-								<input type="number" name="system.resources.hp.temp" value="{{system.resources.hp.temp}}">
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.TEMPORARYABBR"}}</h6>
-							</div>
-							<div class="current flexcol">
-								<input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}">
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}} {{localize "SKYFALL.CURRENT"}}</h6>
-							</div>
-						</div>
-						<div class="resource hitDie flexrow">
-							<div class="max flexcol">
-								<input type="number" name="system.resources.hitDie.max" value="{{system.resources.hitDie.max}}" disabled>
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}} {{localize "SKYFALL.TOTAL"}}</h6>
-							</div>
-							<div class="die flexcol">
-								<input type="text" name="system.resources.hitDie.dado" value="{{system.resources.hitDie.die}}" disabled>
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}}</h6>
-							</div>
-							<div class="current flexcol">
-								<input type="number" name="system.resources.hitDie.value" value="{{system.resources.hitDie.value}}">
-								<h6>{{localize "SKYFALL.ACTOR.RESOURCES.HITDIEABBR"}} {{localize "SKYFALL.CURRENT"}}</h6>
-							</div>
-						</div>
-					</div>
-					<div class="resources-check background-box flexrow">
-						<div class="shadow flexcol entry" data-entry-id="shadow">
-							<h4 data-tooltip="{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW.HINT"}}">{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW"}}</h4>
-							<a data-action="vary" data-target="system.resources.shadow.value">
-								{{#with system.resources.shadow}}
-								{{{ifThen (gte value 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte value 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte value 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte value 4) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte value 5) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{/with}}
-							</a>
-						</div>
-						<div class="death flexcol entry" data-entry-id="death">
-							<h4>{{localize "SKYFALL.ACTOR.DEATHSAVES"}}</h4>
-							<a data-action="vary" data-target="system.death.success" data-tooltip="{{localize "SKYFALL.ROLL.SUCCESSPLURAL"}}">
-								{{{SYSTEM.icons.heartline}}}
-								{{#with system.death}}
-								{{{ifThen (gte success 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte success 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte success 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{/with}}
-							</a>
-							<a data-action="vary" data-target="system.death.failure" data-tooltip="{{localize "SKYFALL.ROLL.FAILUREPLURAL"}}">
-								{{!-- {{{SYSTEM.icons.heartcrack}}} --}}
-								{{{SYSTEM.icons.skull}}}
-								{{#with system.death}}
-								{{{ifThen (gte failure 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte failure 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{{ifThen (gte failure 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-								{{/with}}
-							</a>
-						</div>
-					</div>
-					<div class="flex2">
+		{{!-- Actions Tab --}}
+		<div class="tab actions flexrow" data-group="primary" data-tab="actions">
+			{{> "systems/skyfall/templates/actor/parts/actions.hbs"}}
+		</div>
 
-					</div>
-				</div>
-				{{!-- RIGHT SECTION --}}
-				<div class="favorites flexcol">
-					{{> 'systems/skyfall/templates/actor/parts/favorites.hbs'}}
-					<ul class="list-items favorites">
-						{{! #each items.favoritos as | favorito |}}
-							{{! > "favorito.hbs"}}
-							<li class="item favorito flexrow" data-item-id="s0m31d1a2s3d4f">
-								<div class="item-icon" style="background-image: url('')"></div>
-								<h4 class="item-name">NOME</h4>
-								<div class="item-values">+2 1d6+4</div>
-								<div class="item-controls">
-									<a class="control" data-action="toggle" target="favorite">
-										{{{SYSTEM.icons.star}}}
-									</a>
-								</div>
-							</li>
-						{{! /each}}
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="tab features" data-group="primary" data-tab="features">
-			{{> 'systems/skyfall/templates/actor/parts/features.hbs'}}
-		</div>
-		<div class="tab inventory flexcol" data-group="primary" data-tab="inventory">
-			{{!-- TOP SECTION --}}
-			<div class="flexrow">
-				<div class="equipment-slot flexrow hidden">
-					<div class="slot">WEAPON</div>
-					<div class="slot">WEAPON</div>
-					<div class="slot">ARMOR</div>
-					<div class="slot">HEAD</div>
-					<div class="slot">CHEST</div>
-					<div class="slot">ARMS</div>
-					<div class="slot">LEGS</div>
-					<div class="slot">JEWELS</div>
-				</div>
-				<div class="currency flexcow">
-					<div class="trocado flexrow" data-tooltip="{{localize "SKYFALL.ACTOR.TROCADO"}}">
-						<label for="">{{localize "SKYFALL.ACTOR.TROCADOABBR"}}</label>
-						<input type="number" name="system.currency.t" value="{{system.currency.t}}">
-					</div>
-					<div class="pila flexrow" data-tooltip="{{localize "SKYFALL.ACTOR.PILE"}}">
-						<label for="">{{localize "SKYFALL.ACTOR.PILEABBR"}}</label>
-						<input type="number" name="system.currency.p" value="{{system.currency.p}}">
-					</div>
-					<div class="kurmac flexrow" data-tooltip="{{localize "SKYFALL.ACTOR.KURMAC"}}">
-						<label for="">{{localize "SKYFALL.ACTOR.KURMACABBR"}}</label>
-						<input type="number" name="system.currency.k" value="{{system.currency.k}}">
-					</div>
-				</div>
-				<div class="capacity flexrow">
-					<h5>{{localize "SKYFALL.CAPACITY"}}</h5>
-					<span style="flex:100%"></span>
-					<div class="current flexcol">
-						<input type="number" value="{{system.capacity.value}}" disabled>
-						<label>{{localize "SKYFALL.CURRENT"}}</label>
-					</div>
-					<div class="total flexcol">
-						<input type="number" value="{{system.capacity.max}}" disabled>
-						<label>{{localize "SKYFALL.LIMIT"}}</label>
-					</div>
-				</div>
-				<div class="fragments flexrow">
-					<h5>{{localize "SKYFALL.ACTOR.FRAGMENTS"}}</h5>
-					<span style="flex:100%"></span>
-					<div class="current flexcol">
-						<input type="number" value="{{system.fragments.value}}" disabled>
-						<label>{{localize "SKYFALL.CURRENT"}}</label>
-					</div>
-					<div class="total flexcol">
-						<input type="number" value="{{system.fragments.max}}" disabled>
-						<label>{{localize "SKYFALL.LIMIT"}}</label>
-					</div>
-				</div>
-			</div>
-			{{> 'systems/skyfall/templates/actor/parts/inventory.hbs'}}
-		</div>
-		<div class="tab abilities" data-group="primary" data-tab="abilities">
-			{{> 'systems/skyfall/templates/actor/parts/abilities.hbs'}}
-		</div>
-		<div class="tab spells" data-group="primary" data-tab="spells">
-			{{> 'systems/skyfall/templates/actor/parts/spells.hbs'}}
-		</div>
-		<div class="tab debug" data-group="primary" data-tab="debug">
+		{{!-- Features Tab --}}
+		<div class="tab features flexrow" data-group="primary" data-tab="features">
+			{{> "systems/skyfall/templates/actor/parts/features.hbs"}}
 		</div>
 		
-		{{!-- Active Effects Tab --}}
+		{{!-- Abilities Tab --}}
+		<div class="tab abilities flexcol" data-group="primary" data-tab="abilities">
+			{{> "systems/skyfall/templates/actor/parts/abilities.hbs"}}
+		</div>
+
+		{{!-- Spells Tab --}}
+		<div class="tab spells flexcol" data-group="primary" data-tab="spells">
+			{{> "systems/skyfall/templates/actor/parts/spells.hbs"}}
+		</div>
+
+		{{!-- Inventory Tab --}}
+		<div class="tab inventory flexcol" data-group="primary" data-tab="inventory">
+			{{> "systems/skyfall/templates/actor/parts/inventory.hbs"}}
+		</div>
+
+		{{!-- Effecs Tab --}}
 		<div class="tab effects flexcol" data-group="primary" data-tab="effects">
 			{{> "systems/skyfall/templates/shared/active-effects.hbs"}}
 		</div>
 	</section>
 </form>
-
-<style>
-	.header-fields label {
-		display: block;
-	}
-	.header-fields label .item-controls {
-		float: right;
-	}
-</style>

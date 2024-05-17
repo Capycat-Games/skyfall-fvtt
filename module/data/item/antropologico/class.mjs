@@ -16,6 +16,11 @@ export default class Class extends Antropologia {
 			initial: new fields.BooleanField({required: true, initial:false}),
 			hitDie: new fields.StringField({required: true, choices:["1d6","1d8","1d10"], initial: "1d6"}),
 			hitDieLevel: new fields.ArrayField(new fields.NumberField({required: true, interger:true})),
+			hitDie2: new fields.SchemaField({
+				value: new fields.NumberField({required: true, interger:true}),
+				max: new fields.NumberField({required: true, interger:true}),
+				die: new fields.StringField({required: true, choices:["1d6","1d8","1d10"], initial: "1d6"}),
+			}),
 			spellcasting : new fields.StringField({required: true, blank: true, choices: SYSTEM.abilities , initial: ""}),
 			proficiencies: new fields.SchemaField({
 				armor: this.grantedSchema(),

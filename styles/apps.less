@@ -17,7 +17,20 @@
 }
 .skyfall {
 	&.sheet {
-		
+		h1, h2, h3, h4, h5, h6 {
+			border-bottom: none;
+			font-family: Skyfall;
+			border-bottom: none;
+			font-family: Skyfall;
+			line-height: 1;
+			// margin: -3px 0 0 0;
+			margin: 0;
+			align-self: baseline;
+		}
+		input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], select {
+			height: 22px;
+			font-size: 14px;
+		}
 		.editor, .editor-content {
 			min-height: 100px;
 			min-height: 6em;
@@ -70,7 +83,7 @@
 	
 		.status-effects {
 			.list-items {
-				column-count: 3;
+				column-count: 2;
 				.item {
 					background-color: @colorSFPlayer;
 					color: white;
@@ -81,6 +94,9 @@
 						flex: 0 0 20px;
 						border: none;
 						margin-right: 5px;
+					}
+					&:first-child {
+						margin-top: 0px;
 					}
 					// font-size: 12px;
 				}

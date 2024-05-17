@@ -195,12 +195,12 @@ export default class SkyfallMessage extends ChatMessage {
 			catharsis: {
 				text: '<i class="fa-solid fa-bahai"></i>',
 				title: "SKYFALL.MESSAGE.CATHARSIS",
-				dataset: [['applyCatharsis',1]]
+				dataset: [['applyCatharsis','+']]
 			},
 			catharsisminus: {
 				text: '<i class="fa-solid fa-bahai"></i>',
 				title: "SKYFALL.MESSAGE.CATHARSIS",
-				dataset: [['applyCatharsis',-1]]
+				dataset: [['applyCatharsis','-']]
 			}
 		}
 		
@@ -273,6 +273,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 		// html.find('.aid').click(this._dealDamageClicked.bind(this))
 		html.on("click", "[data-apply-damage]", this.#applyDamage.bind(this));
+		html.on("click", "[data-apply-catharsis]", this.#applyCatharsis.bind(this));
 	}
 
 	/* -------------------------------------------- */
@@ -325,10 +326,28 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 	}
 
-	#applyCatharsis(event) {
+	async #applyCatharsis(event) {
 		event.preventDefault();
-		const terms = [new OperatorTerm({operator:'+'}), new DiceTerm({number:1, faces:6})];
+		const rollTerms = foundry.dice.terms;
+		const button = event.currentTarget;
+		const chatCardId = button.closest(".chat-message").dataset.messageId;
+		const operator = button.dataset.applyCatharsis;
+		const message = game.messages.get(chatCardId);
+		const rollTitle = button.closest(".evaluated-roll").dataset.rollTitle;
+		const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
+		const roll = message.rolls.find( r => r.options.flavor == rollTitle );
+		const terms = [new rollTerms.OperatorTerm({operator: operator}), new rollTerms.Die({number:1, faces:6})];
 		terms.map(t => t.evaluate());
+		roll.terms = roll.terms.concat( terms );
+		roll._formula = roll.constructor.getFormula(roll.terms);
+		await roll._evaluate();
+		message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
+		const updateData = {
+			rolls: message.rolls,
+			"system.rolls": message.system.rolls,
+		}
+		this.update(updateData);
+
 	}
 
 	/* -------------------------------------------- */
@@ -354,7 +373,9 @@ export default class SkyfallMessage extends ChatMessage {
 		console.warn( 'usageConfigurePhase' , _ability , _item );
 		// MERGE _item INTO _ability
 		this.#configureMergeItem(_ability, _item, rolls );
-		
+		// Configure Rolls
+		this.#configureItem(_ability, rolls);
+
 		// APPLY MOFIDICATIONS into tempItem
 		const appliedMod = this.system.modifications;
 		console.log(this.system.modifications);
@@ -384,7 +405,10 @@ export default class SkyfallMessage extends ChatMessage {
 		dmgDesc = new Set(dmgDesc);
 		dmgDesc = [...dmgDesc];
 
-		if ( ['weapon','equipment'].includes(item.type) &&  abl.attack ) {
+		if ( ['weapon','equipment'].includes(item.type) && abl.attack ) {
+			abl.attack.damage = abl.attack.damage.replace('@item', itm.damage.formula);
+		}
+		if ( false && ['weapon','equipment'].includes(item.type) &&  abl.attack ) {
 			const attack = abl.attack;
 			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
 			const rollData = this.getRollData();
@@ -422,7 +446,45 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 	
 	#configureItem( ability, rolls ){
+		console.log('configureItem');
 		// PREPARE ROLLS
+		const abl = ability.system;
+
+		// Group Descriptors
+		let dmgDesc = abl.descriptors.filter( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
+		dmgDesc = new Set(dmgDesc);
+		dmgDesc = [...dmgDesc];
+		console.log(abl);
+		if ( abl.attack?.hit ) {
+			const attack = abl.attack;
+			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
+			const rollData = this.getRollData();
+			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
+			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
+			rollData['prof'] = rollData.proficiency;
+
+			let rollConfig = {
+				advantage: 0, disadvantage: 0,
+				rollData: rollData,
+				terms: terms,
+			}
+			
+			const roll = D20Roll.fromConfig( rollConfig );
+			roll.configureRoll();
+			roll.options.flavor = "Ataque";
+			roll.options.types = ["attack"];
+			rolls.push( roll.toJSON() );
+
+			const damageRoll = new Roll( attack.damage, rollData );
+
+			for (const term of damageRoll.terms) {
+				term.options.flavor ??=  dmgDesc[0] ?? 'slashing';
+			}
+			damageRoll.options.flavor = "Dano";
+			damageRoll.options.types = ["damage"];
+			rolls.push( damageRoll.toJSON() );
+		}
+
 	}
 
 	#configureApplyModification( ability, modifications) {
@@ -443,7 +505,7 @@ export default class SkyfallMessage extends ChatMessage {
 			}
 			await r.evaluate();
 			this.system.rolls[i] = r.toJSON();
-			if ( roll.class == "D20Roll" && r.dice[0].total >= 15 ) {
+			if ( roll.class == "D20Roll" && r.options.amplify && r.dice[0].total >= 15 ) {
 				r.options.flavor += " Ampliado";
 				// ADD APLIFY EFFECTS
 			}
@@ -458,12 +520,14 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 		
 		await this.update({"system.rolls": this.system.rolls,"rolls": executed}, {configured: true});
-		AudioHelper.play({
-			src: CONFIG.sounds.dice,
-			volume: 1,
-			autoplay: true,
-			loop: false
-		}, true);
+		if ( executed ){
+			AudioHelper.play({
+				src: CONFIG.sounds.dice,
+				volume: 1,
+				autoplay: true,
+				loop: false
+			}, true);
+		}
 		// APPLY AMPLIFY
 		// Roll Damage / Dice
 		// Create and Place Templates

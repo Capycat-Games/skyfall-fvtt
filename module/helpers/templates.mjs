@@ -8,12 +8,16 @@ export const preloadHandlebarsTemplates = async function () {
 		// Actor partials.
 		'systems/skyfall/templates/actor/parts/ability-scores.hbs',
 		'systems/skyfall/templates/actor/parts/features.hbs',
+		'systems/skyfall/templates/actor/parts/actions.hbs',
 		'systems/skyfall/templates/actor/parts/abilities.hbs',
 		'systems/skyfall/templates/actor/parts/inventory.hbs',
 		'systems/skyfall/templates/actor/parts/favorites.hbs',
 		'systems/skyfall/templates/actor/parts/spells.hbs',
 		'systems/skyfall/templates/actor/parts/skills.hbs',
 		'systems/skyfall/templates/actor/parts/header-field.hbs',
+
+		"systems/skyfall/templates/actor/parts/header.hbs",
+		"systems/skyfall/templates/actor/parts/aside.hbs",
 
 		// 'systems/skyfall/templates/actor/parts/actor-effects.hbs',
 		// Item partials

@@ -22,7 +22,6 @@
 
 	h1, h2, h3, h4, h5, h6 {
 		border-bottom: none;
-		font-family: Skyfall;
 	}
 
 	label.descriptor {
@@ -54,7 +53,10 @@
 		background-image: url(./assets/sheet/background-cut.png);
 		background-size: cover;
 	}
-
+	.border-1 {
+		border-image: url(./assets/sheet/skyfall-border-1.png) 30 / 10px round;
+		padding: 10px;
+	}
 	.border {
 		border-image: url(./assets/sheet/border.svg) 1;
 		&.player { }
@@ -87,6 +89,26 @@
 		height: 1em;
 	}
 
+}
+
+
+#logo {
+	.cls-1 {
+		fill: @colorSFPlayer;
+	}
+}
+
+#players {
+	width: 220px;
+	.give-catharsis {
+		max-width: 25px;
+		line-height: 1em;
+		font-size: 12px;
+		height: 20px;
+		text-align: center;
+		padding: 0;
+		i { margin: 0;}
+	}
 }
 
 #tooltip:has(.status-effect) {
