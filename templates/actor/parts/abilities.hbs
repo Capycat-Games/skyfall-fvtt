@@ -1,8 +1,38 @@
 <ul class="list-items abilities flexrow">
 	{{#each abilities as | item |}}
 	<li class="item entry flexcol" data-entry-id="{{item._id}}">
-		<div class="item-name">{{item.name}}</div>
-		<div class="item-xxx">{{item.name}}</div>
+		<div class="ability-header flexrow">
+			{{{item.system._labels.action.icon}}}
+			<span class="flex2">{{item.name}}</span>
+			<span class="cost flex1">{{item.system._labels.cost}}</span>
+		</div>
+		<div class="ability-descriptors">
+			{{#each item.system._labels.descriptors as | d | }}
+			<label class="descriptor active">{{localize d.label}}</label>
+			{{/each}}
+		</div>
+		<div class="ability-properties">
+			<ul class="list-items properties" style="columns: 2;">
+			{{#each item.system._labels.properties as | p | }}
+				<li><label>{{localize p.label}}:</label> {{p.descriptive}}</li>
+			{{/each}}
+			</ul>
+		</div>
+		<div class="ability-attack">
+			<ul>
+			{{#each item.system._labels.attack as | p | }}
+				<li><label>{{localize p.label}}:</label> {{p.descriptive}}</li>
+			{{/each}}
+			</ul>
+		</div>
+		<div class="ability-effect">
+			<label>{{localize item.system._labels.effect.label}}</label>
+			{{item.system._labels.effect.descriptive}}
+		</div>
+		<div class="ability-special">
+			<label>{{localize item.system._labels.special.label}}</label>
+			{{item.system._labels.special.descriptive}}
+		</div>
 		<div class="item-controls">
 			<a class="control" data-action="toggle" data-target="favorite">
 				{{{../SYSTEM.icons.star}}}

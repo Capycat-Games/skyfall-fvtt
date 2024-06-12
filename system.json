@@ -68,11 +68,11 @@
       "clothing": {},
       "equipment": {},
       "consumable": {},
-      "loot": {}
+      "loot": {},
+      "sigil": {}
     },
     "ActiveEffect": {
-      "modification": {},
-      "sigil": {}
+      "modification": {}
     },
     "ChatMessage": {
       "usage": {}
@@ -85,8 +85,10 @@
       "paths": ["skyfall.css", "templates", "lang"]
     }
   },
-  "gridDistance": 1.5,
-  "gridUnits": "m",
+  "grid": {
+    "distance":  1.5,
+    "units": "m"
+  },
   "primaryTokenAttribute": "resource.hp",
   "secondaryTokenAttribute": "resource.ep"
 }

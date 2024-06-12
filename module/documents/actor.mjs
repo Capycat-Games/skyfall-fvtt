@@ -1,3 +1,4 @@
+import { SYSTEM } from "../config/system.mjs";
 import D20Roll from "../dice/d20-roll.mjs";
 
 /**
@@ -6,6 +7,7 @@ import D20Roll from "../dice/d20-roll.mjs";
  */
 export default class SkyfallActor extends Actor {
 
+	someProperty;
 	/* -------------------------------------------- */
 	/*  Getters                                     */
 	/* -------------------------------------------- */
@@ -20,6 +22,10 @@ export default class SkyfallActor extends Actor {
 		}, mods);
 		return mods;
 		//this.effects.filter( ef => ef.type == 'modification');
+	}
+
+	get classes() {
+		return this.items.filter(it => it.type == 'class');
 	}
 
 	/* -------------------------------------------- */
@@ -43,9 +49,16 @@ export default class SkyfallActor extends Actor {
 		const actorData = this;
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};
-		
+
 		// PREPARE HIT POINTS
-		if ( true ) {
+		let hpPerLevelMethod = game.settings.get('skyfall', 'hpPerLevelMethod');
+		if( hpPerLevelMethod == 'user' ) {
+			hpPerLevelMethod = this.getFlag('skyfall','hpPerLevelMethod');
+		}
+		if( hpPerLevelMethod == 'mean' ) this.prepareMaxHPMean();
+		else if( hpPerLevelMethod == 'roll' ) this.prepareMaxHPRoll();
+		
+		if ( false ) {
 			const hitDie = systemData.resources.hitDie.die.replace(/\d+d/,'');
 			let levels = [];
 			if ( flags.hpPerLevel == 'roll' ) levels = [];
@@ -57,9 +70,6 @@ export default class SkyfallActor extends Actor {
 			systemData.resources.hp.max = levels.reduce((acc,i)=> acc+i) ?? 1;
 			systemData.resources.hp.max += systemData.level.value * systemData.abilities.con.value;
 		}
-
-		// PREPARE HITDIE
-		systemData.resources.hitDie.max = systemData.level.value;
 		
 		// PREPARE EMPHASYS POINTS
 		systemData.resources.ep.max = systemData.level.value * 3;
@@ -131,6 +141,49 @@ export default class SkyfallActor extends Actor {
 		
 	}
 
+	prepareMaxHPMean(){
+		const systemData = this.system;
+		const hpConfig = systemData.modifiers.hp;
+		const classes = this.classes;
+		const rollData = this.getRollData();
+		const hpData = {};
+		systemData.level.value = 0;
+		for (const cls of classes) {
+			systemData.level.value += cls.system.level;
+			const die = cls.system.hitDie.die.replace(/\d+d/,'');
+			const mean = (((Number(die)) / 2) + 1); 
+			
+			if ( cls.system.initial ) hpData.dieMax = Number(die);
+			hpData.dieMean ??= 0;
+			hpData.dieMean += mean * (cls.system.level - (cls.system.initial?1:0));
+		}
+		
+		// Level -1 - first level is maxed
+		hpData.level = (systemData.level.value ?? 1) - 1;
+		// Sum of ability
+		hpConfig.abilities.reduce((acc, abl) => acc + rollData[abl], hpData.abl);
+		// Sum of bonus per level
+		hpConfig.levelBonus.reduce((acc, bns) => {
+			return acc + Number(rollData[bns] || bns || 0);
+		}, hpData.levelBonus);
+		// Sum of bonus health
+		hpConfig.totalBonus.reduce((acc, bns) => {
+			return acc + Number(rollData[bns] || bns || 0);
+		}, hpData.totalBonus);
+
+		// Pseudo Roll to calculate total hp
+		console.log(systemData, hpData);
+		const roll = new Roll(`@dieMax + @dieMean + @abl + @levelBonus + ((@abl + @levelBonus) * @level) + @totalBonus`, hpData);
+		console.log(roll);
+		roll.evaluateSync();
+		
+		console.log(roll);
+		// Set max HIT POINTS
+		systemData.resources.hp.max = roll.total;
+	}
+	prepareMaxHPRoll(){
+		// TODO
+	}
 	/**
 	 * Override getRollData() that's supplied to rolls.
 	 */
@@ -193,6 +246,8 @@ export default class SkyfallActor extends Actor {
 
 	/** @inheritdoc */
 	_onUpdate(data, options, userId) {
+		this.someProperty = "XABLAU";
+		console.log( this.someProperty );
 		return super._onUpdate(data, options, userId);
 	}
 
@@ -362,4 +417,54 @@ export default class SkyfallActor extends Actor {
 		}
 
 	}
+	// 
+	async shortRest(message){
+		const updateData = message.system.restUpdate;
+		console.log(updateData);
+		// TODO UPDATE ITEMS USES
+		this.update(updateData);
+	}
+	async longRest(){
+		const systemData = this.system;
+		const updateData = {};
+		const quality = await Dialog.prompt({
+			title: game.i18n.localize("SKYFALL.SHEET.NEWSKILL"),
+			content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL.QUALITY")}</label><select type="text" name="quality"><option value="bad">Ruim</option><option value="default" selected>Padrão</option><option value="good">Bom</option></select></div></form>`,
+			callback: html => {
+				return html[0].querySelector('select').value
+			},
+			options: {width: 260}
+		});
+
+		updateData['system.resources.hp.value'] = systemData.resources.hp.max;
+		updateData['system.resources.ep.value'] = systemData.resources.ep.max;
+		updateData['items'] = [];
+		const classes = this.classes;
+		for (const cls of classes) {
+			let hd = (quality == "bad" ? Math.floor(cls.system.hitDie.max/2) : cls.system.hitDie.max);
+			updateData['items'].push({
+				_id: cls.id,
+				"system.hitDie.value": cls.system.hitDie.max,
+			});
+		}
+		// TODO UPDATE ITEMS USES
+		this.update(updateData);
+	}
+
+	async toggleStatusEffect(statusId, {active, overlay=false}={}) {
+		console.log(statusId, active, overlay );
+		const rightClick = overlay ? true : false;
+		if ( overlay ) overlay = false; // DEAD is the only overlay;
+		if ( statusId === 'dead' ) overlay = true;
+		let status = SYSTEM.conditions[statusId];
+		if ( status?.system.stack ) {
+			const effect = this.effects.find(ef => ef.id.startsWith(statusId) );
+			console.log(effect);
+			if ( effect && effect.stack > 1 ) {
+				return effect.stack =  rightClick ? -1 : 1;
+			} //else if ( !effect ) return;
+		}
+		return super.toggleStatusEffect(statusId, {active, overlay}) 
+	}
+
 }

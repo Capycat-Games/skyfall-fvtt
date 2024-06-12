@@ -11,6 +11,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		console.log(SYSTEM.areaTargets);
 		return {
 			description: new fields.SchemaField({
 				value: new fields.HTMLField({required: true, blank: true}),
@@ -69,7 +70,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				per: new fields.StringField({
 					required: true, nullable: true, blank: false, initial: null, label: "SKYFALL.LimitedUsesPer"
 				}),
-				recovery: new fields.StringField({required: true, blank: true, choices: ['rest','scene','turn']}),
+				recovery: new fields.StringField({required: true, blank: true, choices: ['srest','lrest','scene','turn']}),
 			}),
 			consume: new fields.SchemaField({
 				type: new fields.StringField({required: true, blank: true, label: "SKYFALL.ConsumeType"}),
@@ -91,6 +92,13 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		if ( CONST.DOCUMENT_TYPES.includes(documentType) || !foundry.data.validators.isValidId(documentId) ) {
 			throw new Error(`"${uuid}" is not a valid UUID string`);
 		}
+	}
+	/* -------------------------------------------- */
+	/*  Getters                                     */
+	/* -------------------------------------------- */
+
+	get action() {
+		return this.activation.type;
 	}
 
 	/* -------------------------------------------- */

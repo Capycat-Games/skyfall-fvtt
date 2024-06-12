@@ -1,0 +1,19 @@
+<div class="skyfall chat-card rest-card" data-actor-id="{{actor.id}}">
+	<h3>{{localize "SKYFALL.SHORTREST"}}</h3>
+	<details>
+		<summary class="recovered">
+			{{localize "SKYFALL.RECOVERED"}}: 
+			<span class="hp">{{system.recovered.hp}} {{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}}</span>
+			<span class="ep">{{system.recovered.ep}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}}</span>
+		</summary>
+		{{#each rolls as |r id|}}
+		<div class="roll-entry evaluated-roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+			{{{r.options.template}}}
+		</div>
+		{{/each}}
+	</details>
+	<hr>
+	<div class="chat-actions flexrow">
+		<button data-apply-rest="">{{localize "SKYFALL.APPLY"}}</button>
+	</div>
+</div>

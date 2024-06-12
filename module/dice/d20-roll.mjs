@@ -1,3 +1,5 @@
+import SkyfallRoll from "./skyfall-roll.mjs";
+
 const _terms = foundry.dice.terms;
 /**
  * A type of Roll specific to a d20-based check
@@ -11,7 +13,7 @@ const _terms = foundry.dice.terms;
  * @param {(number)} [options.targetValue]       Assign a target value against which the result of this roll should be compared
  * 
  */
-export default class D20Roll extends Roll {
+export default class D20Roll extends SkyfallRoll {
 	constructor(formula, data, options) {
 		super(formula, data, options);
 		this.original = formula;
@@ -110,9 +112,10 @@ export default class D20Roll extends Roll {
 		d20.modifiers = [];
 
 		const advDice = 0 + Number(this.options.advantage) - Number(this.options.disadvantage);
+		console.log( this );
 		if ( advDice > 0 ) d20.modifiers.push('kh');
 		else if ( advDice < 0 ) d20.modifiers.push('kl');
-		d20.number = 1 + Math.abs(advDice);
+		d20.number = 1 + ( Math.abs(advDice) > 0 ? 1 : 0 );//Math.abs(advDice);
 
 		// Re-compile the underlying formula
 		this._formula = this.constructor.getFormula(this.terms);

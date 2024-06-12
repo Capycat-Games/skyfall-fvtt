@@ -13,9 +13,9 @@
 	<div class="form-group">
 		<label>{{ localize "SKYFALL.ITEM.CLASS.HITDIE" }}</label>
 		<div class="form-fields">
-			<select name="system.hitDie">
-				{{selectOptions @root.hitDies valueAttr="id" labelAttr="label" selected=@root.system.hitDie}}
-			</select>
+			{{formInput @root.systemFields.hitDie.value value=@root.system.hitDie.value}}/
+			{{formInput @root.systemFields.hitDie.max value=@root.system.hitDie.max disabled=true}}
+			{{formInput @root.systemFields.hitDie.die value=@root.system.hitDie.die}}
 		</div>
 	</div>
 

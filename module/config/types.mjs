@@ -51,7 +51,7 @@ export const spells = _spells.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
 		type: ["spell"],
-		label: `SKYFALL.ITEM.SPELL.TYPES.${key.toUpperCase()}`,
+		label: `SKYFALL.SPELLLAYERS.${key.toUpperCase()}`,
 	}
 	return obj;
 }, {});
@@ -101,7 +101,7 @@ export const DESCRIPTOR = {
 	DIVERSE: {},
 };
 
-let categoryKeys = ["attack", "weapon", "alchemy", "aura", "inspiration", "magical", "prototype", "control", "ofensive", "utility", "support"];
+let categoryKeys = ["attack", "weapon", "control", "ofensive", "utility"];
 categoryKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
@@ -111,8 +111,8 @@ categoryKeys.reduce((obj, key) => {
 	return obj;
 }, DESCRIPTOR.CATEGORY);
 
-
-let equipmentKeys = ["adaptable", "reach", "thrown", "noisy", "composite", "espalhafatosa", "bludgeoning", "slashing", "disparavel", "double", "eficient", "light", "letal", "mounted", "piercing", "heavy", "precise", "brittle", "reload", "returning", "superior", "versatile"];
+// "bludgeoning", "slashing", "piercing", 
+let equipmentKeys = ["reach", "thrown", "noisy", "composite", "garish", "shooting", "double", "eficient", "light", "lethal", "mounted", "heavy", "precise", "brittle", "reload", "returning", "superior", "versatile","elixir","granade"];
 equipmentKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
@@ -138,7 +138,7 @@ damageTypes.reduce((obj, key) => {
 	return obj;
 }, DESCRIPTOR.DAMAGE);
 
-let diverseKeys = ["aspect", "creation", "elemental", "inspiration"];
+let diverseKeys = ["alchemy","aspect","aura","creation","heal","divine","elemental","enchantment","ilusion","inspiration","magical","fear","mount","movement","support","voice"];
 diverseKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,

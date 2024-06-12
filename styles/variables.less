@@ -9,15 +9,16 @@
 //   font-weight: 400;
 //   src: url('../fonts/skyfall-icons.ttf') format('ttf');
 // }
-
-
-.skyfall-icon {
-  font-family: SkyfallIcons;
+@font-face {
+  font-family: NORTHWEST;
+  src: url('./fonts/NORTHWEST-Regular.woff');
+  descent-override: 50%;
 }
+.skyfall-icon { font-family: SkyfallIcons; }
+.skyfall-font { font-family: NORTHWEST; }
 
-.skyfall-font {
-  font-family: Skyfall;
-}
+@fontSkyfall: NORTHWEST;
+@iconsSKyfall: SkyfallIcons;
 
 /* ----------------------------------------- */
 /*  Fonts Height                             */
@@ -95,3 +96,57 @@
 
 //   .flex-center { justify-content: center; }
 // }
+
+.SF-ability {
+  
+  div {
+    padding: 5px;
+    margin-right: 1rem;
+    border: 1px solid black;
+    position: relative;
+    flex: 0;
+    width: 100%;
+    background-color: #e7e8ed;
+    label {
+      font-weight: bold;
+      color: @colorSFPlayer;
+    }
+    ul, ol {
+      list-style: none;
+      padding: 0;
+    }
+  }
+  > figure.content-embed {
+    margin: 0;
+    margin-right: 1rem;
+  }
+  .ability-header {
+    background-color: @colorSFPlayer;
+    color: white;
+    font-family: @fontSkyfall;
+    align-items: center;
+    > * {
+      color: white;
+    }
+    .skyfall-icon {
+      flex: 0 0 25px;
+      text-align: center;
+    }
+    .cost {
+      flex: 0 0 50px;
+      text-align: center;
+    }
+  }
+  .ability-descriptors {
+    padding: 10px;
+
+    label.descriptor {
+      border: 1px solid gray;
+      color: white;
+      line-height: 2em;
+    }
+  }
+  .ability-properties {
+    background-color: @colorSFPlayerFaint;
+  }
+}

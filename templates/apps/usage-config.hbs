@@ -1,17 +1,17 @@
 <form>
 	<div class="usage-config header flexrow">
 		<div class="actor flexrow">
-			<img src="{{system.actorState.img}}" width="32" height="32">
-			<label>{{system.actorState.name}}</label>
+			<img src="{{actor.img}}" width="32" height="32">
+			<label>{{actor.name}}</label>
 		</div>
 		<div class="item flexrow">
-			<img src="{{system.abilityState.img}}" width="32" height="32">
-			<label>{{system.abilityState.name}}</label>
+			<img src="{{ability.img}}" width="32" height="32">
+			<label>{{ability.name}}</label>
 		</div>
-		{{#if system.itemState.name }}
+		{{#if item.name }}
 		<div class="item flexrow">
-			<img src="{{system.itemState.img}}" width="32" height="32">
-			<label>{{system.itemState.name}}</label>
+			<img src="{{item.img}}" width="32" height="32">
+			<label>{{item.name}}</label>
 		</div>
 		{{/if}}
 	</div>
@@ -23,15 +23,25 @@
 			<div class="name hidden">{{localize "SKYFALL.NAME"}}</div>
 			<div class="description">{{localize "SKYFALL.DESCRIPTION"}}</div>
 		</div>
+		{{log modifications}}
 		{{#each modifications as | mod | }}
 		<div class="modification flexrow">
 			{{!-- ACTION - COST - TYPE  --}}
 			{{!-- DESCRIPTION  --}}
-			<div class="controls">
+			{{log mod}}
+			<div class="controls flexrow">
 				{{#if mod.system.cost.multiple }}
-				<input type="number" name="system.modifications.{{mod.id}}.apply" value="0">
+				<button type="button" data-action="apply-sub"><i class="fa-solid fa-minus"></i></button>
+				<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{mod.apply}}">
+				{{!-- {{ift (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ift mod.system.apply.always 1 0) }} --}}
+				<button type="button" data-action="apply-add"><i class="fa-solid fa-plus"></i></button>
+				{{else if (xablau) }}
+				<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{ift (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ift mod.system.apply.always 1 0) }}">
 				{{else }}
-				<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply'))}}>
+				<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked mod.apply}}>
+				{{!-- (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply')) --}}
 				{{/if}}
 			</div>
 			<div class="cost">
@@ -49,24 +59,25 @@
 	</div>
 
 	<div class="rolls">
-		{{#each system.rolls as | roll | }}
+		{{log system.rolls }}
+		{{#each system.rolls as | roll i | }}
 		<div class="form-group">
-			<label for="">{{roll.options.flavor}}</label>
-			<input type="text" value="{{roll.formula}}" disabled >
+			<label for="">{{roll.options.flavor}} </label>
+			<input type="text" name="_rolls.{{i}}.formula" value="{{roll.formula}}" >
 		</div>
 		{{/each}}
 	</div>
 
-	<div class="something">
+	{{!-- <div class="something">
 		<div class="form-group">
 			<label>FOO</label>
 			<input type="checkbox" name="system.status.configured" {{checked system.status.configured}}>
 		</div>
-	</div>
+	</div> --}}
 
 	<footer class="form-footer">
-		<button data-action="execute">
-			{{localize "SKYFALL.CHATMESSAGE.USAGE.EXECUTE"}}
+		<button data-action="commit">
+			{{localize "SKYFALL.CHATMESSAGE.USAGE.COMMIT"}}
 		</button>
 	</footer>
 </form>

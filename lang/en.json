@@ -2,29 +2,49 @@
 	"TYPES": {
 		"Actor": {
 			"npc": "NPC",
-			"character": "Personagem"
+			"npcPL": "NPCS",
+			"character": "Personagem",
+			"characterPL": "Personagens"
 		},
 		"Item": {
 			"legacy": "Legado",
+			"legacyPL": "Legados",
 			"curse": "Maldição",
+			"cursePL": "Maldições",
 			"background": "Antecedente",
+			"backgroundPL": "Antecedentes",
 			"class": "Classe",
+			"classPL": "Classes",
 			"path": "Trilha",
+			"pathPL": "Trilhas",
 			"feature": "Característica",
+			"featurePL": "Características",
 			"feat": "Talento",
+			"featPL": "Talentos",
 			"ability": "Habilidade",
+			"abilityPL": "Habilidades",
 			"spell": "Magia",
+			"spellPL": "Magias",
 			"weapon": "Arma",
+			"weaponPL": "Armas",
 			"armor": "Armadura",
+			"armorPL": "Armaduras",
 			"clothing": "Vestimenta",
+			"clothingPL": "Vestimentas",
 			"equipment": "Equipamento",
+			"equipmentPL": "Equipamentos",
 			"consumable": "Consumível",
-			"loot": "Tesouro"
+			"consumablePL": "Consumíveis",
+			"loot": "Tesouro",
+			"lootPL": "Tesouros",
+			"sigil": "Sigilo",
+			"sigilPL": "Sigilos"
 		},
 		"ActiveEffect": {
 			"Base": "Efeito",
+			"BasePL": "Efeitos",
 			"Modification": "Modificação",
-			"Sigil": "Sigilo"
+			"ModificationPL": "Modificações"
 		}
 	},
 	"DOCUMENT": {
@@ -46,11 +66,19 @@
 		"DESCRIPTION": "Descrição",
 		"ADD": "Adicionar",
 		"CREATE": "Criar",
+		"EDIT": "Editar",
 		"DELETE": "Apagar",
 		"APPLY": "Aplicar",
 		"TYPE": "Tipo",
 		"RESOURCE": "Recurso",
 		"GIVECATHARSIS": "Conceder Catarse",
+		"SHORTREST": "Descanso Curto",
+		"LONGREST": "Descanso Longo",
+		"RECOVERED": "Recuperado",
+		"HITDIES": "Dados de Vida",
+		"QUALITY": "Qualidade",
+		"ORIGIN": "Origem",
+		"DURATION": "Duração",
 		"SHEET":{
 			"FACE": "Face",
 			"ACTIONS": "Ações",
@@ -217,7 +245,7 @@
 			"USES": "Usos",
 			"CHARGES": "Cargas",
 			"LEGACY": {
-				"TRAITS": "Tracos",
+				"TRAITS": "Traços",
 				"AGE": "Idade",
 				"MOVEMENT": "Deslocamento",
 				"SIZE": "Tamanho",
@@ -261,6 +289,7 @@
 				"EFFECT": "Efeito",
 				"SPECIAL": "Especial"
 			},
+			
 			"SPELL": {
 				"LAYER": "Camada",
 				"COMPONENTS": "Componentes",
@@ -407,7 +436,7 @@
 				"AMPLIFY": "Amplifica"
 			}
 		},
-		"EFFECT": {
+		"EFFECTS": {
 			"MODIFICATION": "Modificação",
 			"MODIFICATIONTEMP": "Mod. Temp.",
 			"TEMPORARY": "Temporário",
@@ -418,6 +447,14 @@
 			"CORE": "CORE"
 		},
 		"DESCRIPTORS": {
+			"LABELS": {
+				"DAMAGE": "Dano",
+				"EQUIPMENT": "Equipamento",
+				"CATEGORY": "Categoria",
+				"DIVERSE": "Diverso",
+				"ORIGIN": "Origem",
+				"SPELL": "Magia"
+			},
 			"DAMAGE": {
 				"ACID": "Ácido",
 				"BLUDGEONING": "Contundente",
@@ -435,11 +472,11 @@
 				"SPECIAL": "Especial"
 			},
 			"EQUIPMENT": {
-				"ADAPTABLE": "Adaptavel",
+				"ADAPTABLE": "Adaptaável:REMOVE",
 				"ADAPTABLEHINT": "Uma arma de uma mão com esta habilidade pode ser usada com as duas mãos para aumentar seu dano (em parênteses).",
 				"REACH": "Alongada",
 				"REACHHINT": "Alcança um espaço adicional (geralmente de adjacente para 1,5m a mais).",
-				"THROWN": "Arremessavel",
+				"THROWN": "Arremessável",
 				"THROWNHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando a FOR para ataque e dano. Elas são arremessadas e caem no mesmo espaço do alvo. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
 				"NOISY": "Barulhenta",
 				"NOISYHINT": "Enquanto estiver sendo empunhado ou vestido, esse equipamento concede desvantagem em todos os testes que envolvam Furtividade.",
@@ -447,45 +484,52 @@
 				"COMPOSITEHINT": "Ataques a distância realizados com essa arma permitem que você aplique sua FOR às jogadas de dano.",
 				"ESPALHAFATOSA": "Espalhafatosa",
 				"ESPALHAFATOSAHINT": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
+				"GARISH": "Espalhafatosa",
+				"GARISHHINT": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
 				"BLUDGEONING": "Contundente",
 				"BLUDGEONINGHINT": "Uma arma, magia ou talento com esse descritor causa dano contundente.",
 				"SLASHING": "Cortante",
 				"SLASHINGHINT": "Uma arma, magia ou talento com esse descritor causa dano cortante.",
-				"DISPARAVEL": "Disparavel",
+				"DISPARAVEL": "Disparável",
 				"DISPARAVELHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando munição. A munição é perdida depois do ataque. Estas armas usam o valor de DES ao invés de FOR para calcular ataque e dano. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
+				"SHOOTING" : "Disparável",
+				"SHOOTINGHINT": "Ataques realizados com esse descritor podem ser realizados a distância usando munição. A munição é perdida depois do ataque. Estas armas usam o valor de DES ao invés de FOR para calcular ataque e dano. O alcance do ataque está descrito na própria arma. Caso uma arma receba esse descritor por outro meio ela tem 9m de alcance.",
 				"DOUBLE": "Dupla",
 				"DOUBLEHINT": "Você pode usar a ação Atacar com Duas Armas para atacar com o outro lado da arma como se estivesse empunhando duas armas.",
 				"EFICIENT": "Eficiente",
 				"EFICIENTHINT": "Você recebe vantagens no teste da perícia indicada enquanto estiver empunhando a arma.",
 				"LIGHT": "Leve",
 				"LIGHTHINT": "Uma arma ou poder com esse descritor pode utilizar DES ao invés de FOR em testes de ataque. O dano ainda é calculado com FOR.",
-				"LETAL": "Letal",
-				"LETALHINT": "Ao ter um acerto crítico com essa arma, você causa um dado de dano adicional (além de dobrar os dados).",
+				"LETHAL": "Letal",
+				"LETHALHINT": "Ao ter um acerto crítico com essa arma, você causa um dado de dano adicional (além de dobrar os dados).",
 				"MOUNTED": "Montada",
 				"MOUNTEDHINT": "Armas montadas foram feitas para serem utilizadas por combatentes montados. Personagens montadas que atacarem com essa arma causam +1d6 de dano.",
 				"PIERCING": "Perfurante",
 				"PIERCINGHINT": "Uma arma, magia ou talento com esse descritor causa dano perfurante.",
 				"HEAVY": "Pesada",
 				"HEAVYHINT": "São armas que precisam de grande força física para serem utilizadas corretamente. Algumas habilidades fazem referência a armas pesadas.",
+				"POTENT": "Potente",
+				"POTENTHINT": "uma arma ou poder com esse descritor realiza ataques de FOR contra CON do alvo, ao invés de DES.",
 				"PRECISE": "Preciso",
 				"PRECISEHINT": "Recebe +2 em jogadas de ataque se o atacante não se moveu antes de atacar.",
-				"BRITTLE": "Quebradico",
+				"BRITTLE": "Quebradiço",
 				"BRITTLEHINT": "O objeto está quebrando. Se for uma arma, quebra quando o atacante tiver uma falha crítica. Se for uma armadura ou escudo, quebra quando um atacante conseguir um sucesso crítico.",
-				"RELOAD": "Recarregavel",
+				"RELOAD": "Recarregável",
 				"RELOADHINT": "Ataques realizados com esse descritor utilizam munição e precisam ser recarregados depois de alguns usos usando uma ação específica. O número diz a quantidade de disparos que podem ser feitos e a letra seguinte diz a ação necessária: (L) para uma ação livre, (B) para ação bônus, (A) para uma ação e (C) para um turno completo, usando tanto ação bônus quanto a ação. Uma arma Recarregável (3 A) precisa ser recarregada com a ação depois de 3 disparos.",
-				"RETURNING": "Retornavel",
+				"RETURNING": "Retornável",
 				"RETURNINGHINT": "A arma retorna para a mão de seu dono no final do turno que foi arremessada.",
 				"SUPERIOR": "Superior",
 				"SUPERIORHINT": "O atacante é considerado expert em testes de “Ataque de Superioridade”.",
-				"VERSATILE": "Versatil",
-				"VERSATILEHINT": "Fornece +2 em testes de ataque de superioridade. Equipamentos Diversos e Serviços"
+				"VERSATILE": "Versátil",
+				"VERSATILEHINT": "uma arma de uma mão com esta habilidade pode ser usada com as duas mãos para aumentar seu dano (em parênteses).",
+				"ELIXIR": "Elixir",
+				"ELIXIRHINT": "Representa um preparo alquímico que pode ser consumido para fazer efeito especial.",
+				"GRANADE": "Granada",
+				"GRANADEHINT": "Objeto que pode ser arremessado e que causa efeito na criatura que acertar ou espaço que cair."
 			},
 			"CATEGORY": {
 				"ATTACK": "Ataque",
 				"WEAPON": "Arma",
-				"ALCHEMY": "Alquímico",
-				"AURA": "Aura",
-				"MAGICAL": "Mágico",
 				"PROTOTYPE": "Protótipo",
 				"CONTROL": "Controle",
 				"OFENSIVE": "Ofensiva",
@@ -493,11 +537,29 @@
 				"SUPPORT": "Suporte"
 			},
 			"DIVERSE": {
+				"ALCHEMY": "Alquímico",
 				"ASPECT": "Aspecto",
+				"AURA": "Aura",
 				"CREATION": "Criação",
+				"HEAL": "Cura",
+				"DIVINE": "Divina",
 				"ELEMENTAL": "Elemental",
-				"INSPIRATION": "Inspiração"
+				"ENCHANTMENT": "Encantamento",
+				"ILUSION": "Ilusão",
+				"INSPIRATION": "Inspiração",
+				"MAGICAL": "Mágico",
+				"FEAR": "Medo",
+				"MOUNT": "Montaria",
+				"MOVEMENT": "Movimento",
+				"SUPPORT": "Suporte",
+				"VOICE": "Vóz"
 			}
+		},
+		"SPELLLAYERS":{
+			"CANTRIP": "Truque",
+			"SUPERFICIAL": "Superficial",
+			"SHALLOW": "Rasa",
+			"DEEP": "Profunda"
 		},
 		"LANGUAGES": {
 			"COMMON": "Comum",
@@ -555,6 +617,17 @@
 			}
 		},
 		"CONDITIONS": {
+			"PROTECTEDGROUP": {
+				"ALL": "Todos",
+				"PHYSICAL": "Físico",
+				"MENTAL": "Mental",
+				"STR": "For",
+				"DEX": "Des",
+				"CON": "Con",
+				"INT": "Int",
+				"WIS": "Sab",
+				"CHA": "Car"
+			},
 			"GRAPPLED": "Agarrado",
 			"GRAPPLEDHINT": "GRAPPLEDHINT",
 			"GRAPPLING": "Agarrando",
@@ -599,6 +672,7 @@
 			"MARKEDHINT": "MARKEDHINT",
 			"HURT": "Machucada",
 			"HURTHINT": "HURTHINT",
+			"DEAD": "Morto",
 			"PARALYZED": "Paralisado",
 			"PARALYZEDHINT": "PARALYZEDHINT",
 			"PETRIFIED": "Petrificado",
@@ -615,6 +689,25 @@
 			"PROTECTEDHINT": "PROTECTEDHINT",
 			"PROVOKED": "Provocado",
 			"PROVOKEDHINT": "PROVOKEDHINT"
+		},
+		"REST": {
+			"BAD": "Ruim",
+			"DEFAULT": "Padrão",
+			"GOOD": "Bom"
+		},
+		"SETTING": {
+			"DISABLEEXPERIENCE": "Desabilitar experiência",
+			"DISABLEEXPERIENCEHINT": "Para jogos com progressão por marcos.",
+			"HPPERLEVELMETHOD": "PV por nível",
+			"HPPERLEVELMETHODHINT": "Define o cálculo de pv por nível",
+			"HPPERLEVELMETHODROLL": "Rolado",
+			"HPPERLEVELMETHODMEAN": "Média",
+			"HPPERLEVELMETHODUSER": "Definido pelo jogador",
+			"SKIPUSAGECONFIG": "Pular Configuração de Uso",
+			"SKIPUSAGECONFIGHINT": "Quando usa um item usando o método selecionado, a janela de Configuração não é exibida, aplicando apenas Modificações marcadas como automáticas.",
+			"SKIPUSAGECONFIGSHIFT": "Shift + Click",
+			"SKIPUSAGECONFIGCLICK": "Click"
 		}
 	}
 }
+

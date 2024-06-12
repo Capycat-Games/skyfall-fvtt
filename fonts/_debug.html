@@ -1,0 +1,43 @@
+
+<body>
+	<div class="felxrow">
+		<div class="someclass fontA">
+			Lorem Ipsum 25
+		</div>
+		<div class="someclass fontB">
+			Lorem Ipsum 25
+		</div>
+
+	</div>
+</body>
+<style>
+	@font-face {
+		font-family: TEST;
+		src: url(NORTHWEST-Regular.otf);
+		/* ascent-override: 70%; */
+		descent-override: 50%;
+	}
+	.fontA {
+		font-family: TEST;
+	}
+	.fontB {
+		font-family: Verdana sans-serif;
+	}
+	* {
+		justify-content: center;
+	}
+	.felxrow {
+		display: flex;
+		flex-direction: row;
+		text-align: center;
+	}
+	.someclass {
+		display: flex;
+		flex: 0 0 150px;
+		max-width: 150px;
+		line-height: 24px;
+		border: 1px solid black;
+		border-radius: 3px;
+		font-size: 16px;
+	}
+</style>

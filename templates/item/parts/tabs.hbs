@@ -1,0 +1,6 @@
+{{!-- Sheet Tab Navigation --}}
+<nav class="sheet-tabs tabs" data-group="primary">
+	{{#each tabs as | label tab |}}
+	<a class="item" data-tab="{{tab}}">{{localize label}}</a>
+	{{/each}}
+</nav>

@@ -1,21 +1,23 @@
-<div class="background-box abilities flexrow flex2">
+<div class="background-box abilities flexrow">
 	{{#each system.abilities as | ability abl |}}
-	<div class="ability entry flexcol text-center" data-type="ability" data-entry-id="{{abl}}" data-target="system.abilities.{{abl}}">
-		<div class="top">
-			<h5>
+	<div class="ability entry flexcol2 text-center" data-type="ability" data-entry-id="{{abl}}" data-target="system.abilities.{{abl}}">
+		<div class="flexcol top">
+			<div><h4>
 				<a class="{{#if (and @root.rolling (or (eq @root.rolling.abl abl) (eq @root.rolling.abl null))) }}active rolling{{else}}{{/if}}" data-tooltip="{{localize 'SKYFALL.ROLL.ABL'}}" data-action="roll" data-target="ability">{{{localize ability.label}}}{{#if ability.spellcasting}}*{{/if}}
-				</a>
-			</h5>
+					</a>
+			</h4></div>
+			<div class="flex2">
 			{{#if @root.editable}}
-				<input type="number" name="system.abilities.{{abl}}.value" value="{{ability.value}}">
+					<input type="number" name="system.abilities.{{abl}}.value" value="{{ability.value}}">
 			{{else}}
 				<h2>{{ability.value}}</h2>
 			{{/if}}
+			</div>
 		</div>
-		<div class="bottom">
-			<label><a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-target="system.abilities.{{abl}}.proficient">{{localize "SKYFALL.ACTOR.PROTECTION"}}</a></label>
+		<div class="flexcol bottom">
+			<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-target="system.abilities.{{abl}}.proficient">{{localize "SKYFALL.ACTOR.PROTECTION"}}</a>
+			<label>{{ability.protection}}</label>
 			{{!-- <input type="number" disabled value="{{ability.protection}}"> --}}
-			<br><span>{{ability.protection}}</span>
 		</div>
 	</div>
 	{{/each}}

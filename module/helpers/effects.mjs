@@ -46,28 +46,28 @@ export function prepareActiveEffectCategories(effects, type = 'base' ) {
 	foundry.utils.mergeObject( categories, (type == 'modification' ? {
 		modification: {
 			type: 'modification',
-			label: game.i18n.localize('SKYFALL.EFFECT.MODIFICATION'),
+			label: game.i18n.localize('SKYFALL.EFFECTS.MODIFICATION'),
 			effects: [],
 		},
 		temporary: {
 			type: 'temporary',
-			label: game.i18n.localize('SKYFALL.EFFECT.MODIFICATIONTEMP'),
+			label: game.i18n.localize('SKYFALL.EFFECTS.MODIFICATIONTEMP'),
 			effects: [],
 		},
 	} : {
 		temporary: {
 			type: 'temporary',
-			label: game.i18n.localize('SKYFALL.EFFECT.TEMPORARY'),
+			label: game.i18n.localize('SKYFALL.EFFECTS.TEMPORARY'),
 			effects: [],
 		},
 		passive: {
 			type: 'passive',
-			label: game.i18n.localize('SKYFALL.EFFECT.PASSIVE'),
+			label: game.i18n.localize('SKYFALL.EFFECTS.PASSIVE'),
 			effects: [],
 		},
 		inactive: {
 			type: 'inactive',
-			label: game.i18n.localize('SKYFALL.EFFECT.INACTIVE'),
+			label: game.i18n.localize('SKYFALL.EFFECTS.INACTIVE'),
 			effects: [],
 		},
 	}));

@@ -68,6 +68,8 @@ export default class SkyfallItem extends Item {
 			case "background":
 				break;
 			case "class":
+				this.system.hitDie.max = this.system.level;
+				
 				break;
 			case "path":
 				break;
@@ -124,12 +126,14 @@ export default class SkyfallItem extends Item {
 	/**
 	 * Override getRollData() that's supplied to rolls.
 	 */
-	getRollData() {
+	getRollData(item = null) {
 		const data = { ...super.getRollData() };
 		if ( this.type == 'weapon' || (this.type == 'armor' && this.system.type == 'shield') ) {
 			data['weapon'] = {};
 			data.weapon = this.system.damage.formula;
 		}
+		if ( item ) data.item = item.getRollData();
+		
 		return data;
 	}
 
@@ -177,6 +181,9 @@ export default class SkyfallItem extends Item {
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
 		await super._onCreate(data, options, user);
+		
+		// Create Given Items
+		if ( !this.actor ) return;
 		let {features, abilities, heritages, feats} = data.system;
 		if ( features?.length || abilities?.length || heritages?.length || feats?.length ) {
 			// if ( [...features, ...abilities, ...heritages, ...feats].length ) {

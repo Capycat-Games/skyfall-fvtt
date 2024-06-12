@@ -10,20 +10,20 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		return {
 			description: new fields.SchemaField({
-				value: new fields.HTMLField({required: true, blank: true}),
+				value: new fields.HTMLField({required: true, blank: true, label:"SKYFALL.DESCRIPTION"}),
 			}),
 			unidentified: new fields.SchemaField({
-				value: new fields.BooleanField({initial: false}),
-				name: new fields.StringField({required:true, blank: true, label: "SKYFALL.ITEM.NameUnidentified"}),
-				description:  new fields.HTMLField({required: true, blank: true, label: "SKYFALL.ITEM.DescriptionUnidentified"})
+				value: new fields.BooleanField({initial: false, label:"SKYFALL.UNIDENTIFIED"}),
+				name: new fields.StringField({required:true, blank: true, label: "SKYFALL.NameUnidentified"}),
+				description:  new fields.HTMLField({required: true, blank: true, label: "SKYFALL.DescriptionUnidentified"})
 			}),
-			descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false})),
-			quantity: new fields.NumberField({required: true, integer: true, min: 0, initial:1}),
-			price: new fields.NumberField({required: true, integer: true, min: 0}),
-			capacity: new fields.NumberField({required: true, integer: true, min: 0}),
-			equipped: new fields.BooleanField({initial: false}),
-			attuned: new fields.BooleanField({initial: false}),
-			favorite: new fields.BooleanField({initial: false}),
+			descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false}),{label:"SKYFALL.DESCRIPTORS"}),
+			quantity: new fields.NumberField({required: true, integer: true, min: 0, initial:1, label:"SKYFALL.QUANTITY"}),
+			price: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.PRICE"}),
+			capacity: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.CAPACITY"}),
+			equipped: new fields.BooleanField({initial: false, label:"SKYFALL.EQUIPPED"}),
+			attuned: new fields.BooleanField({initial: false, label:"SKYFALL.ATTUNED"}),
+			favorite: new fields.BooleanField({initial: false, label:"SKYFALL.FAVORITE"}),
 		}
 	}
 }

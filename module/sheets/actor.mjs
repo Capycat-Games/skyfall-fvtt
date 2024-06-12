@@ -1,4 +1,5 @@
 import ActorTraits from '../apps/actor-traits.mjs';
+import ShortRest from '../apps/short-rest.mjs';
 import D20Roll from '../dice/d20-roll.mjs';
 import {
 	onManageActiveEffect,
@@ -26,19 +27,23 @@ export default class SkyfallActorSheet extends ActorSheet {
 	get template() {
 		return `systems/${SYSTEM.id}/templates/actor/actor-${this.actor.type}.hbs`;
 	}
+	
 	rolling = null;
+	filters = {};
 	/* -------------------------------------------- */
 
 	/** @override */
 	getData() {
 		const context = super.getData();
+		console.log(context);
 		const actorData = context.data;
 		context.system = actorData.system;
 		context.flags = actorData.flags;
 		context.rollData = context.actor.getRollData();
 		context.SYSTEM = SYSTEM;
 		context.rolling = this.rolling;
-		context.VARIAVEL = true;
+		context.filters = this.filters;
+		
 		// Get Data Fields
 		this.#getSystemFields(context);
 		// Prepare header data
@@ -53,7 +58,19 @@ export default class SkyfallActorSheet extends ActorSheet {
 		this._prepareSpells(context);
 		// Prepare ACTIONS
 		this._prepareActions(context);
-		
+		// Prepare HitDie
+		if ( true ){
+			const classes = context.actor.items.filter(it=> it.type == 'class');
+			context.hitDies = {value:0, max:0, dies:[]}
+			for (const cls of classes) {
+				context.hitDies.dies.push({
+					...cls.system.hitDie,
+					icon: `icons/svg/${cls.system.hitDie.die.replace(/^\d+/,'')}-grey.svg`
+				});
+			}
+			context.hitDies.dies.reduce((acc,hd)=> acc + hd.value, context.hitDies.value );
+			context.hitDies.dies.reduce((acc,hd)=> acc + hd.max, context.hitDies.max )
+		}
 		// Prepare EFFECTS
 		context.effects = prepareActiveEffectCategories( this.actor.allApplicableEffects() );
 		context.modifications = prepareActiveEffectCategories( this.actor.allApplicableEffects('modification'), 'modification');
@@ -103,22 +120,23 @@ export default class SkyfallActorSheet extends ActorSheet {
 			context.actorHeader.background.id = items.background.id;
 			context.actorHeader.background.name = items.background.name;
 		}
-		context.actorHeader.class = {};
+		context.actorHeader.class = [];
 		for (const cls of items.classes ) {
-			// TODO MANAGE MULTICLASS
-			context.actorHeader.class.id = cls.id;
-			context.actorHeader.class.name = cls.name;
-
-			// context.actorHeader.class.id = [];
-			// context.actorHeader.class.id.push(cls.id);
-			// context.actorHeader.class.name = [];
-			// context.actorHeader.class.name.push(cls.name);
+			context.actorHeader.class.push({
+				id: cls.id,
+				name: cls.name,
+				level: cls.system.level,
+			});
 		}
-		context.actorHeader.path = {};
+		context.actorHeader.path = [];
 		for (const pth of items.paths ) {
-			// TODO MANAGE MULTIPATH
-			context.actorHeader.path.id = pth.id;
-			context.actorHeader.path.name = pth.name;
+			context.actorHeader.path.push({
+				id: pth.id,
+				name: pth.name,
+				// level: cls.system.level,
+			});
+			// context.actorHeader.path.id = pth.id;
+			// context.actorHeader.path.name = pth.name;
 			// context.actorHeader.path.id = [];
 			// context.actorHeader.path.id.push(pth.id);
 			// context.actorHeader.path.name = [];
@@ -170,16 +188,16 @@ export default class SkyfallActorSheet extends ActorSheet {
 	}
 
 	_prepareAbilities(context) {
-		context.abilities = context.items.filter( i => ['ability'].includes(i.type));
-		context.features = context.items.filter( i => ['feature','feat'].includes(i.type));
+		context.abilities = this.document.items.filter( i => ['ability'].includes(i.type));
+		context.features = this.document.items.filter( i => ['feature','feat'].includes(i.type));
 	}
 	_prepareSpells(context) {
-		context.spells = context.items.filter( i => ['spell'].includes(i.type));
+		context.spells = this.document.items.filter( i => ['spell'].includes(i.type));
 	}
 
 	_prepareActions(context) {
 		context.actions = [];
-		
+		const filter = this.filters.action;
 		// Weapon Attack
 		const _weaponAbilities = context.actor.items.filter( i => i.type == 'ability' && i.system.descriptors.includes('weapon') );
 		// Attack with Weapon
@@ -216,6 +234,11 @@ export default class SkyfallActorSheet extends ActorSheet {
 
 		const spells = context.actor.items.filter( i => i.type == 'spell' );
 		context.actions.push(...spells);
+		
+		// Filter
+		for (const action of context.actions) {
+			action.filtered = (filter && filter!=action.system.action ? 'hidden':'');
+		}
 	}
 
 	/* -------------------------------------------- */
@@ -229,6 +252,28 @@ export default class SkyfallActorSheet extends ActorSheet {
 		super.activateListeners(html);
 		html.find("[data-action]").on('click contextmenu', this._onClickControl.bind(this));
 		html.find("[data-action]").change(this._onChangeControl.bind(this));
+		html.find("[data-filter]").on('click', this._onClickFilter.bind(this));
+		
+		new ContextMenu(html, '.window-content .class', [], {
+			onOpen: entry => {
+				const entryId = entry.dataset.entryId;
+				const item = this.document.items.find(it => it.id==entryId);
+				if ( !item ) return;
+				ui.context.menuItems = [{
+					name: "SKYFALL.EDIT",
+					icon: "<i class='fas fa-edit fa-fw'></i>",
+					condition: () => item.isOwner,
+					callback: () => item.sheet.render(true),
+				},
+				{
+					name: "SKYFALL.DELETE",
+					icon: "<i class='fas fa-trash fa-fw'></i>",
+					condition: () => item.isOwner,
+					callback: li => this.document.deleteEmbeddedDocuments( "Item", [item.id] )
+				}];
+			}
+		});
+
 	}
 	/**
 	* Handle click events on a sheet control button.
@@ -252,7 +297,8 @@ export default class SkyfallActorSheet extends ActorSheet {
 	async _onClickControl(event) {
 		event.preventDefault();
 		const button = event.currentTarget;
-		button.event = event.type; //Pass the trigger mouse click event
+		console.log(event);
+		button.event = event; //.type; //Pass the trigger mouse click event
 		switch ( button.dataset.action ) {
 			case "toggle":
 				this.#onActionToggle(button);
@@ -278,7 +324,19 @@ export default class SkyfallActorSheet extends ActorSheet {
 			case "roll":
 				this.#onActionRoll(button);
 				break;
+			case "rest":
+				this.#onActionRest(button);
+				break;
 		}
+	}
+	async _onClickFilter(event){
+		event.preventDefault();
+		const button = event.currentTarget;
+		const filter = button.dataset.filter;
+		const filterId = button.closest('[data-filter-id]').dataset.filterId;
+		if ( this.filters[filterId] == filter ) this.filters[filterId] = null;
+		else this.filters[filterId] = filter;
+		this.render();
 	}
 
 	#onActionToggle(button) {
@@ -288,18 +346,8 @@ export default class SkyfallActorSheet extends ActorSheet {
 		console.log(target, id, document);
 		// if ( !document ) this.actor;
 		if ( !target || !id ) return;
-		if ( target == 'effect' && CONFIG.statusEffects.find( ef => ef.id==id ) ) {
-			const existing = this.actor.effects.find( ef => ef.statuses.has(id) );
-			console.log(existing);
-			if ( existing ) return this.actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id]);
-			else {
-				const effectData = {...CONFIG.statusEffects.find( ef => ef.id==id )};
-				effectData.id = null;
-				// effectData._id = null;
-				effectData.duration = {rounds: 1};
-				effectData.disabled = false;
-				this.actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
-			}
+		if ( target == 'effect' && SYSTEM.conditions[id] ) {
+			this.actor.toggleStatusEffect( id );
 		} else if ( foundry.utils.hasProperty(document, target) ) {
 			const updateData = {};
 			updateData[target] = !foundry.utils.getProperty(document, target);
@@ -314,8 +362,8 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let document = this.actor.items.get(id) ?? this.actor;
 		if ( !target || !id || !foundry.utils.hasProperty(document, target) ) return;
 		let updateData = {};
-		updateData[target] = Number(getProperty(document, target));
-		button.event == 'click' ? updateData[target]++ : updateData[target]-- ;
+		updateData[target] = Number(foundry.utils.getProperty(document, target));
+		button.event.type == 'click' ? updateData[target]++ : updateData[target]-- ;
 		document.update(updateData);
 		// this.render();
 	}
@@ -423,42 +471,60 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let id = button.closest('.entry').dataset.entryId;
 		let withId = button.dataset.itemId;
 		// let id = button.dataset.itemId;
+		console.log(button.event);
 		if ( withId != id ) {}
-			const ability = this.actor.items.get(id);
-			if ( !ability ) return;
-			const item = this.actor.items.get(withId);
-			const usageData = {
-				...CONFIG.ChatMessage.dataModels.usage.schema.initial(),
+		const ability = this.actor.items.get(id);
+		if ( !ability ) return;
+		const item = this.actor.items.get(withId);
+		const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
+		const skip = ( skipUsageConfig=='shift' && button.event.shiftKey) || ( skipUsageConfig=='click' && !button.event.shiftKey);
+		await ChatMessage.create({
+			type: 'usage',
+			flags: {
+				skyfall: {
+					advantage: button.event.ctrlKey ? 1 : 0,
+					disadvantage: button.event.altKey ? 1 : 0,
+				}
+			},
+			system: {
+				actorId: this.actor.id,
 				abilityId: ability.id,
-				itemId: item ? item.id : null,
-				abilityState: ability.toObject(),
-				itemState: item ? item.toObject() : null,
-				actorState: ability.parent.toObject(),
-				item: ability.toObject(),
-				targets: [ ...game.user.targets.map( token => token.document.uuid ) ]
-			};
-			usageData.abilityState.system._labels = {...ability.system._labels};
-			if ( item ) {
-				usageData.itemState.system._labels = {...item.system._labels};
-			}
-			// usageData.item.system._labels = {...ability.system._labels};
+				itemId: item.id,
+			}}, {skipConfig: skip});
+		return;
+		
+		const usageData = {
+			...CONFIG.ChatMessage.dataModels.usage.schema.initial(),
+			abilityId: ability.id,
+			itemId: item ? item.id : null,
+			abilityState: ability.toObject(),
+			itemState: item ? item.toObject() : null,
+			actorState: ability.parent.toObject(),
+			item: ability.toObject(),
+			targets: [ ...game.user.targets.map( token => token.document.uuid ) ]
+		};
+		usageData.abilityState.system._labels = {...ability.system._labels};
+		if ( item ) {
+			usageData.itemState.system._labels = {...item.system._labels};
+		}
+		// usageData.item.system._labels = {...ability.system._labels};
 
-			const templateData = {
-				usage: usageData,
-			}
-			let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
-			const html = await renderTemplate(template, templateData);
+		const templateData = {
+			usage: usageData,
+		}
+		let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
+		const html = await renderTemplate(template, templateData);
 
-			const messageData = {
-				type: "usage",
-				content: html,
-				system: usageData,
-				speaker: ChatMessage.getSpeaker({actor: this}),
-			}
+		const messageData = {
+			type: "usage",
+			content: html,
+			system: usageData,
+			speaker: ChatMessage.getSpeaker({actor: this}),
+		}
 
-			ChatMessage.applyRollMode(messageData, game.settings.get('core','rollMode'))
-			const message = await ChatMessage.create(messageData);
-			message.usageConfigurePhase();
+		ChatMessage.applyRollMode(messageData, game.settings.get('core','rollMode'))
+		const message = await ChatMessage.create(messageData);
+		message.usageConfigurePhase();
 		
 	}
 
@@ -496,4 +562,15 @@ export default class SkyfallActorSheet extends ActorSheet {
 		this.render(true);
 	}
 
+	async #onActionRest(button) {
+		const rest = button.dataset.rest;
+		switch (rest) {
+			case 'short':
+				return new ShortRest(this.actor, {actor: this.actor}).render(true);
+			case 'long':
+			default:
+				return this.actor.longRest();
+		}
+	}
+	
 }

@@ -1,5 +1,6 @@
 // out: "../skyfall.css", compress: false, sourceMap: false
 @import "variables.less";
+@import "elements.less";
 @import "apps.less";
 @import "actor.less";
 @import "item.less";
@@ -15,12 +16,17 @@
 	scrollbar-color: #182657 transparent;
 	scrollbar-width: thin;
 }
+.dice-total {
+	font-family: @fontSkyfall;
+}
 .skyfall {
 	> * {
 		scrollbar-width: thin;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
+		font-family: @fontSkyfall;
+		margin: 0;
 		border-bottom: none;
 	}
 
@@ -47,6 +53,7 @@
 
 	&.sheet .window-content {
 		background: url(./assets/sheet/background.webp) repeat white;
+		// background-image: url(./assets/sheet/background.webp);
 	}
 
 	.background {
@@ -142,4 +149,30 @@
 /* BUG CORE */
 .sheet.journal-entry .scrollable {
 	position: relative;
+}
+
+.skyfall {
+	dropdown-tags {
+		&.descriptors {
+			.tags-dropdown {
+				background-color: white;
+			}
+			.tag, .checkbox {
+				padding: 0 4px;
+				margin: 2px 2px;
+				background-color: @colorSFPlayer;
+				color: white;
+				text-transform: uppercase;
+				opacity: 0.6;
+				:has(input:checked) {
+					opacity: 1;
+				}
+			}
+			fieldset {
+				border: none;
+				padding: 5px;
+				legend {}
+			}
+		}
+	}
 }

@@ -5,7 +5,7 @@ import SkyfallSheetMixin from "./skyfall-sheet.mjs";
 /**
  * A sheet application for displaying and configuring Items with the Ancestry type.
  * @extends ItemSheet
- * @mixes SkyfallSheet
+ * @mixes SkyfallBaseSheet
  */
 export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 	/** @inheritdoc */
@@ -41,6 +41,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			type: null, 
 			description: "systems/skyfall/templates/item/parts/description.hbs",
 		}
+		context._selOpts = {};
 		// Enrich HTML description
 		context.enriched = {
 			description: await TextEditor.enrichHTML(context.system.description.value, this.enrichmentOptions),
@@ -263,7 +264,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 	}
 
 
-	async getDescriptors(context, type) {
+	async getDescriptors2(context, type) {
 		context.descriptors = context.system.descriptors.reduce((acc, key) => {
 			acc[key] = true;
 			return acc;
@@ -282,6 +283,36 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 			}
 			return acc;
 		}, {});
+	}
+
+	async getDescriptors(context, types = []) {
+		context.descriptors = context.system.descriptors.reduce((acc, key) => {
+			acc[key] = true;
+			return acc;
+		}, {});
+		
+		context.descriptors = {};
+		context._selOpts['descriptors'] = {};
+		
+		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
+			console.log( category, descriptors );
+			if ( types.length && !types.includes(category) ) continue;
+			for (const [id, desc] of Object.entries(descriptors)) {
+				context._selOpts['descriptors'][category] ??= {};
+				context._selOpts['descriptors'][category][desc.id] = {
+					...desc, 
+					value: (context.system.descriptors.includes(desc.id))
+				}
+			}
+			foundry.utils.mergeObject(context.descriptors, context._selOpts['descriptors'][category]);
+		}
+		for (const desc of context.system.descriptors) {
+			if ( desc in context.descriptors ) continue;
+			context._selOpts['descriptors']["ORIGIN"] ??= {};
+			context._selOpts['descriptors']["ORIGIN"][desc] = {
+				id: desc, hint: "", type: ["origin"], label: desc.toUpperCase(), value: true
+			}
+		}
 	}
 
 	/** @inheritdoc */

@@ -9,10 +9,33 @@
 	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.background label="TYPES.Item.background"}}
 
 	{{!-- Classes --}}
-	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.class label=(localize "{level} / {class}" level=(localize "SKYFALL.ACTOR.LEVEL") class=(localize "TYPES.Item.class")) level=true}}
+	<label for="">{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}</label>
+	{{#unless actorHeader.class }}
+	<div class="header-fields entry class" data-entry-id="{{path.id}}">
+		<input type="text" disabled>
+	</div>
+	{{/unless}}
+	{{#each actorHeader.class as | cls | }}
+	<div class="header-fields entry class" data-context-menu data-entry-id="{{cls.id}}">
+		<input type="number" class="level" data-action="update" data-target="system.level" value="{{cls.level}}">
+		<input type="text" value="{{cls.name}}" disabled>
+	</div>
+
+	{{/each}}
 	
 	{{!-- Paths --}}
-	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.path label="TYPES.Item.path"}}
+	<label for="">{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.path"}}</label>
+	{{#unless actorHeader.path }}
+	<div class="header-fields entry path" data-entry-id="{{path.id}}">
+		<input type="text" disabled>
+	</div>
+	{{/unless}}
+	{{#each actorHeader.path as | path | }}
+	<div class="header-fields entry path" data-context-menu data-entry-id="{{path.id}}">
+		{{!-- <input type="number" class="level" data-action="update" target="system.level" value="{{path.level}}"> --}}
+		<input type="text" value="{{cls.name}}" disabled>
+	</div>
+	{{/each}}
 
 	<div class="header-fields">
 		<label>{{localize "SKYFALL.ACTOR.SIZE"}}</label>

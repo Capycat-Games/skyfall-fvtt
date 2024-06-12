@@ -8,7 +8,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 	// 	this.ability = options.ability;
 	// 	this.item = options.item;
 	// }
-	
+	modifications = [];
 
 	/** @override */
 	static get defaultOptions() {
@@ -34,13 +34,17 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const context = {};
 		context.SYSTEM = SYSTEM;
 		context.system = this.document.system;
-		
-		this.getUsageEffects(context);
-		// console.log( this );
+		this.document.getDocuments();
+		context.actor = this.document.actor;
+		context.ability = this.document.ability;
+		context.item = this.document.item;
+		context.modifications = this.document.system.modifications;
+
+		// this.getUsageEffects(context);
+		console.log( this.document.system );
 		// console.log( context.system.abilityState.system );
 		// console.log( context.system.itemState.system );
 		// console.log( context.system.item );
-		// console.log(context);
 		console.log(context);
 		return context;
 	}
@@ -53,19 +57,26 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const actor = new SkyfallActor( context.system.actorState );
 		if ( !actor ) return;
 		const mods = actor.allModifications;
+		console.log( this.document.system.modifications );
 		//await foundry.utils.fromUuid(actorId);
 		for (const mod of actor.allModifications) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
-			console.log(itemType, context.system.item.type);
+			// console.log(itemType, context.system.item.type);
 			if ( itemName && !itemName.split(',').map(n=>n.trim()).includes(context.system.item.name) ) continue;
-			console.log("NAME OK");
+			// console.log("NAME OK");
 			if ( itemType.includes('self') && mod.parent.id != context.system.abilityId ) continue;
-			console.log("SELF OK");
+			// console.log("SELF OK");
 			if ( !foundry.utils.isEmpty(itemType) && !itemType.includes('self') && !itemType.includes(context.system.item.type) ) continue;
-			console.log("TYPE OK");
+			// console.log("TYPE OK");
 			if ( !foundry.utils.isEmpty(descriptors) && !descriptors.every( d => context.system.item.system.descriptors.includes(d) ) ) continue;
-			console.log("DESCRIPTOR OK");
+			// console.log("DESCRIPTOR OK");
+			if ( this.document.system.modifications[mod.id] ) {
+				mod.apply = Number(this.document.system.modifications[mod.id].apply);
+			} else if ( mod.system.apply.always ) {
+				mod.apply = 1;
+			} else mod.apply = 0;
 			context.modifications.push(mod);
+			// modifications.push(mod);
 		}
 	}
 
@@ -86,11 +97,24 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const button = event.currentTarget;
 		button.event = event.type; //Pass the trigger mouse click event
 		switch ( button.dataset.action ) {
+			case "commit":
+				this.document.updateData = null;
+				await this.document.updateUsagePrepareData();
+				console.log( this.document.updateData );
+				this.document.update(this.document.updateData);
+				break;
 			case "execute":
 				this.document.usageExecutePhase();
 				break;
-			case "aid":
-
+			case "apply-add":
+				button.previousElementSibling.stepUp();
+				button.previousElementSibling.dispatchEvent(new Event('change'));
+				this.submit();
+				break;
+			case "apply-sub":
+				button.nextElementSibling.stepDown();
+				button.nextElementSibling.dispatchEvent(new Event('change'));
+				this.submit();
 				break;
 		}
 	}
@@ -109,16 +133,28 @@ export default class ItemUsageConfig extends DocumentSheet {
 	/** @inheritdoc */
 	async _updateObject(event, formData) {
 		formData = foundry.utils.expandObject(formData);
-		if ( formData.system.modifications ) {
-			let _mods = {};
-			for (const [id, mod] of Object.entries(formData.system.modifications)) {
-				if ( mod.apply == 0 || mod.apply == null ) {
-					_mods[`-=${id}`] = null;
+		console.log( formData );
+
+		console.log( this.document.system.rolls );
+		const rolls = this.document.system.rolls;
+		const _rolls = [];
+		for (const [i, roll] of Object.entries(formData._rolls)) {
+			const originalRoll = Roll.fromData( rolls[i] );
+			let r = new Roll(roll.formula);
+			for (const [t, term] of Object.entries(r.terms) ) {
+				const originalTerm = originalRoll.terms[t];
+				if( originalTerm ) {
+					foundry.utils.mergeObject(originalTerm, term);
 				} else {
-					_mods[id] = mod;
+					originalRoll.terms.push(term);
 				}
 			}
-			formData.system.modifications = _mods;
+			originalRoll._formula = originalRoll.constructor.getFormula(originalRoll.terms);
+			_rolls.push( originalRoll );
+		}
+		if ( _rolls ) {
+			console.log(_rolls);
+			formData.system.rolls = _rolls;
 		}
 		formData = foundry.utils.flattenObject(formData);
 		return super._updateObject(event, formData);

@@ -54,6 +54,18 @@
 				flex: 0;
 				font-size: 14px;
 			}
+			.hitDie {
+				flex-wrap: nowrap;
+				max-width: 60px;
+    		flex: 1;
+				justify-content: center;
+				.die {
+					flex: 0 0 20px;
+					background-size: contain;
+					background-position: center;
+					background-repeat: no-repeat;
+				}
+			}
 		}
 		.resource-bar {
 			flex: 0;
@@ -150,40 +162,38 @@
 			margin-right: 5px;
 		}
 	}
-	.abilities {
+	.background-box.abilities {
 		padding: 10px;
 		justify-content: space-around;
-		font-family: Skyfall;
+		// font-family: @fontSkyfall;
+		flex: 0 0 75%;
 		.ability {
-			background-image: url(./assets/sheet/abl-score.webp);
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
-			padding: 5px 5px 0 5px;
-			flex: 0 0 70px;
-			max-width: 70px;
+			flex: 0 0 58px;
+			max-width: 58px;
+			height: 100px;
+			.top {
+				height: 60px!important;
+				background-image: url(./assets/sheet/abl-top.svg);
+			}
 			.bottom {
-				margin-top: 14px;
-				transform: scale(0.7);
-				align-self: center;
-				label { font-size: 16px; }
-				span { font-size: 26px; }
+				margin-top: 4px;
+				height: 36px!important;
+				background-image: url(./assets/sheet/abl-bot.svg);
+				a { font-size: 10px; }
+				label { font-size: 16px; line-height: 1; }
 			}
 			.top, .bottom {
-				h4 {
-					margin: 0;
-				}
-				.rolling {
-					color: red;
-				}
-				input {
-					width: 80%;
-				}
+				background-size: 100%;
+				background-repeat: no-repeat;
+				background-position: center;
+				> div { align-content: center; }
+				.rolling { color: red; }
+				input { width: 80%; }
 				.active {
 					font-weight: bold;
+					text-decoration: underline;
 				}
 			}
-
 		}
 	}
 	
@@ -201,13 +211,12 @@
 			flex: 0 0 2em;
 		}
 		span {
-			font-family: Skyfall;
-			font-size: 10px;
-			padding: 0 5px;
+			font-family: @fontSkyfall;
+			font-size: 12px;
 			border: 2px solid @colorSFGray;
 			border-left: none;
 			line-height: 1em;
-			padding-bottom: 5px;
+			padding: 1px 5px;
 		}
 	}
 
@@ -315,6 +324,18 @@
 				}
 			}
 		}
+		&.abilities, &.spells {
+			text-align: left;
+			margin: 5px;
+			padding: 5px;
+			gap: 10px;
+			.SF-ability;
+			.item.entry {
+				// flex: 0 0 50%;
+				max-width: 50%;
+				min-width: 45%;
+			}
+		}
 	}
 	.middle {
 		flex: 0 0 265px;
@@ -324,10 +345,11 @@
 		background-size: cover;
 		padding: 10px;
 		&.attributes {
+			flex: 0 0 25%;
 			justify-content: space-around;
 			.attribute.box {
 				align-self: auto;
-				flex: 0 0 40%;
+				// flex: 0 0 40%;
 				margin-bottom: 5px;
 				h5 {
 					align-content: center;
@@ -337,10 +359,11 @@
 					width: 80%;
 					margin: auto;
 					margin-bottom: 5px;
+					line-height: 1em;
 				}
 			}
 			.movement.attribute.box {
-				flex: 0 0 90%;
+				// flex: 0 0 90%;
 			}
 		}
 		

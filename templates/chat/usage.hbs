@@ -1,65 +1,59 @@
 <div class="skyfall chat-card usage-card ability-card" data-actor-id="{{actor.id}}" data-item-id="{ {itemId} }">
+	{{log this}}
 	{{!-- usage == message.system --}}
 	<header class="card-header flexrow">
 		{{!-- Ability Image | Ability Name | Item Image --}}
-		{{#if usage.item.img2}}
-		<img src="{{usage.abilityState.img}}" width="36" height="36" style="flex:0" />
-		{{/if}}
-		<h3 class="icon" >{{{usage.item.system._labels.action.icon}}} </h3>
-		<h3 class="item-name">{{usage.abilityState.name}}</h3>
+		<h3 class="icon" >{{{item.system._labels.action.icon}}} </h3>
+		<h3 class="item-name">{{item.name}}</h3>
 	</header>
 	<aside class="card-aside flexcol">
-		{{#if usage.itemState.img}}
-			<img src="{{usage.itemState.img}}" width="36" height="36" style="flex:0" />
-		{{else if (eq usage.item.type 'ability')}}
-			<img src="{{usage.abilityState.img}}" width="36" height="36" style="flex:0" />
-		{{else if (eq usage.item.type 'spell')}}
-			<h2>{{{usage.item.system._labels.spell.icon}}}</h2>
+		{{#if item.img }}
+			<img src="{{item.img}}" width="32" height="32" style="flex:0" />
+		{{else if (eq item.type 'spell')}}
+			<h2>{{{item.system._labels.spell.icon}}}</h2>
 		{{/if}}
-		<h4>{{{usage.item.system._labels.cost}}}</h4>
+		<h4>
+			{{#each usage.costs as | cost id | }}
+			{{#if (eq id 'ep')}}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>
+			{{else if (gt cost 0) }}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>{{/if}}
+			{{/each}}
+		</h4>
 	</aside>
 	
-	{{#if (gte usage.status.phase 0)}}
 	<div class="ability-descriptors">
-		{{#each usage.item.system._labels.descriptors as | tag i | }}
+		{{#each item.system._labels.descriptors as | tag i | }}
 		<label class="descriptor active" >{{tag.label}}</label>
 		{{/each}}
 	</div>
-	{{/if}}
-
+	
 	{{#if (gte usage.status.phase 0)}}
 	<em class="ability-flavor">
-		{{usage.item.system.flavor}}
+		{{item.system.flavor}}
 	</em>
 	{{/if}}
 
-	{{#if (gte usage.status.phase 0)}}
 	<div class="ability-properties">
-		{{#each usage.item.system._labels.properties as | prop | }}
-		<p><label>{{{localize prop.label}}}.</label> {{prop.descriptive}}</p>
+		{{#each item.system._labels.properties as | prop | }}
+		<p><label>{{{localize prop.label}}}:</label> {{prop.descriptive}}</p>
 		{{/each}}
 	</div>
-	{{/if}}
 
-	{{#if (gte usage.status.phase 0)}}
 	<ul class="list-items modifications">
-		{{#each usage.modifications as | mod | }}
+		{{#each modifications as | mod | }}
+		{{log mod}}
 		<li>
-			<b>{{mod.cost}}</b>
-			{{{mod.description}}}
+			<b>{{mod.cost}}{{localize (lookup (lookup @root.SYSTEM.resources mod.resource) 'abbr')}}{{#if (gt mod.apply 1)}} ({{mod.apply}}x){{/if}}</b> {{{mod.name}}}
 		</li>
 		{{/each}}
 	</ul>
-	{{/if}}
 
-	{{#if (gte usage.status.phase 0)}}
-	{{#each usage.rolls as |r id|}}
+	{{#each rolls as |r id|}}
 	{{#if r.evaluated }} 
-	<div class="evaluated-roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+	<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}">
 		{{{r.template}}}
 	</div>
 	{{else }}
-	<div class="roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+	<div class="roll-entry non-evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}">
 		<div class="dice-roll">
 			<div class="dice-flavor">{{r.options.flavor}}</div>
 			<div class="dice-result">
@@ -69,10 +63,9 @@
 	</div>
 	{{/if}}
 	{{/each}}
-	{{/if}}
 	
 	<hr>
-	<div class="chat-actions flexrow">
+	<div class="chat-actions flexcol">
 		{{!-- PHASE 1 BUTTONS | configure - aid --}}
 		{{!-- PHASE 2 BUTTONS | NONE --}}
 		{{!-- PHASE 3 BUTTONS | catharsis (ON ROLL) - placeTemplate - applyCost --}}
@@ -86,23 +79,22 @@
 			{{localize "SKYFALL.CHATMESSAGE.USAGE.AID"}}
 		</button>
 		{{/if}}
-
-		{{#if (eq usage.status.phase 3)}}
-		{{#each usage.templates as | temp i | }}
-		<button class="chat-action" data-action="placeTemplate">
+		{{log "SKYFALL.USAGE.CARDTEMPLATE"}}
+		{{log usage}}
+		{{#each usage.measuredTemplate as | temp i | }}
+		<button class="chat-action" data-place-template data-action="placeTemplate">
 			<i class="fa-solid fa-ruler-combined"></i>
 			{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
 		</button>
 		{{/each}}
+		{{#if (eq usage.status.phase 3)}}
 		{{/if}}
 
-		{{#if (eq usage.status.phase 4)}}
-			{{#each usage.effects as | ef i | }}
-			<button class="chat-action" data-action="applyEffect" data-effect-index="{{i}}">
-				<img src="{{ef.icon}}">
-				{{{ef.name}}}
-			</button>
-			{{/each}}
-		{{/if}}
+		
+		{{#each effects as | ef i | }}
+		<button class="chat-action effect" data-action="applyEffect" data-effect-id="{{ef._id}}">
+			<img src="{{ef.img}}" width="32" height="32">{{{ef.name}}}
+		</button>
+		{{/each}}
 	</div>
 </div>

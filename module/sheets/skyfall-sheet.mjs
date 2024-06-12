@@ -1,11 +1,12 @@
-
+const {HandlebarsApplicationMixin} = foundry.applications.api;
 /**
- * Add common functionalities to every Skyfall Sheet application which alters their visual style.
+ * Add common functionalities to every Skyfall Sheet application which defines interactions.
  * @param {typeof Application} Base     The base Application class being extended
  * @returns {typeof Application}        The extended SkyfallSheet class
  */
 export default function SkyfallSheetMixin(Base) {
-	return class SkyfallSheet extends Base {
+
+	return class SkyfallBaseSheet extends Base {
 
 		/**
 		 * Declare the document type managed by this SkyfallSheet.
@@ -87,7 +88,7 @@ export default function SkyfallSheetMixin(Base) {
 
 		#onClickToggleEditing(event){
 			this.isEditing = !this.isEditing;
-			this.render().setPosition({width: "auto"});
+			this.render().setPosition({width: ( this.isEditing ? 820 : 420 )});
 		}
 
 		#onClickCloseTab(event){

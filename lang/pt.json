@@ -405,7 +405,7 @@
 				"AMPLIFY": "Amplifica"
 			}
 		},
-		"EFFECT": {
+		"EFFECTS": {
 			"MODIFICATION": "Modificação",
 			"MODIFICATIONTEMP": "Mod. Temp.",
 			"TEMPORARY": "Temporário",
@@ -597,6 +597,7 @@
 			"MARKEDHINT": "MARKEDHINT",
 			"HURT": "Machucada",
 			"HURTHINT": "HURTHINT",
+			"DEAD": "Morto",
 			"PARALYZED": "Paralisado",
 			"PARALYZEDHINT": "PARALYZEDHINT",
 			"PETRIFIED": "Petrificado",

@@ -46,7 +46,7 @@
 		.card-header {
 			// border-image: url(./assets/sheet/card-border.svg) 1;
 			// background-color: @colorSFPlayer;
-			font-family: Skyfall;
+			font-family: @fontSkyfall;
 			color: white;
 			position: relative;
 			width: 85%;
@@ -83,6 +83,7 @@
 			width: 15%;
 			float: right;
 			align-items: center;
+			min-height: 45px;
 		}
 
 		.ability-descriptors {
@@ -105,15 +106,26 @@
 
 		.chat-actions {
 			width: 100%;
+
+			.effect {
+				display: flex;
+				flex-direction: row;
+				padding-left: 0px;
+				img {
+					flex: 0 0 32px;
+					background-color: black;
+					margin-right: 1em;
+				}
+			}
 		}
 
-		.evaluated-roll {
+		.roll-entry {
 			position: relative;
 		}
 
 		.roll-btns { 
 			position: absolute;
-			&.top { top: 18px }
+			&.top { top: 15px }
 			&.bottom { bottom: 0px }
 			&.left { float: left; left: 0px }
 			&.right { float: right; right: 0px }

@@ -2,6 +2,15 @@
  * Duração pode ser condicional, evento ['turnStart','turnEnd','restStart','restEnd']
  */
 
+let _protectedGroup = ["all", "physical", "mental", "str", "dex", "con", "int", "wis", "cha"];
+export const protectedGroup = _protectedGroup.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		label: `SKYFALL.CONDITIONS.PROTECTEDGROUP.${key.toUpperCase()}`,
+	}
+	return obj;
+}, {});
+
 
 let _durations = ["turn", "round", "scene", "minute", "hour", "day", "month", "year", "until", "perm", "inst", "spec"];
 export const durations = _durations.reduce((obj, key) => {
@@ -41,13 +50,14 @@ export const activations = _activations.reduce((obj, key) => {
 }, {});
 
 let _areaTargets = ["radius", "sphere", "cylinder", "cone", "square", "cube", "line", "wall"];
-//["cone", "cubo", "cilindro", "esfera", "linha"];
-export const areaTargets = _areaTargets.reduce((obj, key) => {
-	obj[key] = {
-		id: key,
-		label: `SKYFALL.ITEM.TARGETS.${key.toUpperCase()}`,
+_areaTargets = {radius: "circle", sphere: "circle", cylinder: "circle", cone: "cone", square: "rect", cube: "rect", line: "line", wall: "rect"}
+export const areaTargets = Object.entries(_areaTargets).reduce((acc, key) => {
+	acc[key[0]] = {
+		id: key[0],
+		t: key[1],
+		label: `SKYFALL.ITEM.TARGETS.${key[0].toUpperCase()}`,
 	}
-	return obj;
+	return acc;
 }, {});
 
 let _individualTargets = ["self", "ally", "enemy", "creature", "object", "space", "creatureOrObject", "any", "willing"];

@@ -1,0 +1,37 @@
+<div class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{#unless (eq system.equipped undefined)}}
+	<aside class="flexcol">
+		{{formField schema.quantity value=system.quantity classes="slim" localize=true}}
+		{{formField schema.price value=system.price classes="slim" localize=true}}
+		{{formField schema.capacity value=system.volume classes="slim" localize=true}}
+		{{formField schema.equipped value=system.equipped localize=true}}
+		{{formField schema.attuned value=system.attuned localize=true}}
+		{{formField schema.unidentified.value value=system.unidentified.value localize=true}}
+	</aside>
+	{{/unless}}
+	<div class="flexcol flex3">
+		{{#unless (eq system.descriptors undefined) }}
+		<dropdown-tags name="system.descriptors" class="descriptors">
+				{{#each _selOpts.descriptors as | group id |}}
+				<optgroup label="{{localize (concat "SKYFALL.DESCRIPTORS.LABELS." id)}}">
+					{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
+				</optgroup>
+				{{/each}}
+			</dropdown-tags>
+		{{/unless}}
+
+		{{formField schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=200 localize=true}}
+
+		{{!-- {{formField schema.description.value value=description.value enriched=description.enriched localize=true toggled=true height=300 documentUUID=description.uuid}} --}}
+
+		{{!-- {{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}} --}}
+
+		{{#unless (eq system.origin undefined) }}
+		{{formField schema.origin value=system.origin localize=true disabled=true}}
+		{{/unless}}
+
+		{{#unless (eq system.requisites undefined) }}
+		{{formField schema.requisites value=system.requisites localize=true disabled=true}}
+		{{/unless}}
+	</div>
+</div>

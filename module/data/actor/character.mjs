@@ -80,6 +80,20 @@ export default class Character extends foundry.abstract.TypeDataModel {
 					imune: new fields.ArrayField(new fields.StringField({choices: SYSTEM.DESCRIPTORS})),
 					protected: new fields.ArrayField(new fields.StringField({choices: SYSTEM.STATUSEFFECTS})),
 				}),
+				rest: new fields.SchemaField({
+					hitDieBonus: new fields.ArrayField(new fields.StringField({})),
+					hitDieMod: new fields.ArrayField(new fields.StringField({})),
+					bonusHP: new fields.ArrayField(new fields.StringField({})),
+					bonusHPtemp: new fields.ArrayField(new fields.StringField({})),
+					bonusEP: new fields.ArrayField(new fields.StringField({})),
+					bonusEPtemp: new fields.ArrayField(new fields.StringField({})),
+					bonusCatharsis: new fields.ArrayField(new fields.StringField({})),
+				}),
+				hp: new fields.SchemaField({
+					abilities: new fields.ArrayField(new fields.StringField({})),
+					levelBonus: new fields.ArrayField(new fields.StringField({})),
+					totalBonus: new fields.ArrayField(new fields.StringField({})),
+				}),
 			}),
 			level:  new fields.SchemaField({
 				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1,  max: 12}),

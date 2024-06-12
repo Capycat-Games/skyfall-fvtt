@@ -1,11 +1,21 @@
 <div class="flexrow flex100">
 	{{> 'systems/skyfall/templates/actor/parts/ability-scores.hbs'}}
 
-	<div class="background-box attributes flexrow text-center flex0">
+	<div class="background-box attributes flexcol text-center">
 		<div class="initiative attribute box flexcol entry" data-type="initiative" data-entry-id="dex">
 			<h5><a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a></h5>
 			<input type="number" disabled value="{{system.initiative}}">
 			<div></div>
+		</div>
+		<div class="movement attribute box flexcol">
+			<h5><a data-action="manage" data-target="movement">{{localize "SKYFALL.ACTOR.MOVEMENT"}}</a></h5>
+			<div>
+			{{#each movement as | move | }}
+			<span data-tooltip="{{localize move.label}}">
+				{{{move.icon}}} {{move.value}} 
+			</span>
+			{{/each}}
+			</div>
 		</div>
 	</div>
 </div>
@@ -20,11 +30,11 @@
 
 <div class="actions">
 	<div class="inventory-filters actions-filters flexrow">
-		<ul class="filter-list flexrow" data-filter="action">
-			<li class="filter-item" data-filter="action">{{{SYSTEM.icons.sfaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.ACTION"}}</li>
-			<li class="filter-item" data-filter="bonus">{{{SYSTEM.icons.sfbonus}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.BONUS"}}</li>
-			<li class="filter-item" data-filter="reaction">{{{SYSTEM.icons.sfreaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.REACTION"}}</li>
-			<li class="filter-item" data-filter="free">{{{SYSTEM.icons.sffree}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.FREE"}}</li>
+		<ul class="filter-list flexrow" data-filter-id="action">
+			<li class="filter-item {{#if (eq this.filters.action "action")}}active{{/if}}" data-filter="action">{{{SYSTEM.icons.sfaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.ACTION"}}</li>
+			<li class="filter-item {{#if (eq this.filters.action "bonus")}}active{{/if}}" data-filter="bonus">{{{SYSTEM.icons.sfbonus}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.BONUS"}}</li>
+			<li class="filter-item {{#if (eq this.filters.action "reaction")}}active{{/if}}" data-filter="reaction">{{{SYSTEM.icons.sfreaction}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.REACTION"}}</li>
+			<li class="filter-item {{#if (eq this.filters.action "free")}}active{{/if}}" data-filter="free">{{{SYSTEM.icons.sffree}}} {{localize "SKYFALL.ITEM.ACTIVATIONS.FREE"}}</li>
 		</ul>
 	</div>
 
@@ -32,7 +42,7 @@
 		
 		{{#each actions as | item |}}
 		{{#if item.weapons}}
-		<li class="item {{item.type}} weapon entry flexcol " data-entry-id="{{item.id}}">
+		<li class="item {{item.type}} weapon entry flexcol {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-name">{{{item.system._labels.action.icon}}} {{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}</div>
 			<div class="item-controls flexrow flex100">
 				{{#each item.weapons as | weapon | }} 
@@ -43,7 +53,7 @@
 			</div>
 		</li>
 		{{else if (eq item.type 'weapon')}}
-		<li class="item {{item.type}} entry flexcol " data-entry-id="{{item.id}}">
+		<li class="item {{item.type}} entry flexcol {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-name">{{item.name}}</div>
 			<div class="item-controls flexcol">
 				{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
@@ -55,7 +65,7 @@
 			</div>
 		</li>
 		{{else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
-		<li class="item {{item.type}} entry flexrow" data-entry-id="{{item.id}}">
+		<li class="item {{item.type}} entry flexrow {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-controls">
 				<a class="control ability" data-action="use" data-target="ability" data-item-id="{{item.id}}">
 					{{{item.system._labels.action.icon}}} {{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}
@@ -66,7 +76,7 @@
 			</div>
 		</li>
 		{{else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
-		<li class="item {{item.type}} flexcol" data-entry-id="{{item.id}}">
+		<li class="item {{item.type}} flexcol {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-name">{{item.name}}</div>
 			<div class="item-controls">
 				<a class="control" data-action="usage" data-target="item">

@@ -1,6 +1,17 @@
 /* ----------------------------------------- */
 /*  Application Styles                       */
 /* ----------------------------------------- */
+.skyfall {
+	nav.tabs {
+		.item {
+			color: black;
+		}
+		.item.active {
+			color: black;
+			// text-shadow: 0 0 8px @colorSFPlayer;
+		}
+	}
+}
 .skyfall.sheet, .journal-sheet.sheet {
 	.modification-header, .modification-description {
 		padding: 5px;
@@ -17,16 +28,6 @@
 }
 .skyfall {
 	&.sheet {
-		h1, h2, h3, h4, h5, h6 {
-			border-bottom: none;
-			font-family: Skyfall;
-			border-bottom: none;
-			font-family: Skyfall;
-			line-height: 1;
-			// margin: -3px 0 0 0;
-			margin: 0;
-			align-self: baseline;
-		}
 		input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], select {
 			height: 22px;
 			font-size: 14px;
@@ -82,8 +83,9 @@
 		}
 	
 		.status-effects {
+			margin-bottom: 2em;
 			.list-items {
-				column-count: 2;
+				column-count: 3;
 				.item {
 					background-color: @colorSFPlayer;
 					color: white;
@@ -100,6 +102,16 @@
 					}
 					// font-size: 12px;
 				}
+			}
+		}
+		.filter-list {
+			list-style: none;
+			padding: 0;
+			.li {
+				cursor: pointer;
+			}
+			.active {
+				text-shadow: 0 0 10px var(--color-shadow-primary);
 			}
 		}
 	}
@@ -123,6 +135,21 @@
 					padding: 5px;
 					align-content: center;
 				}
+				.controls {
+					flex-wrap: nowrap;
+					input {
+						// width: auto;
+						flex: 1;
+					};
+					button {
+						flex: 0;
+						width: 16px;
+						height: 26px;
+						line-height: 26px;
+						font-size: 10px;
+						padding: 0 2px;
+					}
+				}
 				.controls, .cost {
 					text-align: center;
 					flex: 0 0 70px;
@@ -134,6 +161,40 @@
 				.description {
 
 				}
+			}
+		}
+	}
+	&.rest-config {
+		input, .entry > div {
+			text-align: center;
+		}
+	}
+	&.effects-menu {
+		max-width: 50px!important;
+		min-width: 50px!important;
+		width: 50px!important;
+		left: calc(100vw - 370px)!important;
+		visibility: hidden;
+		.window-header { display: none; }
+		.window-content { padding: 5px; }
+		.effect {
+			visibility: visible;
+			position: relative;
+			cursor: pointer;
+			border: 2px solid gray;
+			border-radius: 25px;
+			flex: 0 0 40px;
+			width: 40px;
+			height: 40px;
+			background-size: cover;
+			.stack {
+				position: absolute;
+				background-color: red;
+				border-radius: 80px;
+				right: -5px;
+				width: 15px;
+				font-size: 12px;
+				text-align: center;
 			}
 		}
 	}

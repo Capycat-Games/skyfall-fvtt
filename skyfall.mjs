@@ -9,11 +9,16 @@ import {fields} from "./module/data/fields/custom.mjs";
 import * as models from "./module/data/_module.mjs";
 import * as sheets from "./module/sheets/_module.mjs";
 import * as dice from "./module/dice/_module.mjs";
-
+import * as elements from "./module/apps/elements/_module.mjs"
+import EffectsMenu from "./module/apps/effects-menu.mjs";
 
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
 import { registerHandlebarsHelpers } from "./module/helpers/handlebars.mjs";
+import { registerSystemSettings } from "./module/helpers/settings.mjs";
+import AbilityTemplate from "./module/helpers/ability-template.mjs";
+import ShortRestV2 from "./module/apps/restV2.mjs";
+import TokenSkyfall from "./module/token.mjs";
 
 globalThis.skyfall = {
 	CONST: SYSTEM,
@@ -23,6 +28,12 @@ globalThis.skyfall = {
 	sheets,
 	data: {
 		fields
+	},
+	canvas: {
+		AbilityTemplate
+	},
+	wip: {
+		ShortRestV2
 	}
 }
 
@@ -32,7 +43,8 @@ Hooks.once('init', function () {
 	globalThis.skyfall = game.skyfall = Object.assign(game.system, globalThis.skyfall);
 
 	// Register System Settings
-	// SystemSettings();
+	registerSystemSettings();
+	
 	// Add custom constants for configuration.
 	CONFIG.SKYFALL = SYSTEM;
 	CONFIG.time.roundTime = 6;
@@ -46,7 +58,7 @@ Hooks.once('init', function () {
 	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
 	// CONFIG.Token.documentClass = documents.SkyfallToken;
 	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
-	
+	CONFIG.Token.objectClass = TokenSkyfall;
 	
 	// DATA MODEL
 	CONFIG.Actor.dataModels["character"] = models.actor.Character;
@@ -76,8 +88,9 @@ Hooks.once('init', function () {
 	CONFIG.ChatMessage.dataModels["usage"] = models.other.UsageMessage;
 
 	// Register Roll Extensions
+	// CONFIG.Dice.rolls[0] = dice.SkyfallRoll;
+	CONFIG.Dice.rolls.push(dice.SkyfallRoll);
 	CONFIG.Dice.rolls.push(dice.D20Roll);
-	// CONFIG.Dice.legacyParsing = true; // TODO REMOVE
 	CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/chat/roll.hbs';
 
 	// Register sheet application classes
@@ -91,11 +104,16 @@ Hooks.once('init', function () {
 		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: true,
 	});
+	Items.registerSheet("skyfall", sheets.SkyfallItemSheetV2, {
+		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
+		makeDefault: false,
+	});
 
 	Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
-		types: ['ability','spell'],
+		types: ['ability','spell','sigil'],
 		makeDefault: true,
 	});
+	
 	
 	Messages.registerSheet('skyfall', sheets.ItemUsageConfig, {
 		types: ['usage'],
@@ -110,7 +128,7 @@ Hooks.once('init', function () {
 	// Status Effects
 	CONFIG.statusEffects = SYSTEM.statusEffects;
 	// CONFIG.specialStatusEffects.INVISIBLE = "INVISIBLE";
-
+	
 	// Preload Handlebars templates.
 	preloadHandlebarsTemplates();
 	// HELPERS
@@ -178,7 +196,8 @@ Hooks.once('ready', async function () {
 	for (const [key, desc] of Object.entries(SYSTEM.DESCRIPTORS)) {
 		SYSTEM.DESCRIPTORS[key].label = game.i18n.localize( desc.label );
 	}
-
+	
+	prepareSystemLocalization();
 	prepareSystemStatusEffects();
 
 	const svg = await fetchSVG("systems/skyfall/assets/skyfall-logo-h.svg");
@@ -208,6 +227,25 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 	});
 	html.on('click', '.give-catharsis', _giveCatharsis.bind(this));
 });
+
+Hooks.on("controlToken", (token, controlled) => {
+	console.log( token.actor, controlled );
+	if ( controlled ) new EffectsMenu({document: token.actor}).render(true);
+	else {
+		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
+	}
+});
+
+Hooks.on("targetToken", (user, token, target) => {
+	const actor = token.actor.clone();
+	actor.updateSource({'ownership.default': 1 });
+	actor.ownership.default = 1;
+	if ( target ) new EffectsMenu({document: actor }).render(true);
+	else {
+		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
+	}
+});
+ 
 /* -------------------------------------------- */
 /*  Helpers                                     */
 /* -------------------------------------------- */
@@ -278,6 +316,15 @@ async function createItemMacro(data, slot) {
 	return false;
 }
 
+async function prepareSystemLocalization() {
+	const _sys = foundry.utils.flattenObject(SYSTEM)
+	const keys = Object.keys( _sys ).filter( k => k.match(/(label|abbr)$/) )
+	for (const key of keys) {
+		const content = foundry.utils.getProperty(SYSTEM, key);
+		foundry.utils.setProperty(SYSTEM, key, game.i18n.localize(content))
+	}
+}
+
 async function prepareSystemStatusEffects() {
 	let journalConditions;
 	if ( game.modules.has("skyfall-core") ) {
@@ -299,9 +346,15 @@ async function prepareSystemStatusEffects() {
 			if ( page ) {
 				content = `<section class='tooltip status-effect'><h3>${efName}</h3>${page.text.content}</section>`;
 			}
+			ef.description = content;
 		}
 		ef.tooltip = content;
 	}
+	SYSTEM.conditions = {};
+	SYSTEM.statusEffects.reduce((acc,ef) => {
+		acc[ef.id] = ef;
+		return acc;
+	}, SYSTEM.conditions)
 }
 
 /**

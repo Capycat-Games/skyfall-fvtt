@@ -1,63 +1,276 @@
 import D20Roll from "../dice/d20-roll.mjs";
+import SkyfallRoll from "../dice/skyfall-roll.mjs";
 
 export default class SkyfallMessage extends ChatMessage {
-	/* -------------------------------------------- */
-	/*  Data Preparation                            */
-	/* -------------------------------------------- */
 
-	/** @override */
-	prepareData() {
-		super.prepareData();
-		console.log(`${this.documentName}.prepareData()`);
+	actor;
+	ability;
+	item;
+	updateData;
+
+	/* -------------------------------------------- */
+	/*  Usage Workflows                             */
+	/* -------------------------------------------- */
+	
+	/* Set a reference to the Actor and items being used */
+	async #updateUsagePrepareData(){
+		this.getDocuments();
+		this.#applyItemToAbility();
+		this.#prepareModifications();
+		this.#applyModifications();
+		this.#prepareRolls();
+		this.#prepareAreaTemplate();
+		this.#prepareEffects();
+		await this.#prepareUsageHTML();
+		
+		return this.updateData;
+	}
+	
+	async updateUsagePrepareData() {
+		this.#applyItemToAbility();
+		this.#prepareModifications();
+		this.#applyModifications();
+		this.#prepareRolls();
+		this.#prepareAreaTemplate();
+		this.#prepareEffects();
+		await this.#prepareUsageHTML();
+		
+		return this.updateData;
 	}
 
-	/** @override */
-	prepareBaseData() {
-		super.prepareBaseData();
-		console.log(`${this.documentName}.prepareBaseData()`);
-		switch (this.type) {
-			case 'usage':
-				this.prepareUsageData();
+	async getDocuments(){
+		if ( this.actor ) return;
+		const {actorId, abilityId, itemId} = this.system;
+		this.actor = game.actors.get(actorId);
+		this.ability = this.actor.items.find( i => i.id == abilityId);
+		this.item = this.actor.items.find( i => i.id == itemId);
+		return;
+		
+		this.actor = await fromUuid(actorId);
+		this.ability = await fromUuid(abilityId);
+		this.item = await fromUuid(itemId);
+	}
+	
+	/**
+	 * Add specific modifiers that como from an item.
+	 * Example. Melee Attack + Weapon:
+	 * - Overwrite Ability range and damage for Weapon range and damage
+	 */
+	#applyItemToAbility(){
+		const {actorId, abilityId, itemId} = this.system;
+		const actor = this.actor; //game.actor.get(actorId);
+		const ability = this.ability; //actor.items.find( i => i.id == abilityId);
+		const item = this.item;
+		this.system.item = ability.toObject();
+		this.system.item.img = null;
+		
+		// Get a default active effect where ability changes are configured;
+		const itemover = ability.effects.find( ef => ef.name == 'FromItem');
+		if ( !item || !itemover  ) return;
+		this.system.item.system.descriptors = ability.system.descriptors.concat( item.system.descriptors );
+		this.system.item.img = item.img;
+
+		const AFMODES = CONST.ACTIVE_EFFECT_MODES;
+		for (const change of itemover.changes) {
+			if (!foundry.utils.hasProperty( this.system.item, change.key )) continue;
+			let value = Roll.replaceFormulaData(change.value, item.getRollData() );
+			
+			if( change.mode == AFMODES.CUSTOM ){
+			} else if( change.mode == AFMODES.MULTIPLY ){
+			} else if( change.mode == AFMODES.ADD ){
+			} else if( change.mode == AFMODES.DOWNGRADE ){
+			} else if( change.mode == AFMODES.UPGRADE ){
+			} else if( change.mode == AFMODES.OVERRIDE ){
+				foundry.utils.setProperty(this.system.item, change.key, value);
+			}
+		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.item = this.system.item;
+		this.updateData.system.actorId = this.system.actorId;
+		this.updateData.system.abilityId = this.system.abilityId;
+		this.updateData.system.itemId = this.system.itemId;
+		
+		return;
+		switch (item.type) {
+			case 'weapon':
+			case 'equipment':
+				break;
+			case 'other':
+				break;
+			default:
 				break;
 		}
 	}
 
-	/** @override */
-	prepareDerivedData() {
-		super.prepareDerivedData();
-		console.log(`${this.documentName}.prepareDerivedData()`);
-
-		switch (this.type) {
-			case 'usage':
-				this.prepareUsageDerivedData();
-				break;
+	#prepareModifications(){
+		const item = this.system.item;
+		if ( !foundry.utils.isEmpty(this.system.modifications) ) return;
+		for (const mod of this.actor?.allModifications ) {
+			const {itemName, itemType, descriptors} = mod.system.apply;
+			// Ignore modifications if apply condition is not met;
+			if ( itemName && !itemName.split(',').map(n=>n.trim()).includes(item.name) ) continue;
+			if ( itemType.includes('self') && mod.parent.id != item._id ) continue;
+			if ( !foundry.utils.isEmpty(itemType) && !itemType.includes('self') && !itemType.includes(item.type) ) continue;
+			if ( !foundry.utils.isEmpty(descriptors) && !descriptors.every( d => item.system.descriptors.includes(d) ) ) continue;
+			this.system.modifications[mod.id] = {
+				id: mod.id,
+				uuid: mod.uuid,
+				name: mod.name,
+				cost: mod.system.cost.value * Number(mod.system.apply.always),
+				resource: mod.system.cost.resource,
+				apply: mod.system.apply.always ? 1 : 0,
+			}
 		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.modifications = this.system.modifications;
+	}
+
+	#applyModifications(){
+		const act = this.system.item.system.activation;
+		// if ( act.resource )
+		this.system.costs['ep'] += act.cost;
+		
+		for ( const mod of Object.values(this.system.modifications) ) {
+			const effect = this.actor?.allModifications.find( ef => ef.id == mod.id);
+			if ( !mod.apply || Number(mod.apply) < 1 ) continue;
+			this.system.costs[mod.resource] += mod.cost;
+			continue;
+			/**
+			 * TODO APPLY SPECIAL CASES USAGE EFFECTS
+			 * Ones that Change Roll
+			 * Ones that Change Effect 
+			 */
+			for (const change of effect.changes) {
+				effect.apply(this.ability, change);
+			}
+		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.item = this.system.item;
+	}
+
+	#prepareRolls(){
+		const item = this.system.item;
+		const advantage = this.getFlag('skyfall', 'advantage');
+		const disadvantage = this.getFlag('skyfall', 'disadvantage');
+
+		this.system.rolls = [];
+		let damageType = item.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
+		const rollData = foundry.utils.mergeObject(this.actor.getRollData(), this.ability.getRollData());
+		if ( this.item ) rollData.item = this.item.getRollData();
+		if ( item.system.attack?.type ) {
+			rollData['prof'] = rollData.proficiency;
+			const attack = item.system.attack;
+			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
+			
+			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
+			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
+			rollData['prof'] = rollData.proficiency;
+
+			let rollConfig = {
+				advantage: advantage ?? 0,
+				disadvantage: disadvantage ?? 0,
+				rollData: rollData,
+				terms: terms,
+			}
+			console.log(rollConfig);
+			const roll = D20Roll.fromConfig( rollConfig );
+			roll.configureRoll();
+			roll.options.flavor = "Ataque";
+			roll.options.types = ["attack"];
+			this.system.rolls.push( roll );
+			// let roll = new D20Roll(`${d20} + @prof + ${item.system.attack.type}`, rollData, {types:['check','attack'], flavor:'Ataque', advantage:advantage, disadvantage:disadvantage });
+			// this.system.rolls.push(roll);
+			
+		}
+
+		if ( item.system.attack?.damage ) {
+			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {types:['damage'], flavor:'Dano Acerto'});
+			this.system.rolls.push(roll);
+		}
+
+		if ( item.system.effect?.damage ) {
+			let roll = new SkyfallRoll(`${item.system.effect.damage}`, rollData, {types:['damage'], flavor:'Dano Efeito'});
+			roll.terms.map( t => t.options.flavor = damageType );
+			this.system.rolls.push(roll);
+		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.rolls = this.system.rolls;
+	}
+
+	async #evaluateRolls(index = null){
+		let criticalHit = false;
+		for (const [i, rollData] of Object.entries(this.system.rolls)) {
+			if( index != null && index != i ) continue;
+			const roll = Roll.fromData(rollData);
+			if ( roll.options.types?.includes('damage') && criticalHit ) {
+				roll.alter(2);
+			}
+			await roll.evaluate();
+			this.rolls[i] = roll;
+			this.system.rolls[i].evaluated = true;
+			this.system.rolls[i].template = await roll.render({flavor: roll.options.flavor});
+			if ( roll.options.types?.includes('attack') && roll.dice[0].total == 20 ) {
+				criticalHit = true;
+			}
+		}
+		this.updateData ??= {}
+		this.updateData.system ??= {}
+		this.updateData.rolls = this.rolls;
+		this.updateData.system.rolls = this.system.rolls;
+		await this.#prepareUsageHTML();
 	}
 	
-	/* -------------------------------------------- */
-
-	/**
-	 * Prepare Usage type specific data
-	 */
-	prepareUsageData() {
-		const messageData = this;
-		const systemData = messageData.system;
-		const flags = messageData.flags.skyfall || {};
-	}
-	
-	/* -------------------------------------------- */
-
-	/**
-	 * Prepare Usage type specific derived data
-	 */
-	prepareUsageDerivedData() {
-		const messageData = this;
-		const systemData = messageData.system;
-		const flags = messageData.flags.skyfall || {};
-
-		if ( systemData.status.phase == 1 ) {
-
+	#prepareAreaTemplate(){
+		const item = this.system.item;
+		if ( item.system.target.shape ) {
+			this.system.measuredTemplate.push({t: item.system.target.shape});
 		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.measuredTemplate = this.system.templates;
+	}
+
+	#prepareEffects() {
+		const item = this.system.item;
+		this.system.effects = [];
+		for (const ef of item.effects) {
+			if ( ef.type == 'modification' && !ef.isTemporary ) continue;
+			if ( ef.disabled ) continue;
+			let statusEffect = CONFIG.statusEffects.find(e => e.name == ef.name);
+			if( statusEffect ) statusEffect._id = statusEffect.id;
+			this.system.effects.push( statusEffect ?? ef );
+		}
+		this.updateData ??= {};
+		this.updateData.system ??= {};
+		this.updateData.system.effects = this.system.effects;
+	}
+
+	async #prepareUsageHTML(){
+		const templateData = {
+			usage: this.system,
+			SYSTEM: SYSTEM,
+			modifications: this.system.modifications,
+			effects: this.system.effects,
+			rolls: this.system.rolls,
+		}
+		const tempItem = new Item(templateData.usage.item);
+		// templateData.usage.item._labels = tempItem.system._labels;
+		templateData.item = tempItem;
+		const mods = {};
+		Object.values(templateData.modifications).reduce((acc, mod) => {
+			if ( Number(mod.apply) > 0 ) acc[mod.id] = mod;
+			return acc;
+		}, mods);
+		templateData.modifications = mods;
+		let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
+		const content = await renderTemplate(template, templateData);
+		// console.log(content);
+		this.updateData ??= {};
+		this.updateData.content = content;
 	}
 
 	/* -------------------------------------------- */
@@ -66,8 +279,8 @@ export default class SkyfallMessage extends ChatMessage {
 
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
-		console.warn(this.system.item);
 		await super._preCreate(data, options, user);
+		return;
 	}
 
 	/* -------------------------------------------- */
@@ -75,17 +288,49 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
 		await super._onCreate(data, options, user);
-		// Renders Item Usage config
+		console.warn(this, data, options, user);
 		if ( data.type == 'usage' && user == data.author ) {
-			await this.usageConfigurePhase();
-			this.sheet.render(true);
+			await this.#updateUsagePrepareData();
+			if ( !foundry.utils.isEmpty(this.updateData) ) {
+				// delete this.updateData._id;
+				await this.update(this.updateData, {contentRendered:true})
+				this.updateData = null;
+			}
+
+			if ( options.skipConfig ) {
+				await this.#evaluateRolls();
+				if ( !foundry.utils.isEmpty(this.updateData) ) { 
+					await this.update(this.updateData, {contentRendered:true})
+					this.updateData = null;
+				}
+			} else {
+				this.sheet.render(true);
+			}
 		}
+		console.log(this);
+		return;
 	}
 
 	/* -------------------------------------------- */
 
 	/** @inheritdoc */
 	async _preUpdate(data, options, userId) {
+		if ( this.type == 'usage' ){
+			// delete data._id;
+
+			// foundry.utils.mergeObject(this, data);
+			// console.warn(options.contentRendered);
+			// if( !options.contentRendered ) {
+			// 	await this.#prepareUsageHTML();
+			// }
+			// if ( !foundry.utils.isEmpty(this.updateData) ) { 
+			// 	// await this.update(this.updateData)
+			// 	data = foundry.utils.mergeObject(data, this.updateData);
+			// 	// this.updateData = null;
+			// }
+		}
+		console.warn(data, this.updateData);
+		return await super._preUpdate(data, options, userId);
 		// Prevent Update of commited message;
 		if ( data.type == 'usage' ) {
 			const html = await this.usageRenderTemplate();
@@ -102,25 +347,34 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	_onUpdate(data, options, userId) {
 		super._onUpdate(data, options, userId);
-		if ( this.type == "usage" && !options.configured ) this.usageConfigurePhase();
+		return;
 	}
 
 	/* -------------------------------------------- */
 	/*  Event Handling                              */
 	/* -------------------------------------------- */
-	
+
 	/**
 	 * Render the HTML for the ChatMessage which should be added to the log
 	 * @returns {Promise<jQuery>}
 	 */
 	async getHTML() {
 		const html = await super.getHTML();
-		
+		console.log('getHTML');
 		if ( this.type == 'usage' ) {
 			const bgOverlay = document.createElement("div");
 			bgOverlay.classList.add("header-overlay");
 			html.prepend( bgOverlay );
+			if ( this.system.modifications ){
+				let mods = Object.values(this.system.modifications);
+				// mods = mods.map(m => `<li>@Embed[${m.uuid}]</li>`).join('');
+				// let modslist = await TextEditor.enrichHTML(mods);
+				// $(html).find('ul.modifications').html(modslist);
+				//mods = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
+				//context.enriched.modifications = await TextEditor.enrichHTML(`<div>${mods}</div>`);
+			}
 		}
+
 		// Context menu
 		const metadata = $(html).find(".message-metadata");
 		metadata.find(".message-delete")?.remove();
@@ -130,11 +384,12 @@ export default class SkyfallMessage extends ChatMessage {
 		anchor.dataset.contextMenu = "";
 		anchor.innerHTML = '<i class="fas fa-ellipsis-vertical fa-fw"></i>';
 		metadata.append(anchor);
+
 		// Add Damage Apply Buttons
-		this._damageApplyButtons(html);
+		this._rollButtons(html);
 
 		this.activateListeners(html);
-		
+
 		const itemName = html.find('.card-header > .item-name');
 		if( itemName.text().length <= 10 ) itemName.addClass("fonts22");
 		else if ( itemName.text().length <= 15 ) itemName.addClass("fonts20");
@@ -142,18 +397,17 @@ export default class SkyfallMessage extends ChatMessage {
 		else if ( itemName.text().length <= 25 ) itemName.addClass("fonts16");
 		else if ( itemName.text().length <= 30 ) itemName.addClass("fonts14");
 		else itemName.addClass("fonts12");
-		
-		console.warn( itemName );
 
-		return html
+		return html;
 	}
 
-	
 	/**
 	 * Render Action Buttons Over roll-template
 	 */
-	_damageApplyButtons(html){
+	_rollButtons(html){
 		let chatHTML = html.find(".message-content");
+		let noButtons = chatHTML.find(".rest-card");
+		if ( noButtons[0] ) return;
 		if ( !chatHTML[0] ) return;
 		chatHTML = chatHTML[0];
 		
@@ -201,11 +455,16 @@ export default class SkyfallMessage extends ChatMessage {
 				text: '<i class="fa-solid fa-bahai"></i>',
 				title: "SKYFALL.MESSAGE.CATHARSIS",
 				dataset: [['applyCatharsis','-']]
+			},
+			evaluate: {
+				text: '<i class="fa-solid fa-dice"></i>',
+				title: "SKYFALL.MESSAGE.ROLL",
+				dataset: [['evaluateRoll','1']]
 			}
 		}
-		
+
 		// Get Element To Append to;
-		let damageRolls = chatHTML.querySelectorAll('.evaluated-roll:not(.D20Roll)');
+		let damageRolls = chatHTML.querySelectorAll('.roll-entry.evaluated:not(.D20Roll)');
 		for (const damageRoll of damageRolls) {
 			if( !damageRoll ) continue;
 			// Left Buttons
@@ -234,7 +493,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		// Get Element To Append Catharsis to;
-		let diceRolls = chatHTML.querySelectorAll('.evaluated-roll');
+		let diceRolls = chatHTML.querySelectorAll('.roll-entry.evaluated');
 		for (const diceRoll of diceRolls) {
 			if( !diceRoll ) continue;
 			// Left Buttons
@@ -252,6 +511,17 @@ export default class SkyfallMessage extends ChatMessage {
 			button = btnCreate( buttons.catharsis );
 			btncontainer.append(button);
 			// Append to Roll Template
+			diceRoll.append(btncontainer);
+		}
+
+		diceRolls = chatHTML.querySelectorAll('.roll-entry:not(.evaluated)');
+		for (const diceRoll of diceRolls) {
+			if( !diceRoll ) continue;
+			btncontainer = document.createElement("span");
+			btncontainer.classList.add('roll-btns', 'right', 'top');
+			// Button Apply Damage
+			button = btnCreate( buttons.evaluate );
+			btncontainer.append(button);
 			diceRoll.append(btncontainer);
 		}
 	}
@@ -274,6 +544,10 @@ export default class SkyfallMessage extends ChatMessage {
 		// html.find('.aid').click(this._dealDamageClicked.bind(this))
 		html.on("click", "[data-apply-damage]", this.#applyDamage.bind(this));
 		html.on("click", "[data-apply-catharsis]", this.#applyCatharsis.bind(this));
+		html.on("click", "[data-apply-rest]", this.#applyRest.bind(this));
+		html.on("click", "[data-evaluate-roll]", this.#evaluateRoll.bind(this));
+		
+		html.on('click', '[data-place-template]', this.#placeTemplate.bind(this));
 	}
 
 	/* -------------------------------------------- */
@@ -286,7 +560,7 @@ export default class SkyfallMessage extends ChatMessage {
 	async #onClickControl(event) {
 		event.preventDefault();
 		const button = event.currentTarget;
-		button.event = event.type; //Pass the trigger mouse click event
+		button.event = event; //Pass the trigger mouse click event
 		switch ( button.dataset.action ) {
 			case "configure":
 				this.sheet.render(true);
@@ -301,24 +575,44 @@ export default class SkyfallMessage extends ChatMessage {
 
 				break;
 			case "applyEffect":
-				
+				const effId = button.dataset.effectId;
+				let eff = this.system.effects.find( ef => ef._id == effId );
+				for (const tkn of canvas.tokens.controlled) {
+					if ( SYSTEM.conditions[eff.id] ) {
+						tkn.actor.toggleStatusEffect( eff.id );
+					} else {
+						tkn.actor.createEmbeddedDocuments('ActiveEffect', [eff]);
+					}
+				}
 				break;
 		}
 	}
 
 	/* -------------------------------------------- */
-
+	async #evaluateRoll(event){
+		event.preventDefault();
+		const button = event.currentTarget;
+		const chatCardId = button.closest(".chat-message").dataset.messageId;
+		const message = game.messages.get(chatCardId);
+		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
+		const rollIndex = message.system.rolls.findIndex( r => r.options.flavor == rollTitle );
+		await message.#evaluateRolls(rollIndex);
+		if ( !foundry.utils.isEmpty(message.updateData) ) { 
+			await message.update(message.updateData);
+			message.updateData = null;
+		}
+	}
 
 	#applyDamage(event) {
 		event.preventDefault();
 		const button = event.currentTarget;
 		button.event = event.type; //Pass the trigger mouse click event
 		const modifier = Number(button.dataset.applyDamage);
-		const damage = button.closest('.evaluated-roll').querySelector('.dice-total').innerText;
+		const damage = button.closest('.roll-entry').querySelector('.dice-total').innerText;
 
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
 		const message = game.messages.get(chatCardId);
-		const rollTitle = button.closest(".evaluated-roll").dataset.rollTitle;
+		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
 		const roll =  message.rolls.find( r => r.options.flavor == rollTitle && r.options.types.includes('damage') );
 		
 		for (const token of canvas.tokens.controlled) {
@@ -328,235 +622,69 @@ export default class SkyfallMessage extends ChatMessage {
 
 	async #applyCatharsis(event) {
 		event.preventDefault();
+		if ( !game.user.isGM && canvas.tokens.controlled) {
+			const actor = canvas.tokens.controlled[0]?.actor;
+			const current = actor.system.resources.catharsis.value;
+			if ( current == 0 ) return ui.notifications.info("Catarse Insuficiente");
+		}
 		const rollTerms = foundry.dice.terms;
 		const button = event.currentTarget;
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
 		const operator = button.dataset.applyCatharsis;
 		const message = game.messages.get(chatCardId);
-		const rollTitle = button.closest(".evaluated-roll").dataset.rollTitle;
+		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
 		const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
 		const roll = message.rolls.find( r => r.options.flavor == rollTitle );
-		const terms = [new rollTerms.OperatorTerm({operator: operator}), new rollTerms.Die({number:1, faces:6})];
-		terms.map(t => t.evaluate());
-		roll.terms = roll.terms.concat( terms );
-		roll._formula = roll.constructor.getFormula(roll.terms);
-		await roll._evaluate();
+		await roll.applyCatharsis({operator});
+		
 		message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
-		const updateData = {
-			rolls: message.rolls,
-			"system.rolls": message.system.rolls,
-		}
-		this.update(updateData);
-
-	}
-
-	/* -------------------------------------------- */
-	/* Usage Message Processing                     */
-	/* -------------------------------------------- */
-	
-	async usageRenderTemplate(){
-		const templateData = {
-			usage: this.system,
-		}
-		let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
-		const html = await renderTemplate(template, templateData);
-		return html;
-	}
-
-	async usageConfigurePhase(){
-		if ( this.type != 'usage' ) return;
-		if ( this.system.status.phase > 1 ) return;
 		
-		const rolls = [];
-		const _ability = this.system.abilityState;
-		const _item = this.system.itemState;
-		console.warn( 'usageConfigurePhase' , _ability , _item );
-		// MERGE _item INTO _ability
-		this.#configureMergeItem(_ability, _item, rolls );
-		// Configure Rolls
-		this.#configureItem(_ability, rolls);
+		message.updateData = {};
+		message.updateData.system = {};
+		message.updateData.rolls = message.rolls;
+		message.updateData.system.rolls = message.system.rolls;
 
-		// APPLY MOFIDICATIONS into tempItem
-		const appliedMod = this.system.modifications;
-		console.log(this.system.modifications);
-		for ( const [id, mod] of Object.entries(appliedMod) ) {
-			this.#configureApplyModification( _ability, mod );
+		await message.#prepareUsageHTML();
+		if ( !foundry.utils.isEmpty(message.updateData) ) {
+			await message.update(message.updateData);
+			message.updateData = null;
 		}
-
-		const tempItem = new Item(_ability);
-		const finalData = tempItem.toObject();
-		
-		
-		finalData.system._labels = tempItem.system._labels;
-
-		// Re-render template
-		const html = await this.usageRenderTemplate();
-		this.update({"system.item": finalData, "system.rolls": rolls, content: html }, {configured: true });
-	}
-
-	#configureMergeItem( ability, item, rolls ){
-		if ( !item ) return;
-		const abl = ability.system;
-		const itm = item.system;
-		
-		// Group Descriptors
-		if ( itm ) abl.descriptors = abl.descriptors.concat( itm.descriptors );
-		let dmgDesc = abl.descriptors.filter( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
-		dmgDesc = new Set(dmgDesc);
-		dmgDesc = [...dmgDesc];
-
-		if ( ['weapon','equipment'].includes(item.type) && abl.attack ) {
-			abl.attack.damage = abl.attack.damage.replace('@item', itm.damage.formula);
-		}
-		if ( false && ['weapon','equipment'].includes(item.type) &&  abl.attack ) {
-			const attack = abl.attack;
-			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
-			const rollData = this.getRollData();
-			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
-			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			rollData['prof'] = rollData.proficiency;
-
-			let rollConfig = {
-				advantage: 0, disadvantage: 0,
-				rollData: rollData,
-				terms: terms,
-			}
-			
-			const roll = D20Roll.fromConfig( rollConfig );
-			roll.configureRoll();
-			roll.options.flavor = "Ataque";
-			roll.options.types = ["attack"];
-			rolls.push( roll.toJSON() );
-
-			rollData['item'] = itm.damage.formula;
-			const damageRoll = new Roll( attack.damage, rollData );
-
-			for (const term of damageRoll.terms) {
-				term.options.flavor ??=  dmgDesc[0] ?? 'slashing';
-			}
-			damageRoll.options.flavor = "Dano";
-			damageRoll.options.types = ["damage"];
-			rolls.push( damageRoll.toJSON() );
-		}
-
-		if ( ['weapon','equipment'].includes(item.type) && abl.range.descriptive == "@item" ) {
-			abl.range.value = itm.range;
-			abl.range.descriptive = `${abl.range.value}${abl.range.units}`;
+		console.log( game.user.isGM, canvas.tokens.controlled );
+		if ( !game.user.isGM && canvas.tokens.controlled) {
+			const actor = canvas.tokens.controlled[0]?.actor;
+			const current = actor.system.resources.catharsis.value;
+			actor.update({"system.resources.catharsis.value": current - 1});
 		}
 	}
-	
-	#configureItem( ability, rolls ){
-		console.log('configureItem');
-		// PREPARE ROLLS
-		const abl = ability.system;
 
-		// Group Descriptors
-		let dmgDesc = abl.descriptors.filter( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
-		dmgDesc = new Set(dmgDesc);
-		dmgDesc = [...dmgDesc];
-		console.log(abl);
-		if ( abl.attack?.hit ) {
-			const attack = abl.attack;
-			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
-			const rollData = this.getRollData();
-			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
-			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			rollData['prof'] = rollData.proficiency;
-
-			let rollConfig = {
-				advantage: 0, disadvantage: 0,
-				rollData: rollData,
-				terms: terms,
-			}
-			
-			const roll = D20Roll.fromConfig( rollConfig );
-			roll.configureRoll();
-			roll.options.flavor = "Ataque";
-			roll.options.types = ["attack"];
-			rolls.push( roll.toJSON() );
-
-			const damageRoll = new Roll( attack.damage, rollData );
-
-			for (const term of damageRoll.terms) {
-				term.options.flavor ??=  dmgDesc[0] ?? 'slashing';
-			}
-			damageRoll.options.flavor = "Dano";
-			damageRoll.options.types = ["damage"];
-			rolls.push( damageRoll.toJSON() );
-		}
-
+	async #applyRest(event){
+		event.preventDefault();
+		// console.log("applyRest", event);
+		const button = event.currentTarget;
+		const actorId = button.closest('.rest-card').dataset.actorId;
+		const actor = game.actors.get(actorId);
+		const messageId = button.closest('.chat-message').dataset.messageId;
+		const message = game.messages.get(messageId);
+		if ( !actor || actor.isOwnser ) return;
+		// console.log("applyRest", actor, message);
+		actor.shortRest(message);
 	}
-
-	#configureApplyModification( ability, modifications) {
-
-	}
-	
-	async usageExecutePhase(){
-		// Roll Attack/Check Dice
-		const item = this.system.item;
-		const rolls = this.system.rolls;
-		const executed = [];
-		let criticalHit = false;
-		for (const [i, roll] of this.system.rolls.entries() ) {
-			let r = Roll.fromData(roll);
-
-			if ( r.options.types?.includes('damage') && criticalHit ) {
-				r.alter(2);
-			}
-			await r.evaluate();
-			this.system.rolls[i] = r.toJSON();
-			if ( roll.class == "D20Roll" && r.options.amplify && r.dice[0].total >= 15 ) {
-				r.options.flavor += " Ampliado";
-				// ADD APLIFY EFFECTS
-			}
-			
-			this.system.rolls[i].template = await r.render({flavor: r.options.flavor});
-
-			if ( r.options.types?.includes('attack') && r.dice[0].total == 20 ) {
-				criticalHit = true;
-			}
-			
-			executed.push(r);
-		}
-		
-		await this.update({"system.rolls": this.system.rolls,"rolls": executed}, {configured: true});
-		if ( executed ){
-			AudioHelper.play({
-				src: CONFIG.sounds.dice,
-				volume: 1,
-				autoplay: true,
-				loop: false
-			}, true);
-		}
-		// APPLY AMPLIFY
-		// Roll Damage / Dice
-		// Create and Place Templates
-		// configureEffects
-		
-		// Prepare EFFECTS
-		const applycableEffects = this.system.effects;
-		for ( const eff of applycableEffects ) {
-			this.#configureEffects( _ability, eff );
-		}
-		// return;
-		// Re-render template
-		const html = await this.usageRenderTemplate();
-		// COMMIT Resources spended
-		this.update({"system.status.phase": 3, content: html }, {configured: true});
-	}
-
-	#configureEffects( ability, modifications) {
-
-	}
-
-	/* -------------------------------------------- */
-	/*  Importing and Exporting                     */
-	/* -------------------------------------------- */
 
 	/**
-	 * Export the content of the chat message into a standardized log format
-	 * @returns {string}
-	 */
-	// export() {}
-
+	* Retrieve AbilityTemplate data and Draw on Canvas
+	* @param {Event} event   The originating click event
+	* @private
+	*/
+	async #placeTemplate(event) {
+		event.preventDefault();
+		const button = event.currentTarget;
+		const message = this;
+		const item = message.system.item;
+		if( !item ) return;
+		const template = game.skyfall.canvas.AbilityTemplate.fromItem(item);
+		
+		if ( template ) {
+			template.drawPreview();
+		}
+	}
 }

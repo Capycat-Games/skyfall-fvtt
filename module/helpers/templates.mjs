@@ -34,5 +34,8 @@ export const preloadHandlebarsTemplates = async function () {
 		// Shared partials
 		'systems/skyfall/templates/shared/descriptor-field.hbs',
 		'systems/skyfall/templates/shared/active-effects.hbs',
+
+
+		"systems/skyfall/templates/apps/rest-config.hbs",
 	]);
 };
