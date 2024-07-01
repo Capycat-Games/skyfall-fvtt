@@ -1,0 +1,109 @@
+<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<div class="character-progression">
+		{{!-- LEGACY --}}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.legacy label="TYPES.Item.legacy" }}
+
+		{{!-- CURSE --}}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.curse label="TYPES.Item.curse" }}
+
+		{{!-- BACKGROUND --}}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.background label="TYPES.Item.background" }}
+
+		{{!-- Classes --}}
+		<div class="from-group slim">
+			<label>{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}</label>
+			{{#unless items.class }}
+			<div class="form-fields entry class" data-entry-id="{{path.id}}">
+				<input type="text" disabled>
+			</div>
+			{{/unless}}
+			{{#each items.class as | cls | }}
+			<div class="form-fields entry class flexrow" data-context-menu data-entry-id="{{cls.id}}">
+				<input type="number" class="slim flex0" data-action="update" data-fieldPath="system.level" value="{{cls.system.level}}">
+				<input type="text" value="{{cls.name}}" disabled>
+			</div>
+			{{/each}}
+		</div>
+		
+		{{!-- Paths --}}
+		<div class="from-group">
+			<label>{{localize "TYPES.Item.path"}}</label>
+			{{#unless items.path }}
+			<div class="form-fields entry path" data-entry-id="{{path.id}}">
+				<input type="text" disabled>
+			</div>
+			{{/unless}}
+			{{#each items.path as | path | }}
+			<div class="form-fields entry path" data-context-menu data-entry-id="{{path.id}}">
+				<input type="text" value="{{path.name}}" disabled>
+			</div>
+			{{/each}}
+		</div>
+
+		{{formField schema.size value=system.size localize=true }}
+		{{formField schema.spellcasting value=system.spellcasting localize=true }}
+		{{formField schema.details.pronouns value=system.details.pronouns localize=true }}
+		
+		<div class="background-box flexcol">
+			<div class="languages">
+				<h4><a data-action="manage" data-manage="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
+				{{#each languages as | language |}}
+					<span class="language">{{localize language}}</span>
+				{{/each}}
+			</div>
+			<div class="proficiencies">
+				<h4><a data-action="manage" data-manage="proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
+				{{#each proficiencies as | proficiency |}}
+					<span class="proficiency">{{localize proficiency}}</span>
+				{{/each}}
+			</div>
+			{{!-- RESISTANCES --}}
+			{{#if (or isEditMode irv.vul )}}
+			<div class="status vulnerability">
+				<h4><a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:
+				</a></h4>
+				{{#each irv.vul as | entry |}}
+				<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+				{{/each }}
+			</div>
+			{{/if}}
+			{{#if (or isEditMode irv.res )}}
+			<div class="status resistance">
+				<h4><a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:
+				</a></h4>
+				{{#each irv.res as | entry |}}
+				<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+				{{/each }}
+			</div>
+			{{/if}}
+			{{#if (or isEditMode irv.imu )}}
+			<div class="status imunity">
+				<h4><a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:
+				</a></h4>
+				{{#each irv.imu as | entry |}}
+				<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+				{{/each }}
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	
+	<ul class="plain features flex-start flexcol">
+		{{#each items.features as | item |}}
+		<li class="item entry flexrow" data-entry-id="{{item._id}}">
+			<div class="item-name">{{item.name}}</div>
+			{{!-- <div class="item-xxx"></div> --}}
+			<div class="item-controls">
+				{{!-- <a class="control" data-action="toggle" data-field-path="system.favorite">
+					{{{../SYSTEM.icons.star}}}
+				</a> --}}
+				<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+				<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</section>

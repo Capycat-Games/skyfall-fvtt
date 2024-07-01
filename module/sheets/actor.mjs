@@ -427,7 +427,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 			const effectData = {
 				type: type,
 				name: game.i18n.format("DOCUMENT.Create", {
-					type: game.i18n.localize(`TYPES.ActiveEffect.${type.titleCase()}`)
+					type: game.i18n.localize(`TYPES.ActiveEffect.${type}`)
 				}),
 				img: ['modification','sigil'].includes(type) ? 'icons/svg/upgrade.svg' : 'icons/svg/aura.svg',
 				disabled: category == 'inactive',

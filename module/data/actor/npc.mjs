@@ -1,10 +1,9 @@
-import Character from "./character.mjs";
+import Creature from "./creature.mjs";
 /**
  * Data schema, attributes, and methods specific to Ancestry type Items.
  */
 
-
-export default class NPC extends foundry.abstract.TypeDataModel {
+export default class NPC extends Creature {
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */
@@ -12,22 +11,9 @@ export default class NPC extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return {}
-		return foundry.utils.mergeObject(super.defineSchema(), {
-
+		return Object.assign(super.defineSchema(), {
+			hierarchy: new fields.StringField({required:true, choices: SYSTEM.hierarchy, initial:'complex', blank:true, label:"SKYFALL.DM.HIERARCHY"}),
+			archetype: new fields.SetField(new fields.StringField({required:true, choices: SYSTEM.archetype, initial:'brute'}),{label:"SKYFALL.DM.ARCHETYPE"}),
 		});
-	}
-
-	/* -------------------------------------------- */
-	/*  Schema Factory                              */
-	/* -------------------------------------------- */
-
-	static #schemaDamage() {
-		const dmgResLevels = Object.keys(SYSTEM.damageModifiers);
-		const dmgTypes = Object.values(SYSTEM.DESCRIPTOR.DAMAGE);
-		return new fields.SchemaField( dmgTypes.reduce((obj, dmg) => {
-			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "nor"});
-			return obj;
-		}, {}));
 	}
 }

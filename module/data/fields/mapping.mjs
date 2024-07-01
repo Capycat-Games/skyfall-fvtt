@@ -61,7 +61,7 @@
  * @property {boolean} [initialKeysOnly=false]  Should the keys in the initialized data be limited to the keys provided
  *                                              by `options.initialKeys`?
  */
-export class MappingField extends foundry.data.fields.ObjectField {
+export default class MappingField extends foundry.data.fields.ObjectField {
 	constructor(model, options) {
 		if ( !(model instanceof foundry.data.fields.DataField) ) {
 			throw new Error("MappingField must have a DataField as its contained element");

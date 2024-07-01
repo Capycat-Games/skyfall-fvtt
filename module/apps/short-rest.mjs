@@ -93,8 +93,8 @@ export default class ShortRest extends FormApplication {
 				hitDieMods: modifiers?.rest?.hitDieMod?.join('') ?? '',
 				hitDieBonus: ["+@con"].concat(modifiers?.hitDieBonus ?? []).join('+'),
 			}
-			let roll = new Roll(hdData._formula, rollData);
-			roll = new Roll(roll.formula, rollData);
+			let roll = new RollSF(hdData._formula, rollData);
+			roll = new RollSF(roll.formula, rollData);
 			hdData.formula = roll.formula;
 			console.log(hdData);
 			hitDies.push(hdData);
@@ -135,7 +135,7 @@ export default class ShortRest extends FormApplication {
 			this.updateData.items.push(updateItem);
 		}
 		// Evaluate hitDie Roll
-		const roll = new Roll(formula,{},{flavor:classItem.name});
+		const roll = new RollSF(formula,{},{flavor:classItem.name});
 		await roll.evaluate();
 		roll.options.template = await roll.render();
 		// Track Recovered

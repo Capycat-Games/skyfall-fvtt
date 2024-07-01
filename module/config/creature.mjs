@@ -146,3 +146,46 @@ export const damageModifiers = _damageModifiers.reduce((obj, key) => {
 	}
 	return obj;
 }, {});
+
+
+let npcHierarchy = ["simple", "complex", "boss"];
+export const hierarchy = npcHierarchy.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		label: `SKYFALL.DM.HIERARCHYTYPES.${key.toUpperCase()}`,
+		abbr: `SKYFALL.DM.HIERARCHYTYPES.${key.toUpperCase()}ABBR`,
+	}
+	return obj;
+}, {});
+
+
+let npcArchetype = ['ranged','brute','group','mount','defender','flanker','leader','sentinel'];
+export const archetype = npcArchetype.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		label: `SKYFALL.DM.ARCHETYPETYPES.${key.toUpperCase()}`,
+		abbr: `SKYFALL.DM.ARCHETYPETYPES.${key.toUpperCase()}ABBR`,
+	}
+	return obj;
+}, {});
+
+const characterProgression = {
+	"legacy": {},
+	"curse": {},
+	"feat0": {},
+	"background": {},
+	"level1": {},
+	"level2": {},
+	"basicpath": {},
+	"level3": {},
+	"level4": {},
+	"level5": {},
+	"level6": {},
+	"level7": {},
+	"advancedpath": {},
+	"level8": {},
+	"level9": {},
+	"level10": {},
+	"level11": {},
+	"level12": {},
+}

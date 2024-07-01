@@ -1,4 +1,6 @@
+import RollConfig from "../apps/roll-config.mjs";
 import { SYSTEM } from "../config/system.mjs";
+import { actor } from "../data/_module.mjs";
 import D20Roll from "../dice/d20-roll.mjs";
 
 /**
@@ -41,6 +43,18 @@ export default class SkyfallActor extends Actor {
 	/** @override */
 	prepareBaseData() {
 		console.log(`${this.documentName}.prepareBaseData()`);
+		// ABILITIES
+		for (let [key, abl] of Object.entries(this.system.abilities)) {
+			abl.label = SYSTEM.abilities[key].abbr;
+		}
+
+		// SKILLS
+		for (let [key, skill] of Object.entries(this.system.skills)) {
+			skill.id = key;
+			skill.label = SYSTEM.skills[key] ? game.i18n.localize(SYSTEM.skills[key].label) : (skill.label || "SKILL");
+			skill.icon = [SYSTEM.icons.square, SYSTEM.icons.check, SYSTEM.icons.checkdouble][skill.value];
+			skill.type = SYSTEM.skills[key]?.type ?? 'apti' ?? 'custom';
+		}
 	}
 
 	/** @override */
@@ -55,25 +69,19 @@ export default class SkyfallActor extends Actor {
 		if( hpPerLevelMethod == 'user' ) {
 			hpPerLevelMethod = this.getFlag('skyfall','hpPerLevelMethod');
 		}
-		if( hpPerLevelMethod == 'mean' ) this.prepareMaxHPMean();
+		if ( this.type != "character"){
+		} else if( hpPerLevelMethod == 'mean' ) this.prepareMaxHPMean();
 		else if( hpPerLevelMethod == 'roll' ) this.prepareMaxHPRoll();
-		
-		if ( false ) {
-			const hitDie = systemData.resources.hitDie.die.replace(/\d+d/,'');
-			let levels = [];
-			if ( flags.hpPerLevel == 'roll' ) levels = [];
-			else { //if ( flags.hpPerLevel == 'mean') {
-				let mean = (((Number(hitDie)) / 2) + 1);
-				levels = Array.fromRange(systemData.level.value).fill(mean, 0, 12);
-			}
-			levels[0] = Number(hitDie);
-			systemData.resources.hp.max = levels.reduce((acc,i)=> acc+i) ?? 1;
-			systemData.resources.hp.max += systemData.level.value * systemData.abilities.con.value;
-		}
+		const { hp, ep } = systemData.resources;
+		systemData.resources.hp.pct = Math.round(hp.value * 100 / hp.max);
+		systemData.resources.hp.tpct = Math.round(hp.temp * 100 / hp.max);
+		systemData.resources.hp.negative = hp.value < 0 ;
 		
 		// PREPARE EMPHASYS POINTS
 		systemData.resources.ep.max = systemData.level.value * 3;
-
+		systemData.resources.ep.pct = Math.round(ep.value * 100 / ep.max);
+		systemData.resources.ep.tpct = Math.round(ep.temp * 100 / ep.max);
+		
 		// PREPARE PROFICIENCIA
 		
 		// PREPARE PROTECTIONS
@@ -105,13 +113,16 @@ export default class SkyfallActor extends Actor {
 		}, 0);
 		
 		// PREPARE FRAGMENTS LIMIT
-		const cha = systemData.abilities.cha.value;
-		systemData.fragments.max = cha + (systemData.proficiency * 2);
+		let fragAbl = systemData.fragments.abl;
+		fragAbl = systemData.abilities[fragAbl].value ?? 0;
+		systemData.fragments.max = fragAbl + (systemData.proficiency * 2);
 		
+		if ( systemData.spellcasting ) {
+			systemData.abilities[systemData.spellcasting].spellcasting = true;
+		}
 		// PREPARE DATA FROM CLASS
 		const iniClass = actorData.items.find( it => it.type == 'class' && it.system.initial );
 		if ( iniClass ) {
-			systemData.resources.hitDie.die = iniClass.system.hitDie;
 			// PREPARE SPELLCASTING ABILITY
 			if ( iniClass.system.spellcasting ) {
 				systemData.abilities[iniClass.system.spellcasting].spellcasting = true;
@@ -173,7 +184,7 @@ export default class SkyfallActor extends Actor {
 
 		// Pseudo Roll to calculate total hp
 		console.log(systemData, hpData);
-		const roll = new Roll(`@dieMax + @dieMean + @abl + @levelBonus + ((@abl + @levelBonus) * @level) + @totalBonus`, hpData);
+		const roll = new RollSF(`@dieMax + @dieMean + @abl + @levelBonus + ((@abl + @levelBonus) * @level) + @totalBonus`, hpData);
 		console.log(roll);
 		roll.evaluateSync();
 		
@@ -189,8 +200,16 @@ export default class SkyfallActor extends Actor {
 	 */
 	getRollData() {
 		const data = { ...super.getRollData() };
+		data.magic = 0;
 		for (const [key, abl] of Object.entries(data.abilities)) {
 			data[key] = abl.value;
+			if ( abl.spellcasting ) {
+				data.magic = Math.max(data.magic, abl.value);
+			}
+		}
+		data['prof'] = data['proficiency'];
+		for (const [key, skill] of Object.entries(data.skills)) {
+			data[key] = data['prof'] * skill.value;
 		}
 		return data;
 	}
@@ -371,7 +390,33 @@ export default class SkyfallActor extends Actor {
 		return;
 	}
 
-	async rollCheck({type='ability',id='str',abl='str'}){
+	async rollCheck({type='ability',id='str',abl='str'}, options){
+		const roll = await new RollConfig({
+			type: type,
+			ability: abl,
+			skill: id,
+			actor: this,
+			createMessage: true,
+			skipConfig: options.skipConfig ?? false,
+			advantageConfig: options.advantageConfig ?? 0,
+		}).render( !(options.skipConfig ?? false) );
+		
+		if ( type='initiative' && roll ) {
+			try {
+				let combat = game.combats.active;
+				if (!combat) return;
+				let combatant = combat.combatants.find(
+					(c) => c.actor.id === this.id
+				);
+				if ( !combatant || combatant.initiative != null ) return;
+				combat.setInitiative(combatant.id, roll.total);
+				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
+			} catch (error) {
+				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
+			}
+		}
+		return;
+		
 		const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
 		const rollData = this.getRollData();
 		terms.push( {term: `@${abl}`, options: {flavor: '', name: 'ability', source: ''}} );
@@ -457,7 +502,7 @@ export default class SkyfallActor extends Actor {
 		if ( overlay ) overlay = false; // DEAD is the only overlay;
 		if ( statusId === 'dead' ) overlay = true;
 		let status = SYSTEM.conditions[statusId];
-		if ( status?.system.stack ) {
+		if ( status?.system?.stack ) {
 			const effect = this.effects.find(ef => ef.id.startsWith(statusId) );
 			console.log(effect);
 			if ( effect && effect.stack > 1 ) {

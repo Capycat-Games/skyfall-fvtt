@@ -53,3 +53,40 @@
 		}
 	}
 }
+
+.skyfall.sheet.ability {
+	.window-content {
+		padding: 0;
+		position: relative;
+		flex-direction: row;
+		max-height: 600px;
+		max-width: 850px;
+		
+		.ability-card {
+			color: @colorSFPlayer;
+			max-width: 400px;
+			.SF-ability;
+		}
+		.ability-configuration {
+			color: black;
+			min-width: 420px;
+			width: 420px;
+			max-width: 420px;
+			input, select { color: white;}
+
+			section.tab, div.tab {
+				flex: 0 0 550px;
+			}
+			.ability-config.scrollable {
+				--scroll-margin: 0;
+				margin-right: 0 !important;
+				padding-right: 0 !important;
+				textarea {
+					padding: 5px;
+					min-height: 30px;
+				}
+			}
+		}
+
+	}
+}

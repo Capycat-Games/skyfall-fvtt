@@ -32,6 +32,29 @@
 			height: 22px;
 			font-size: 14px;
 		}
+		.item-controls {
+			white-space: nowrap;
+			flex: 0;
+			font-size: 14px;
+			text-align: right;
+		}
+		.effects-list {
+			img {
+				width: 32px;
+				height: 32px;
+				flex: 0;
+				margin-right: 10px;
+			}
+			.effect-name { flex: 1 }
+			.effect-source, .effect-duration {
+				flex: 0 0 150px;
+				text-align: center;
+			}
+			.effect-controls {
+				flex: 0 0 80px;
+				white-space: nowrap;
+			 }
+		}
 		.editor, .editor-content {
 			min-height: 100px;
 			min-height: 6em;
@@ -81,37 +104,20 @@
 				}
 			}
 		}
-	
-		.status-effects {
-			margin-bottom: 2em;
-			.list-items {
-				column-count: 3;
-				.item {
-					background-color: @colorSFPlayer;
-					color: white;
-					padding: 4px 8px 6px 8px;
-					img {
-						vertical-align: sub;
-						width: 20px;
-						flex: 0 0 20px;
-						border: none;
-						margin-right: 5px;
-					}
-					&:first-child {
-						margin-top: 0px;
-					}
-					// font-size: 12px;
-				}
-			}
-		}
+		
 		.filter-list {
 			list-style: none;
 			padding: 0;
-			.li {
-				cursor: pointer;
+			image {
+				filter: invert(0%) contrast(0%) brightness(0%);
 			}
-			.active {
-				text-shadow: 0 0 10px var(--color-shadow-primary);
+			li.filter-item {
+				cursor: pointer;
+				opacity: 0.5;
+			}
+			li.active {
+				// text-shadow: 0 0 10px var(--color-shadow-primary);
+				opacity: 1;
 			}
 		}
 	}
@@ -190,6 +196,7 @@
 			.stack {
 				position: absolute;
 				background-color: red;
+				color: white;
 				border-radius: 80px;
 				right: -5px;
 				width: 15px;

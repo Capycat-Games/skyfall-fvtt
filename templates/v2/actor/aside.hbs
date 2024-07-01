@@ -1,0 +1,94 @@
+<aside class="sheet-header flexcol border-1">
+	<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="160" width="160"/>
+	<div class="charname flex0">
+		<input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
+	</div>
+	{{!-- {{formField schema.name value=document.name}} --}}
+	
+	<div class="actor-actions flexrow flex0">
+		<button data-action="manage" data-manage="short-rest">{{{SYSTEM.icons.food}}}</button>
+		<button data-action="manage" data-manage="long-rest">{{{SYSTEM.icons.tent}}}</button>
+		
+		<div class="hitDie flexrow">
+			{{#each hitDies.dies as | hd |}}
+				<span class="die" style="background-image:url({{hd.icon}})">{{hd.value}}</span>
+			{{/each}}
+		</div>
+		<input type="number" name="system.resources.catharsis.value" value="{{system.resources.catharsis.value}}">
+	</div>
+	
+	<div class="damage-reduction attribute flexcol">
+		<h4>{{localize "SKYFALL.ACTOR.DR"}}</h4>
+		{{formInput schema.dr value=system.dr classes="slim" disabled=true}}
+	</div>
+
+	<div class="resource hp flexrow">
+		<h4 class="flex100">{{localize "SKYFALL.ACTOR.RESOURCES.HP"}}</h4>
+		<div class="container">
+			<div class="bar {{#if system.resources.hp.negative }}negative{{/if}}" style="width:{{system.resources.hp.pct}}%;"></div>
+			<div class="bar temp" style="width:{{system.resources.hp.tpct}}%;"></div>
+			<div class="fields flexrow">
+				{{!-- {{formInput schema.resources.hp.max value=system.resources.hp.max disabled=true dataset=(toObject 'tooltip:SKYFALL.TOTAL')}} --}}
+				<span data-tooltip="SKYFALL2.Total">{{system.resources.hp.max}}</span>
+				/
+				{{formInput schema.resources.hp.value value=system.resources.hp.value dataset=(toObject 'tooltip:SKYFALL2.Current')}}
+				({{formInput schema.resources.hp.temp value=system.resources.hp.temp  dataset=(toObject 'tooltip:SKYFALL2.Temporary')}})
+			</div>
+		</div>
+	</div>
+
+	<div class="resource ep flexrow">
+		<h4 class="flex100">{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}</h4>
+		<div class="container">
+			<div class="bar {{#if system.resources.ep.negative }}negative{{/if}}" style="width:{{system.resources.ep.pct}}%;"></div>
+			<div class="bar temp" style="width:{{system.resources.ep.tpct}}%;"></div>
+			<div class="fields flexrow">
+				{{!-- {{formInput schema.resources.ep.max value=system.resources.ep.max disabled=true dataset=(toObject 'tooltip:SKYFALL2.Total')}} --}}
+				<span data-tooltip="SKYFALL2.Total">{{system.resources.ep.max}}</span>
+				/
+				{{formInput schema.resources.ep.value value=system.resources.ep.value dataset=(toObject 'tooltip:SKYFALL2.Current')}}
+				({{formInput schema.resources.ep.temp value=system.resources.ep.temp  dataset=(toObject 'tooltip:SKYFALL2.Temporary')}})
+			</div>
+		</div>
+	</div>
+
+	<div class="shadow flexcol">
+		<h4 data-tooltip="{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW.HINT"}}">{{localize "SKYFALL.ACTOR.RESOURCES.SHADOW"}}</h4>
+		<h4>
+		<a data-action="vary" data-field-path="system.resources.shadow.value">
+			{{#with system.resources.shadow}}
+			{{{ifThen (gte value 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte value 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte value 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte value 4) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte value 5) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{/with}}
+		</a>
+		</h4>
+	</div>
+
+	
+	<div class="death flexcol">
+		<h4>{{localize "SKYFALL.ACTOR.DEATHSAVES"}}</h4>
+		<h4>
+		<a data-action="vary" data-field-path="system.death.success" data-tooltip="{{localize "SKYFALL.ROLL.SUCCESSPLURAL"}}">
+			{{{SYSTEM.icons.heartline}}}
+			{{#with system.death}}
+			{{{ifThen (gte success 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte success 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte success 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{/with}}
+		</a></h4>
+		<h4><a data-action="vary" data-field-path="system.death.failure" data-tooltip="{{localize "SKYFALL.ROLL.FAILUREPLURAL"}}">
+			{{!-- {{{SYSTEM.icons.heartcrack}}} --}}
+			{{{SYSTEM.icons.skull}}}
+			{{#with system.death}}
+			{{{ifThen (gte failure 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte failure 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte failure 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{/with}}
+		</a>
+		</h4>
+	</div>
+
+</aside>

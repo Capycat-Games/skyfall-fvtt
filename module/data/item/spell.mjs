@@ -12,8 +12,8 @@ export default class Spell extends Ability {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.spells, initial: ""}),
-			components: new fields.ArrayField(new fields.StringField({required:true, blank: false})),
+			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.spells, initial: "", label: "SKYFALL2.Type"}),
+			components: new fields.ArrayField(new fields.StringField({required:true, blank: false, label: "SKYFALL2.ComponentPl"})),
 		});
 	}
 }

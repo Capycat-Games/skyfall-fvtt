@@ -1,0 +1,99 @@
+<section class="roll-config">
+	{{!-- CONTEXT HEADER --}}
+	<div class="roll-context flexcol">
+		<h5>{{title}}</h5> 
+		<div class="roll-types">
+			{{#each types as | type key | }}
+			<span data-tooltip="{{type.tooltip}}">{{type.label}}</span>
+			{{/each}}
+		</div>
+		{{#if target }}
+		<div class="roll-target">
+			Against {{target.name}}
+			<input type="text" name="target-protection" value="dex">
+			<div class="roll-target-status">
+			{{#if target.status }}(
+				{{#each target.status as | status key | }}
+				<span class="condition-reference" data-tooltip="{{status.tooltip}}">{{status.label}}</span>
+				{{/each}}
+			){{/if}}
+			</div>
+		</div>
+		{{/if}}
+	</div>
+	{{!-- ADD TERMS & MODIFIERS --}}
+	<ul class="plain roll-terms">
+		<li class="flexrow">
+			<div class="">{{localize "SKYFALL2.APP.ROLLCONFIG.RollTerm"}}</div>
+		</li>
+		{{#each terms as | term t |}}
+		<li class="roll-term flexrow">
+			<div class="flex0">
+				<input type="checkbox" data-action="check" name="terms.{{t}}.active" {{checked term.active}}>
+			</div>
+			<div class="">
+				{{!-- <input type="text" name="terms.{{t}}.label" value="{{term.label}}" disabled> --}}
+				{{term.label}}
+			</div>
+			<div class="">
+				{{!-- <input type="text" name="terms.{{t}}.expression" value="{{term.expression}}" disabled> --}}
+				{{term.expression}}
+			</div>
+			<div class="">
+				{{!-- <input type="text" name="terms.{{t}}.flavor" value="{{term.flavor}}" disabled> --}}
+				{{term.flavor}}
+			</div>
+			<div class="text-center">
+				{{!-- <input type="hidden" name="terms.{{t}}.preview" value="{{term.preview}}" disabled> --}}
+				{{term.preview}}
+			</div>
+			<div class="item-controls flex0">
+				<a data-action="deleteTerm" data-delete="{{t}}">{{{@root.SYSTEM.icons.delete}}}</a>
+			</div>
+		</li>
+		{{/each}}
+		<li class="roll-term flexrow">
+			<div><input type="text" name="label" placeholder="Nome"></div>
+			<div><input type="text" name="expression" placeholder="ex. @str, 1d6"></div>
+			<div><input type="text" name="flavor" placeholder="ex. ability, fire"></div>
+			<div class="item-controls flex0">
+				<a data-action="addTerm">{{{SYSTEM.icons.create}}}&nbsp;{{localize "ADD"}}</a>
+			</div>
+		</li>
+	</ul>
+	{{!-- TRANSFORMERS --}}
+	<ul class="plain roll-transformer flexrow">
+		<li class="flexrow flex100">
+			<div class="flex3">{{localize "SKYFALL2.APP.ROLLCONFIG.RollTransformer"}}</div>
+		</li>
+		{{#each transformers as | transformer t |}}
+		<li class="roll-transformer flexrow">
+			<div class="transformer">
+				<label class="transformer {{ifThen transformer.active active}}">{{transformer.label}} <input type="checkbox" data-action="check" name="transformers.{{t}}.active" class="" {{checked transformer.active}}></label>
+			</div>
+
+			<div class="hidden">
+				<input type="hidden" name="transformers.{{t}}.label" value="{{transformer.label}}">
+				<input type="hidden" name="transformers.{{t}}.expression" value="{{transformer.expression}}">
+				<input type="hidden" name="transformers.{{t}}.target" value="{{transformer.target}}">
+				<input type="hidden" name="transformers.{{t}}.source" value="{{transformer.source}}">
+			</div>
+			<div class="item-controls flex0 hidden">
+				<a data-action="deleteTransformer" data-delete="{{t}}">{{{@root.SYSTEM.icons.delete}}}</a>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+	{{!-- PREVIEW --}}
+	<div class="roll-preview">
+		{{roll.formula}}
+	</div>
+	<div class="roll-options">
+		<div class="form-group">
+			<label>{{localize "CHAT.RollVisibility"}}</label>
+			<select name="rollMode">
+				{{selectOptions _selOptions.rollModes selected=rollMode localize=true}}
+			</select>
+		</div>
+	</div>
+</section>

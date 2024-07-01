@@ -3,14 +3,14 @@
 	{{!-- usage == message.system --}}
 	<header class="card-header flexrow">
 		{{!-- Ability Image | Ability Name | Item Image --}}
-		<h3 class="icon" >{{{item.system._labels.action.icon}}} </h3>
+		<h3 class="icon" >{{{item.system.labels.action.icon}}} </h3>
 		<h3 class="item-name">{{item.name}}</h3>
 	</header>
 	<aside class="card-aside flexcol">
 		{{#if item.img }}
 			<img src="{{item.img}}" width="32" height="32" style="flex:0" />
 		{{else if (eq item.type 'spell')}}
-			<h2>{{{item.system._labels.spell.icon}}}</h2>
+			<h2>{{{item.system.labels.spell.icon}}}</h2>
 		{{/if}}
 		<h4>
 			{{#each usage.costs as | cost id | }}
@@ -21,7 +21,7 @@
 	</aside>
 	
 	<div class="ability-descriptors">
-		{{#each item.system._labels.descriptors as | tag i | }}
+		{{#each item.system.labels.descriptors as | tag i | }}
 		<label class="descriptor active" >{{tag.label}}</label>
 		{{/each}}
 	</div>
@@ -33,8 +33,9 @@
 	{{/if}}
 
 	<div class="ability-properties">
-		{{#each item.system._labels.properties as | prop | }}
-		<p><label>{{{localize prop.label}}}:</label> {{prop.descriptive}}</p>
+		{{log item.system}}
+		{{#each item.system.labels.properties as | prop | }}
+		<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 		{{/each}}
 	</div>
 
@@ -46,10 +47,11 @@
 		</li>
 		{{/each}}
 	</ul>
-
+	{{log rolls }}
 	{{#each rolls as |r id|}}
 	{{#if r.evaluated }} 
-	<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}">
+	{{log r.template}}
+	<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}" data-roll-index="{{id}}">
 		{{{r.template}}}
 	</div>
 	{{else }}

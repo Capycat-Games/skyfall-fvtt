@@ -40,7 +40,7 @@ export const ranges = _ranges.reduce((obj, key) => {
 }, {});
 
 
-let _activations = ["action","bonus","free","reaction","special","minute","hour","day"];
+let _activations = ["action","bonus","free","reaction","passive","special","minute","hour","day"];
 export const activations = _activations.reduce((obj, key) => {
 	obj[key] = {
 		id: key,

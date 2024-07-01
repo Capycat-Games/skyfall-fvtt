@@ -22,7 +22,7 @@ export default class D20Roll extends SkyfallRoll {
 
 	static fromConfig({terms=[], rollData={}, types=[], advantage=0, disadvantage=0}) {
 		terms = terms.reduce( (acc, t) => {
-			let r = new Roll(`${t.term}`, rollData);
+			let r = new RollSF(`${t.term}`, rollData);
 			r.terms[0].options = t.options;
 			r.terms.push( new _terms.OperatorTerm({operator:'+'}) );
 			acc = acc.concat(r.terms);
@@ -83,7 +83,7 @@ export default class D20Roll extends SkyfallRoll {
 		
 		// Append a situational bonus term
 		if ( form.bonus.value ) {
-			const bonus = new Roll(form.bonus.value, this.data);
+			const bonus = new RollSF(form.bonus.value, this.data);
 			if ( !(bonus.terms[0] instanceof OperatorTerm) ) this.terms.push(new OperatorTerm({operator: "+"}));
 			this.terms = this.terms.concat(bonus.terms);
 		}

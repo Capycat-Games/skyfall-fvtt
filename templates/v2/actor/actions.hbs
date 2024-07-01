@@ -1,0 +1,38 @@
+<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow space-between" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- ABILITY SCORES --}}
+	{{> "systems/skyfall/templates/v2/actor/actions-ability-scores.hbs"}}
+	
+	{{!-- INITIATIVE AND MOVEMENT --}}
+	<div class="attributes background-cut flexcol text-center">
+		<div class="initiative box flexcol flex1">
+			<h6>
+				<a data-action="roll" data-roll-type="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a>
+			</h6>
+			<input type="number" value="{{system.initiative}}" disabled>
+		</div>
+		<div class="movement  box flexcol flex1">
+			<h6>
+				<a data-action="manage" data-manage="movement">{{localize "SKYFALL.ACTOR.MOVEMENT"}}</a>
+			</h6>
+			<div class="values">
+				{{#each movement as | move | }}
+				<span data-tooltip="{{localize move.label}}">
+					{{{move.icon}}} {{move.value}} 
+				</span>
+				{{/each}}
+				<span>&nbsp;</span>
+			</div>
+		</div>
+	</div>
+	<div class="flex100"></div>
+	{{!-- SKILLS --}}
+	<div class="background-cut skills">
+		<div class="proficiency flexrow">
+			<input type="number" class="slim" value="{{system.proficiency}}" disabled>
+			<span>{{localize "SKYFALL.ACTOR.PROFBONUSABBR"}}</span>
+		</div>
+		{{> "systems/skyfall/templates/v2/actor/actions-skills.hbs" skills=system.skills}}
+	</div>
+	{{!-- ABILITY ACTIONS --}}
+	{{> "systems/skyfall/templates/v2/actor/actions-abilities.hbs"}}
+</section>

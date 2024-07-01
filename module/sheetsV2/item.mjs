@@ -1,44 +1,65 @@
+import PhysicalItemData from "../data/item/physical/physical-item.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
+const { ItemSheetV2 } = foundry.applications.sheets;
 
-export default class SkyfallItemSheetV2 extends SkyfallSheetMixin(foundry.applications.sheets.ItemSheetV2) {
+export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall", "item"],
 		position: {width: 520, height: "auto"},
 		actions: {
-			someAction: SkyfallItemSheetV2.#someAction,
+			someAction: ItemSheetSkyfall.#someAction,
 		}
 	};
-
+	
 	/** @override */
 	static PARTS = {
 		header: {template: "systems/skyfall/templates/v2/item/header.hbs"},
 		tabs: {template: "templates/generic/tab-navigation.hbs"},
 		description: {template: "systems/skyfall/templates/v2/item/description.hbs", scrollable: [""]},
-		// details: {template: "systems/artichron/templates/partials/item-details.hbs", scrollable: [""]},
-		// traits: {template: "templates/generic/tab-navigation.hbs"},
-		// heritage: {template: "templates/generic/tab-navigation.hbs"},
-		// abilities: {template: "templates/generic/tab-navigation.hbs"},
-		// feats: {template: "templates/generic/tab-navigation.hbs"},
-		// features: {template: "systems/skyfall/templates/item/parts/features.hbs"},
-		debug: {template: "systems/skyfall/templates/v2/shared/debug.hbs"},
+		traits: {template: "systems/skyfall/templates/v2/item/traits.hbs"},
+		heritage: {template: "systems/skyfall/templates/v2/item/heritage.hbs"},
+		// abilities: {template: "systems/skyfall/templates/v2/item/abilities.hbs"},
+		features: {template: "systems/skyfall/templates/v2/item/features.hbs"},
+		feats: {template: "systems/skyfall/templates/v2/item/feats.hbs"},
+		// debug: {template: "systems/skyfall/templates/v2/shared/debug.hbs"},
 		effects: {template: "systems/skyfall/templates/v2/shared/effects.hbs",scrollable: [""]}
 	};
 
 	/** @override */
 	static TABS = {
 		description: {id: "description", group: "primary", label: "SKYFALL.DESCRIPTION", cssClass: 'active'},
-		// traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
-		// details: {id: "details", group: "primary", label: "SKYFALL.ITEM.Details"},
-		debug: {id: "debug", group: "primary", label: "DEBUG"},
-		effects: {id: "effects", group: "primary", label: "TYPES.ActiveEffect.BasePL"}
+		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
+		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
+		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
+		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
+		effects: {id: "effects", group: "primary", label: "TYPES.ActiveEffect.basePL"}
 	};
 
 	/** @override */
 	tabGroups = {
-		primary: "description"
+		primary: "description",
+		heritage: "heritage1",
 	};
+
+	/**
+	 * Utility method for _prepareContext to create the tab navigation.
+	 * @returns {object}
+	 */
+	#getTabs() {
+		return Object.values(this.constructor.TABS).reduce((acc, v) => {
+			if ( !this.tabs.includes(v.id) ) return acc;
+			const isActive = this.tabGroups[v.group] === v.id;
+			acc[v.id] = {
+				...v,
+				active: isActive,
+				cssClass: isActive ? "item active" : "item",
+				tabCssClass: isActive ? "tab scrollable active" : "tab scrollable"
+			};
+			return acc;
+		}, {});
+	}
 
 	/** @override */
 	_configureRenderOptions(options) {
@@ -54,26 +75,33 @@ export default class SkyfallItemSheetV2 extends SkyfallSheetMixin(foundry.applic
 			case 'clothing':
 			case 'consumable':
 			case 'equipment':
-				options.parts = ["header","tabs","description","traits","debug","effects"];
+				options.parts = ["header","tabs","description","traits","effects"];
+				this.tabs = ["description","traits","effects"];
 				break;
 			case 'legacy':
-				options.parts = ["header","tabs","traits","features","heritage","feats","effects"];
+				// options.parts = ["header","tabs","traits","features","heritage","feats","effects"];
+				options.parts = ["header","tabs","description","features","heritage","feats","effects"];
+				this.tabs = ["description","features","heritage","feats","effects"];
+				break;
 			case 'background':
 				options.parts = ["header","tabs","description","effects"];
+				this.tabs = ["description","effects"];
+				break;
 			case 'class':
 			case 'path':
 				options.parts = ["header","tabs","description","features","feats","effects"];
+				this.tabs = ["description","features","feats","effects"];
 				break;
 			case 'feature':
 			case 'curse':
 			case 'feat':
 				options.parts = ["header","tabs","description","abilities","effects"];
+				this.tabs = ["description","abilities","effects"];
 				break;
 			case 'ability':
 			case 'spell':
 			case 'sigil':
-				options.parts = ["card","tabs","ability","effects"];
-				options.parts.push('foo')
+				// HAS ITS OWN SHEET
 				break;
 		}
 	}
@@ -108,43 +136,83 @@ export default class SkyfallItemSheetV2 extends SkyfallSheetMixin(foundry.applic
 		const enrichmentOptions = {
 			secrets: doc.isOwner, async: true, relativeTo: doc, rollData: rollData
 		}
-
+		
 		const context = {
 			document: doc,
 			item: doc,
 			user: game.user,
 			system: doc.system,
 			source: src.system,
-			schema: this._getDataFields(),
 			SYSTEM: SYSTEM,
 			effects: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
 				description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
 			},
-			tabs: this._getTabs(),
+			tabs: this.#getTabs(),
 			isEditMode: this.isEditMode,
 			isPlayMode: this.isPlayMode,
 			isEditable: this.isEditable,
 			isEditing: this.isEditing,
 			_selOpts: {},
+			_app: {
+				fields: foundry.applications.fields,
+				element: foundry.applications.elements
+			},
 		};
-		this.getDescriptors(context);
+		await this._getDataFields(context),
+		await this._typeContext(context);
 		console.log(context);
 		return context;
 	}
+	async _typeContext(context) {
+		// Prepare Descriptors
+		if ('descriptors' in this.document.system ) await this.getDescriptors(context);
 
+		switch (this.document.type) {
+			case 'loot':
+			case 'weapon':
+			case 'armor':
+			case 'clothing':
+			case 'consumable':
+			case 'equipment':
+			case 'legacy':
+				break;
+			case 'background':
+				break;
+			case 'class':
+			case 'path':
+				break;
+			case 'feature':
+			case 'curse':
+			case 'feat':
+				break;
+			case 'ability':
+			case 'spell':
+			case 'sigil':
+				// HAS ITS OWN SHEET
+				break;
+		}
+	}
 	/* ---------------------------------------- */
 
-	_getDataFields(){
+	async _getDataFields(context){
 		const doc = this.document;
 		const schema = doc.system.schema;
 		const dataFields = foundry.utils.flattenObject(doc.system.toObject());
 		
 		for (const fieldPath of Object.keys(dataFields)) {
 			dataFields[fieldPath] = schema.getField(fieldPath);
+			if ( dataFields[fieldPath] instanceof foundry.data.fields.HTMLField ) {
+				const key = fieldPath.split('.').pop();
+				const html = foundry.utils.getProperty(doc.system, fieldPath);
+				console.log(doc, fieldPath);
+				context.enriched[key] = await TextEditor.enrichHTML(html, {
+					secrets: doc.isOwner, async: true, relativeTo: doc, rollData: doc.getRollData()
+				});
+			}
 		}
-		return foundry.utils.expandObject(dataFields);
+		context.schema = foundry.utils.expandObject(dataFields);
 	}
 
 	async getDescriptors(context, types = []) {

@@ -12,22 +12,271 @@
 		position: relative;
 		overflow: hidden;
 	}
+	&.character {
+		--actor-color: @colorSFPlayer;
+		--actor-color-faint: @colorSFPlayerFaint;
+		&.minimized {
+			min-height: unset;
+		}
+		.window-content {
+			padding-top: 0;
+			padding-left: 190px;
+			
+			// }
+			.background-cut {
+				padding: 10px;
+				background-size: 100%;// cover;
+				background-repeat: no-repeat;
+				&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
+				&.attributes { background-image: url(assets/sheet/cut-attributes.svg); }
+				&.skills { background-image: url(assets/sheet/cut-skills.svg); }
+				&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
+			}
+			.box {
+				padding: 5px;
+				background-color: white;
+				border: 2px solid #424f66;
+			}
+			aside {
+				* { color: white; } //OVERWRITE THEME
+				.actor-actions {
+					input {padding: 0;}
+				}
+			}
+			nav.tabs {
+				position: relative;
+				float: right;
+				width: 100%;
+				i { display: none; }
+			}
+			.tab {
+				align-items: flex-start;
+				flex-basis: content;
+				height: 100%;
+				gap: 5px;
+			}
+			// TODO - CHECK CONFLICTS
+			.ability-scores {
+				height: 120px;
+				flex: 0 0 75%;
+				.bottom a { font-size: 12px; }
+			}
+			.ability-scores {
+				padding: 10px;
+				justify-content: space-around;
+				// font-family: @fontSkyfall;
+				flex: 0 0 75%;
+				.ability {
+					flex: 0 0 58px;
+					max-width: 58px;
+					height: 100px;
+					.top {
+						height: 60px!important;
+						background-image: url(./assets/sheet/abl-top.svg);
+					}
+					.bottom {
+						margin-top: 4px;
+						height: 36px!important;
+						background-image: url(./assets/sheet/abl-bot.svg);
+						a { font-size: 10px; }
+						label { font-size: 16px; line-height: 1; }
+					}
+					.top, .bottom {
+						background-size: 100%;
+						background-repeat: no-repeat;
+						background-position: center;
+						> div { align-content: center; }
+						.rolling { color: red; }
+						input { width: 80%; }
+						.active {
+							font-weight: bold;
+							text-decoration: underline;
+						}
+					}
+				}
+			}
+			.attributes {
+				h6 { line-height: 1;}
+				input { border: none; }
+				gap: 5px;
+				height: 120px;
+				flex: 0 0 20%
+			}
+			.skills, .actions {
+				height: auto;
+			}
+			.skills {
+				flex: 0 0 45%;
+				ul {
+					width: 90%;
+					margin: auto;
+					li {
+						line-height: normal;
+						a, span { flex: 0 0 20px; }
+						input {
+							text-align: center;
+						}
+						a, input {
+							&.rolling { color: red; }
+						}
+						* {
+							height: 20px;
+							line-height: 20px;
+						}
+					}
+				}
+			}
+			.actions {
+				.actions-filters {
+					padding: 5px;
+					
+				}
+				.filter-list {
+					li { 
+						flex: 0 0 auto;
+						padding: 0 5px;
+						margin: 0;
+					}
+				}
+			}
+			.features {
+
+			}
+			.actor-abilities, .actor-spells {
+				// text-align: left;
+				// margin: 5px;
+				padding: 5px;
+				gap: 10px;
+				.SF-ability;
+				.item.entry {
+					// flex: 0 0 50%;
+					max-width: 50%;
+					min-width: 45%;
+				}
+				.ability-card {
+					padding: 0;
+					flex: 0 0 49%;
+					// margin-right: 1rem;
+					.ability-header * {
+						color: white !important;
+					}
+					&.collapsed {
+						> div:not(:first-child) {
+							display: none;
+						}
+					}
+					.space { display: none; }
+				}
+			}
+			.actor-effects {
+				.modification-effects, .base-effects {
+					.SF-item-list;
+				}
+				.status-effects {
+					.SF-status-effects;
+				}
+			}
+			.actor-inventory {
+				.inventory-header {
+					width: 100%;
+					.capacity, .fragments {
+						input[type=number]{
+							padding: 0 5px;
+							max-width: 50px;
+						}
+					}
+				}
+				.inventory-list {
+					width: 100%;
+					text-align: center;
+					.SF-item-list;
+				}
+			}
+		}
+	}
+	&.npc {
+		--actor-color: @colorSFFoe;
+		--actor-color-faint: @colorSFFoeFaint;
+		.window-content {
+			padding: 0;
+			nav.tabs {
+				.toggle-mode {
+					padding: 0 10px;
+				}
+			}
+			.npc-statblock {
+				* { color: @colorSFFoe; }
+				font-size: 16px;
+				input, select {
+					background-color: black;
+					color: white;
+				}
+				> div.teste { padding: 10px; }
+				.header {
+					align-items: flex-start;
+					padding: 10px;
+					background-color: @colorSFFoe;
+					* { color: white; }
+				}
+				.ability-scores {
+					.ability {
+						> div {
+							background-color: @colorSFFoeFaint;
+							padding: 5px;
+
+						}
+						.label {
+							background-color: @colorSFFoe;
+							font-weight: bold;
+							* {color: white;}
+						}
+					}
+				}
+				.abilities {
+					ol, ul {
+						padding: 10px;
+						* { font-size: 18px; }
+						label { font-weight: bold; }
+						.ability-properties :not(:first-child) {
+							border-left: 3px solid @colorSFFoe;
+							padding-left: 3px;
+						}
+					}
+				}
+				.irv.skills {
+					padding: 0 0 0 10px;
+					line-height: 24px;
+				}
+			}
+			.actor-effects {
+				padding: 0 10px;
+				.SF-status-effects;
+				.status-effects {
+					.status-list { columns: 2; }
+				}
+			}
+		}
+	}
 	aside.sheet-header {
+		// TODO MOVE TO CHARACTER
 		background-color: @colorSFPlayer;
 		background-opacity: 0.5;
+		position: absolute;
+		float: left;
+		left: 0;
+		width: 180px;
+		margin-right: 10px;
+		height: 100%;
 		button i {
 			margin: 0;
 		}
 		button, input, * {
 			color: white;
 		}
-		position: absolute;
-		float: left;
-		width: 180px;
-		margin-right: 10px;
-		height: 100%;
+		
 		> * {
 			align-content: flex-start;
+			width: 100%;
 		}
 		> div {
 			text-align: center;
@@ -35,8 +284,8 @@
 			justify-content: center;
 			align-items: center;
 			h1, h2, h3, h4, h5, h6 {
-				// width: 80%;
-				min-height: 20px;
+				// min-height: 20px;
+				line-height: 150%;
 				margin: auto;
 			}
 		}
@@ -67,8 +316,39 @@
 				}
 			}
 		}
-		.resource-bar {
+		.resource { //-bar
 			flex: 0;
+			&.hp .bar {
+				background-color: red;
+				&.temp { background-color: orange; }
+				&.negative { background-color: crimson; }
+			}
+			&.ep .bar {
+				background-color: blueviolet;
+				&.temp { background-color: cyan; }
+			}
+			.container {
+				position: relative;
+				flex: 0 0 100%;
+				height: 28px;
+				background-color: black;// var(--input-background-color);
+				.bar {
+					position: absolute;
+					height: 20px;
+					margin: 4px 0;
+					max-width: 100%;
+					&.temp { opacity: 50%; }
+					&.negative { float: right; }
+				}
+				.fields {
+					position: absolute;
+					height: 100%;
+					input {
+						background: none;
+						border: none;
+					}
+				}
+			}
 			.form-fields {
 				flex: 100%;
 			}
@@ -83,11 +363,19 @@
 			
 		}
 	}
-	nav.sheet-tabs.tabs, section.sheet-body {
-		position: relative;
-		float: right;
-		width: calc(100% - 190px);
+	
+	&.character2 {
+		nav.tabs {
+			position: relative;
+			float: right;
+			width: 100%;
+			i { display: none; }
+		}
+		div.tab {
+			height: 100%;
+		}
 	}
+	
 	section.sheet-body {
 		height: -webkit-fill-available;
     overflow: scroll;
@@ -160,40 +448,6 @@
 		input {
 			width: auto;
 			margin-right: 5px;
-		}
-	}
-	.background-box.abilities {
-		padding: 10px;
-		justify-content: space-around;
-		// font-family: @fontSkyfall;
-		flex: 0 0 75%;
-		.ability {
-			flex: 0 0 58px;
-			max-width: 58px;
-			height: 100px;
-			.top {
-				height: 60px!important;
-				background-image: url(./assets/sheet/abl-top.svg);
-			}
-			.bottom {
-				margin-top: 4px;
-				height: 36px!important;
-				background-image: url(./assets/sheet/abl-bot.svg);
-				a { font-size: 10px; }
-				label { font-size: 16px; line-height: 1; }
-			}
-			.top, .bottom {
-				background-size: 100%;
-				background-repeat: no-repeat;
-				background-position: center;
-				> div { align-content: center; }
-				.rolling { color: red; }
-				input { width: 80%; }
-				.active {
-					font-weight: bold;
-					text-decoration: underline;
-				}
-			}
 		}
 	}
 	

@@ -1,0 +1,121 @@
+<section class="tab scrollable ability-config {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- ITEM --}}
+	<div class="ability-image-and-description flexrow">
+		<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56" height="56"/>
+		<div class="form-group stacked">
+			<label>{{localize "SKYFALL2.Description"}}</label>
+			<textarea name="system.description.value" rows="1">{{{item.system.description.value}}}</textarea>
+		</div>
+		<div class="flex100"></div>
+		{{!-- DECRIPTIONS --}}
+		<div class="form-group stacked">
+			<label>{{localize "SKYFALL2.DescriptorPl"}}</label>
+		<dropdown-tags name="system.descriptors" class="descriptors">
+			{{#each _selOpts.descriptors as | group id |}}
+			<optgroup label="{{localize (concat "SKYFALL.DESCRIPTORS.LABELS." id)}}">
+				{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
+			</optgroup>
+			{{/each}}
+		</dropdown-tags>
+		</div>
+	</div>
+	{{!-- ACTIVATION --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Activation"}}</legend>
+		{{formGroup schema.activation.type value=system.activation.type localize=true}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Cost"}}</label>
+			<div class="form-fields">
+				{{formInput schema.activation.cost value=system.activation.cost localize=true}}
+				{{formGroup schema.activation.repeatable value=system.activation.repeatable localize=true classes="slim"}}
+			</div>
+		</div>
+		{{#if (eq item.type "spell") }}
+		<div class="form-group slim">
+			<label>{{ localize "SKYFALL2.ComponentPl" }}</label>
+			<div class="form-fields">
+			{{#each SYSTEM.spellComponents as | comp key | }}
+				{{log comp key }}
+				{{log @root.system.components}}
+				{{log (includes @root.system.components key)}}
+				<label for=""> {{localize comp.label}}
+					<input type="checkbox" name="system.components" value="{{key}}" {{checked (includes @root.system.components key)}}>
+				</label>
+			{{/each}}
+			</div>
+		</div>
+		{{/if}}
+	</fieldset>
+	{{!-- RANGE --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Range"}}</legend>
+		{{formGroup schema.range.descriptive value=system.range.descriptive localize=true}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Range"}} / {{localize "SKYFALL2.UnitPl"}}</label>
+			<div class="form-fields">
+				{{formInput schema.range.units value=system.range.units localize=true}}
+				{{formInput schema.range.value value=system.range.value localize=true}}
+			</div>
+		</div>
+	</fieldset>
+	{{!-- TARGET --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Target"}} / {{localize "SKYFALL2.TARGET.Shape"}}</legend>
+		{{formGroup schema.target.descriptive value=system.target.descriptive localize=true}}
+		{{formGroup schema.target.quantity value=system.target.quantity localize=true}}
+		{{formGroup schema.target.type value=system.target.type localize=true}}
+		{{formGroup schema.target.shape value=system.target.shape localize=true}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.TARGET.LengthAbbr"}} / {{localize "SKYFALL2.TARGET.WidthAbbr"}}</label>
+			<div class="form-fields slim">
+				{{formInput schema.target.length value=system.target.length localize=true}}x
+				{{formInput schema.target.width value=system.target.width localize=true}}
+				{{formInput schema.target.units value=system.target.units localize=true}}
+			</div>
+		</div>
+	</fieldset>
+	{{!-- DURATION --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Duration"}}</legend>
+		{{formGroup schema.duration.descriptive value=system.duration.descriptive localize=true}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Value"}} / {{localize "SKYFALL2.Type"}}</label>
+			<div class="form-fields slim">
+				{{formInput schema.duration.value value=system.duration.value localize=true}}
+				{{formInput schema.duration.units value=system.duration.units localize=true}}
+			</div>
+		</div>
+	</fieldset>
+	{{!-- ATTACK --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Attack"}}</legend>
+		{{formGroup schema.attack.descriptive value=system.attack.descriptive localize=true}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Attack"}} / {{localize "SKYFALL2.ATTACK.Protection"}}</label>
+			<div class="form-fields slim">
+				{{formInput schema.attack.type value=system.attack.type localize=true}}
+				vs
+				{{formInput schema.attack.protection value=system.attack.protection localize=true}}
+			</div>
+		</div>
+		{{formGroup schema.attack.damage value=system.attack.damage localize=true}}
+		{{formGroup schema.attack.hit value=system.attack.hit localize=true}}
+		{{formGroup schema.attack.miss value=system.attack.miss localize=true}}
+	</fieldset>
+	{{!-- TRIGGER --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Trigger"}}</legend>
+		{{formGroup schema.trigger.descriptive value=system.trigger.descriptive localize=true}}
+	</fieldset>
+	{{!-- EFFECT --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Effect"}}</legend>
+		{{formGroup schema.effect.damage value=system.effect.damage localize=true}}
+		{{formGroup schema.effect.descriptive value=system.effect.descriptive localize=true}}
+	</fieldset>
+	{{!-- SPECIAL --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Special"}}</legend>
+		{{formGroup schema.special.descriptive value=system.special.descriptive localize=true}}
+	</fieldset>
+</section>

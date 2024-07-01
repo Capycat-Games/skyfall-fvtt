@@ -107,7 +107,7 @@ export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 
 				hitDieMods: modifiers?.rest?.hitDieMod?.join('') ?? '',
 				hitDieBonus: ["+@con"].concat(modifiers?.rest?.hitDieBonus ?? []).join('+'),
 			}
-			hdData.formula = new Roll(hdData._formula, rollData).formula;
+			hdData.formula = new RollSF(hdData._formula, rollData).formula;
 			
 			hitDies.push(hdData);
 		}
@@ -136,7 +136,7 @@ export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 
 			}
 		}
 		// Evaluate hitDie Roll
-		const roll = new Roll(formula,{},{flavor:classItem.name});
+		const roll = new RollSF(formula,{},{flavor:classItem.name});
 		roll.evaluate();
 
 		// Prepare Actor Update

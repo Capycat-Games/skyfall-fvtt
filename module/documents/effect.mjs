@@ -160,7 +160,7 @@ export default class SkyfallEffect extends ActiveEffect {
 		if ( !this.isGroup ) return true;
 		// if ( !(this.parent.statuses?.has( data.statuses[0] )) ) return true;
 		//.find(ef => ef.statuses.has( data.statuses[0] ) );
-		const effect = this.parent?.effects.find(ef => ef.id.startsWith(data.id));
+		const effect = this.parent?.effects.find(ef => ef.id.startsWith(data.id) || ef.id == data.id );
 		console.log(effect);
 
 		let content = '';

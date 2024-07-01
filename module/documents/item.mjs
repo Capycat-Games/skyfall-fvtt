@@ -227,5 +227,19 @@ export default class SkyfallItem extends Item {
 			}
 		}
 	}
+
+	
+	/** @inheritDoc */
+	async _buildEmbedHTML(config, options={}) {
+		console.log( config );
+		config.caption = false;
+		config.cite = false;
+		const embed = await super._buildEmbedHTML(config, options);
+		console.log(embed);
+		if ( !embed ) {
+			if ( this.system._embed instanceof Function ) return this.system._embed(config, options);
+		}
+		return embed;
+	}
 }
 

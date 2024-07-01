@@ -12,6 +12,7 @@ export default class Armor extends PhysicalItemData {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
+			...this.equippableSchema(),
 			/* leve | pesada | escudo */
 			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.armors, initial: "light"}),
 			dr: new fields.NumberField({required: true, integer: true, min: 0}),
@@ -24,5 +25,9 @@ export default class Armor extends PhysicalItemData {
 				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
 			}),
 		})
+	}
+
+	get isShield() {
+		return this.type == 'shield';
 	}
 }

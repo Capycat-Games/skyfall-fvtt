@@ -483,7 +483,7 @@ export default class SkyfallMessageOLD extends ChatMessage {
 			rolls.push( roll.toJSON() );
 
 			rollData['item'] = itm.damage.formula;
-			const damageRoll = new Roll( attack.damage, rollData );
+			const damageRoll = new RollSF( attack.damage, rollData );
 
 			for (const term of damageRoll.terms) {
 				term.options.flavor ??=  dmgDesc[0] ?? 'slashing';
@@ -529,7 +529,7 @@ export default class SkyfallMessageOLD extends ChatMessage {
 			roll.options.types = ["attack"];
 			rolls.push( roll.toJSON() );
 
-			const damageRoll = new Roll( attack.damage, rollData );
+			const damageRoll = new RollSF( attack.damage, rollData );
 
 			for (const term of damageRoll.terms) {
 				term.options.flavor ??=  dmgDesc[0] ?? 'slashing';
@@ -565,7 +565,7 @@ export default class SkyfallMessageOLD extends ChatMessage {
 		const executed = [];
 		let criticalHit = false;
 		for (const [i, roll] of this.system.rolls.entries() ) {
-			let r = Roll.fromData(roll);
+			let r = RollSF.fromData(roll);
 
 			if ( r.options.types?.includes('damage') && criticalHit ) {
 				r.alter(2);

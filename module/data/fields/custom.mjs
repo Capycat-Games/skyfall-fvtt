@@ -1,4 +1,4 @@
-class DescriptorsField extends foundry.data.fields.ArrayField {
+export default class DescriptorsField extends foundry.data.fields.ArrayField {
 	/* -------------------------------------------- */
 	/*  Form Field Integration                      */
 	/* -------------------------------------------- */
@@ -12,6 +12,6 @@ class DescriptorsField extends foundry.data.fields.ArrayField {
 	}
 }
 
-export const fields = Object.freeze({
-	DescriptorsField: DescriptorsField
-});
+// export const fields = Object.freeze({
+// 	DescriptorsField: DescriptorsField
+// });

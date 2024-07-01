@@ -1,0 +1,62 @@
+<div class="actor-traits">
+	{{log this}}
+	{{!-- SKILLS --}}
+	{{#if skills }}
+	<ol class="plain" style="columns:2; min-width:400px; max-width:500px;color:black;">
+	{{#each skills as | skill key | }}
+		{{#if (or (eq @index 0 ) (eq @index 14 )) }}
+			<li class="flexrow" style="border-bottom: 1px solid black;">
+			<label class="flex1 text-center"> {{{@root.SYSTEM.icons.square}}} </label>
+			<label class="flex1 text-center"> {{{@root.SYSTEM.icons.check}}} </label>
+			<label class="flex1 text-center"> {{{@root.SYSTEM.icons.checkdouble}}} </label>
+			<label class="flex3">
+				{{localize "SKYFALL2.Skill"}}
+			</label>
+		</li>
+		{{/if}}
+	<li class="flexrow">
+		<label class="flex1 text-center">
+			<input type="radio" name="system.skills.{{key}}.value" value="0" {{checked (eq skill.value 0)}}>
+		</label>
+		<label class="flex1  text-center">
+			<input type="radio" name="system.skills.{{key}}.value" value="1" {{checked (eq skill.value 1)}}>
+		</label>
+		<label class="flex1  text-center">
+			<input type="radio" name="system.skills.{{key}}.value" value="2" {{checked (eq skill.value 2)}}>
+		</label>
+		<label class="flex3">
+			{{skill.label}}
+		</label>
+	</li>
+	{{/each}}
+	</ol>
+	{{/if}}
+	
+	{{#if damageTaken }}
+	<ol class="plain" style="min-width:400px; max-width:600px;color:black;">
+		<li class="flexrow" style="border-bottom: 1px solid black;">
+			<div class="flex2">{{localize "SKYFALL2.Descriptor"}}</div>
+			<div class="flex1 text-center">{{localize "SKYFALL2.MODIFIER.Vulnerable"}}</div>
+			<div class="flex1 text-center">{{localize "SKYFALL2.Default"}}</div>
+			<div class="flex1 text-center">{{localize "SKYFALL2.MODIFIER.Resistant"}}</div>
+			<div class="flex1 text-center">{{localize "SKYFALL2.MODIFIER.Imune"}}</div>
+		</li>
+		{{#each damageTaken as | damage key |}}
+		<li class="item flexrow">
+			<div class="flex2">{{localize damage.label}}</div>
+			{{#each @root.SYSTEM.damageModifiers as | rank r | }}
+			<div class="flex1 text-center">
+				<input type="radio" name="system.modifiers.damage.taken.{{key}}" value="{{r}}" {{checked (eq damage.rank r) }}>
+			</div>
+			{{/each}}
+		</li>
+		{{/each}}
+	</ol>
+	{{/if}}
+
+	{{#if (eq manage 'irv') }}
+	<div  style="color: black;">
+		{{formGroup schema.modifiers.condition.imune value=conditionImunity input=_app.elements.HTMLMultiSelectElement localize=true stacked=true}}
+	</div>
+	{{/if}}
+</div>

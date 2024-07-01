@@ -19,11 +19,34 @@
 .dice-total {
 	font-family: @fontSkyfall;
 }
+
+// OVERWRITE LIGHT/DARK THEME
+.skyfall.sheet.character, .skyfall.sheet.npc, .skyfall.sheet {
+	.window-content {
+		* { color: black; }
+		
+		input, select { background-color: rgba(0,0,0,.05);}
+		input.slim {padding: 5px 0; text-align: center;}
+		h1, h2, h3, h4, h5, h6 {
+			line-height: normal;
+			text-shadow: none;
+		}
+	}
+}
+
 .skyfall {
+	--actor-color: @colorSFOther ;
 	> * {
 		scrollbar-width: thin;
 	}
 
+	h1 { font-size: 22px; } // 48
+	h2 { font-size: 20px; } // 32
+	h3 { font-size: 18px; } // 24
+	h4 { font-size: 16px; } // 24
+	h5 { font-size: 14px; } // 20
+	h6 { font-size: 12px; } // 24
+	
 	h1, h2, h3, h4, h5, h6 {
 		font-family: @fontSkyfall;
 		margin: 0;
@@ -31,7 +54,7 @@
 	}
 
 	label.descriptor {
-		padding: 5px;
+		padding: 4px;
 		margin: 2px 2px;
 		background-color: #182657;
 		color: white;
@@ -53,6 +76,7 @@
 
 	&.sheet .window-content {
 		background: url(./assets/sheet/background.webp) repeat white;
+		// * { color: black; }
 		// background-image: url(./assets/sheet/background.webp);
 	}
 
@@ -62,7 +86,7 @@
 	}
 	.border-1 {
 		border-image: url(./assets/sheet/skyfall-border-1.png) 30 / 10px round;
-		padding: 10px;
+		padding: 12px;
 	}
 	.border {
 		border-image: url(./assets/sheet/border.svg) 1;
@@ -74,7 +98,6 @@
 		border-image-width: 10px;
 		padding: 10px;
 	}
-
 	.list-items {
 		list-style: none;
 		padding: 0;
@@ -85,7 +108,17 @@
 			text-align: center;
 		}
 	}
-
+	.condition-reference {
+		text-decoration: underline;
+		font-style: italic;
+		font-weight: bold;
+	}
+	.descriptor-reference {
+		font-weight: bold;
+		background-color: var(--actor-color);
+		padding: 1px 5px;
+		color: white!important;
+	}
 	.sf-icon {
 		display: inline-flex;
 		align-self: center;
@@ -97,7 +130,6 @@
 	}
 
 }
-
 
 #logo {
 	.cls-1 {
@@ -152,6 +184,15 @@
 }
 
 .skyfall {
+	&.sheet #context-menu {
+		background-color: white;
+		li {
+			line-height: 14px;
+			font-size: 14px;
+			color: black;
+			&:hover * { color: white; }
+		}
+	}
 	dropdown-tags {
 		&.descriptors {
 			.tags-dropdown {
@@ -175,4 +216,17 @@
 			}
 		}
 	}
+	multi-select {
+		flex-direction: column-reverse;
+	}
+}
+
+
+.inline-roll-request {
+	background: #DDD;
+	padding: 1px 4px;
+	border: 1px solid var(--color-border-dark-tertiary);
+	border-radius: 2px;
+	white-space: nowrap;
+	word-break: break-all;
 }

@@ -21,6 +21,13 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 			quantity: new fields.NumberField({required: true, integer: true, min: 0, initial:1, label:"SKYFALL.QUANTITY"}),
 			price: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.PRICE"}),
 			capacity: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.CAPACITY"}),
+			
+		}
+	}
+
+	static equippableSchema(){
+		const fields = foundry.data.fields;
+		return {
 			equipped: new fields.BooleanField({initial: false, label:"SKYFALL.EQUIPPED"}),
 			attuned: new fields.BooleanField({initial: false, label:"SKYFALL.ATTUNED"}),
 			favorite: new fields.BooleanField({initial: false, label:"SKYFALL.FAVORITE"}),

@@ -1,0 +1,36 @@
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{log this}}
+	{{#if (eq document.type 'weapon')}}
+		{{formGroup schema.category value=system.category}}
+		{{formGroup schema.wield value=system.wield}}
+		{{formGroup schema.damage.formula value=system.damage.formula}}
+		{{formGroup schema.range value=system.range}}
+	{{/if}}
+	{{#if (eq document.type 'armor')}}
+		{{formGroup schema.type value=system.type}}
+		{{formGroup schema.dr value=system.dr}}
+		{{#if (eq system.type 'shield')}}
+		{{formGroup schema.category value=system.category}}
+		{{formGroup schema.damage.formula value=system.damage.formula}}
+		{{/if}}
+	{{/if}}
+	{{#if (eq document.type 'clothing')}}
+		{{formGroup schema.type value=system.type}}
+	{{/if}}
+	{{#if (eq document.type 'equipment')}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.UsePl"}}</label>
+			<div class="form-fields">
+				{{formInput schema.uses.value value=uses.value}}/
+				{{formInput schema.uses.max value=uses.max}}
+			</div>
+		</div>
+	{{/if}}
+	{{#if (eq document.type 'consumable')}}
+		{{formGroup schema.type value=system.type}}
+		{{formGroup schema.damage.formula value=system.damage.formula}}
+	{{/if}}
+
+	{{#if (eq document.type 'template')}}
+	{{/if}}
+</section>

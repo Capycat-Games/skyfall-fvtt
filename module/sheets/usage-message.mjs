@@ -139,8 +139,8 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const rolls = this.document.system.rolls;
 		const _rolls = [];
 		for (const [i, roll] of Object.entries(formData._rolls)) {
-			const originalRoll = Roll.fromData( rolls[i] );
-			let r = new Roll(roll.formula);
+			const originalRoll = RollSF.fromData( rolls[i] );
+			let r = new RollSF(roll.formula);
 			for (const [t, term] of Object.entries(r.terms) ) {
 				const originalTerm = originalRoll.terms[t];
 				if( originalTerm ) {

@@ -1,0 +1,23 @@
+<ul class="plain box flexcol">
+	{{#each skills as | skill |}}
+		{{#if (eq skill.id "apti")}}
+		<li class="skill entry flexrow" data-type="skill" data-entry-id="{{skill.id}}">
+			<span>-</span>
+			<h5 class="flex3">{{skill.label}}</h5>
+			<a data-action="create" data-create="skill">{{{@root.SYSTEM.icons.create}}}</a>
+		</li>
+		{{else if (and (eq skill.type "apti") (eq skill.value 0))}}
+		{{else}}
+		<li class="skill entry flexrow" data-type="skill" data-entry-id="{{skill.id}}">
+			<a data-action="vary" data-field-path="system.skills.{{skill.id}}.value">{{{skill.icon}}}</a>
+			<h5 class="flex3"><a class="{{#if (or (eq @root.rolling.id skill.id) (eq @root.rolling.type 1)) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">{{skill.label}}</a></h5>
+			{{#if @root.rolling.abl }}
+			<input class="{{#if @root.rolling.abl }}rolling{{/if}}" type="number" value="{{lookup skill.roll @root.rolling.abl}}" disabled>
+			{{else}}
+			<input type="number" value="{{skill.roll.pro}}" disabled>
+			{{/if}}
+			{{!-- <input type="number" name="system.skills.{{skill.id}}.other" value="{{skill.outros}}" data-tooltip="{{localize "SKYFALL.ROLL.OTHER"}}"> --}}
+		</li>
+		{{/if}}
+	{{/each}}
+</ul>

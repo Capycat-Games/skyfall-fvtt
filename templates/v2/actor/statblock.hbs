@@ -1,0 +1,158 @@
+<section class="tab scrollable npc-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- NAME AND STUFF --}}
+	<div class="header flexrow">
+		{{#if isEditMode }}
+		<h2 class="flex2">
+			<input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
+		</h2>
+		<h5 class="flex1 flexrow text-center">
+			<label>{{localize "SKYFALL.DM.CR"}}</label>
+			<input type="number" name="system.level.value" value="{{system.level.value}}">
+		</h5>
+		{{else}}
+		<h1 class="flex2">{{actor.name}}</h1>
+		<h3 class="cr flex0">{{localize "SKYFALL.DM.CR"}}:&nbsp;{{system.level.value}}</h3>
+		{{/if}}
+		<div class="flex100"></div>
+		{{!-- CREATURES TYPES --}}
+		{{#if isEditMode }}
+		{{formGroup schema.creatureType value=system.creatureType localize=true stacked=true}}
+		{{formGroup schema.size value=system.size localize=true stacked=true}}
+		<div class="flex100"></div>
+		{{formGroup schema.hierarchy value=system.hierarchy localize=true stacked=true}}
+		{{formGroup schema.archetype value=system.archetype input=_app.elements.HTMLMultiSelectElement localize=true stacked=true}}
+		{{else}}
+		<i>{{lookup (lookup SYSTEM.creatureTypes system.creatureType) "label"}}, {{lookup (lookup SYSTEM.actorSizes system.size) "label"}}</i>
+		<div class="flex100"></div>
+		<i>{{lookup (lookup SYSTEM.hierarchy system.hierarchy) "label"}}
+			({{#each system.archetype as | archetype i |}}{{ifThen (gt i 0) ", " "" }}{{lookup (lookup @root.SYSTEM.archetype archetype) "label"}}{{/each}})
+			{{/if}}
+		</i>
+		<div class="flex100" style="margin-bottom: 10px;"></div>
+		{{!-- HP / DR / MOVEMENT --}}
+		<div class="resource hp flexrow" data-tooltip="SKYFALL.HP">
+			{{{SYSTEM.icons.sfheart}}}
+			{{formInput schema.resources.hp.value value=system.resources.hp.value}}/
+			{{formInput schema.resources.hp.max value=system.resources.hp.max}}
+		</div>
+		<div class="dr flexrow" data-tooltip="SKYFALL.DR">
+			{{{SYSTEM.icons.sfdr}}}
+			{{formInput schema.dr value=system.dr}}
+		</div>
+		<div class="movement flexrow" data-tooltip="{{localize "SKYFALL.ACTOR.MOVEMENT"}}">
+			<a data-action="manage" data-manage="movement">{{{SYSTEM.icons.walk}}}</a>
+			<div class="values">
+				{{#each movement as | move | }}
+				<span data-tooltip="{{localize move.label}}">
+					{{{move.icon}}} {{move.value}} 
+				</span>
+				{{/each}}
+				<span>&nbsp;</span>
+			</div>
+		</div>
+	</div>
+	{{!-- ABILTY-SCORES --}}
+	<div class="ability-scores flexrow text-center">
+		<div class="flexcol ability">
+			<div class="score" data-tooltip="{{localize "SKYFALL.ACTOR.ABILTIY"}}">
+				{{{SYSTEM.icons.sfactive}}}
+			</div>
+			<div class="label">&nbsp;</div>
+			<div class="protection" data-tooltip="{{localize "SKYFALL.ACTOR.PROTECTION"}}">
+				{{{SYSTEM.icons.sfdefense}}}
+			</div>
+		</div>
+		{{#each system.abilities as | ability abl | }}
+		<div class="flexcol ability">
+			<div class="score">
+				{{#if @root.isEditMode }}
+				<input type="number" name="system.abilities.{{abl}}.value" value="{{ability.value}}">
+				{{else}}
+				{{ability.value}}
+				{{/if}}
+			</div>
+			<div class="label">
+				<a data-action="roll" data-type="ability" data-roll-type="ability" data-id="{{abl}}">
+					{{{ifThen (eq @root.rolling.type 'skill') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					{{{ifThen (eq @root.rolling.abl abl) '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					{{{localize ability.label}}}
+				</a>
+			</div>
+			<div class="protection">
+				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">{{ability.protection}}</a>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+	<div class="irv skills flexcol">
+		{{!-- SKILLS --}}
+		{{#if (or isEditMode _skills )}}
+		<div class="skills">
+			<a data-action="manage" data-manage="skills">
+				<b>{{localize "SKYFALL2.SkillPl"}}:</b>
+			</a>
+			{{#each system.skills as |skill key| }}
+			{{#if (gt skill.value 0) }}
+			<span class="skill entry" data-entry-id="{{key}}">
+				<a data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">
+					{{{ifThen @root.rolling.abl '<i class="fa-solid fa-dice-d20"></i>' ''}}} {{skill.label}}
+					{{!-- {{ifThen @root.rolling.abl (concat "(" @root.rolling.abl ")") ""}} --}}
+					{{formatNumber (ifThen @root.rolling.abl (lookup skill.roll @root.rolling.abl ) skill.roll.pro) sign=true}}</a>
+			</span>
+			{{/if}}
+			{{/each}}
+		</div>
+		{{/if}}
+		{{!-- RESISTANCES --}}
+		{{#if (or isEditMode irv.vul )}}
+		<div class="status vulnerability">
+			<a data-action="manage" data-manage="irv">
+				<b>{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:</b>
+			</a>
+			{{#each irv.vul as | entry |}}
+			<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+			{{/each }}
+		</div>
+		{{/if}}
+		{{#if (or isEditMode irv.res )}}
+		<div class="status resistance">
+			<a data-action="manage" data-manage="irv">
+				<b>{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:</b>
+			</a>
+			{{#each irv.res as | entry |}}
+			<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+			{{/each }}
+		</div>
+		{{/if}}
+		{{#if (or isEditMode irv.imu )}}
+		<div class="status imunity">
+			<a data-action="manage" data-manage="irv">
+				<b>{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:</b>
+			</a>
+			{{#each irv.imu as | entry |}}
+			<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+			{{/each }}
+		</div>
+		{{/if}}
+	</div>
+	{{!-- ABILITIES --}}
+	{{#if (or isEditMode abilities.passive.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.passive}}
+	{{/if}}
+	{{#if (or isEditMode abilities.reaction.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.reaction}}
+	{{/if}}
+	{{#if (or isEditMode abilities.action.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.action}}
+	{{/if}}
+	{{#if (or isEditMode abilities.bonus.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.bonus}}
+	{{/if}}
+	{{#if (or isEditMode abilities.free.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.free}}
+	{{/if}}
+	{{#if (or isEditMode abilities.maction.list.length )}}
+	{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.maction}}
+	{{/if}}
+
+</section>

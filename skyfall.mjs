@@ -5,9 +5,11 @@ globalThis.SYSTEM = SYSTEM;
 // Import Modules.
 import * as applications from "./module/apps/_module.mjs";
 import * as documents from "./module/documents/_module.mjs";
-import {fields} from "./module/data/fields/custom.mjs";
+// import {fields} from "./module/data/fields/custom.mjs";
+import * as fields from "./module/data/fields/_module.mjs";
 import * as models from "./module/data/_module.mjs";
 import * as sheets from "./module/sheets/_module.mjs";
+import * as sheetsV2 from "./module/sheetsV2/_module.mjs";
 import * as dice from "./module/dice/_module.mjs";
 import * as elements from "./module/apps/elements/_module.mjs"
 import EffectsMenu from "./module/apps/effects-menu.mjs";
@@ -19,6 +21,8 @@ import { registerSystemSettings } from "./module/helpers/settings.mjs";
 import AbilityTemplate from "./module/helpers/ability-template.mjs";
 import ShortRestV2 from "./module/apps/restV2.mjs";
 import TokenSkyfall from "./module/token.mjs";
+import * as functions from "./module/helpers/functions.mjs";
+import griddySystemSetup from "./module/hooks/griddy.mjs";
 
 globalThis.skyfall = {
 	CONST: SYSTEM,
@@ -34,8 +38,10 @@ globalThis.skyfall = {
 	},
 	wip: {
 		ShortRestV2
-	}
+	},
+	utils: functions
 }
+globalThis.RollSF = dice.SkyfallRoll;
 
 Hooks.once('init', function () {
 	console.log(`Initializing Skyfall Game System`);
@@ -49,7 +55,7 @@ Hooks.once('init', function () {
 	CONFIG.SKYFALL = SYSTEM;
 	CONFIG.time.roundTime = 6;
 	CONFIG.ActiveEffect.legacyTransferral = true;
-	CONFIG.Combat.initiative.formula = '1d20 + @des';
+	CONFIG.Combat.initiative.formula = '1d20 + @dex';
 	CONFIG.Combat.initiative.decimals = 2;
 
 	// Define system Document classes
@@ -91,12 +97,25 @@ Hooks.once('init', function () {
 	// CONFIG.Dice.rolls[0] = dice.SkyfallRoll;
 	CONFIG.Dice.rolls.push(dice.SkyfallRoll);
 	CONFIG.Dice.rolls.push(dice.D20Roll);
-	CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/chat/roll.hbs';
+	CONFIG.Dice.rolls = [
+		dice.SkyfallRoll,
+		dice.D20Roll
+	]
+	// CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/chat/roll.hbs';
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("skyfall", sheets.SkyfallActorSheet, {
 		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
+		makeDefault: true,
+	});
+	Actors.registerSheet("skyfall", sheetsV2.CharacterSheetSkyfall, {
+		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
+		makeDefault: false,
+	});
+	Actors.registerSheet("skyfall", sheetsV2.NPCSheetSkyfall, {
+		types: ["npc"], makeDefault: true, label: 'TYPES.Actor.npc',
+		makeDefault: true,
 	});
 	
 	// Items.unregisterSheet("core", ItemSheet);
@@ -104,7 +123,7 @@ Hooks.once('init', function () {
 		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: true,
 	});
-	Items.registerSheet("skyfall", sheets.SkyfallItemSheetV2, {
+	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
 		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: false,
 	});
@@ -112,6 +131,10 @@ Hooks.once('init', function () {
 	Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
 		types: ['ability','spell','sigil'],
 		makeDefault: true,
+	});
+	Items.registerSheet("skyfall", sheetsV2.AbilitySheetSkyfall, {
+		types: ['ability','spell','sigil'],
+		makeDefault: false,
 	});
 	
 	
@@ -121,7 +144,7 @@ Hooks.once('init', function () {
 	});
 
 	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheets.SkyfallModificationConfig, {
-		types: ['modification','sigil'],
+		types: ['modification'],
 		makeDefault :true
 	});
 
@@ -135,17 +158,13 @@ Hooks.once('init', function () {
 	registerHandlebarsHelpers()
 	// Register Fonts
 	registerFonts();
+	// Enrichers
+	registerCustomEnrichers();
 });
 
 /* -------------------------------------------- */
 /*  Handlebars Helpers                          */
 /* -------------------------------------------- */
-
-// If you need to add Handlebars helpers, here is a useful example:
-Handlebars.registerHelper('toLowerCase', function (str) {
-	return str.toLowerCase();
-});
-
 
 /**
  * Registers all fonts used by the system so that they are available in the text editor.
@@ -350,7 +369,7 @@ async function prepareSystemStatusEffects() {
 		}
 		ef.tooltip = content;
 	}
-	SYSTEM.conditions = {};
+	// SYSTEM.conditions = {};
 	SYSTEM.statusEffects.reduce((acc,ef) => {
 		acc[ef.id] = ef;
 		return acc;
@@ -381,4 +400,83 @@ function rollItemMacro(itemUuid) {
 		// Trigger the item roll
 		item.roll();
 	});
+}
+
+/* DEBUG */
+// griddySystemSetup();
+
+function registerCustomEnrichers(){
+	CONFIG.TextEditor.enrichers.push({
+		pattern:
+			/\[\[\/?(?<type>rr|rollrequest|damage) (?<config>[^\]]+)\]\](?:{(?<label>[^}]+)})?/gi,
+		enricher: enrichRollRequest
+	},{
+		pattern:
+			/&(?<type>Reference)\[(?<config>[^\]]+)](?:{(?<label>[^}]+)})?/gi,
+		enricher: enrichReference
+	});
+	// (?<type>ability|skill|attack|damage|healing)
+	document.body.addEventListener("click", rollConfig);
+}
+function enrichReference(match, options) {
+	let { type, config, label } = match.groups;
+	
+	console.log(config);
+	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
+	console.log(reference);
+	if ( !reference ) return;
+	let style;
+	if ( SYSTEM.DESCRIPTORS[config] ) style = "descriptor-reference";
+	else if ( SYSTEM.conditions[config] ) style = "condition-reference";
+	
+	const inline = document.createElement('span');
+	inline.classList.add(style);
+	inline.dataset.tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
+	inline.innerHTML = game.i18n.localize(reference.label);
+	return inline;
+}
+
+function enrichRollRequest(match, options) {
+	console.groupCollapsed("enrichRollRequest");
+	let { type, config, label } = match.groups;
+	// [[/rr type=ability ability=str]]{Força}
+	console.log("match", match);
+	console.log("groups", config, label);
+
+	config = config.replace(/:(\w+)/gi, `[$1]`);
+	const rollConfigs = config.split(" ").reduce((acc, c) => {
+		console.log(acc, c);
+		let cKeyVal = c.split('=');
+		acc[ cKeyVal[0] ] = cKeyVal[1];
+		return acc;
+	}, {});
+	console.log(rollConfigs);
+	if ( !label ) label = functions.rollTitle(rollConfigs);
+	const inline = document.createElement('a');
+	inline.classList.add("inline-roll-request");
+	inline.classList.add("roll-config");
+	inline.dataset.action = "roll-config";
+	inline.dataset.type = rollConfigs.type;
+	inline.dataset.ability = rollConfigs.ability;
+	inline.dataset.skill = rollConfigs.skill;
+	inline.dataset.formula = rollConfigs.formula;
+	
+	inline.innerHTML = `<i class="fa-solid fa-dice-d20"></i> ${label}`;
+	
+	console.groupEnd();
+	return inline;
+}
+
+async function rollConfig(event){
+	const target = event.target.closest('[data-action="roll-config"]');
+  if ( !target ) return;
+	event.stopPropagation();
+	const roll = await new applications.RollConfig({
+		type: target.dataset.type,
+		ability: target.dataset.ability,
+		skill: target.dataset.skill,
+		formula: target.dataset.formula,
+		message: target.closest(".message")?.dataset.messageId,
+		createMessage: true
+	}).render(true);
 }

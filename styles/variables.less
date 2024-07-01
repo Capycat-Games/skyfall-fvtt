@@ -38,7 +38,7 @@
 @colorSFPlayer: #182657;
 @colorSFPlayerFaint: #babecd;
 @colorSFFoe: #750703;
-@colorSFFoeFaint: #babecd;
+@colorSFFoeFaint: #75070322;
 @colorSFOther: #652657;
 @colorSFOtherFaint: #d1becd;
 @colorSFGray: #424f66;
@@ -96,29 +96,46 @@
 
 //   .flex-center { justify-content: center; }
 // }
+.SF-item-list {
+  // .item-list
+  ol, ul {
+		* { text-align: center; }
+		li .item-name, li .item-name * {
+			text-align: left;
+		}
+		li.header {
+			background-color: @colorSFPlayer;
+			padding: 5px;
+			* { color: white !important; }
+		}
+		li.entry {
+			background-color: @colorSFPlayerFaint;
+			img { margin-right: 5px;}
+			&.draggable { cursor: default; }
+		}
+		.item-controls {
+			flex: 0 0 80px;
+		}
+	}
+}
 
 .SF-ability {
   
   div {
     padding: 5px;
-    margin-right: 1rem;
     border: 1px solid black;
     position: relative;
-    flex: 0;
+    font-size: 14px;
+    // flex: 0;
     width: 100%;
     background-color: #e7e8ed;
     label {
       font-weight: bold;
       color: @colorSFPlayer;
     }
-    ul, ol {
-      list-style: none;
-      padding: 0;
-    }
   }
   > figure.content-embed {
     margin: 0;
-    margin-right: 1rem;
   }
   .ability-header {
     background-color: @colorSFPlayer;
@@ -137,8 +154,11 @@
       text-align: center;
     }
   }
+  .ability-description {
+    text-align: center;
+  }
   .ability-descriptors {
-    padding: 10px;
+    padding: 5px;
 
     label.descriptor {
       border: 1px solid gray;
@@ -148,5 +168,33 @@
   }
   .ability-properties {
     background-color: @colorSFPlayerFaint;
+  }
+  .rich {
+    label + * {
+      display: inline;
+    }
+    * { margin: 0; }
+  }
+}
+.SF-status-effects {
+  //.status-effects
+  .status-list {
+    column-count: 3;
+    .item {
+      background-color: @colorSFPlayer;
+      padding: 4px 8px 6px 8px;
+      * { color: white; }
+      img {
+        vertical-align: sub;
+        width: 20px;
+        flex: 0 0 20px;
+        border: none;
+        margin-right: 5px;
+      }
+      &:first-child {
+        margin-top: 0px;
+      }
+      // font-size: 12px;
+    }
   }
 }

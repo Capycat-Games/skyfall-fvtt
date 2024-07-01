@@ -1,3 +1,4 @@
+import RollConfig from "../apps/roll-config.mjs";
 import D20Roll from "../dice/d20-roll.mjs";
 import SkyfallRoll from "../dice/skyfall-roll.mjs";
 
@@ -7,6 +8,7 @@ export default class SkyfallMessage extends ChatMessage {
 	ability;
 	item;
 	updateData;
+	
 
 	/* -------------------------------------------- */
 	/*  Usage Workflows                             */
@@ -14,7 +16,7 @@ export default class SkyfallMessage extends ChatMessage {
 	
 	/* Set a reference to the Actor and items being used */
 	async #updateUsagePrepareData(){
-		this.getDocuments();
+		await this.getDocuments();
 		this.#applyItemToAbility();
 		this.#prepareModifications();
 		this.#applyModifications();
@@ -22,7 +24,7 @@ export default class SkyfallMessage extends ChatMessage {
 		this.#prepareAreaTemplate();
 		this.#prepareEffects();
 		await this.#prepareUsageHTML();
-		
+
 		return this.updateData;
 	}
 	
@@ -41,14 +43,10 @@ export default class SkyfallMessage extends ChatMessage {
 	async getDocuments(){
 		if ( this.actor ) return;
 		const {actorId, abilityId, itemId} = this.system;
-		this.actor = game.actors.get(actorId);
-		this.ability = this.actor.items.find( i => i.id == abilityId);
-		this.item = this.actor.items.find( i => i.id == itemId);
-		return;
-		
 		this.actor = await fromUuid(actorId);
-		this.ability = await fromUuid(abilityId);
-		this.item = await fromUuid(itemId);
+		if ( !this.actor ) return ui.notifications.warn("Não é possível configurar esta mensagem, Actor não foi encontrado.");
+		this.ability = this.actor.items.get(abilityId);
+		this.item = this.actor.items.get(itemId);
 	}
 	
 	/**
@@ -73,7 +71,7 @@ export default class SkyfallMessage extends ChatMessage {
 		const AFMODES = CONST.ACTIVE_EFFECT_MODES;
 		for (const change of itemover.changes) {
 			if (!foundry.utils.hasProperty( this.system.item, change.key )) continue;
-			let value = Roll.replaceFormulaData(change.value, item.getRollData() );
+			let value = RollSF.replaceFormulaData(change.value, item.getRollData() );
 			
 			if( change.mode == AFMODES.CUSTOM ){
 			} else if( change.mode == AFMODES.MULTIPLY ){
@@ -161,6 +159,7 @@ export default class SkyfallMessage extends ChatMessage {
 		const rollData = foundry.utils.mergeObject(this.actor.getRollData(), this.ability.getRollData());
 		if ( this.item ) rollData.item = this.item.getRollData();
 		if ( item.system.attack?.type ) {
+			// TODO REWORK USING ROLLCONFIG APP
 			rollData['prof'] = rollData.proficiency;
 			const attack = item.system.attack;
 			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
@@ -175,11 +174,12 @@ export default class SkyfallMessage extends ChatMessage {
 				rollData: rollData,
 				terms: terms,
 			}
-			console.log(rollConfig);
 			const roll = D20Roll.fromConfig( rollConfig );
 			roll.configureRoll();
 			roll.options.flavor = "Ataque";
 			roll.options.types = ["attack"];
+			roll.options.type = "attack";
+			roll.options.ability = (attack.type == "@magic" ? rollData.spellcasting : (attack.type.replace('@','') ?? 'str'));
 			this.system.rolls.push( roll );
 			// let roll = new D20Roll(`${d20} + @prof + ${item.system.attack.type}`, rollData, {types:['check','attack'], flavor:'Ataque', advantage:advantage, disadvantage:disadvantage });
 			// this.system.rolls.push(roll);
@@ -187,7 +187,13 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		if ( item.system.attack?.damage ) {
-			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {types:['damage'], flavor:'Dano Acerto'});
+			rollData.weapon = rollData.item.weapon;
+			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {
+				types:['damage'],
+				flavor:'Dano Acerto',
+				type: "damage",
+				formula: item.system.attack.damage,
+			});
 			this.system.rolls.push(roll);
 		}
 
@@ -202,14 +208,39 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 
 	async #evaluateRolls(index = null){
+		await this.getDocuments();
+		this.rollData = {};
+		if ( this.actor ) {
+			this.rollData = this.actor?.getRollData();
+			if ( this.ability ) {
+				this.rollData = foundry.utils.mergeObject(this.rollData, (this.ability?.getRollData() ?? {}));
+			}
+			if ( this.item ) { 
+				this.rollData = foundry.utils.mergeObject(this.rollData, (this.item?.getRollData() ?? {}));
+				// rollData.weapon = rollData.item.weapon ?? null;
+			}
+		}
 		let criticalHit = false;
 		for (const [i, rollData] of Object.entries(this.system.rolls)) {
 			if( index != null && index != i ) continue;
-			const roll = Roll.fromData(rollData);
-			if ( roll.options.types?.includes('damage') && criticalHit ) {
-				roll.alter(2);
-			}
-			await roll.evaluate();
+			console.warn(rollData, this, this.rollData);
+			const roll = await new RollConfig({
+				type: rollData.options.type,
+				ability: rollData.options.ability,
+				formula: rollData.options.formula,
+				rollIndex:i,
+				message: this.id,
+				rollData: this.rollData,
+				createMessage:false
+			}).render(true);
+			return;
+			// continue;
+			// const roll2 = RollSF.fromData(rollData);
+			// if ( roll.options.types?.includes('damage') && criticalHit ) {
+			// 	roll.alter(2);
+			// }
+			// await roll.evaluate();
+			console.log(this.rolls);
 			this.rolls[i] = roll;
 			this.system.rolls[i].evaluated = true;
 			this.system.rolls[i].template = await roll.render({flavor: roll.options.flavor});
@@ -217,11 +248,31 @@ export default class SkyfallMessage extends ChatMessage {
 				criticalHit = true;
 			}
 		}
+		return;
+		console.log(this.rolls);
 		this.updateData ??= {}
 		this.updateData.system ??= {}
 		this.updateData.rolls = this.rolls;
 		this.updateData.system.rolls = this.system.rolls;
 		await this.#prepareUsageHTML();
+	}
+
+	async _updateRoll(roll, index){
+		this.rolls[index] = roll;
+		this.system.rolls[index].evaluated = true;
+		this.system.rolls[index].template = await roll.render({flavor: roll.options.flavor});
+		if ( roll.options.types?.includes('attack') && roll.dice[0].total == 20 ) {
+			criticalHit = true;
+		}
+		this.updateData ??= {}
+		this.updateData.system ??= {}
+		this.updateData.rolls = this.rolls;
+		this.updateData.system.rolls = this.system.rolls;
+		await this.#prepareUsageHTML();
+		if ( !foundry.utils.isEmpty(this.updateData) ) { 
+			await this.update(this.updateData);
+			this.updateData = null;
+		}
 	}
 	
 	#prepareAreaTemplate(){
@@ -268,7 +319,6 @@ export default class SkyfallMessage extends ChatMessage {
 		templateData.modifications = mods;
 		let template = `systems/${SYSTEM.id}/templates/chat/usage.hbs`;
 		const content = await renderTemplate(template, templateData);
-		// console.log(content);
 		this.updateData ??= {};
 		this.updateData.content = content;
 	}
@@ -307,7 +357,6 @@ export default class SkyfallMessage extends ChatMessage {
 				this.sheet.render(true);
 			}
 		}
-		console.log(this);
 		return;
 	}
 
@@ -359,7 +408,9 @@ export default class SkyfallMessage extends ChatMessage {
 	 * @returns {Promise<jQuery>}
 	 */
 	async getHTML() {
+		console.log("getHTML");
 		const html = await super.getHTML();
+		html[0].classList.add('skyfall');
 		console.log('getHTML');
 		if ( this.type == 'usage' ) {
 			const bgOverlay = document.createElement("div");
@@ -633,10 +684,10 @@ export default class SkyfallMessage extends ChatMessage {
 		const operator = button.dataset.applyCatharsis;
 		const message = game.messages.get(chatCardId);
 		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
-		const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
-		const roll = message.rolls.find( r => r.options.flavor == rollTitle );
+		const rollIndex = button.closest(".roll-entry").dataset.rollIndex;
+		// const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
+		const roll = message.rolls.find( r => r.options.rollIndex == rollIndex );
 		await roll.applyCatharsis({operator});
-		
 		message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
 		
 		message.updateData = {};
@@ -649,7 +700,6 @@ export default class SkyfallMessage extends ChatMessage {
 			await message.update(message.updateData);
 			message.updateData = null;
 		}
-		console.log( game.user.isGM, canvas.tokens.controlled );
 		if ( !game.user.isGM && canvas.tokens.controlled) {
 			const actor = canvas.tokens.controlled[0]?.actor;
 			const current = actor.system.resources.catharsis.value;
@@ -659,14 +709,12 @@ export default class SkyfallMessage extends ChatMessage {
 
 	async #applyRest(event){
 		event.preventDefault();
-		// console.log("applyRest", event);
 		const button = event.currentTarget;
 		const actorId = button.closest('.rest-card').dataset.actorId;
 		const actor = game.actors.get(actorId);
 		const messageId = button.closest('.chat-message').dataset.messageId;
 		const message = game.messages.get(messageId);
 		if ( !actor || actor.isOwnser ) return;
-		// console.log("applyRest", actor, message);
 		actor.shortRest(message);
 	}
 

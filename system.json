@@ -45,7 +45,35 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": [],
+  "packs": [
+    {
+      "name": "characters",
+      "label": "Heróis (Teste)",
+      "system": "skyfall",
+      "path": "packs/characters",
+      "type": "Actor",
+      "private": false,
+      "flags": {}
+    },
+    {
+      "name": "foes",
+      "label": "Ameaças (Teste)",
+      "system": "skyfall",
+      "path": "packs/foes",
+      "type": "Actor",
+      "private": true,
+      "flags": {}
+    },
+    {
+      "name": "items",
+      "label": "Items (Teste)",
+      "system": "skyfall",
+      "path": "packs/items",
+      "type": "Item",
+      "private": false,
+      "flags": {}
+    }
+  ],
   "packFolders": [],
   "documentTypes": {
     "Actor": {

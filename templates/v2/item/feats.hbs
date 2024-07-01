@@ -1,0 +1,18 @@
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<ol class="plain drop-item">
+	{{#each feats as | item id | }}
+	<li class="item {{type}} entry draggable flexrow" data-entry-id="{{item.uuid}}">
+		<div class="item-icon" style="background-image:url({{item.img}})"></div>
+		<div class="item-name flex3">{{item.name}}</div>
+		<div class="item-controls">
+			<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+	</li>
+	{{/each}}
+	{{#unless feats }}
+	<li>
+		{{localize "SKYFALL.SHEET.DROPITEM"}}
+	</li>
+	{{/unless}}
+	</ol>
+</section>

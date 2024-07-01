@@ -1,0 +1,76 @@
+<section class="tab actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<div class="inventory-header flexrow">
+		{{!-- CURRENCY --}}
+		<div class="currency text-center flexcol">
+			{{formGroup schema.currency.t value=system.currency.t classes="stacked2" localize=true}}
+			{{formGroup schema.currency.p value=system.currency.p classes="stacked2" localize=true}}
+			{{formGroup schema.currency.k value=system.currency.k classes="stacked2" localize=true}}
+		</div>
+		{{!-- CAPACITY --}}
+		<div class="capacity">
+			<div class="form-group flexcol">
+				<label>{{localize "SKYFALL2.Capacity"}}</label>
+				<div class="form-fields" >
+					{{formInput schema.capacity.value value=system.capacity.value disabled=true}}/
+					{{formInput schema.capacity.max value=system.capacity.max disabled=true}}
+				</div>
+			</div>
+		</div>
+		{{!-- ATTUNEMENT --}}
+		<div class="fragments flex2">
+			<div class="form-group flexcol">
+				<label>{{localize "SKYFALL2.FragmentPl"}}</label>
+				<div class="form-fields">
+					{{formInput schema.fragments.value value=system.fragments.value disabled=true}}/
+					{{formInput schema.fragments.max value=system.fragments.max disabled=true}}
+					{{formInput schema.fragments.abl value=system.fragments.abl }}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="item-list inventory-list scrollable">
+		<ol class="plain">
+			{{#each items.inventory as | list key | }}
+			<li class="item header flexrow">
+				<div class="item-name flex3">
+					<h6>
+					{{#if (eq key "category") }}
+					{{localize "SKYFALL2.Name"}}
+					{{else}}
+					{{localize (concat "TYPES.Item." key "PL")}}
+					{{/if}}
+					</h6>
+				</div>
+				<div class="item-quantity"><h6>{{localize "SKYFALL2.QuantityAbbr"}}</h6></div>
+				<div class="item-capacity"><h6>{{localize "SKYFALL2.Capacity"}}</h6></div>
+				<div class="item-controls">
+					<a data-action="inventoryDisplay">{{{ifThen (eq this.inventory 'category') '<i class="fa-solid fa-list"></i>' '<i class="fa-solid fa-layer-group"></i>' }}}</a>
+				</div>
+			</li>
+			{{#each list as | item | }}
+			<li class="item draggable entry flexrow" data-entry-id="{{item.id}}">
+				<div class="item-name flexrow flex3">
+					<img src="{{item.img}}" class="flex0" width="28px" height="28px" style="display: inline;">{{item.name}}
+				</div>
+				<div class="item-quantity">{{item.system.quantity}}</div>
+				<div class="item-capacity">{{item.system.capacity}}</div>
+				<div class="item-controls">
+					{{#unless (eq item.system.equipped undefined) }}
+					<a class="control" data-action="toggle" data-field-path="system.equipped">
+						{{#if item.system.equipped }}
+						{{{@root.SYSTEM.icons.on}}}
+						{{else }}
+						{{{@root.SYSTEM.icons.off}}}
+						{{/if}}
+					</a>
+					{{/unless}}
+					<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+				</div>
+			</li>
+			{{/each}}
+			{{/each}}
+		</ol>
+	</div>
+</section>

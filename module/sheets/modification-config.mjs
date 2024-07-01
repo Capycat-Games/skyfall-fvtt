@@ -19,7 +19,7 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 	get title() {
 		const {documentName, type, name} = this.object;
 		// const typeLabel = type.titleCase();
-		const typeLabel = game.i18n.localize(`TYPES.ActiveEffect.${type.titleCase()}`);
+		const typeLabel = game.i18n.localize(`TYPES.ActiveEffect.${type}`);
 		return `[${typeLabel}] ${name}`;
 	}
 

@@ -2,25 +2,30 @@ import * as CREATURES from "./creature.mjs";
 import * as EFFECTS from "./effects.mjs";
 import * as TYPES from "./types.mjs";
 import * as CONDITIONS from "./conditions.mjs";
+import * as TRANSFORMERS from "./transformers.mjs";
 
 export const SYSTEM_ID = "skyfall";
 
 const _SVGICONS = {
-  sfaction: "systems/skyfall/assets/sheet/sfaction.svg",
-  sfactive: "systems/skyfall/assets/sheet/sfactive.svg",
-  sfbonus: "systems/skyfall/assets/sheet/sfbonus.svg",
-  sfdefense: "systems/skyfall/assets/sheet/sfdefense.svg",
-  sfdr: "systems/skyfall/assets/sheet/sfdr.svg",
-  sffree: "systems/skyfall/assets/sheet/sffree.svg",
-  sfheath: "systems/skyfall/assets/sheet/sfheath.svg",
-  sfmaction: "systems/skyfall/assets/sheet/sfmaction.svg",
-  sfmod: "systems/skyfall/assets/sheet/sfmod.svg",
-  sfpassive: "systems/skyfall/assets/sheet/sfpassive.svg",
-  sfreaction: "systems/skyfall/assets/sheet/sfreaction.svg",
-  sfrepeatable: "systems/skyfall/assets/sheet/sfrepeatable.svg",
-  sfspellattack: "systems/skyfall/assets/sheet/sfspellattack.svg",
-  sfspellcontrol: "systems/skyfall/assets/sheet/sfspellcontrol.svg",
-  sfspellutil: "systems/skyfall/assets/sheet/sfspellutil.svg",
+  // sfaction: "systems/skyfall/assets/sheet/sfaction.svg",
+  // sfactive: "systems/skyfall/assets/sheet/sfactive.svg",
+  // sfbonus: "systems/skyfall/assets/sheet/sfbonus.svg",
+  // sfdefense: "systems/skyfall/assets/sheet/sfdefense.svg",
+  // sfdr: "systems/skyfall/assets/sheet/sfdr.svg",
+  // sffree: "systems/skyfall/assets/sheet/sffree.svg",
+  // sfheath: "systems/skyfall/assets/sheet/sfheath.svg",
+  // sfmaction: "systems/skyfall/assets/sheet/sfmaction.svg",
+  // sfmod: "systems/skyfall/assets/sheet/sfmod.svg",
+  // sfpassive: "systems/skyfall/assets/sheet/sfpassive.svg",
+  // sfreaction: "systems/skyfall/assets/sheet/sfreaction.svg",
+  // sfrepeatable: "systems/skyfall/assets/sheet/sfrepeatable.svg",
+  // sfspellattack: "systems/skyfall/assets/sheet/sfspellattack.svg",
+  // sfspellcontrol: "systems/skyfall/assets/sheet/sfspellcontrol.svg",
+  // sfspellutil: "systems/skyfall/assets/sheet/sfspellutil.svg",
+
+  sfmelee: "icons/svg/sword.svg",
+  sfranged: "icons/svg/target.svg",
+  sfsigil: "icons/svg/sun.svg",
 }
 
 const _FONTICONS = {
@@ -79,7 +84,7 @@ const SHEETICONS = {
   climb: '<i class="fa-solid fa-person-falling"></i>',
   dig: '<i class="fa-solid fa-person-digging"></i>',
   // TODO
-  // ...SVGICONS,
+  ...SVGICONS,
   ..._FONTICONS,
   
   skaction: '<i class="fa-solid fa-forward"></i>',
@@ -95,11 +100,18 @@ const SHEETICONS = {
  * Include all constant definitions within the SYSTEM global export
  * @type {Object}
  */
+const conditions = {};
+CONDITIONS.statusEffects.reduce((acc,ef) => {
+  acc[ef.id] = ef;
+  return acc;
+}, conditions);
 export const SYSTEM = {
   id: SYSTEM_ID,
   ...CREATURES,
   ...EFFECTS,
   ...TYPES,
+  rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
+  conditions: conditions,
   icons: SHEETICONS
 };

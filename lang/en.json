@@ -41,10 +41,10 @@
 			"sigilPL": "Sigilos"
 		},
 		"ActiveEffect": {
-			"Base": "Efeito",
-			"BasePL": "Efeitos",
-			"Modification": "Modificação",
-			"ModificationPL": "Modificações"
+			"base": "Efeito",
+			"basePL": "Efeitos",
+			"modification": "Modificação",
+			"modificationPL": "Modificações"
 		}
 	},
 	"DOCUMENT": {
@@ -69,6 +69,8 @@
 		"EDIT": "Editar",
 		"DELETE": "Apagar",
 		"APPLY": "Aplicar",
+		"FILTER": "Filtrar",
+		"CONFIG": "Configuração",
 		"TYPE": "Tipo",
 		"RESOURCE": "Recurso",
 		"GIVECATHARSIS": "Conceder Catarse",
@@ -77,8 +79,9 @@
 		"RECOVERED": "Recuperado",
 		"HITDIES": "Dados de Vida",
 		"QUALITY": "Qualidade",
-		"ORIGIN": "Origem",
 		"DURATION": "Duração",
+		"ORIGIN": "Origem",
+		"SOURCE": "Fonte",
 		"SHEET":{
 			"FACE": "Face",
 			"ACTIONS": "Ações",
@@ -116,6 +119,7 @@
 			"PILEABBR": "P$",
 			"KURMAC": "Kurmac",
 			"KURMACABBR": "K$",
+			"ABILITY": "Atributo",
 			"ABILITIES": {
 				"STR": "Força",
 				"STRABBR": "For",
@@ -326,6 +330,8 @@
 				"BONUS": "Ação Bônus",
 				"FREE": "Ação Livre",
 				"REACTION": "Reação",
+				"PASSIVE": "Passiva",
+				"MACTION": "Ações Múltiplas",
 				"SPECIAL": "Especial",
 				"TURN": "Turno",
 				"MINUTE": "Minutos",
@@ -707,7 +713,184 @@
 			"SKIPUSAGECONFIGHINT": "Quando usa um item usando o método selecionado, a janela de Configuração não é exibida, aplicando apenas Modificações marcadas como automáticas.",
 			"SKIPUSAGECONFIGSHIFT": "Shift + Click",
 			"SKIPUSAGECONFIGCLICK": "Click"
+		},
+		"APPV2": "",
+		"DM": {
+			"SIZE": "Tamanho",
+			"CREATURETYPE": "TIPO",
+			"HIERARCHY": "Hierarquia",
+			"ARCHETYPE": "Arquétipo",
+			"PRONOUNS": "Pronomes",
+			"CR": "ND",
+			"HIERARCHYTYPES":{
+				"SIMPLE": "Simples",
+				"COMPLEX": "Complexo",
+				"BOSS": "Chefe"
+			},
+			"ARCHETYPETYPES":{
+				"RANGED": "Atirador",
+				"BRUTE": "Bruto",
+				"GROUP": "Coletivo",
+				"MOUNT": "Cavalaria",
+				"DEFENDER": "Defensor",
+				"FLANKER": "Flanqueador",
+				"LEADER": "Líder",
+				"SENTINEL": "Sentinela"
+			}
+		},
+		"TAB":  {
+			"ACTIONS": "Ações",
+			"FEATURES": "Características",
+			"ABILITIES": "Habilidades",
+			"SPELLS": "Magias",
+			"INVENTORY": "Inventário",
+			"STATBLOCK": "Ficha",
+			"EFFECTS": "Efeitos"
 		}
-	}
-}
+	},
+	"SKYFALL2": {
+		"Name": "Nome",
+		"Confirm": "Confirmar",
+		"Description": "Descrição",
+		"Descriptor": "Descritor",
+		"DescriptorPl": "Descritores",
+		"Value": "Valor",
+		"Total": "Total",
+		"TotalPl": "Totais",
+		"Current": "Atual",
+		"CurrentPl": "Atuais",
+		"Temporary": "Temporário",
+		"TemporaryPl": "Temporários",
+		"TemporaryAbbr": "Temp.",
+		"Default": "Padrão",
+		"Initiative": "Iniciativa",
+		"Death": "Morte",
+		"Cost": "Custo",
+		"Capacity": "Volume",
+		"Fragment": "Fragmento",
+		"FragmentPl": "Fragmentos",
+		"Quantity": "Quantidade",
+		"QuantityAbbr": "Qtd",
+		"Unit": "Unidade",
+		"UnitPl": "Unidades",
+		"UNIT": {},
+		"Component": "Componente",
+		"ComponentPl": "Componentes",
+		"COMPONENTS": {},
+		"Ability": "Atributo",
+		"AbilityPl": "Atributos",
+		"AbilityAbbr": "Atr.",
+		"ABILITY": {
+			"Str": "Força",
+			"StrAbbr": "For",
+			"Dex": "Destreza",
+			"DexAbbr": "Des",
+			"Con": "Constituição",
+			"ConAbbr": "Con",
+			"Int": "Inteligência",
+			"IntAbbr": "Int",
+			"Wis": "Sabedoria",
+			"WisAbbr": "Sab",
+			"Cha": "Carisma",
+			"ChaAbbr": "Carisma",
+			"Protection": "Proteção",
+			"Spellcasting": "Atributo Mágico"
+		},
+		"Skill": "Perícia",
+		"SkillPl": "Perícias",
+		"SKILL": {
+		},
+		"Activation": "Ativação",
+		"ACTIVATION": {
+			"Type": "Açao",
+			"Cost": "Custo",
+			"Repeatable": "Repetível",
 
+			"ACTION": "Ação",
+			"BONUS": "Ação Bônus",
+			"FREE": "Ação Livre",
+			"REACTION": "Reação",
+			"PASSIVE": "Passiva",
+			"MACTION": "Ações Múltiplas",
+			"SPECIAL": "Especial",
+			"TURN": "Turno",
+			"MINUTE": "Minutos",
+			"HOUR": "Horas",
+			"DAY": "Dias"
+		},
+		"Range": "Alcance",
+		"RANGE": {
+			
+		},
+		"Target": "Alvo",
+		"TARGET": {
+			"Shape" : "Área",
+			"Length": "Comprimento",
+			"LengthAbbr": "Comp.",
+			"Width": "Largura",
+			"WidthAbbr": "Larg."
+		},
+		"Duration": "Duração",
+		"Attack": "Ataque",
+		"ATTACK": {
+			"Hit": "Acerto",
+			"Miss": "Erro",
+			"Type": "Ataque",
+			"Protection": "Proteção",
+			"Melee": "Corpo-a-Corpo",
+			"Ranged": "A Distância"
+		},
+		"Damage": "Dano",
+		"Trigger": "Gatilho",
+		"Effect": "Efeito",
+		"Special": "Especial",
+
+		"Currency": "Dinheiro",
+		"CURRENCY": {
+			"T": "Trocado",
+			"TAbbr": "$T",
+			"P": "Pila",
+			"PAbbr": "$P",
+			"K": "Kurmac",
+			"KAbbr": "$K"
+		},
+		"Modifier": "Modificador",
+		"ModifierPl": "Modificadores",
+		"ModifierAbbr": "Mod.",
+		"MODIFIER": {
+			"DamageTaken": "Dano Recebido",
+			"Conditions": "Imunidade a Condições",
+			"Resistance": "Resistência",
+			"ResistancePl": "Resistências",
+			"Resistant": "Resistente",
+			"Imunity": "Imunidade",
+			"ImunityPl": "Imunidades",
+			"Imune": "Imune",
+			"Vulnerability": "Vulnerabilidade",
+			"VulnerabilityPl": "Vulnerabilidades",
+			"Vulnerable": "Vulnerável"
+		},
+		"APP": {
+			"IRVConfig": "Resistências",
+			"DamageDealt": "Dano Causado",
+			"Languages": "Idiomas",
+			"Movement": "Deslocamento",
+			"Proficiencies": "Proficiências",
+			"NPCSelectSkill": "Proficiências em Perícias",
+			"RollConfig": "Configuração de Rolagem",
+			"ROLLCONFIG": {
+				"Check": "Teste de {type}",
+				"CheckAbility": "Teste de {type} ({ability})",
+				"RollTerm": "Termos de Rolagem",
+				"RollTransformer": "Modificadores de Rolagem",
+				"DamageRoll": "Dano: {formula}"
+			}
+		},
+		"DIALOG": {
+			"SelectSkill": "Selecion a Perícia",
+			"SelectAbility": "Selecione o Atributo",
+			"SelectAbilityItem": "Selecione a Habilidade"
+		}
+	},
+	"Teste": "BBBB"
+}
