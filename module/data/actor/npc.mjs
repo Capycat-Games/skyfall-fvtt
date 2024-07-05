@@ -16,4 +16,14 @@ export default class NPC extends Creature {
 			archetype: new fields.SetField(new fields.StringField({required:true, choices: SYSTEM.archetype, initial:'brute'}),{label:"SKYFALL.DM.ARCHETYPE"}),
 		});
 	}
+
+	/** @override */
+	prepareBaseData() {
+		const level = this.level.value;
+		this.proficiency = (level >= 17 ? 6
+				: (level >= 13 ? 5
+				: (level >= 9 ? 4
+				: (level >= 5 ? 3
+				: 2 ))));
+	}
 }

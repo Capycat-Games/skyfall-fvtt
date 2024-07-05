@@ -3,15 +3,20 @@
 		<h3>{{{category.icon}}} {{category.label}}</h3>
 		{{#if @root.isEditing }}
 		<div class="item-controls">
-			<a data-action="create" data-type="Item" data-type="ability">{{{@root.SYSTEM.icons.create}}}</a>
+			{{!-- <a data-action="create" data-type="Item" data-type="ability">{{{@root.SYSTEM.icons.create}}}</a> --}}
 		</div>
 		{{/if}}
 	</div>
 	<ul class="plain ability">
 		{{#each category.list as | ability | }}
 		<li class="ability entry" data-entry-id="{{ability.id}}">
-			<h4><i><a data-action="use" data-target="ability">{{ability.name}}</a></i></h4>
-			{{#if ability.description }}{{ability.description}}{{/if}}
+			<h4><i><a data-action="use" data-target="ability">{{ability.name}}</a></i>
+				<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">
+					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+				</span>
+			</h4>
+			{{#if ability.description }}{{{ability.description}}}{{/if}}
 			<div class="ability-properties">
 			{{#each ability.system.labels.properties as | prop | }}
 				<span><label>{{localize prop.label}}:</label> {{prop.descriptive}}</span>
@@ -19,22 +24,22 @@
 			</div>
 			<div class="attack">
 			{{#each ability.system.labels.attack as | prop | }}
-				<label>{{localize prop.label}}:</label> {{prop.descriptive}}</span><br>
+				<label>{{localize prop.label}}:</label> {{{prop.descriptive}}}</span>
 			{{/each}}
 			</div>
 			{{#if ability.system.labels.effect }}
 			<div class="attack">
-				<label>{{ability.system.labels.effect.label}}:</label> {{ability.system.labels.effect.descriptive}}</span><br>
+				<label>{{localize ability.system.labels.effect.label}}:</label> {{{ability.system.labels.effect.descriptive}}}</span>
 			</div>
 			{{/if}}
 			{{#if ability.system.labels.trigger }}
 			<div class="attack">
-				<label>{{localize ability.system.labels.trigger.label}}:</label> {{ability.system.labels.trigger.descriptive}}</span><br>
+				<label>{{localize ability.system.labels.trigger.label}}:</label> {{{ability.system.labels.trigger.descriptive}}}</span>
 			</div>
 			{{/if}}
 			{{#if ability.system.labels.special }}
 			<div class="attack">
-				<label>{{localize ability.system.labels.special.label}}:</label> {{ability.system.labels.special.descriptive}}</span><br>
+				<label>{{localize ability.system.labels.special.label}}:</label> {{{ability.system.labels.special.descriptive}}}</span>
 			</div>
 			{{/if}}
 		</li>

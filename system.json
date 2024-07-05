@@ -2,7 +2,7 @@
   "id": "skyfall",
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
-  "version": "0.0.001",
+  "version": "0.8.00",
   "manifest": "https://raw.githubusercontent.com/VHPaiva/skyfall-fvtt/main/system.json",
   "download": "https://github.com/VHPaiva/skyfall-fvtt/archive/master.zip",
   "url": "TODO/URL",
@@ -13,11 +13,11 @@
   "background": "systems/skyfall/assets/skyfall.jpg",
   "authors": [
     {
-      "name": "Vizael",
-      "discord": "vizael"
+      "name": "Capycat Games"
     },
     {
-      "name": "Capycat Games"
+      "name": "Vizael",
+      "discord": "vizael"
     }
   ],
   "media": [
@@ -48,7 +48,7 @@
   "packs": [
     {
       "name": "characters",
-      "label": "Heróis (Teste)",
+      "label": "Heróis (Beta)",
       "system": "skyfall",
       "path": "packs/characters",
       "type": "Actor",
@@ -57,7 +57,7 @@
     },
     {
       "name": "foes",
-      "label": "Ameaças (Teste)",
+      "label": "Ameaças (Beta)",
       "system": "skyfall",
       "path": "packs/foes",
       "type": "Actor",
@@ -66,10 +66,23 @@
     },
     {
       "name": "items",
-      "label": "Items (Teste)",
+      "label": "Items (Beta)",
       "system": "skyfall",
       "path": "packs/items",
       "type": "Item",
+      "private": false,
+      "flags": {}
+    },
+    {
+      "name": "rules",
+      "label": "Regras (Beta)",
+      "system": "skyfall",
+      "path": "packs/rules",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
       "private": false,
       "flags": {}
     }

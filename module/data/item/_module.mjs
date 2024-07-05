@@ -1,11 +1,11 @@
 
-export {default as Legacy} from "./antropologico/legacy.mjs";
-export {default as Curse} from "./antropologico/curse.mjs";
-export {default as Background} from "./antropologico/background.mjs";
-export {default as Class} from "./antropologico/class.mjs";
-export {default as Path} from "./antropologico/path.mjs";
-export {default as Feature} from "./antropologico/feature.mjs";
-export {default as Feat} from "./antropologico/feat.mjs";
+export {default as Legacy} from "./identity/legacy.mjs";
+export {default as Curse} from "./identity/curse.mjs";
+export {default as Background} from "./identity/background.mjs";
+export {default as Class} from "./identity/class.mjs";
+export {default as Path} from "./identity/path.mjs";
+export {default as Feature} from "./identity/feature.mjs";
+export {default as Feat} from "./identity/feat.mjs";
 export {default as Ability} from "./ability.mjs";
 export {default as Spell} from "./spell.mjs";
 export {default as Weapon} from "./physical/weapon.mjs";

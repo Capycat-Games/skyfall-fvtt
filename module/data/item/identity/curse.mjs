@@ -1,9 +1,9 @@
-import Antropologia from "./antropologia.mjs";
+import Identity from "./identity.mjs";
 
 /**
  * Data schema, attributes, and methods specific to Curse type Items.
  */
-export default class Curse extends Antropologia {
+export default class Curse extends Identity {
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */

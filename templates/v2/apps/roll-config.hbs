@@ -1,25 +1,26 @@
 <section class="roll-config">
 	{{!-- CONTEXT HEADER --}}
 	<div class="roll-context flexcol">
-		<h5>{{title}}</h5> 
+		<h4>
+			{{title}}
+			{{#if target }}
+			<span class="roll-target">
+				VS. {{protection}} ({{target.name}})
+				{{!-- <div class="roll-target-status">
+				{{#if target.status }}(
+					{{#each target.status as | status key | }}
+					<span class="condition-reference" data-tooltip="{{status.tooltip}}">{{status.label}}</span>
+					{{/each}}
+				){{/if}}
+				</div> --}}
+			</span>
+			{{/if}}
+		</h4> 
 		<div class="roll-types">
 			{{#each types as | type key | }}
 			<span data-tooltip="{{type.tooltip}}">{{type.label}}</span>
 			{{/each}}
 		</div>
-		{{#if target }}
-		<div class="roll-target">
-			Against {{target.name}}
-			<input type="text" name="target-protection" value="dex">
-			<div class="roll-target-status">
-			{{#if target.status }}(
-				{{#each target.status as | status key | }}
-				<span class="condition-reference" data-tooltip="{{status.tooltip}}">{{status.label}}</span>
-				{{/each}}
-			){{/if}}
-			</div>
-		</div>
-		{{/if}}
 	</div>
 	{{!-- ADD TERMS & MODIFIERS --}}
 	<ul class="plain roll-terms">
@@ -67,6 +68,7 @@
 			<div class="flex3">{{localize "SKYFALL2.APP.ROLLCONFIG.RollTransformer"}}</div>
 		</li>
 		{{#each transformers as | transformer t |}}
+		{{log transformer}}
 		<li class="roll-transformer flexrow">
 			<div class="transformer">
 				<label class="transformer {{ifThen transformer.active active}}">{{transformer.label}} <input type="checkbox" data-action="check" name="transformers.{{t}}.active" class="" {{checked transformer.active}}></label>

@@ -1,36 +1,55 @@
 <section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	{{log this}}
 	{{#if (eq document.type 'weapon')}}
-		{{formGroup schema.category value=system.category}}
-		{{formGroup schema.wield value=system.wield}}
-		{{formGroup schema.damage.formula value=system.damage.formula}}
-		{{formGroup schema.range value=system.range}}
+		{{formGroup schema.category value=system.category localize=true}}
+		{{formGroup schema.wield value=system.wield localize=true}}
+		{{formGroup schema.damage.formula value=system.damage.formula localize=true}}
+		{{formGroup schema.range value=system.range localize=true}}
 	{{/if}}
 	{{#if (eq document.type 'armor')}}
-		{{formGroup schema.type value=system.type}}
-		{{formGroup schema.dr value=system.dr}}
+		{{formGroup schema.type value=system.type localize=true}}
+		{{formGroup schema.dr value=system.dr localize=true}}
 		{{#if (eq system.type 'shield')}}
 		{{formGroup schema.category value=system.category}}
 		{{formGroup schema.damage.formula value=system.damage.formula}}
 		{{/if}}
 	{{/if}}
 	{{#if (eq document.type 'clothing')}}
-		{{formGroup schema.type value=system.type}}
+		{{formGroup schema.type value=system.type label="Tipo" localize=true}}
 	{{/if}}
 	{{#if (eq document.type 'equipment')}}
 		<div class="form-group">
 			<label>{{localize "SKYFALL2.UsePl"}}</label>
 			<div class="form-fields">
-				{{formInput schema.uses.value value=uses.value}}/
-				{{formInput schema.uses.max value=uses.max}}
+				{{formInput schema.uses.value value=system.uses.value}}/
+				{{formInput schema.uses.max value=system.uses.max}}
 			</div>
 		</div>
 	{{/if}}
 	{{#if (eq document.type 'consumable')}}
-		{{formGroup schema.type value=system.type}}
-		{{formGroup schema.damage.formula value=system.damage.formula}}
+		{{formGroup schema.type value=system.type label="Tipo" localize=true}}
+		{{formGroup schema.damage.formula value=system.damage.formula localize=true}}
 	{{/if}}
 
+	{{#if (eq document.type 'class')}}
+	<div class="form-group">
+		<label>{{localize "SKYFALL2.Level"}}</label>
+		<div class="form-fields">
+			<input type="number" name="system.level" value="{{system.level}}">
+			{{formGroup schema.initial value=system.initial}}
+		</div>
+	</div>
+	<div class="form-group">
+		<label>{{localize "SKYFALL2.HitDie"}}</label>
+		<div class="form-fields">
+			{{formInput schema.hitDie.value value=system.hitDie.value}}/
+			{{formInput schema.hitDie.max value=system.hitDie.max}}
+			{{formInput schema.hitDie.die value=system.hitDie.die}}
+		</div>
+	</div>
+	{{localize "SKYFALL2.ProficiencyPl"}}
+	{{formGroup schema.description.value value=system.description.value enriched=enriched.description toggled=true}}
+	{{/if}}
 	{{#if (eq document.type 'template')}}
 	{{/if}}
 </section>

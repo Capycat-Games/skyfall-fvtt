@@ -1,0 +1,18 @@
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<ol class="plain drop-item" data-field-path="system.abilities" data-item-type="ability">
+	{{#each abilities as | item id | }}
+	<li class="item ability entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
+		<div class="item-icon" style="background-image:url({{item.img}})"></div>
+		<div class="item-name flex3">{{item.name}}</div>
+		<div class="item-controls">
+			<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+	</li>
+	{{/each}}
+	{{#if (eq abilities.length 0) }}
+	<li>
+		{{localize "SKYFALL.SHEET.DROPITEM"}}
+	</li>
+	{{/if}}
+	</ol>
+</section>

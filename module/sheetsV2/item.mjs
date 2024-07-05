@@ -1,3 +1,4 @@
+import { abilities } from "../config/creature.mjs";
 import PhysicalItemData from "../data/item/physical/physical-item.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
@@ -8,8 +9,11 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall", "item"],
 		position: {width: 520, height: "auto"},
+		window: {
+			resizable: true,
+		},
 		actions: {
-			someAction: ItemSheetSkyfall.#someAction,
+			heritageTab: ItemSheetSkyfall.#heritageTab,
 		}
 	};
 	
@@ -20,7 +24,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		description: {template: "systems/skyfall/templates/v2/item/description.hbs", scrollable: [""]},
 		traits: {template: "systems/skyfall/templates/v2/item/traits.hbs"},
 		heritage: {template: "systems/skyfall/templates/v2/item/heritage.hbs"},
-		// abilities: {template: "systems/skyfall/templates/v2/item/abilities.hbs"},
+		abilities: {template: "systems/skyfall/templates/v2/item/abilities.hbs"},
 		features: {template: "systems/skyfall/templates/v2/item/features.hbs"},
 		feats: {template: "systems/skyfall/templates/v2/item/feats.hbs"},
 		// debug: {template: "systems/skyfall/templates/v2/shared/debug.hbs"},
@@ -33,6 +37,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
 		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
 		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
+		abilities: {id: "abilities", group: "primary", label: "SKYFALL.ABILITIES"},
 		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
 		effects: {id: "effects", group: "primary", label: "TYPES.ActiveEffect.basePL"}
 	};
@@ -88,12 +93,15 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				this.tabs = ["description","effects"];
 				break;
 			case 'class':
+				options.parts = ["header","tabs","traits","features","feats","effects"];
+				this.tabs = ["traits","features","feats","effects"];
+				break;
+			case 'curse':
 			case 'path':
 				options.parts = ["header","tabs","description","features","feats","effects"];
 				this.tabs = ["description","features","feats","effects"];
 				break;
 			case 'feature':
-			case 'curse':
 			case 'feat':
 				options.parts = ["header","tabs","description","abilities","effects"];
 				this.tabs = ["description","abilities","effects"];
@@ -105,6 +113,32 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				break;
 		}
 	}
+
+	heritage;
+	/* ---------------------------------------- */
+	/* DRAG AND DROP HANDLERS                   */
+	/* ---------------------------------------- */
+
+	async _onDrop(event) {
+		event.preventDefault();
+		const target = event.target;
+		const {type, uuid} = TextEditor.getDragEventData(event);
+		if (!this.isEditable) return;
+		if ( type == "Item" ){
+			console.log("_onDrop ITEM", type, uuid, target);
+			const item = fromUuidSync(uuid);
+			const fieldPath = target.closest("ol").dataset.fieldPath;
+			const itemType = target.closest("ol").dataset.itemType;
+			if ( !foundry.utils.hasProperty(this.document, fieldPath) || itemType != item.type ) return;
+			const updateData = {};
+			updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), uuid ];
+			return this.document.update(updateData);
+		}
+	}
+
+	/* ---------------------------------------- */
+	/* Data Preparation         */
+	/* ---------------------------------------- */
 
 	/** @override */
 	async _preparePartContext(partId, context) {
@@ -154,6 +188,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			isPlayMode: this.isPlayMode,
 			isEditable: this.isEditable,
 			isEditing: this.isEditing,
+			heritage: this.heritage,
 			_selOpts: {},
 			_app: {
 				fields: foundry.applications.fields,
@@ -165,9 +200,47 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		console.log(context);
 		return context;
 	}
+	
 	async _typeContext(context) {
 		// Prepare Descriptors
-		if ('descriptors' in this.document.system ) await this.getDescriptors(context);
+		if ( 'descriptors' in context.system )
+			await this.getDescriptors(context);
+		// Prepare Item Reference
+		if ( 'features' in context.system ){
+			context.features = [];
+			for (const uuid of this.document.system.features ) {
+				const item = fromUuidSync(uuid);
+				console.log(uuid, item);
+				if ( !item ) continue;
+				context.features.push(item);
+			}
+		}
+		if ( 'featuresAdv' in context.system ){
+			context.featuresAdv = [];
+			for (const uuid of this.document.system.featuresAdv ) {
+				const item = fromUuidSync(uuid);
+				if ( !item ) continue;
+				context.featuresAdv.push(item);
+			}
+		}
+		if ( 'feats' in context.system ){
+			context.feats = [];
+			for (const uuid of this.document.system.feats ) {
+				const item = fromUuidSync(uuid);
+				if ( !item ) continue;
+				context.feats.push(item);
+			}
+		}
+		if ( 'abilities' in context.system ){
+			context.abilities = [];
+			for (const uuid of this.document.system.abilities ) {
+				const item = fromUuidSync(uuid);
+				if ( !item ) continue;
+				context.abilities.push(item);
+			}
+		}
+		// if ( 'container' in context.system )
+			// TODO CONTAINER
 
 		switch (this.document.type) {
 			case 'loot':
@@ -176,7 +249,24 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'clothing':
 			case 'consumable':
 			case 'equipment':
+				break;
 			case 'legacy':
+				context.heritages = {};
+				for (const [key, heritage] of Object.entries(context.system.heritages)) {
+					if ( heritage.chosen ) context.heritage ??= key;
+					context.heritages[key] = {};
+					context.heritages[key].name = heritage.name;
+					context.heritages[key].chosen = heritage.chosen;
+					context.heritages[key].description = heritage.description;
+
+					const features = [...context.system.heritages[key].features];
+					context.heritages[key].features = [];
+					for (const uuid of features) {
+						let item = fromUuidSync(uuid);
+						if ( !item ) continue;
+						context.heritages[key].features.push(item);
+					}
+				}
 				break;
 			case 'background':
 				break;
@@ -206,8 +296,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			if ( dataFields[fieldPath] instanceof foundry.data.fields.HTMLField ) {
 				const key = fieldPath.split('.').pop();
 				const html = foundry.utils.getProperty(doc.system, fieldPath);
-				console.log(doc, fieldPath);
-				context.enriched[key] = await TextEditor.enrichHTML(html, {
+				context.enriched[key] ??= await TextEditor.enrichHTML(html, {
 					secrets: doc.isOwner, async: true, relativeTo: doc, rollData: doc.getRollData()
 				});
 			}
@@ -280,7 +369,9 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	 * @param {Event} event             The initiating click event.
 	 * @param {HTMLElement} target      The current target of the event listener.
 	 */
-	static #someAction(event, target) {
-		console.log('someAction', this.document);
+	static #heritageTab(event, target) {
+		console.log('heritageTab', target);
+		this.heritage = target.dataset.heritage;
+		this.render();
 	}
 }

@@ -41,9 +41,9 @@ const _FONTICONS = {
   sfpassive: '<span class="skyfall-icon">P</span>',
   sfreaction: '<span class="skyfall-icon">R</span>',
   sfrepeatable: '<span class="skyfall-icon">T</span>',
-  sfspellattack: '<span class="skyfall-icon">J</span>',
+  sfspellofensive: '<span class="skyfall-icon">J</span>',
   sfspellcontrol: '<span class="skyfall-icon">K</span>',
-  sfspellutil: '<span class="skyfall-icon">H</span>',
+  sfspellutility: '<span class="skyfall-icon">H</span>',
 }
 
 const SVGICONS = {}

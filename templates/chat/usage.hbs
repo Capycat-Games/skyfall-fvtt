@@ -21,6 +21,7 @@
 	</aside>
 	
 	<div class="ability-descriptors">
+		<label>&nbsp;</label>
 		{{#each item.system.labels.descriptors as | tag i | }}
 		<label class="descriptor active" >{{tag.label}}</label>
 		{{/each}}
@@ -41,7 +42,7 @@
 
 	<ul class="list-items modifications">
 		{{#each modifications as | mod | }}
-		{{log mod}}
+		{{{mod.embed}}}
 		<li>
 			<b>{{mod.cost}}{{localize (lookup (lookup @root.SYSTEM.resources mod.resource) 'abbr')}}{{#if (gt mod.apply 1)}} ({{mod.apply}}x){{/if}}</b> {{{mod.name}}}
 		</li>

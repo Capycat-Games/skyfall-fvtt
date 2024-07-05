@@ -56,6 +56,7 @@
 				<div class="item-quantity">{{item.system.quantity}}</div>
 				<div class="item-capacity">{{item.system.capacity}}</div>
 				<div class="item-controls">
+					<a class="control" data-action="itemToChat">{{{@root.SYSTEM.icons.chat}}}</a>
 					{{#unless (eq item.system.equipped undefined) }}
 					<a class="control" data-action="toggle" data-field-path="system.equipped">
 						{{#if item.system.equipped }}

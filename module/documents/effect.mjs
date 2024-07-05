@@ -49,14 +49,18 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	get cost(){
 		if ( this.type != 'modification' ) return null;
-		const cost = {value: 1, resource:'ep', label: ``};
-		cost.label = `+${cost.value} `;
-		cost.label += game.i18n.localize(`SKYFALL.ACTOR.RESOURCES.${cost.resource.toUpperCase()}ABBR`);
+		const cost = this.system.cost; // {value: 1, resource:'ep', label: ``};
+		if ( !Number(cost.value) ) cost.label = ``;
+		else {
+			cost.label = `+${cost.value} `;
+			cost.label += game.i18n.localize(`SKYFALL.ACTOR.RESOURCES.${cost.resource.toUpperCase()}ABBR`);
+		}
 		return cost;
 	}
 
 	get modTypes(){
 		if ( this.type != 'modification' ) return null;
+		return {label: `[${this.name}]`};
 		const types = {value: ['add'], label: ``};
 		types.label = types.value.map( t => game.i18n.localize(`SKYFALL.MODIFICATION.TYPES.${t.toUpperCase()}`)).join(' ');
 		types.label = `[${types.label}]`;
@@ -88,10 +92,8 @@ export default class SkyfallEffect extends ActiveEffect {
 		const flags = actorData.flags.skyfall || {};
 
 		if ( this.isStack ) {
-			console.log('PREPARE STACK DESCRIPTION');
 			this.tooltip = this.description.replace(`<h3>${this.name}</h3>`, `<h3>${this.statusName}</h3>`);
 		} else if ( this.isGroup ) {
-			console.log('PREPARE GROUP DESCRIPTION');
 			const labels = this.statusGroupLabels?.map(l => `<label>${game.i18n.localize(l)}</label>` ) ?? '';
 			this.tooltip = this.description.replace(`<h3>${this.name}</h3>`, `<h3>${this.name}</h3><p>${labels}</p>`);
 		} else {
@@ -117,7 +119,6 @@ export default class SkyfallEffect extends ActiveEffect {
 	 *            and if the status has implicit statuses but doesn't have a static _id.
 	 */
 	static async fromStatusEffect(statusData, options={}) {
-		console.log('fromStatusEffect', options);
 		if ( typeof statusData === "string" ) statusData = CONFIG.statusEffects.find(e => e.id === statusData);
 		if ( foundry.utils.getType(statusData) !== "Object" ) return;
 		const createData = {
@@ -137,14 +138,12 @@ export default class SkyfallEffect extends ActiveEffect {
 	async _preCreate(data, options, user) {
 		let allowed = await super._preCreate(data, options, user);
 		if ( allowed !== false ) allowed = this._stackEffect(data);
-		console.log(this, allowed)
 		if ( allowed !== false ) allowed = this._groupEffect(data);
 		return allowed;
 	}
 
 	_stackEffect(data){
 		if ( !this.isStack ) return true;
-		console.log('isStack', data, this);
 		// parent has status; TODO: When a AE has this in statuses;
 		// if ( !(this.parent.statuses?.has( data.id )) ) return true;
 		// status Exists
@@ -156,12 +155,11 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	async _groupEffect(data){
 		// is Group?
-		console.log('isGroup', data, this);
 		if ( !this.isGroup ) return true;
 		// if ( !(this.parent.statuses?.has( data.statuses[0] )) ) return true;
 		//.find(ef => ef.statuses.has( data.statuses[0] ) );
 		const effect = this.parent?.effects.find(ef => ef.id.startsWith(data.id) || ef.id == data.id );
-		console.log(effect);
+		const id = data.id ?? data._id.replaceAll('0','');
 
 		let content = '';
 		for (const group of Object.values(SYSTEM.protectedGroup)) {
@@ -183,10 +181,12 @@ export default class SkyfallEffect extends ActiveEffect {
 			options: {width: 300}
 		});
 		const statuses = [].concat( (effect?.statuses.toObject() ?? data.statuses ?? []) );
+		
 		for (const key in groups) {
 			if ( !groups[key] ) continue;
-			statuses.push( data.id + '-' + key );
+			statuses.push( id + '-' + key );
 		}
+		
 		this.updateSource({"system.group": groups, statuses: statuses});
 		if ( !effect ) return true;
 		effect.update({"system.group": groups, statuses: statuses});
@@ -221,11 +221,9 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	/** @inheritDoc */
 	async _buildEmbedHTML(config, options={}) {
-		console.log( config );
 		config.caption = false;
 		config.cite = false;
 		const embed = await super._buildEmbedHTML(config, options);
-		console.log(embed);
 		if ( !embed ) {
 			if ( this.type === "modification" ) return this._embedModification(config, options);
 			else if ( this.type === "image" ) return this._embedModification(config, options);

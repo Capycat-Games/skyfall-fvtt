@@ -50,13 +50,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		
-		if ( this.isPlayMode ) {
-			options.parts = ["ability"];
-		} else {
-			options.parts = ["ability","configuration"]//,"tabs","config","effects"];
-		}
-		console.log(options);
+		options.parts = ["ability","configuration"]//,"tabs","config","effects"];
 	}
 
 	/** @override */
@@ -109,6 +103,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 			}
 		};
 		this.getDescriptors(context);
+		await this.getEnrichedFields(context);
 		await this.getModificationsEmbeds(context);
 		console.log(context);
 		return context;
@@ -119,6 +114,17 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	async getModificationsEmbeds(context){
 		const embedded = context.modifications.modification.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
+	}
+
+	async getEnrichedFields(context){
+		const hit = context.system.attack.hit;
+		const miss = context.system.attack.miss;
+		const effect = context.system.effect.descriptive;
+		const special = context.system.special.descriptive;
+		if ( hit ) context.enriched.hit = await TextEditor.enrichHTML(hit,{});
+		if ( miss ) context.enriched.miss = await TextEditor.enrichHTML(miss,{});
+		if ( effect ) context.enriched.effect = await TextEditor.enrichHTML(effect,{});
+		if ( special ) context.enriched.special = await TextEditor.enrichHTML(special,{});
 	}
 
 	/* ---------------------------------------- */

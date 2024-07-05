@@ -2,6 +2,7 @@ import RollConfig from "../apps/roll-config.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { actor } from "../data/_module.mjs";
 import D20Roll from "../dice/d20-roll.mjs";
+import SkyfallRoll from "../dice/skyfall-roll.mjs";
 
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
@@ -9,7 +10,7 @@ import D20Roll from "../dice/d20-roll.mjs";
  */
 export default class SkyfallActor extends Actor {
 
-	someProperty;
+	
 	/* -------------------------------------------- */
 	/*  Getters                                     */
 	/* -------------------------------------------- */
@@ -99,11 +100,13 @@ export default class SkyfallActor extends Actor {
 		}
 
 		// PREPARE DAMAGE REDUCTION
-		systemData.dr = actorData.items.filter( i => 'dr' in i.system && i.system.equipped ).reduce((acc, i) => {
-			acc += i.system.dr;
-			return acc;
-		}, 0);
-
+		if ( this.type == "character" ) {
+			systemData.dr = actorData.items.filter( i => 'dr' in i.system && i.system.equipped ).reduce((acc, i) => {
+				acc += i.system.dr;
+				return acc;
+			}, 0);
+		}
+		
 		// PREPARE CAPACITY
 		const str = systemData.abilities.str.value;
 		systemData.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
@@ -157,7 +160,7 @@ export default class SkyfallActor extends Actor {
 		const hpConfig = systemData.modifiers.hp;
 		const classes = this.classes;
 		const rollData = this.getRollData();
-		const hpData = {};
+		const hpData = {abl:0};
 		systemData.level.value = 0;
 		for (const cls of classes) {
 			systemData.level.value += cls.system.level;
@@ -172,19 +175,20 @@ export default class SkyfallActor extends Actor {
 		// Level -1 - first level is maxed
 		hpData.level = (systemData.level.value ?? 1) - 1;
 		// Sum of ability
-		hpConfig.abilities.reduce((acc, abl) => acc + rollData[abl], hpData.abl);
+		if ( hpConfig.abilities.length == 0 ) hpConfig.abilities = ['con'];
+		hpData.abl = hpConfig.abilities.reduce((acc, abl) => acc + rollData[abl], 0);
 		// Sum of bonus per level
-		hpConfig.levelBonus.reduce((acc, bns) => {
+		hpData.levelExtra = hpConfig.levelExtra.reduce((acc, bns) => {
 			return acc + Number(rollData[bns] || bns || 0);
-		}, hpData.levelBonus);
+		}, 0);
 		// Sum of bonus health
-		hpConfig.totalBonus.reduce((acc, bns) => {
+		hpData.totalExtra =  hpConfig.totalExtra.reduce((acc, bns) => {
 			return acc + Number(rollData[bns] || bns || 0);
-		}, hpData.totalBonus);
+		}, 0);
 
 		// Pseudo Roll to calculate total hp
-		console.log(systemData, hpData);
-		const roll = new RollSF(`@dieMax + @dieMean + @abl + @levelBonus + ((@abl + @levelBonus) * @level) + @totalBonus`, hpData);
+		console.warn(systemData, hpConfig, rollData, hpData);
+		const roll = new SkyfallRoll(`@dieMax + @dieMean + @abl + @levelExtra + ((@abl + @levelExtra) * @level) + @totalExtra`, hpData);
 		console.log(roll);
 		roll.evaluateSync();
 		
@@ -194,6 +198,12 @@ export default class SkyfallActor extends Actor {
 	}
 	prepareMaxHPRoll(){
 		// TODO
+	}
+	
+	/** @inheritDoc */
+	applyActiveEffects(){
+		console.log('applyActiveEffects');
+		super.applyActiveEffects();
 	}
 	/**
 	 * Override getRollData() that's supplied to rolls.

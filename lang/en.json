@@ -65,6 +65,7 @@
 		"DESCRIPTOR": "Descritores",
 		"DESCRIPTION": "Descrição",
 		"ADD": "Adicionar",
+		"Create": "Criar",
 		"CREATE": "Criar",
 		"EDIT": "Editar",
 		"DELETE": "Apagar",
@@ -299,9 +300,13 @@
 				"COMPONENTS": "Componentes",
 				"TYPES": {
 					"CANTRIP": "Truque",
+					"CANTRIPHINT": "",
 					"SUPERFICIAL": "Superficial",
+					"SUPERFICIALHINT": "",
 					"SHALLOW": "Rasa",
-					"DEEP": "Profunda"
+					"SHALLOWHINT": "",
+					"DEEP": "Profunda",
+					"DEEPHINT": ""
 				}
 			},
 			"EQUIPMENT": {
@@ -463,19 +468,33 @@
 			},
 			"DAMAGE": {
 				"ACID": "Ácido",
+				"ACIDHINT": "vômitos de criaturas grotescas, substâncias corrosivas e dano relacionado com demônios e diabretes. Dano relacionado com o elemento Terra.",
 				"BLUDGEONING": "Contundente",
+				"BLUDGEONINGHINT": "ataques de força e impacto — martelos, quedas, constrição e similares — causam dano contundente.",
 				"SLASHING": "Cortante",
+				"SLASHINGHINT": "armas (naturais ou não) e objetos cortantes causam esse tipo de dano.",
 				"LIGHTNING": "Elétrico",
+				"LIGHTNINGHINT": "descargas elétricas de objetos magitec, efeitos mágicos ou habilidades de monstros. Relacionado com o elemento Ar.",
 				"ENERGY": "Energético",
+				"ENERGYHINT": "dano de magia pura, geralmente associado como uma manifestação do Arcanum, deixando rastros mágicos evidentes.",
 				"COLD": "Gélido",
+				"COLDHINT": "efeitos naturais de frio extremo, habilidades de criaturas ou magias podem causar dano desse tipo. Relacionado com elemento Água.",
 				"FIRE": "Ígneo",
+				"FIREHINT": "dano causado por chamas, sejam elas naturais ou mágicas. Relacionado com elemento Fogo.",
 				"NECROTIC": "Necrótico",
+				"NECROTICHINT": "esse tipo de dano está relacionado com a remoção da essência vital de matéria viva.",
 				"PIERCING": "Perfurante",
+				"PIERCINGHINT": "ataques com objetos pontudos, como lanças e mordidas de monstros, causam dano perfurante.",
 				"PSYCHIC": "Psíquico",
+				"PSYCHICHINT": "habilidades que afetam diretamente a mente e embaralham sentidos causam dano psíquico.",
 				"RADIANT": "Radiante",
+				"RADIANTHINT": "energia relacionada com as Deusas e os Titãs, podendo ser manifestada por devotos ou seraphs.",
 				"THUNDER": "Trovejante",
+				"THUNDERHINT": "todo efeito explosivo relacionado com ondas sonoras causa dano desse tipo.",
 				"POISON": "Venenoso",
-				"SPECIAL": "Especial"
+				"POISONHINT": "a mordida venenosa de uma cobra ou uma toxina poderosa causam dano desse tipo.",
+				"SPECIAL": "Especial",
+				"SPECIALHINT": "essa categoria abarca todos os danos de outros tipos que não podem ser reduzidos normalmente, como dano relativo a cansaço, afogamento ou até mesmo fome. Ignora redução."
 			},
 			"EQUIPMENT": {
 				"ADAPTABLE": "Adaptaável:REMOVE",
@@ -535,37 +554,65 @@
 			},
 			"CATEGORY": {
 				"ATTACK": "Ataque",
+				"ATTACKHINT": "",
 				"WEAPON": "Arma",
+				"WEAPONHINT": "",
 				"PROTOTYPE": "Protótipo",
+				"PROTOTYPEHINT": "",
 				"CONTROL": "Controle",
+				"CONTROLHINT": "",
 				"OFENSIVE": "Ofensiva",
+				"OFENSIVEHINT": "",
 				"UTILITY": "Utilidade",
-				"SUPPORT": "Suporte"
+				"UTILITYHINT": "",
+				"SUPPORT": "Suporte",
+				"SUPPORTHINT": ""
 			},
 			"DIVERSE": {
 				"ALCHEMY": "Alquímico",
+				"ALCHEMYHINT": "habilidades, magias ou itens que combinam elementos mágicos, químicos e de engenharia para fabricação de granadas e elixires.",
 				"ASPECT": "Aspecto",
+				"ASPECTHINT": "habilidades ou magias que alteram seu estado físico. Você só pode ter uma alteração de ASPECTO por vez. Sempre que você for alterado por outra habilidade ou magia com esse descritor, você termina o efeito da habilidade ou magia anterior.",
 				"AURA": "Aura",
+				"AURAHINT": "habilidades ou magias que criam um efeito mágico à sua volta. Geralmente, auras precisam de condições especiais para continuarem ativas. Sempre que você manifestar uma aura por outra habilidade ou magia com esse descritor, você termina o efeito da habilidade ou magia anterior.",
 				"CREATION": "Criação",
+				"CREATIONHINT": "habilidades ou magias com esse descritor criam um objeto ou criatura mágica. Essa criação dura até final da cena (ou de acordo com a descrição da habilidade ou magia). Uma criação possui uma quantidade de cargas de vida igual ao bônus de proficiência de seu criador. Sempre que for sofrer dano, ela perde uma carga de vida. Se chegar a 0 cargas ou menos, ela é destruída. Considera-se que a CRIAÇÃO usa os valores de proteção de seu criador. Se ela puder atacar, considera-se que é o criador que está atacando com um Ataque Mágico.",
 				"HEAL": "Cura",
+				"HEALHINT": "habilidades e efeitos que recuperam pontos de vida. Algumas características, habilidades ou magias podem aumentar ou reduzir essa quantidade",
 				"DIVINE": "Divina",
+				"DIVINEHINT": "habilidades ou magias que utilizam poder de Deusas ou Titãs. Algumas características como resistências podem fazer referência a esse descritor.",
 				"ELEMENTAL": "Elemental",
+				"ELEMENTALHINT": " habilidades ou magias com efeitos relacionados com um ou mais elementos e seus danos relacionados. São eles: Água (GÉLIDO), Ar (ELÉTRICO), Fogo (ÍGNEO) e Terra (ÁCIDO).",
 				"ENCHANTMENT": "Encantamento",
+				"ENCHANTMENTHINT": " habilidades ou magias que afetam a mente do alvo tentando alterar suas percepções sobre você. Geralmente, relacionado com a condição Encantado.",
 				"ILUSION": "Ilusão",
+				"ILUSIONHINT": "habilidades ou efeitos que criam imagens ou sons ilusórios, afetando os sentidos.",
 				"INSPIRATION": "Inspiração",
+				"INSPIRATIONHINT": "habilidades ou magias capazes de fazer com que a criatura afetada fique tomada por uma força maior, recebendo a condição Inspirado. Você só pode ter uma alteração de INSPIRAÇÃO por vez. Sempre que você for alterado por outra habilidade ou magia com esse descritor, você termina o efeito da habilidade ou magia anterior.",
 				"MAGICAL": "Mágico",
+				"MAGICALHINT": "habilidades consideradas mágicas. Algumas características como resistências podem fazer referência a esse descritor. Naturalmente, magias e truques mágicos carregam esse descritor em sua camada.",
 				"FEAR": "Medo",
+				"FEARHINT": "habilidades ou magias que tentam impor medo no alvo, geralmente deixando-o Amedrontado ou outra condição similar.",
 				"MOUNT": "Montaria",
+				"MOUNTHINT": "habilidades ou magias que só podem ser usadas enquanto você está montado em outra criatura.",
 				"MOVEMENT": "Movimento",
+				"MOVEMENTHINT": "habilidades ou magias que afetam diretamente seu deslocamento. Características e habilidades podem referenciar esse descritor aumentando ou reduzindo a movimentação.",
+
 				"SUPPORT": "Suporte",
-				"VOICE": "Vóz"
+				"SUPPORTHINT": "habilidades ou magias que afetam outras criaturas e concedem benefícios (geralmente mágicos). Características e habilidades podem referenciar esse descritor, aumentando duração ou concedendo benefícios adicionais.",
+				"VOICE": "Vóz",
+				"VOICEHINT": "habilidades ou magias diretamente relacionadas com sua potência vocal. Você não pode usar essa habilidade ou magia caso esteja impossibilitado de falar. Criaturas que não falam podem utilizar esse descritor através de outros mecanismos, mas devem determinar também como ficam impossibilitados de utilizá-lo."
 			}
 		},
 		"SPELLLAYERS":{
 			"CANTRIP": "Truque",
+			"CANTRIPHINT": "",
 			"SUPERFICIAL": "Superficial",
+			"SUPERFICIALHINT": "",
 			"SHALLOW": "Rasa",
-			"DEEP": "Profunda"
+			"SHALLOWHINT": "",
+			"DEEP": "Profunda",
+			"DEEPHINT": ""
 		},
 		"LANGUAGES": {
 			"COMMON": "Comum",
@@ -754,6 +801,7 @@
 		"Description": "Descrição",
 		"Descriptor": "Descritor",
 		"DescriptorPl": "Descritores",
+		"Type": "Tipo",
 		"Value": "Valor",
 		"Total": "Total",
 		"TotalPl": "Totais",
@@ -774,6 +822,12 @@
 		"Unit": "Unidade",
 		"UnitPl": "Unidades",
 		"UNIT": {},
+		"Level": "Nível",
+		"HitDie": "Dado de Vida",
+		"HitDiePl": "Dados de Vida",
+		"HitDieAbbr": "DdV",
+		"Proficiency": "Proficiência",
+		"ProficiencyPl": "Proficiências",
 		"Component": "Componente",
 		"ComponentPl": "Componentes",
 		"COMPONENTS": {},
@@ -800,6 +854,13 @@
 		"SkillPl": "Perícias",
 		"SKILL": {
 		},
+		"DamageReduction": "Redução de Dano",
+		"DamageReductionAbbr": "RD",
+		"Melancholy": "Melancolia",
+		"Chosen": "Escolhido",
+		"Equipped": "Equipado",
+		"Attuned": "Sintonizado",
+		"Unidentified": "Não Identificado",
 		"Activation": "Ativação",
 		"ACTIVATION": {
 			"Type": "Açao",
@@ -840,19 +901,41 @@
 			"Melee": "Corpo-a-Corpo",
 			"Ranged": "A Distância"
 		},
+		"Wield": "Empunhadura",
+		"WIELD":{
+			"OneHand": "Uma Mão",
+			"TwoHand": "Duas Mãos"
+		},
+		"Use": "Uso",
+		"UsePl": "Usos",
 		"Damage": "Dano",
 		"Trigger": "Gatilho",
 		"Effect": "Efeito",
 		"Special": "Especial",
-
+		"Creature": "Criatura",
+		"CREATURE": {
+			"Celestial" : "Celestial",
+			"Construct" : "Construto",
+			"Dragon" : "Dragão",
+			"Elemental" : "Elemental",
+			"Fey" : "Feérico",
+			"Beast" : "Fera",
+			"Giant" : "Gigante",
+			"Ooze" : "Gosma",
+			"Humanoid" : "Humanoide",
+			"Fiend" : "Ínfero",
+			"Monstrosity" : "Monstro",
+			"Undead" : "Morto-vivo",
+			"Plant" : "Planta"
+		},
 		"Currency": "Dinheiro",
 		"CURRENCY": {
 			"T": "Trocado",
-			"TAbbr": "$T",
+			"TAbbr": "T$",
 			"P": "Pila",
-			"PAbbr": "$P",
+			"PAbbr": "P$",
 			"K": "Kurmac",
-			"KAbbr": "$K"
+			"KAbbr": "K$"
 		},
 		"Modifier": "Modificador",
 		"ModifierPl": "Modificadores",
@@ -869,6 +952,11 @@
 			"Vulnerability": "Vulnerabilidade",
 			"VulnerabilityPl": "Vulnerabilidades",
 			"Vulnerable": "Vulnerável"
+		},
+		"PATH": {
+			"Specialized": "Trilha de Especialista",
+			"War": "Trilha de Guerra",
+			"Mystic": "Trilha Mística"
 		},
 		"APP": {
 			"IRVConfig": "Resistências",

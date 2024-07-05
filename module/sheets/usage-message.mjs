@@ -17,7 +17,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 			template: `systems/${SYSTEM.id}/templates/apps/usage-config.hbs`,
 			width: 600,
 			height: "auto", //400,
-			submitOnChange: true,
+			submitOnChange: false,
 			closeOnSubmit: false,
 		});
 	}
@@ -41,11 +41,11 @@ export default class ItemUsageConfig extends DocumentSheet {
 		context.modifications = this.document.system.modifications;
 
 		// this.getUsageEffects(context);
-		console.log( this.document.system );
+		// console.log( this.document.system );
 		// console.log( context.system.abilityState.system );
 		// console.log( context.system.itemState.system );
 		// console.log( context.system.item );
-		console.log(context);
+		console.log("ItemUsageConfig", context);
 		return context;
 	}
 
@@ -57,7 +57,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const actor = new SkyfallActor( context.system.actorState );
 		if ( !actor ) return;
 		const mods = actor.allModifications;
-		console.log( this.document.system.modifications );
+		// console.log( this.document.system.modifications );
 		//await foundry.utils.fromUuid(actorId);
 		for (const mod of actor.allModifications) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
@@ -99,8 +99,8 @@ export default class ItemUsageConfig extends DocumentSheet {
 		switch ( button.dataset.action ) {
 			case "commit":
 				this.document.updateData = null;
+				await this.submit();
 				await this.document.updateUsagePrepareData();
-				console.log( this.document.updateData );
 				this.document.update(this.document.updateData);
 				break;
 			case "execute":
@@ -132,31 +132,8 @@ export default class ItemUsageConfig extends DocumentSheet {
 
 	/** @inheritdoc */
 	async _updateObject(event, formData) {
-		formData = foundry.utils.expandObject(formData);
-		console.log( formData );
-
-		console.log( this.document.system.rolls );
-		const rolls = this.document.system.rolls;
-		const _rolls = [];
-		for (const [i, roll] of Object.entries(formData._rolls)) {
-			const originalRoll = RollSF.fromData( rolls[i] );
-			let r = new RollSF(roll.formula);
-			for (const [t, term] of Object.entries(r.terms) ) {
-				const originalTerm = originalRoll.terms[t];
-				if( originalTerm ) {
-					foundry.utils.mergeObject(originalTerm, term);
-				} else {
-					originalRoll.terms.push(term);
-				}
-			}
-			originalRoll._formula = originalRoll.constructor.getFormula(originalRoll.terms);
-			_rolls.push( originalRoll );
-		}
-		if ( _rolls ) {
-			console.log(_rolls);
-			formData.system.rolls = _rolls;
-		}
-		formData = foundry.utils.flattenObject(formData);
+		// formData = foundry.utils.expandObject(formData);
+		// formData = foundry.utils.flattenObject(formData);
 		return super._updateObject(event, formData);
 	}
 

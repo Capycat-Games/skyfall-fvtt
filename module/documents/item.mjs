@@ -204,28 +204,13 @@ export default class SkyfallItem extends Item {
 	/* -------------------------------------------- */
 
 	/**
-	 * Do Something.
-	 * @private
+	 * Send Description to Chat
+	 * @public
 	 */
-	_someFunction(changed) {
-		if ( !this.isOwned ) return;
-		if ( !["armor", "weapon"].includes(this.type) ) return;
-		const tokens = this.actor.getActiveTokens(true);
-
-		// Equipment changes
-		if ( changed.system?.equipped !== undefined ) {
-			const text = `${changed.system.equipped ? "+" : "-"}(${this.name})`;
-			const fontSize = 24 * (canvas.dimensions.size / 100).toNearest(0.25);
-			for ( let token of tokens ) {
-				canvas.interface.createScrollingText(token.center, text, {
-					anchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
-					direction: CONST.TEXT_ANCHOR_POINTS[changed.system.equipped ? "TOP" : "BOTTOM"],
-					fontSize: fontSize,
-					stroke: 0x000000,
-					strokeThickness: 4
-				});
-			}
-		}
+	async toMessage() {
+		ChatMessage.create({
+			content: `<h3>${this.name}</h3>${this.system.description.value}`,
+		});
 	}
 
 	

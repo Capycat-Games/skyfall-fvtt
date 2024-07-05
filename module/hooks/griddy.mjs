@@ -1,4 +1,5 @@
 export default function griddySystemSetup(params) {
+	return;
 	if ( game.user.isGM ) {
 		game.settings.set('griddy','itemTypes','armor,weapon,clothing,consumable,loot,equipment');
 	}

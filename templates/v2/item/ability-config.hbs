@@ -35,11 +35,8 @@
 			<label>{{ localize "SKYFALL2.ComponentPl" }}</label>
 			<div class="form-fields">
 			{{#each SYSTEM.spellComponents as | comp key | }}
-				{{log comp key }}
-				{{log @root.system.components}}
-				{{log (includes @root.system.components key)}}
 				<label for=""> {{localize comp.label}}
-					<input type="checkbox" name="system.components" value="{{key}}" {{checked (includes @root.system.components key)}}>
+					<input type="checkbox" name="system.components" value="{{key}}" {{checked (includes key @root.system.components)}}>
 				</label>
 			{{/each}}
 			</div>

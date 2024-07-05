@@ -4,7 +4,7 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 	/** @override */
 	static get defaultOptions() {
 		return foundry.utils.mergeObject(super.defaultOptions, {
-			classes: ["skyfall", "sheet", "modification"],
+			classes: ["skyfall", "sheet", "modification", "active-effect-sheet"],
 			// width: 800,
 			height: 'auto',
 			// height: 700,
@@ -32,14 +32,13 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 	async getData() {
 		const context = await super.getData();
 		context.system = this.document.system.toObject();
-		console.log(context);
-		console.log(widgets);
 		if ( context.system?.apply?.itemType ) {
 			context.system.apply.itemType = context.system.apply.itemType.filter(Boolean).reduce( (acc, k) => {
 				acc[k] = true;
 				return acc;
 			}, {})
 		}
+		context._selOpts = {};
 		// context.widgets = widgets;
 		this.getDescriptors(context);
 		this.#getSystemFields(context);
@@ -58,7 +57,34 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 		context.systemFields = foundry.utils.expandObject(system);
 	}
 
-	async getDescriptors(context, type) {
+	async getDescriptors(context, types = []) {
+		console.log(context);
+		context.descriptors = context.system.apply.descriptors.reduce((acc, key) => {
+			acc[key] = true;
+			return acc;
+		}, {});
+		context.descriptors = {};
+		context._selOpts['descriptors'] = {};
+		
+		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
+			if ( types.length && !types.includes(category) ) continue;
+			for (const [id, desc] of Object.entries(descriptors)) {
+				context._selOpts['descriptors'][category] ??= {};
+				context._selOpts['descriptors'][category][desc.id] = {
+					...desc, 
+					value: (context.system.apply.descriptors.includes(desc.id))
+				}
+			}
+			foundry.utils.mergeObject(context.descriptors, context._selOpts['descriptors'][category]);
+		}
+		for (const desc of context.system.apply.descriptors) {
+			if ( desc in context.descriptors ) continue;
+			context._selOpts['descriptors']["ORIGIN"][desc] = {
+				id: desc, hint: "", type: ["origin"], label: desc.toUpperCase(), value: true
+			}
+		}
+	}
+	async getDescriptors2(context, type) {
 		context.descriptors = context.system.apply.descriptors.reduce((acc, key) => {
 			acc[key] = true;
 			return acc;

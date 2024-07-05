@@ -12,8 +12,8 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		classes: ["skyfall", "actor", "character"],
 		position: { width: 800, height: 660},
 		actions: {
-			someAction: CharacterSheetSkyfall.#someAction,
 			inventoryDisplay: CharacterSheetSkyfall.#inventoryDisplay,
+			itemToChat: CharacterSheetSkyfall.#itemToChat,
 		}
 	};
 
@@ -187,7 +187,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		// 
 		this._prepareItems(context);
 		if ( context.items.abilities ) {
-			context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
+			// context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
 		}
 		this._prepareFilters(context);
 		context.statusEffects = CONFIG.statusEffects.reduce((acc, ef)=>{
@@ -397,7 +397,10 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	 * @param {Event} event             The initiating click event.
 	 * @param {HTMLElement} target      The current target of the event listener.
 	 */
-	static #someAction(event, target) {
-		console.log('someAction', this.document);
+	static #itemToChat(event, target) {
+		const itemId = target.closest("[data-entry-id]").dataset.entryId;
+		const item = this.document.items.get(itemId);
+		if ( !item ) return;
+		item.toMessage();
 	}
 }

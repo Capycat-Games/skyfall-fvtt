@@ -57,6 +57,11 @@
 @sheetBackground: url("assets/parchment.jpg") repeat;
 
 
+:root, * {
+	scrollbar-color: #182657 transparent;
+	scrollbar-width: thin;
+}
+
 /* ----------------------------------------- */
 /*  Flexbox                                  */
 /* ----------------------------------------- */
@@ -142,7 +147,7 @@
     color: white;
     font-family: @fontSkyfall;
     align-items: center;
-    > * {
+    * {
       color: white;
     }
     .skyfall-icon {

@@ -12,10 +12,6 @@
 /*  Skyfall Styles                           */
 /* ----------------------------------------- */
 
-:root, * {
-	scrollbar-color: #182657 transparent;
-	scrollbar-width: thin;
-}
 .dice-total {
 	font-family: @fontSkyfall;
 }
@@ -30,6 +26,14 @@
 		h1, h2, h3, h4, h5, h6 {
 			line-height: normal;
 			text-shadow: none;
+		}
+		prose-mirror {
+			.editor-menu {
+				* { color: var(--color-light-3); }
+				:hover * { color: black; }
+				background: #302831;
+				* { background: #302831; }
+			}
 		}
 	}
 }
@@ -117,6 +121,7 @@
 		font-weight: bold;
 		background-color: var(--actor-color);
 		padding: 1px 5px;
+		text-transform: uppercase;
 		color: white!important;
 	}
 	.sf-icon {
@@ -203,7 +208,10 @@
 				margin: 2px 2px;
 				background-color: @colorSFPlayer;
 				color: white;
+				* { color: white; }
 				text-transform: uppercase;
+			}
+			.checkbox {
 				opacity: 0.6;
 				:has(input:checked) {
 					opacity: 1;

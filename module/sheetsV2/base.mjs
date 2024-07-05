@@ -51,7 +51,7 @@ export const SkyfallSheetMixin = Base => {
 				filter: {handler: BaseSheetSkyfall.#onFilter, buttons: [0, 2]},
 				collapse: BaseSheetSkyfall.#onCollapse,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
-				renderGriddy: BaseSheetSkyfall.#renderGriddy,
+				// renderGriddy: BaseSheetSkyfall.#renderGriddy,
 			}
 		};
 
@@ -150,9 +150,9 @@ export const SkyfallSheetMixin = Base => {
 			const frame = await super._renderFrame(options);
 			
 			// Add Griddy button
-			const griddyLabel = "Griddy";
-			const griddyBtn = `<button type="button" class="header-control fa-solid fa-table-cells" data-action="renderGriddy" data-tooltip="${griddyLabel}" aria-label="${griddyLabel}"></button>`;
-			this.window.close.insertAdjacentHTML("beforebegin", griddyBtn);
+			// const griddyLabel = "Griddy";
+			// const griddyBtn = `<button type="button" class="header-control fa-solid fa-table-cells" data-action="renderGriddy" data-tooltip="${griddyLabel}" aria-label="${griddyLabel}"></button>`;
+			// this.window.close.insertAdjacentHTML("beforebegin", griddyBtn);
 
 			// Add console.log button
 			const logLabel = game.i18n.localize("CONSOLE.LOG");
@@ -320,6 +320,7 @@ export const SkyfallSheetMixin = Base => {
 			event.preventDefault();
 			const target = event.target;
 			const {type, uuid} = TextEditor.getDragEventData(event);
+			console.log("_onDrop", type, uuid, target);
 			if (!this.isEditable) return;
 			const item = await fromUuid(uuid);
 			const itemData = item.toObject();
@@ -491,7 +492,7 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static #onEdit(event, target) {
 			const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
-			const document = this.document.items.get(itemId) ?? this.document.effects.get(itemId);
+			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId);
 			if ( !document ) return;
 			document.sheet.render(true);
 		}
@@ -502,9 +503,19 @@ export const SkyfallSheetMixin = Base => {
 		 * @param {HTMLElement} target      The current target of the event listener.
 		 */
 		static #onDelete(event, target) {
+			const type = target.dataset.delete;
 			const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
-			const fieldPath = target.dataset.fieldPath;
-			const document = this.document.items.get(itemId) ?? this.document.effects.get(itemId);
+			const fieldPath = target.closest("[data-field-path]")?.dataset.fieldPath;
+			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId);
+			if ( type == 'id' ) {
+				const list = foundry.utils.getProperty(this.document, fieldPath);
+				console.log(list);
+				if ( !list ) return;
+				list.delete(itemId);
+				const updateData = {};
+				updateData[fieldPath] = [...list];
+				return this.document.update(updateData);
+			}
 			if ( fieldPath ) {
 				const updateData = {};
 				updateData[`${fieldPath}-=${itemId}`] = null;
@@ -523,7 +534,7 @@ export const SkyfallSheetMixin = Base => {
 			const fieldPath = target.dataset.fieldPath;
 			const itemId = target.closest(".entry")?.dataset.entryId;
 			if ( this.actor && SYSTEM.conditions[itemId] ) return this.actor.toggleStatusEffect( itemId );
-			const document = ( itemId ? (this.document.items.get(itemId) ?? this.document.effects.get(itemId)) : this.document );
+			const document = ( itemId ? (this.document.items?.get(itemId) ?? this.document.effects.get(itemId)) : this.document );
 			if ( !foundry.utils.hasProperty(document, fieldPath) ) return;
 			const updateData = {};
 			updateData[fieldPath] = !foundry.utils.getProperty(document, fieldPath);
@@ -569,6 +580,7 @@ export const SkyfallSheetMixin = Base => {
 						disadvantage: event.altKey ? 1 : 0,
 					}
 				},
+				speaker: ChatMessage.getSpeaker({actor: this}),
 				system: {
 					actorId: this.actor.uuid,
 					abilityId: ability.id,
@@ -614,6 +626,7 @@ export const SkyfallSheetMixin = Base => {
 						disadvantage: event.altKey ? 1 : 0,
 					}
 				},
+				speaker: ChatMessage.getSpeaker({actor: this}),
 				system: {
 					actorId: this.actor.uuid,
 					abilityId: ability.id,
@@ -707,7 +720,9 @@ export const SkyfallSheetMixin = Base => {
 		}
 
 		static #onToggleMode(event, target) {
-			this._sheetMode = this._sheetMode ? 0 : 1;
+			console.log( this._sheetMode, this.isEditMode );
+			this._sheetMode = this._sheetMode == 1 ? 0 : 1;
+			console.log( this._sheetMode, this.isEditMode );
 			this.render();
 		}
 
@@ -747,10 +762,6 @@ export const SkyfallSheetMixin = Base => {
 			console.log(this.document);
 			console.log(this);
 			console.groupEnd()
-		}
-
-		static #renderGriddy(){
-			this.actor.griddy();
 		}
 
 		/* ---------------------------------------- */

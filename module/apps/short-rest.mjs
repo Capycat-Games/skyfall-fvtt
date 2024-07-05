@@ -93,8 +93,8 @@ export default class ShortRest extends FormApplication {
 				hitDieMods: modifiers?.rest?.hitDieMod?.join('') ?? '',
 				hitDieBonus: ["+@con"].concat(modifiers?.hitDieBonus ?? []).join('+'),
 			}
-			let roll = new RollSF(hdData._formula, rollData);
-			roll = new RollSF(roll.formula, rollData);
+			let roll = new Roll(hdData._formula, rollData);
+			roll = new Roll(roll.formula, rollData);
 			hdData.formula = roll.formula;
 			console.log(hdData);
 			hitDies.push(hdData);

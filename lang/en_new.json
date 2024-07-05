@@ -424,7 +424,7 @@
 	"SKYFALL.REST.GOOD": "Bom",
 	"_ITEMS_": {},
 	"_PATHTYPES_": {},
-	"SKYFALL.PATHTYPES.SPEC": "Trilha de Especialista",
+	"SKYFALL.PATHTYPES.SPECIALIZED": "Trilha de Especialista",
 	"SKYFALL.PATHTYPES.WAR": "Trilha de Guerra",
 	"SKYFALL.PATHTYPES.MYSTIC": "Trilha Mística",
 	"_ARMORS_": {},
@@ -825,9 +825,21 @@
 		"ABILITYABBR": "Atb",
 		"ABILITYPL": "Atributos",
 		"ABILITYLONG": "Valor de Atributo",
-		"PROPERTIES": {
-			"SOME":"Some",
-			"OTHER":"Other"
+		"ABILITIES": {
+			"STR":"Some",
+			"STRABBR":"Some",
+			"DEX":"Some",
+			"DEXABBR":"Some",
+			"CON":"Some",
+			"CONABBR":"Some",
+			"INT":"Some",
+			"INTABBR":"Some",
+			"WIS":"Some",
+			"WISABBR":"Some",
+			"CHA":"Some",
+			"CHAABBR":"Some",
+			"PHYSICAL": "",
+			"MENTAL": ""
 		}
 	}
 }

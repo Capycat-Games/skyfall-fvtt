@@ -1,5 +1,4 @@
-{{log "tab" tab}}
-<section class="ability-configuration flexcol">
+<section class="ability-configuration {{ifThen isPlayMode 'hidden' ''}}  flexcol">
 	{{> "templates/generic/tab-navigation.hbs"}}
 	{{> "systems/skyfall/templates/v2/item/ability-config.hbs" tab=tabs.config}}
 

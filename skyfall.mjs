@@ -54,7 +54,7 @@ Hooks.once('init', function () {
 	// Add custom constants for configuration.
 	CONFIG.SKYFALL = SYSTEM;
 	CONFIG.time.roundTime = 6;
-	CONFIG.ActiveEffect.legacyTransferral = true;
+	CONFIG.ActiveEffect.legacyTransferral = false;
 	CONFIG.Combat.initiative.formula = '1d20 + @dex';
 	CONFIG.Combat.initiative.decimals = 2;
 
@@ -105,13 +105,13 @@ Hooks.once('init', function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("skyfall", sheets.SkyfallActorSheet, {
-		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
-		makeDefault: true,
-	});
+	// Actors.registerSheet("skyfall", sheets.SkyfallActorSheet, {
+	// 	types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
+	// 	makeDefault: true,
+	// });
 	Actors.registerSheet("skyfall", sheetsV2.CharacterSheetSkyfall, {
 		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
-		makeDefault: false,
+		makeDefault: true,
 	});
 	Actors.registerSheet("skyfall", sheetsV2.NPCSheetSkyfall, {
 		types: ["npc"], makeDefault: true, label: 'TYPES.Actor.npc',
@@ -119,22 +119,22 @@ Hooks.once('init', function () {
 	});
 	
 	// Items.unregisterSheet("core", ItemSheet);
-	Items.registerSheet("skyfall", sheets.SkyfallItemSheet, {
-		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
-		makeDefault: true,
-	});
+	// Items.registerSheet("skyfall", sheets.SkyfallItemSheet, {
+	// 	types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
+	// 	makeDefault: true,
+	// });
 	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
 		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
-		makeDefault: false,
-	});
-
-	Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
-		types: ['ability','spell','sigil'],
 		makeDefault: true,
 	});
+
+	// Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
+	// 	types: ['ability','spell','sigil'],
+	// 	makeDefault: true,
+	// });
 	Items.registerSheet("skyfall", sheetsV2.AbilitySheetSkyfall, {
 		types: ['ability','spell','sigil'],
-		makeDefault: false,
+		makeDefault: true,
 	});
 	
 	
@@ -227,7 +227,6 @@ Hooks.once('ready', async function () {
 
 Hooks.on("renderPlayerList", (app, html, data) => {
 	if ( !game.user.isGM ) return;
-	console.log('renderPlayerList', app, html, data)
 	html.find('li.player').each((i, player)=> {
 		if($(player).hasClass('gm')) return;
 		const userId = player.dataset.userId;
@@ -235,7 +234,6 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 		if ( !character ) return;
 		const catharsis = character.system.resources.catharsis.value;
 		const playerName = $(player).find('.player-name').text();
-		// console.log()
 		$(player).find('.player-name').text(`${playerName} (${catharsis})`);
 		const btn = document.createElement("button");
 		btn.innerHTML = '<i class="fa-solid fa-bahai"></i>';
@@ -248,7 +246,6 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 });
 
 Hooks.on("controlToken", (token, controlled) => {
-	console.log( token.actor, controlled );
 	if ( controlled ) new EffectsMenu({document: token.actor}).render(true);
 	else {
 		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
@@ -346,13 +343,17 @@ async function prepareSystemLocalization() {
 
 async function prepareSystemStatusEffects() {
 	let journalConditions;
-	if ( game.modules.has("skyfall-core") ) {
+	if ( false && game.modules.has("skyfall-core") ) {
 		journalConditions = fromUuidSync(
-			"Compendium.skyfall-fastplay.regras.JournalEntry.65t2wLGXUdAgIIjm"
+			"Compendium.skyfall-core.regras.JournalEntry.TBD"
 		);
-	} else if ( game.modules.has("skyfall-fastplay") ) {
+	} else if ( false && game.modules.has("skyfall-fastplay") ) {
 		journalConditions = await fromUuid(
 			"Compendium.skyfall-fastplay.regras.JournalEntry.65t2wLGXUdAgIIjm"
+		);
+	} else if ( true ) { //BETA
+		journalConditions = await fromUuid(
+			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
 		);
 	}
 	for (const [i, ef] of CONFIG.statusEffects.entries()) {
@@ -421,9 +422,7 @@ function registerCustomEnrichers(){
 function enrichReference(match, options) {
 	let { type, config, label } = match.groups;
 	
-	console.log(config);
 	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
-	console.log(reference);
 	if ( !reference ) return;
 	let style;
 	if ( SYSTEM.DESCRIPTORS[config] ) style = "descriptor-reference";
@@ -437,20 +436,15 @@ function enrichReference(match, options) {
 }
 
 function enrichRollRequest(match, options) {
-	console.groupCollapsed("enrichRollRequest");
 	let { type, config, label } = match.groups;
 	// [[/rr type=ability ability=str]]{Força}
-	console.log("match", match);
-	console.log("groups", config, label);
 
 	config = config.replace(/:(\w+)/gi, `[$1]`);
 	const rollConfigs = config.split(" ").reduce((acc, c) => {
-		console.log(acc, c);
 		let cKeyVal = c.split('=');
 		acc[ cKeyVal[0] ] = cKeyVal[1];
 		return acc;
 	}, {});
-	console.log(rollConfigs);
 	if ( !label ) label = functions.rollTitle(rollConfigs);
 	const inline = document.createElement('a');
 	inline.classList.add("inline-roll-request");
@@ -460,10 +454,10 @@ function enrichRollRequest(match, options) {
 	inline.dataset.ability = rollConfigs.ability;
 	inline.dataset.skill = rollConfigs.skill;
 	inline.dataset.formula = rollConfigs.formula;
+	inline.dataset.protection = rollConfigs.protection;
 	
 	inline.innerHTML = `<i class="fa-solid fa-dice-d20"></i> ${label}`;
 	
-	console.groupEnd();
 	return inline;
 }
 
@@ -476,6 +470,7 @@ async function rollConfig(event){
 		ability: target.dataset.ability,
 		skill: target.dataset.skill,
 		formula: target.dataset.formula,
+		protection: target.dataset.protection,
 		message: target.closest(".message")?.dataset.messageId,
 		createMessage: true
 	}).render(true);

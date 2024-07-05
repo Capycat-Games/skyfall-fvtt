@@ -13,23 +13,22 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 				value: new fields.HTMLField({required: true, blank: true, label:"SKYFALL.DESCRIPTION"}),
 			}),
 			unidentified: new fields.SchemaField({
-				value: new fields.BooleanField({initial: false, label:"SKYFALL.UNIDENTIFIED"}),
+				value: new fields.BooleanField({initial: false, label:"SKYFALL2.Unidentified"}),
 				name: new fields.StringField({required:true, blank: true, label: "SKYFALL.NameUnidentified"}),
 				description:  new fields.HTMLField({required: true, blank: true, label: "SKYFALL.DescriptionUnidentified"})
 			}),
 			descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false}),{label:"SKYFALL.DESCRIPTORS"}),
 			quantity: new fields.NumberField({required: true, integer: true, min: 0, initial:1, label:"SKYFALL.QUANTITY"}),
 			price: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.PRICE"}),
-			capacity: new fields.NumberField({required: true, integer: true, min: 0, label:"SKYFALL.CAPACITY"}),
-			
+			capacity: new fields.NumberField({required: true, initial:1, min: 0, label:"SKYFALL.CAPACITY"}),
 		}
 	}
 
 	static equippableSchema(){
 		const fields = foundry.data.fields;
 		return {
-			equipped: new fields.BooleanField({initial: false, label:"SKYFALL.EQUIPPED"}),
-			attuned: new fields.BooleanField({initial: false, label:"SKYFALL.ATTUNED"}),
+			equipped: new fields.BooleanField({initial: false, label:"SKYFALL2.Equipped"}),
+			attuned: new fields.BooleanField({initial: false, label:"SKYFALL2.Attuned"}),
 			favorite: new fields.BooleanField({initial: false, label:"SKYFALL.FAVORITE"}),
 		}
 	}

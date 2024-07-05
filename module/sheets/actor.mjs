@@ -486,6 +486,7 @@ export default class SkyfallActorSheet extends ActorSheet {
 					disadvantage: button.event.altKey ? 1 : 0,
 				}
 			},
+			speaker: ChatMessage.getSpeaker({actor: this}),
 			system: {
 				actorId: this.actor.id,
 				abilityId: ability.id,

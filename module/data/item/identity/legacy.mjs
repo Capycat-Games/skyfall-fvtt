@@ -1,9 +1,9 @@
-import Antropologia from "./antropologia.mjs";
+import Identity from "./identity.mjs";
 // import { MappingField } from "../../fields/mapping.mjs";
 /**
  * Data schema, attributes, and methods specific to Legacy type Items.
  */
-export default class Legacy extends Antropologia {
+export default class Legacy extends Identity {
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */
@@ -23,7 +23,7 @@ export default class Legacy extends Antropologia {
 			heritages: new _fields.MappingField(new fields.SchemaField({
 				name: new fields.StringField({required: true, blank: false}),
 				description: new fields.HTMLField({required: true, blank: true}),
-				features: new fields.SetField(new fields.StringField({required: true}, {validate: Antropologia.validateUuid})),
+				features: new fields.SetField(new fields.StringField({required: true}, {validate: Identity.validateUuid})),
 				chosen: new fields.BooleanField({required: true, default: false}),
 			})),
 		});

@@ -90,7 +90,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				}),
 			}),
 			level:  new fields.SchemaField({
-				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1,  max: 12, label: "SKYFALL.DM.LEVEL"}),
+				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL.DM.LEVEL"}),
 				xp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 0, label: "SKYFALL.DM.EXPERIENCY"}),
 			}),
 			movement: new fields.SchemaField({

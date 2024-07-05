@@ -43,26 +43,26 @@
 	{{/if}}
 	{{#if labels.attack.hit }}
 	<div class="rich">
-		<label>{{{localize labels.attack.hit.label}}}:</label> {{{labels.attack.hit.descriptive}}}
+		<label>{{{localize labels.attack.hit.label}}}:</label> {{#if enriched.hit}}{{{enriched.hit}}}{{else}}{{{labels.attack.hit.descriptive}}}{{/if}}
 	</div>
 	{{/if}}
 
 	{{#if labels.attack.miss }}
 	<div class="rich">
-		<label>{{{localize labels.attack.miss.label}}}:</label> {{{labels.attack.miss.descriptive}}}
+		<label>{{{localize labels.attack.miss.label}}}:</label> {{#if enriched.miss}}{{{enriched.miss}}}{{else}}{{{labels.attack.miss.descriptive}}}{{/if}}
 	</div>
 	{{/if}}
 	{{#if labels.effect }}
 	<div class="rich">
-		<label>{{{localize labels.effect.label}}}:</label> {{{labels.effect.descriptive}}}
+		<label>{{{localize labels.effect.label}}}:</label> {{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
 	</div>
 	{{/if}}
 	{{#if labels.special }}
 	<div class="rich">
-		<label>{{{localize labels.special.label}}}:</label> {{{labels.special.descriptive}}}
+		<label>{{{localize labels.special.label}}}:</label> {{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}
 	</div>
 	{{/if}}
 	{{!-- MODIFICATIONS --}}
 	{{{enriched.modifications}}}
-	<div class="space flex100"></div>
+	{{!-- <div class="space flex100"></div> --}}
 </div>

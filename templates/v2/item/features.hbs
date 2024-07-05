@@ -1,18 +1,38 @@
-<section class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
-	<ol class="plain drop-item">
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<ol class="plain drop-item" data-field-path="system.features" data-item-type="feature">
 	{{#each features as | item id | }}
-	<li class="item {{type}} entry draggable flexrow" data-entry-id="{{item.uuid}}">
+	<li class="item feature entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
 		<div class="item-icon" style="background-image:url({{item.img}})"></div>
 		<div class="item-name flex3">{{item.name}}</div>
 		<div class="item-controls">
-			<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
+			<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
 		</div>
 	</li>
 	{{/each}}
-	{{#unless features }}
+	{{#if (eq features.length 0) }}
 	<li>
 		{{localize "SKYFALL.SHEET.DROPITEM"}}
 	</li>
-	{{/unless}}
+	{{/if}}
 	</ol>
+	{{!-- PATH ADVANCED FEATURES --}}
+	{{#if (isDefined system.featuresAdv)}}
+	<h3>{{localize "SKYFALL.ITEM.PATH.ADVFEATURES"}}</h3>
+	<ol class="plain drop-item" data-field-path="system.featuresAdv" data-item-type="feature">
+	{{#each features as | item id | }}
+	<li class="item feature entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
+		<div class="item-icon" style="background-image:url({{item.img}})"></div>
+		<div class="item-name flex3">{{item.name}}</div>
+		<div class="item-controls">
+			<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+	</li>
+	{{/each}}
+	{{#if (eq featuresAdv.length 0) }}
+	<li>
+		{{localize "SKYFALL.SHEET.DROPITEM"}}
+	</li>
+	{{/if}}
+	</ol>
+	{{/if}}
 </section>

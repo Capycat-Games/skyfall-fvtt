@@ -75,20 +75,20 @@ export const modificationTypes = _modificationTypes.reduce((obj, key) => {
 	return obj;
 }, {});
 
-let _pathTypes = ['spec','war','mystic'];
+let _pathTypes = ['specialized','war','mystic'];
 export const pathTypes = _pathTypes.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ITEM.PATH.TYPE${key.toUpperCase()}`,
+		label: `SKYFALL2.PATH.${key.titleCase()}`,
 	}
 	return obj;
 }, {});
 
-let _creatures = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "monstrosity", "ooze", "plant"];
+let _creatures = ['celestial','construct','dragon','elemental','fey','beast','giant','ooze','humanoid','fiend','monstrosity','undead','plant'];
 export const creatureTypes = _creatures.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ACTOR.TYPES.${key.toUpperCase()}`,
+		label: `SKYFALL2.CREATURE.${key.titleCase()}`,
 	}
 	return obj;
 }, {});
@@ -144,7 +144,7 @@ diverseKeys.reduce((obj, key) => {
 		id: key,
 		type: ["diverse"],
 		label: `SKYFALL.DESCRIPTORS.DIVERSE.${key.toUpperCase()}`,
-		hint: `SKYFALL.DESCRIPTORS.DIVERSE.${key.toUpperCase()}Hint`,
+		hint: `SKYFALL.DESCRIPTORS.DIVERSE.${key.toUpperCase()}HINT`,
 	}
 	return obj;
 }, DESCRIPTOR.DIVERSE);

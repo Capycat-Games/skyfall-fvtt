@@ -14,6 +14,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 
 	_reset(options){
 		this.actor ??= options.actor ?? game.canvas.tokens.controlled[0]?.actor ?? null;
+		this.target = this._getTarget();
 		this.message ??= options.message ? game.messages.get(options.message) : null;
 		this.rollData = options.rollData ?? this.actor.getRollData() ?? {};
 		this._configFromRequest(options);
@@ -38,6 +39,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			ability: options.ability,
 			skill: options.skill,
 			formula: options.formula,
+			protection: options.protection,
 			rollIndex: options.rollIndex,
 		}
 	}
@@ -59,7 +61,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			}, this.system.terms);
 		} else {
 			// this.terms.push({expression:'1d20',label:'d20',flavor:'d20'});
-			if ( this.ability.id ){
+			if ( this.ability?.id ){
 				this.system.terms.push({
 					expression:`@${this.ability.id}`,
 					label:`${this.ability.label}`,
@@ -93,6 +95,8 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	_prepareTransforms(){
+		const KLKH = this._hasKLKH();
+		
 		if ( ['damage','catharsis'].includes(this.config.type) ) {
 			this.system.transformers.push({
 				label: "Crítico",
@@ -105,14 +109,14 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				label: "Desvantagem",
 				expression: "disadvantage", //["1d","kl"],
 				target: "d20",
-				active: this.options.advantageConfig == -1 ? true : false,
+				active: KLKH == -1 ? true : false,
 				source: null,
 			});
 			this.system.transformers.push({
 				label: "Vantagem",
 				expression: "advantage",//["1d","kh"],
 				target: "d20",
-				active: this.options.advantageConfig == 1 ? true : false,
+				active: KLKH == 1 ? true : false,
 				source: null,
 			});
 			this.system.transformers.push({
@@ -123,6 +127,35 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				source: "Precisão Vantajosa"
 			});
 		}
+	}
+
+	_hasKLKH(){
+		let result =  0;
+		const rollMods = foundry.utils.getProperty(this.actor, `system.modifiers.roll.${this.config.type}`) ?? [];
+		const statuses = this.target?.statuses ?? new Set();
+		
+		// KEYUP
+		result += this.options.advantageConfig ? this.options.advantageConfig : 0;
+		result += rollMods.includes("kh") ? 1 : 0;
+		result += rollMods.includes("kl") ? -1 : 0;
+		console.log( isNaN(result) );
+		if ( this.config.protection ) {
+			result += statuses.has( `protected-${this.config.protection}` ) ? -1 : 0;
+			result += statuses.has( `protected-all` ) ? -1 : 0;
+			result += statuses.has( `unprotected-${this.config.protection}` ) ? 1 : 0;
+			result += statuses.has( `unprotected-all` ) ? 1 : 0;
+			console.log( isNaN(result) );
+			if ( ["str","dex","con"].includes(this.config.protection) ) {
+				result += statuses.has( `protected-physical` ) ? -1 : 0;
+				result += statuses.has( `unprotected-physical` ) ? 1 : 0;
+			} else if ( ["int","wis","cha"].includes(this.config.protection) ) {
+				result += statuses.has( `protected-mental` ) ? -1 : 0;
+				result += statuses.has( `unprotected-mental` ) ? 1 : 0;
+			}
+			console.log( isNaN(result) );
+		}
+		console.log(statuses, this.config.protection, result);
+		return Math.clamp(-1, result , 1);
 	}
 
 	static DEFAULT_OPTIONS = {
@@ -186,7 +219,8 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			terms: this.system.terms,
 			transformers: this.system.transformers,
 			title: skyfall.utils.rollTitle(this.config),
-			target: this._getTarget(),
+			target: this.target, //_getTarget(),
+			protection: (this.config.protection ? SYSTEM.abilities[this.config.protection].abbr : null),
 			rollMode: this.system.rollMode,
 			system: this.system,
 			_app: {
@@ -215,8 +249,8 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		if ( !token ) return null;
 		const target = {}
 		target.name = token.name;
-		target.statuses = [...token.actor.statuses];
-		target.transformers = target.statuses.map( t => SYSTEM.rollTransformers[t] ).filter(Boolean);
+		target.statuses = token.actor.statuses;
+		// target.transformers = target.statuses.map( t => SYSTEM.rollTransformers[t] ).filter(Boolean);
 		return target
 
 		const targets = game.user.targets.reduce( acc, t => acc.push({name:t.name, statuses: t.actor.statuses}),[]);
@@ -284,8 +318,10 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			for (const transformer of trns) {
 	
 				if ( transformer.expression == "disadvantage" ) roll.advantage({mod:"kl"})
-				if ( transformer.expression == "advantage" ) roll.advantage({mod:"kh"});
-				if ( transformer.expression == "advantage+" ) roll.advantage({mod:"kh",extra:true});
+				else if ( transformer.expression == "advantage" ) {
+					roll.advantage({mod:"kh"});
+					if ( transformer.expression == "advantage+" ) roll.advantage({mod:"kh",extra:true});
+				}
 			}
 		}
 		if ( this.message?.type == 'usage' && this.config.rollIndex !== null ) { //this.message?.type == 'usage' && 

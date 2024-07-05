@@ -63,7 +63,7 @@
 		{{#each system.rolls as | roll i | }}
 		<div class="form-group">
 			<label for="">{{roll.options.flavor}} </label>
-			<input type="text" name="_rolls.{{i}}.formula" value="{{roll.formula}}" >
+			<input type="text" name="_rolls.{{i}}.formula" value="{{roll.formula}}" disabled>
 		</div>
 		{{/each}}
 	</div>

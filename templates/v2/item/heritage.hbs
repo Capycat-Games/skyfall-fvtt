@@ -1,3 +1,56 @@
 <section class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
-	
+	<aside class="heritage-list flexcol">
+		<ul class="plain flex3">
+		{{#each heritages as | heritage key | }}
+		<li><a class="flex0 {{#if heritage.chosen}}chosen{{/if}} {{#if (eq @root.heritage key)}}active{{/if}}" data-action="heritageTab" data-heritage="{{key}}">{{heritage.name}}</a></li>
+		{{/each}}
+		</ul>
+		<div class="controls flex0">
+			<a data-action="create" data-create="heritage">{{localize "SKYFALL.Create"}}</a>
+		</div>
+	</aside>
+	{{#each heritages as | heritage key | }}
+	<div class="heritage {{#unless (eq @root.heritage key)}}hidden{{/unless}}">
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Name"}}</label>
+			<div class="form-fields">
+				<input type="text" name="system.heritages.{{key}}.name" value="{{heritage.name}}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Chosen"}}</label>
+			<div class="form-fields">
+				<input type="checkbox" name="system.heritages.{{key}}.chosen" {{checked heritage.chosen}}>
+			</div>
+		</div>
+		<div class="form-group stacked">
+			<label for="">{{localize "SKYFALL2.Description"}}</label>
+			<div class="form-fields">
+				<textarea name="system.heritages.{{key}}.description">{{{heritage.description}}}</textarea>
+			</div>
+		</div>
+		{{!-- FEATURES LIST --}}
+		{{log heritage}}
+		{{log heritage.features.length}}
+		<ol class="plain drop-item" data-field-path="system.heritages.{{key}}.features" data-item-type="feature">
+			{{#each heritage.features as | item id | }}
+			<li class="item feature entry flexrow" data-entry-id="{{item.uuid}}">
+				<div class="item-icon" style="background-image:url({{item.img}})"></div>
+				<div class="item-name flex3">{{item.name}}</div>
+				<div class="item-controls">
+					<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+				</div>
+			</li>
+			{{/each}}
+			{{#if (eq heritage.features.length 0) }}
+			<li>
+				{{localize "SKYFALL.SHEET.DROPITEM"}}
+			</li>
+			{{/if}}
+		</ol>
+	</div>
+	{{/each}}
+	{{#unless system.heritages }}
+	<div class="heritage"></div>
+	{{/unless}}
 </section>

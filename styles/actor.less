@@ -197,12 +197,25 @@
 	&.npc {
 		--actor-color: @colorSFFoe;
 		--actor-color-faint: @colorSFFoeFaint;
+		--scroll-margin: 0px;
+		* {
+			scrollbar-color: @colorSFFoe transparent !important;
+		}
+		
 		.window-content {
+			
 			padding: 0;
+			.scrollable {
+				margin-right: 0px;
+
+			}
 			nav.tabs {
 				.toggle-mode {
 					padding: 0 10px;
 				}
+			}
+			.item-controls {
+				float: right;
 			}
 			.npc-statblock {
 				* { color: @colorSFFoe; }
@@ -235,6 +248,9 @@
 				.abilities {
 					ol, ul {
 						padding: 10px;
+						.ability:nth-child(n+2){
+							border-top: 1px solid var(--actor-color);
+						}
 						* { font-size: 18px; }
 						label { font-weight: bold; }
 						.ability-properties :not(:first-child) {

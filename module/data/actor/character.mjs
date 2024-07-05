@@ -71,6 +71,14 @@ export default class Character extends foundry.abstract.TypeDataModel {
 					taken: this.#schemaDamage(),
 					dealt: this.#schemaDamage(),
 				}),
+				roll: new fields.SchemaField({
+					all: new fields.ArrayField(new fields.StringField()),
+					ability: new fields.ArrayField(new fields.StringField()),
+					skill: new fields.ArrayField(new fields.StringField()),
+					attack: new fields.ArrayField(new fields.StringField()),
+					death: new fields.ArrayField(new fields.StringField()),
+					initiative: new fields.ArrayField(new fields.StringField()),
+				}),
 				condition: new fields.SchemaField({
 					imune: new fields.SetField(new fields.StringField({required:true, choices: SYSTEM.conditions}),{label:"SKYFALL2.MODIFIER.Conditions"}),
 					protected: new fields.ArrayField(new fields.StringField({choices: SYSTEM.STATUSEFFECTS})),
@@ -90,8 +98,13 @@ export default class Character extends foundry.abstract.TypeDataModel {
 				}),
 				hp: new fields.SchemaField({
 					abilities: new fields.ArrayField(new fields.StringField({})),
-					levelBonus: new fields.ArrayField(new fields.StringField({})),
-					totalBonus: new fields.ArrayField(new fields.StringField({})),
+					levelExtra: new fields.ArrayField(new fields.StringField({})),
+					totalExtra: new fields.ArrayField(new fields.StringField({})),
+				}),
+				ep: new fields.SchemaField({
+					abilities: new fields.ArrayField(new fields.StringField({})),
+					levelExtra: new fields.ArrayField(new fields.StringField({})),
+					totalExtra: new fields.ArrayField(new fields.StringField({})),
 				}),
 			}),
 			level:  new fields.SchemaField({

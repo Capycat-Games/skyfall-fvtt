@@ -16,6 +16,7 @@ export default class SkyfallMessage extends ChatMessage {
 	
 	/* Set a reference to the Actor and items being used */
 	async #updateUsagePrepareData(){
+		console.warn("updateUsagePrepareData",this.system.modifications);
 		await this.getDocuments();
 		this.#applyItemToAbility();
 		this.#prepareModifications();
@@ -24,8 +25,8 @@ export default class SkyfallMessage extends ChatMessage {
 		this.#prepareAreaTemplate();
 		this.#prepareEffects();
 		await this.#prepareUsageHTML();
-
-		return this.updateData;
+		console.warn("updateData",this.updateData);
+		// return this.updateData;
 	}
 	
 	async updateUsagePrepareData() {
@@ -115,10 +116,12 @@ export default class SkyfallMessage extends ChatMessage {
 				id: mod.id,
 				uuid: mod.uuid,
 				name: mod.name,
-				cost: mod.system.cost.value * Number(mod.system.apply.always),
+				cost: mod.system.cost.value,
 				resource: mod.system.cost.resource,
 				apply: mod.system.apply.always ? 1 : 0,
 			}
+			console.warn(mod.system.cost);
+			console.warn(mod.system.cost);
 		}
 		this.updateData ??= {};
 		this.updateData.system ??= {};
@@ -126,14 +129,16 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 
 	#applyModifications(){
-		const act = this.system.item.system.activation;
+		console.groupCollapsed('applyModifications');
+		const ability = this.system.item.system.activation;
 		// if ( act.resource )
-		this.system.costs['ep'] += act.cost;
-		
+		this.system.costs['ep'] += ability.cost;
+		console.log(ability.cost);
 		for ( const mod of Object.values(this.system.modifications) ) {
 			const effect = this.actor?.allModifications.find( ef => ef.id == mod.id);
 			if ( !mod.apply || Number(mod.apply) < 1 ) continue;
 			this.system.costs[mod.resource] += mod.cost;
+			console.log(mod);
 			continue;
 			/**
 			 * TODO APPLY SPECIAL CASES USAGE EFFECTS
@@ -147,6 +152,9 @@ export default class SkyfallMessage extends ChatMessage {
 		this.updateData ??= {};
 		this.updateData.system ??= {};
 		this.updateData.system.item = this.system.item;
+		this.updateData.system.cost = this.system.costs;
+		console.log(this.updateData);
+		console.groupEnd();
 	}
 
 	#prepareRolls(){
@@ -228,33 +236,13 @@ export default class SkyfallMessage extends ChatMessage {
 				type: rollData.options.type,
 				ability: rollData.options.ability,
 				formula: rollData.options.formula,
+				protection: rollData.options.protection,
 				rollIndex:i,
 				message: this.id,
 				rollData: this.rollData,
 				createMessage:false
 			}).render(true);
-			return;
-			// continue;
-			// const roll2 = RollSF.fromData(rollData);
-			// if ( roll.options.types?.includes('damage') && criticalHit ) {
-			// 	roll.alter(2);
-			// }
-			// await roll.evaluate();
-			console.log(this.rolls);
-			this.rolls[i] = roll;
-			this.system.rolls[i].evaluated = true;
-			this.system.rolls[i].template = await roll.render({flavor: roll.options.flavor});
-			if ( roll.options.types?.includes('attack') && roll.dice[0].total == 20 ) {
-				criticalHit = true;
-			}
 		}
-		return;
-		console.log(this.rolls);
-		this.updateData ??= {}
-		this.updateData.system ??= {}
-		this.updateData.rolls = this.rolls;
-		this.updateData.system.rolls = this.system.rolls;
-		await this.#prepareUsageHTML();
 	}
 
 	async _updateRoll(roll, index){
@@ -329,6 +317,9 @@ export default class SkyfallMessage extends ChatMessage {
 
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
+		const actor = fromUuidSync(data.system?.actorId);
+		console.log(data, actor);
+		if ( actor ) data.speaker = {actor: (actor.token.name ?? actor.name)};
 		await super._preCreate(data, options, user);
 		return;
 	}
@@ -365,6 +356,7 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	async _preUpdate(data, options, userId) {
 		if ( this.type == 'usage' ){
+			console.warn("_preUpdate",data);
 			// delete data._id;
 
 			// foundry.utils.mergeObject(this, data);
@@ -396,6 +388,7 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	_onUpdate(data, options, userId) {
 		super._onUpdate(data, options, userId);
+		console.warn("_onUpdate",data);
 		return;
 	}
 
@@ -418,9 +411,9 @@ export default class SkyfallMessage extends ChatMessage {
 			html.prepend( bgOverlay );
 			if ( this.system.modifications ){
 				let mods = Object.values(this.system.modifications);
-				// mods = mods.map(m => `<li>@Embed[${m.uuid}]</li>`).join('');
-				// let modslist = await TextEditor.enrichHTML(mods);
-				// $(html).find('ul.modifications').html(modslist);
+				mods = mods.filter(m=> m.apply > 0 ).map(m => `<li>@Embed[${m.uuid}]</li>`).join('');
+				let modslist = await TextEditor.enrichHTML(mods);
+				$(html).find('ul.modifications').html(modslist);
 				//mods = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 				//context.enriched.modifications = await TextEditor.enrichHTML(`<div>${mods}</div>`);
 			}

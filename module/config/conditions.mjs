@@ -7,8 +7,8 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.GRAPPLED",
 		description: "SKYFALL.CONDITIONS.GRAPPLEDHINT",
 		img: "icons/svg/trap.svg",
-		// statuses: ["grappled"],
-		changes: [{key:'test',mode:0,value:'10'}],
+		// statuses: ["grappled", "restrained"],
+		changes: [],
 		disabled: false,
 	},
 	{
@@ -19,7 +19,12 @@ export const statusEffects = [
 		description: "SKYFALL.CONDITIONS.GRAPPLINGHINT",
 		img: "icons/svg/trap.svg",
 		// statuses: ["grappling"],
-		changes: [],
+		changes: [
+			{key: "system.movement.walk", mode:1, value:0.5 },
+			{key: "system.movement.swim", mode:1, value:0.5 },
+			{key: "system.movement.burrow", mode:1, value:0.5 },
+			{key: "system.movement.flight", mode:1, value:0.5 },
+		],
 		disabled: false,
 	},
 	{
@@ -30,7 +35,10 @@ export const statusEffects = [
 		description: "SKYFALL.CONDITIONS.FRIGHTENEDHINT",
 		img: "icons/svg/terror.svg",
 		// statuses: ["frightened"],
-		changes: [],
+		changes: [
+			{key: "system.modifiers.roll.ability", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+		],
 		disabled: false,
 	},
 	{
@@ -40,7 +48,7 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.STUNNED",
 		description: "SKYFALL.CONDITIONS.STUNNEDHINT",
 		img: "icons/svg/stoned.svg",
-		// statuses: ["stunned"],
+		// statuses: ["incapacitated","unprotected"],
 		changes: [],
 		disabled: false,
 	},
@@ -51,7 +59,9 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.PRONE",
 		description: "SKYFALL.CONDITIONS.PRONEHINT",
 		img: "icons/svg/falling.svg",
-		// statuses: ["prone"],
+		changes: [
+			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+		],
 		changes: [],
 		disabled: false,
 	},
@@ -62,7 +72,14 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.RESTRAINED",
 		description: "SKYFALL.CONDITIONS.RESTRAINEDHINT",
 		img: "icons/svg/net.svg",
-		// statuses: ["restrained"],
+		// statuses: ["unprotected-physical"],
+		changes: [
+			{key: "system.movement.walk", mode:1, value:0 },
+			{key: "system.movement.swim", mode:1, value:0 },
+			{key: "system.movement.burrow", mode:1, value:0 },
+			{key: "system.movement.flight", mode:1, value:0 },
+			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+		],
 		changes: [],
 		disabled: false,
 	},
@@ -76,7 +93,6 @@ export const statusEffects = [
 		// statuses: ["unprotected"],
 		changes: [],
 		disabled: false,
-		flags: {skyfall:{group:true}},
 		disabled: false,
 		system: {
 			group: {
@@ -84,11 +100,6 @@ export const statusEffects = [
 				str: false, dex: false, con: false,
 				int: false, wis: false, cha: false
 			},
-			changes: [
-				{
-					key: "enemy-check[]", mode: "0", value:"disadvantage",
-				}
-			]
 		},
 	},
 	{
@@ -98,8 +109,10 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.DISORIENTED",
 		description: "SKYFALL.CONDITIONS.DISORIENTEDHINT",
 		img: "icons/svg/daze.svg",
-		// statuses: ["disoriented"],
-		changes: [],
+		// statuses: ["unprotected"],
+		changes: [
+			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+		],
 		disabled: false,
 	},
 	{
@@ -126,7 +139,8 @@ export const statusEffects = [
 		description: "SKYFALL.CONDITIONS.CHARMEDHINT",
 		img: "icons/svg/daze.svg",
 		// statuses: ["charmed"],
-		changes: [],
+		changes: [
+		],
 		disabled: false,
 	},
 	{
@@ -138,7 +152,9 @@ export const statusEffects = [
 		img: "icons/svg/poison.svg",
 		tint: "#00FF00",
 		// statuses: ["poisoned"],
-		changes: [],
+		changes: [
+			{key: "system.modifiers.roll.check", mode:2, value:'kl'},
+		],
 		disabled: false,
 	},
 	{
@@ -159,7 +175,7 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.UNCONSCIOUS",
 		description: "SKYFALL.CONDITIONS.UNCONSCIOUSHINT",
 		img: "icons/svg/unconscious.svg",
-		// statuses: ["unconscious"],
+		// statuses: ["incapacitated","prone","unprotected"],
 		changes: [],
 		disabled: false,
 	},
@@ -182,7 +198,9 @@ export const statusEffects = [
 		description: "SKYFALL.CONDITIONS.INVISIBLEHINT",
 		img: "icons/svg/invisible.svg",
 		// statuses: ["invisible"],
-		changes: [],
+		changes: [
+			{key: "system.modifiers.roll.attack", mode:2, value:'kh'},
+		],
 		disabled: false,
 	},
 	{
@@ -223,7 +241,7 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.PARALYZED",
 		description: "SKYFALL.CONDITIONS.PARALYZEDHINT",
 		img: "icons/svg/anchor.svg",
-		// statuses: ["paralyzed"],
+		// statuses: ["incapacitated","unprotected"],
 		changes: [],
 		disabled: false,
 	},
@@ -234,8 +252,10 @@ export const statusEffects = [
 		label: "SKYFALL.CONDITIONS.PETRIFIED",
 		description: "SKYFALL.CONDITIONS.PETRIFIEDHINT",
 		img: "icons/svg/statue.svg",
-		// statuses: ["petrified"],
-		changes: [],
+		// statuses: ["incapacitated","unprotected"],
+		changes: [
+			{key: "system.modifiers.damage.taken.all", mode:5, value:'res'},
+		],
 		disabled: false,
 	},
 	{
@@ -247,7 +267,6 @@ export const statusEffects = [
 		img: "icons/svg/shield.svg",
 		// statuses: ["protected"],
 		changes: [],
-		flags: {skyfall:{group:true}},
 		disabled: false,
 		system: {
 			group: {
@@ -255,11 +274,6 @@ export const statusEffects = [
 				str: false, dex: false, con: false,
 				int: false, wis: false, cha: false
 			},
-			changes: [
-				{
-					key: "enemy-check[]", mode: "0", value:"disadvantage",
-				}
-			]
 		},
 	},
 	{
@@ -270,7 +284,9 @@ export const statusEffects = [
 		description: "SKYFALL.CONDITIONS.PROVOKEDHINT",
 		img: "icons/svg/eye.svg",
 		// statuses: ["provoked"],
-		changes: [],
+		changes: [
+			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+		],
 		disabled: false,
 	}
 ]
