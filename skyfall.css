@@ -1568,8 +1568,9 @@ dropdown-tags .tags-dropdown fieldset legend {
   color: white;
   position: relative;
   width: 85%;
-  height: 3em;
-  max-height: 3em;
+  min-height: 45px;
+  height: 45px;
+  max-height: 50px;
   float: left;
   top: -10px;
   align-items: center;
@@ -1615,7 +1616,7 @@ dropdown-tags .tags-dropdown fieldset legend {
   width: 15%;
   float: right;
   align-items: center;
-  min-height: 45px;
+  min-height: 55px;
 }
 .skyfall.usage-card .ability-descriptors label.descriptor {
   font-size: 12px;
@@ -1627,6 +1628,15 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.usage-card .ability-properties p label {
   font-weight: bold;
+}
+.skyfall.usage-card .rich label {
+  font-weight: bold;
+}
+.skyfall.usage-card .rich label + * {
+  display: inline;
+}
+.skyfall.usage-card .rich * {
+  margin: 0;
 }
 .skyfall.usage-card .chat-actions {
   width: 100%;

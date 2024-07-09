@@ -50,8 +50,9 @@
 			color: white;
 			position: relative;
 			width: 85%;
-			height: 3em;
-			max-height: 3em;
+			min-height: 45px;
+			height: 45px;
+			max-height: 50px;
 			float: left;
 			top: -10px;
 			align-items: center;
@@ -83,7 +84,7 @@
 			width: 15%;
 			float: right;
 			align-items: center;
-			min-height: 45px;
+			min-height: 55px;
 		}
 
 		.ability-descriptors {
@@ -102,6 +103,15 @@
 				}
 			}
 
+		}
+		.rich {
+			label {
+				font-weight: bold;
+			}
+			label + * {
+				display: inline;
+			}
+			* { margin: 0; }
 		}
 
 		.chat-actions {

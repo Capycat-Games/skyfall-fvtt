@@ -20,7 +20,7 @@
 		<div class="modification header flexrow">
 			<div class="controls">{{localize "SKYFALL.APPLY"}}</div>
 			<div class="cost">{{localize "SKYFALL.ITEM.ABILITY.COST"}}</div>
-			<div class="name hidden">{{localize "SKYFALL.NAME"}}</div>
+			<div class="name">{{localize "SKYFALL.NAME"}}</div>
 			<div class="description">{{localize "SKYFALL.DESCRIPTION"}}</div>
 		</div>
 		{{log modifications}}
@@ -45,13 +45,12 @@
 				{{/if}}
 			</div>
 			<div class="cost">
-				{{mod.cost.label}}
+				{{mod.cost}} {{mod.resource}}
 			</div>
-			<div class="name hidden">
-				{{mod.name}}
+			<div class="name">
+				{{{mod.name}}}
 			</div>
 			<div class="description">
-				{{mod.name}}
 				{{{mod.description}}}
 			</div>
 		</div>

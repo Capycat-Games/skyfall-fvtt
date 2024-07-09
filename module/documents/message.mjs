@@ -61,7 +61,7 @@ export default class SkyfallMessage extends ChatMessage {
 		const ability = this.ability; //actor.items.find( i => i.id == abilityId);
 		const item = this.item;
 		this.system.item = ability.toObject();
-		this.system.item.img = null;
+		this.system.item.img = item?.img ?? ability.img;
 		
 		// Get a default active effect where ability changes are configured;
 		const itemover = ability.effects.find( ef => ef.name == 'FromItem');
@@ -112,10 +112,12 @@ export default class SkyfallMessage extends ChatMessage {
 			if ( itemType.includes('self') && mod.parent.id != item._id ) continue;
 			if ( !foundry.utils.isEmpty(itemType) && !itemType.includes('self') && !itemType.includes(item.type) ) continue;
 			if ( !foundry.utils.isEmpty(descriptors) && !descriptors.every( d => item.system.descriptors.includes(d) ) ) continue;
+			
 			this.system.modifications[mod.id] = {
 				id: mod.id,
 				uuid: mod.uuid,
-				name: mod.name,
+				name: `${mod.parent.name}<br>[${mod.name}]`,
+				description: mod.description,
 				cost: mod.system.cost.value,
 				resource: mod.system.cost.resource,
 				apply: mod.system.apply.always ? 1 : 0,
@@ -168,13 +170,15 @@ export default class SkyfallMessage extends ChatMessage {
 		if ( this.item ) rollData.item = this.item.getRollData();
 		if ( item.system.attack?.type ) {
 			// TODO REWORK USING ROLLCONFIG APP
-			rollData['prof'] = rollData.proficiency;
+			
 			const attack = item.system.attack;
 			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
 			
 			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
-			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			rollData['prof'] = rollData.proficiency;
+			if ( this.actor?.type == 'character' ) { 
+				rollData['prof'] = rollData.proficiency;
+				terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
+			}
 
 			let rollConfig = {
 				advantage: advantage ?? 0,
@@ -195,7 +199,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		if ( item.system.attack?.damage ) {
-			rollData.weapon = rollData.item.weapon;
+			if ( this.item ) rollData.weapon = rollData.item.weapon;
 			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {
 				types:['damage'],
 				flavor:'Dano Acerto',
@@ -206,8 +210,13 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		if ( item.system.effect?.damage ) {
-			let roll = new SkyfallRoll(`${item.system.effect.damage}`, rollData, {types:['damage'], flavor:'Dano Efeito'});
-			roll.terms.map( t => t.options.flavor = damageType );
+			if ( this.item ) rollData.weapon = rollData.item.weapon;
+			let roll = new SkyfallRoll(`${item.system.effect.damage}`, rollData, {
+				types:['damage'],
+				flavor:'Dano Efeito',
+				type: "damage",
+				formula: item.system.effect.damage,
+			});
 			this.system.rolls.push(roll);
 		}
 		this.updateData ??= {};
@@ -318,8 +327,7 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
 		const actor = fromUuidSync(data.system?.actorId);
-		console.log(data, actor);
-		if ( actor ) data.speaker = {actor: (actor.token.name ?? actor.name)};
+		if ( actor ) data.speaker = {actor: (actor.token?.name ?? actor.name)};
 		await super._preCreate(data, options, user);
 		return;
 	}

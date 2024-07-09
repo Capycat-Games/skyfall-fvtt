@@ -1,8 +1,15 @@
-2024/07/05-12:13:43.279 777c Recovering log #28
-2024/07/05-12:13:43.334 777c Delete type=0 #28
-2024/07/05-12:13:43.334 777c Delete type=3 #26
-2024/07/05-12:30:57.234 1c18 Level-0 table #33: started
-2024/07/05-12:30:57.234 1c18 Level-0 table #33: 0 bytes OK
-2024/07/05-12:30:57.264 1c18 Delete type=0 #31
-2024/07/05-12:30:57.264 1c18 Manual compaction at level-0 from '!actors!89khPwlutZMcXnsm' @ 72057594037927935 : 1 .. '!actors.items.effects!z7kgYdBtPCw8qz3U.z9dWjowcV8DOvh5c.soq2oRlMm4vMquxD' @ 0 : 0; will stop at (end)
-2024/07/05-12:30:57.264 1c18 Manual compaction at level-1 from '!actors!89khPwlutZMcXnsm' @ 72057594037927935 : 1 .. '!actors.items.effects!z7kgYdBtPCw8qz3U.z9dWjowcV8DOvh5c.soq2oRlMm4vMquxD' @ 0 : 0; will stop at (end)
+2024/07/08-13:43:45.242 63d0 Recovering log #36
+2024/07/08-13:43:45.303 63d0 Delete type=0 #36
+2024/07/08-13:43:45.303 63d0 Delete type=3 #34
+2024/07/08-23:06:46.877 3264 Level-0 table #41: started
+2024/07/08-23:06:46.929 3264 Level-0 table #41: 115716 bytes OK
+2024/07/08-23:06:46.953 3264 Delete type=0 #39
+2024/07/08-23:06:47.011 3264 Manual compaction at level-0 from '!actors!89khPwlutZMcXnsm' @ 72057594037927935 : 1 .. '!actors.items.effects!z7kgYdBtPCw8qz3U.z9dWjowcV8DOvh5c.soq2oRlMm4vMquxD' @ 0 : 0; will stop at (end)
+2024/07/08-23:06:47.011 3264 Manual compaction at level-1 from '!actors!89khPwlutZMcXnsm' @ 72057594037927935 : 1 .. '!actors.items.effects!z7kgYdBtPCw8qz3U.z9dWjowcV8DOvh5c.soq2oRlMm4vMquxD' @ 0 : 0; will stop at '!actors.items.effects!z7kgYdBtPCw8qz3U.X8ZicUgs2DqoPrR0.meDTa7KHTnabM2WP' @ 259 : 0
+2024/07/08-23:06:47.011 3264 Compacting 1@1 + 1@2 files
+2024/07/08-23:06:47.053 3264 Generated table #42@1: 138 keys, 78209 bytes
+2024/07/08-23:06:47.053 3264 Compacted 1@1 + 1@2 files => 78209 bytes
+2024/07/08-23:06:47.077 3264 compacted to: files[ 0 0 1 0 0 0 0 ]
+2024/07/08-23:06:47.077 3264 Delete type=2 #25
+2024/07/08-23:06:47.078 3264 Delete type=2 #41
+2024/07/08-23:06:47.261 3264 Manual compaction at level-1 from '!actors.items.effects!z7kgYdBtPCw8qz3U.X8ZicUgs2DqoPrR0.meDTa7KHTnabM2WP' @ 259 : 0 .. '!actors.items.effects!z7kgYdBtPCw8qz3U.z9dWjowcV8DOvh5c.soq2oRlMm4vMquxD' @ 0 : 0; will stop at (end)

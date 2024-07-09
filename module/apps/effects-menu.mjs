@@ -54,11 +54,12 @@ export default class EffectsMenu extends HandlebarsApplicationMixin(DocumentShee
 	async _prepareContext(options) {
 		const doc = this.document;
 		const context = {
-			effects: doc.appliedEffects.filter(ef=> ef.type != "modification")
+			effects: doc.appliedEffects.filter(ef=> ef.type != "modification" && ef.isTemporary)
 		}
 		for (const eff of context.effects ) {
-			eff.embed = await TextEditor.enrichHTML(`<div>@Embed[${eff.uuid}]</div>`);
+			eff.tooltip = eff.statusId?.tooltip ?? await eff.richTooltip();
 		}
+		console.log(context);
 		return context;
 	}
 

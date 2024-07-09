@@ -24,18 +24,18 @@ export const rollTitle = (config) => {
 			return game.i18n.localize("SKYFALL2.APP.ROLLCONFIG.Check");
 		case "ability":
 			return game.i18n.format("SKYFALL2.APP.ROLLCONFIG.Check", {
-				type: game.i18n.localize(ability.label) ?? '-',
+				type: game.i18n.localize(ability?.label) ?? '-',
 			});
 		case "skill":
 			return game.i18n.format("SKYFALL2.APP.ROLLCONFIG.CheckAbility", {
 				type: game.i18n.localize(skill.label) ?? '-',
-				ability: game.i18n.localize(ability.label) ?? '-',
+				ability: game.i18n.localize(ability?.label) ?? '-',
 			});
 		case "initiative":
 		case "attack":
 			return game.i18n.format("SKYFALL2.APP.ROLLCONFIG.CheckAbility", {
 				type: types[config.type],
-				ability: game.i18n.localize(ability.abbr) ?? "-",
+				ability: game.i18n.localize(ability?.abbr) ?? "-",
 			});
 		case "deathsave":
 			return game.i18n.format("SKYFALL2.APP.ROLLCONFIG.Check", {

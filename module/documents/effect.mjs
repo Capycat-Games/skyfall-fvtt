@@ -224,9 +224,10 @@ export default class SkyfallEffect extends ActiveEffect {
 		config.caption = false;
 		config.cite = false;
 		const embed = await super._buildEmbedHTML(config, options);
+		
 		if ( !embed ) {
 			if ( this.type === "modification" ) return this._embedModification(config, options);
-			else if ( this.type === "image" ) return this._embedModification(config, options);
+			// else if ( this.type === "base" ) return this._embedBase(config, options);
 		}
 		return embed;
 	}
@@ -244,5 +245,22 @@ export default class SkyfallEffect extends ActiveEffect {
 		`;
 		return container.children;
 	}
+
+	async richTooltip() {
+		// DURATION?
+		// INHERIT PARENT DESCRIPTORS?
+		return await renderTemplate(
+			"systems/skyfall/templates/v2/apps/effect-tooltip.hbs", {
+				effect: this,
+				description: await TextEditor.enrichHTML(this.description, {
+					async: true, relativeTo: this
+				}),
+				cssClasses: ["skyfall", "effect-tooltip"]
+			}
+		);
+		
+		// {} ;
+	}
+
 
 }

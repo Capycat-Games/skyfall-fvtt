@@ -6,7 +6,7 @@ const {HandlebarsApplicationMixin, ApplicationV2, DialogV2} = foundry.applicatio
 export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2) {
 	constructor(options={}) {
 		super(options);
-		// console.log(options);
+		// console.log("RollConfig", options);
 		this.system = new skyfall.models.other.RollConfiguration({rollMode:game.settings.get("core", "rollMode")});
 		this._reset(options);
 		if ( options.skipConfig ) this._roll();
@@ -34,6 +34,10 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	_configFromRequest( options ){
+		if ( foundry.utils.getType(options.ability) == 'string' ) {
+			this.rollData['mod'] = 5 ?? Number(options.ability) ?? `${options.ability}`;
+			options.ability = `@mod`;
+		}
 		this.config = {
 			type: options.type,
 			ability: options.ability,
@@ -53,6 +57,9 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 					expression: t.options.data ? `@${t.options.data}` : t.expression,
 					label:`Base`,
 					flavor: t.flavor,
+					options: {
+						flavor: t.flavor,
+					},
 					preview: this.rollData[t.options.data] ?? '',
 					//this.actor.getRollData()[t.options.data] ?? '',
 					active: true,
@@ -61,12 +68,22 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			}, this.system.terms);
 		} else {
 			// this.terms.push({expression:'1d20',label:'d20',flavor:'d20'});
+			// console.log(this);
 			if ( this.ability?.id ){
 				this.system.terms.push({
 					expression:`@${this.ability.id}`,
 					label:`${this.ability.label}`,
 					flavor:'ability',
 					preview: this.rollData[this.ability.id] ?? 0,
+					//this.actor.getRollData()[this.ability.id] ?? 0,
+					active: true,
+				});
+			} else if ( this.config.ability == "@mod" ) {
+				this.system.terms.push({
+					expression:`@mod`,
+					label: `Modificador`,
+					flavor: 'ability',
+					preview: this.rollData['mod'] ?? 0,
 					//this.actor.getRollData()[this.ability.id] ?? 0,
 					active: true,
 				});
@@ -81,10 +98,10 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 					active: true,
 				});
 			}
-			if ( this.config.type == "attack" ){
+			if ( this.config.type == "attack" && this.config.ability != "@mod" ){
 				this.system.terms.push({
 					expression: `@prof`,
-					label:`Proficiencia`,
+					label:`Proficiência`,
 					flavor:'proficiency',
 					preview: this.rollData['prof'] ?? 0,
 					//this.actor.getRollData()['prof'] ?? 0,
@@ -95,7 +112,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	_prepareTransforms(){
-		const KLKH = this._hasKLKH();
+		const keep = this._hasKeep();
 		
 		if ( ['damage','catharsis'].includes(this.config.type) ) {
 			this.system.transformers.push({
@@ -109,14 +126,14 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				label: "Desvantagem",
 				expression: "disadvantage", //["1d","kl"],
 				target: "d20",
-				active: KLKH == -1 ? true : false,
+				active: keep == -1 ? true : false,
 				source: null,
 			});
 			this.system.transformers.push({
 				label: "Vantagem",
 				expression: "advantage",//["1d","kh"],
 				target: "d20",
-				active: KLKH == 1 ? true : false,
+				active: keep == 1 ? true : false,
 				source: null,
 			});
 			this.system.transformers.push({
@@ -129,7 +146,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		}
 	}
 
-	_hasKLKH(){
+	_hasKeep(){
 		let result =  0;
 		const rollMods = foundry.utils.getProperty(this.actor, `system.modifiers.roll.${this.config.type}`) ?? [];
 		const statuses = this.target?.statuses ?? new Set();
@@ -302,11 +319,16 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	async _roll(){
 		// this.config.type
 		let roll;
-		if ( ['damage','catharsis'].includes(this.config.type) ) {
+		if ( ['damage'].includes(this.config.type) ) {
 			roll = new RollSF([
 				...this.system.terms.filter(t => t.active )
-			].map(t => t.expression).join('+'), this.rollData, this.config);
+			].map(t => `${t.expression}${t.options?.flavor?'['+t.options.flavor+']':''}`).join('+'), this.rollData, this.config);
 			// this.actor.getRollData()
+		} else if ( ['catharsis'].includes(this.config.type) ) {
+			roll = new RollSF([
+				...this.system.terms.filter(t => t.active )
+			].map(t => t.expression ).join('+'), this.rollData, this.config);
+		
 		} else {
 			roll = new RollSF([
 				{expression:"1d20"},
