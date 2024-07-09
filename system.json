@@ -3,7 +3,7 @@
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
   "version": "0.8.001",
-  "manifest": "https://raw.githubusercontent.com/Capycat-Games/skyfall-fvtt/v0.8.001-Beta/system.json",
+  "manifest": "https://raw.githubusercontent.com/Capycat-Games/skyfall-fvtt/main/system.json",
   "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.8.001-Beta.zip",
   "url": "TODO/URL",
   "bugs": "TODO/URL",

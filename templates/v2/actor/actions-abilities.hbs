@@ -9,6 +9,7 @@
 	</div>
 	
 	<ul class="plain flexcol">
+		{{log items.actions}}
 		{{#each items.actions as | item |}}
 		{{#if item.weapons}}
 		<li class="item {{item.type}} weapon entry flexcol {{item.filtered}}" data-entry-id="{{item.id}}">
@@ -64,6 +65,15 @@
 			<div class="item-controls">
 				<a class="control" data-action="usage" data-target="item">
 					{{{../SYSTEM.icons.star}}}
+				</a>
+			</div>
+		</li>
+		{{else if (eq item.type 'commom')}}
+		<li class="item {{item.type}} entry flexrow {{item.filtered}}" data-entry-id="{{item.id}}">
+			<div class="item-name">
+				<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+				<span class="skyfall-icon">{{item.action}}</span>
+				{{localize item.name}}
 				</a>
 			</div>
 		</li>

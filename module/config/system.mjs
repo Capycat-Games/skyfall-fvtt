@@ -3,7 +3,7 @@ import * as EFFECTS from "./effects.mjs";
 import * as TYPES from "./types.mjs";
 import * as CONDITIONS from "./conditions.mjs";
 import * as TRANSFORMERS from "./transformers.mjs";
-
+import * as ACTIONS from "./common-actions.mjs";
 export const SYSTEM_ID = "skyfall";
 
 const _SVGICONS = {
@@ -110,6 +110,7 @@ export const SYSTEM = {
   ...CREATURES,
   ...EFFECTS,
   ...TYPES,
+  actions: ACTIONS.actions,
   rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
   conditions: conditions,

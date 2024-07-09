@@ -3,6 +3,7 @@ import ActorTraitsV2 from "../apps/actor-traitsV2.mjs";
 
 import ShortRestV2 from "../apps/restV2.mjs";
 import ShortRest from "../apps/short-rest.mjs";
+import { SYSTEM } from "../config/system.mjs";
 import { weapons } from "../config/types.mjs";
 const {HandlebarsApplicationMixin} = foundry.applications.api;
 const {ItemSheetV2} = foundry.applications.sheets;
@@ -565,6 +566,7 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static async #onUse(event, target) {
 			let id = target.closest('.entry').dataset.entryId;
+			
 			let withId = target.dataset.itemId;
 			if ( withId != id ) {}
 			const ability = this.actor.items.get(id);
@@ -595,7 +597,16 @@ export const SkyfallSheetMixin = Base => {
 		static async #onAbilityUse(event, target) {
 			let abilityId = target.dataset.abilityId;
 			let itemId = target.dataset.entryId;
+			let commom = SYSTEM.actions.find( action => action.id == abilityId )
+			console.log(abilityId);
 			if ( itemId == abilityId ) return;
+			if ( commom ){
+				await ChatMessage.create({
+					content: `<h5>${game.i18n.localize(commom.name)}</h5>${game.i18n.localize(commom.hint)}`,
+					speaker: ChatMessage.getSpeaker({actor: this}),
+				});
+				return;
+			}
 			const item = this.actor.items.get(itemId);
 			if ( !abilityId && ['weapon','armor'].includes(item?.type) ) {
 				const weaponAbilitiesOptions = this.actor.items.filter(i => i.type == 'ability' && i.system.descriptors.includes('weapon')).map( i => 				`<label><input type="radio" name="abilityId" value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon}</span> ${i.name}</label><br>` ).join('');

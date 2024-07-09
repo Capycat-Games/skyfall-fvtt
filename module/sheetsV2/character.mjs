@@ -326,30 +326,21 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const spells = this.document.items.filter( i => i.type == 'spell' );
 		context.items.actions.push(...spells);
 		
+		// Commom Actions
+		context.items.actions.push( ...SYSTEM.actions );
 	}
-	_prepareActionsOld(context) {
-		// Weapon Attack
-		const _weaponAbilities = this.document.items.filter( i => i.type == 'ability' && i.system.descriptors.includes('weapon') );
-		// Attack with Weapon
-		const weapons = this.document.items.filter( i => i.type == 'weapon' || (i.type == 'armor' && i.system.type == 'shield') );
-		
-		for (const ability of _weaponAbilities) {
-			ability.weapons = weapons;
-			context.items.actions.push(ability);
-		}
-	}
-
-
+	
 	_prepareFilters(context){
 		const actions = this.filters.actions;
 		const isRanged = (d) => ['thrown', 'shooting'].includes(d);
 		const isMelee = (d) => !['shooting'].includes(d);
 		for (const item of Object.values(context.items.actions)) {
+			console.log(item);
 			let show = true;
 			// RANGED == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING 
-			if ( !actions.ranged.active && item.system.descriptors.some(isRanged) )show = false;
+			if ( !actions.ranged.active && item.system.descriptors?.some(isRanged) )show = false;
 			// MELEE == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING
-			if ( !actions.melee.active && !item.system.descriptors.some(isMelee) ) show = false;
+			if ( !actions.melee.active && !item.system.descriptors?.some(isMelee) ) show = false;
 			
 			if ( item.system.action && !actions[item.system.action]?.active ) show = false;
 			item.filtered = show ? '' : 'hidden';
