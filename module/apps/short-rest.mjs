@@ -78,7 +78,6 @@ export default class ShortRest extends FormApplication {
 				id: cls.id,
 				...cls.system.hitDie
 			}
-			console.log(this.quality, hdData.die);
 			if ( this.quality == 'bad' ){
 				if ( hdData.die == '1d10' ) hdData.die = '1d8';
 				else if ( hdData.die == '1d8' ) hdData.die = '1d6';
@@ -96,7 +95,6 @@ export default class ShortRest extends FormApplication {
 			let roll = new Roll(hdData._formula, rollData);
 			roll = new Roll(roll.formula, rollData);
 			hdData.formula = roll.formula;
-			console.log(hdData);
 			hitDies.push(hdData);
 		}
 		return hitDies;
@@ -121,7 +119,6 @@ export default class ShortRest extends FormApplication {
 		const classItem = this.actor.items.find(it => it.id==classId);
 		const resources = this.actor.system.resources;
 		const proficiency = this.actor.system.proficiency;
-		console.log(classId, formula, classItem)
 		if ( !classItem ) return;
 		// Prepare item update - reducing current hitDie;
 		if ( this.updateData.items.findIndex(it => it._id == classItem.id) >=0 ) {

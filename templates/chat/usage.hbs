@@ -98,25 +98,18 @@
 		{{!-- PHASE 3 BUTTONS | catharsis (ON ROLL) - placeTemplate - applyCost --}}
 		{{!-- PHASE 4 BUTTONS | applyDamage (ON ROLL) - applyEffect --}}
 		
-		<button class="chat-action" data-action="configure">
-			{{localize "SKYFALL.CHATMESSAGE.USAGE.CONFIGURE"}}
-		</button>
-		{{#if (eq usage.status.phase 1)}}
-		<button class="chat-action hidden" data-action="aid">
-			{{localize "SKYFALL.CHATMESSAGE.USAGE.AID"}}
-		</button>
-		{{/if}}
-		{{log "SKYFALL.USAGE.CARDTEMPLATE"}}
-		{{log usage}}
 		{{#each usage.measuredTemplate as | temp i | }}
 		<button class="chat-action" data-place-template data-action="placeTemplate">
 			<i class="fa-solid fa-ruler-combined"></i>
 			{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
 		</button>
 		{{/each}}
-		{{#if (eq usage.status.phase 3)}}
-		{{/if}}
 
+		{{#each buttons as | button | }}
+		<button class="chat-action" data-action="{{button.action}}">
+			{{button.icon}} {{localize button.label}}
+		</button>
+		{{/each}}
 		
 		{{#each effects as | ef i | }}
 		<button class="chat-action effect" data-action="applyEffect" data-effect-id="{{ef._id}}">

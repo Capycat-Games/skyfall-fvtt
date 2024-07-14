@@ -99,6 +99,7 @@ export const DESCRIPTOR = {
 	EQUIPMENT: {},
 	DAMAGE: {},
 	DIVERSE: {},
+	SIGIL: {},
 };
 
 let categoryKeys = ["attack", "weapon", "control", "ofensive", "utility"];
@@ -155,8 +156,54 @@ export const DESCRIPTORS = Object.freeze({
 	...DESCRIPTOR.EQUIPMENT,
 	...DESCRIPTOR.DAMAGE,
 	...DESCRIPTOR.DIVERSE
-})
+});
 
 
 
 
+export const SIGILDESCRIPTOR = {
+	RANK: {},
+	GEAR: {},
+	CLOTHING: {},
+};
+
+const sigilRanks = ["grade1","grade2","grade3","grade4"];
+sigilRanks.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: ["sigil"],
+		label: `SKYFALL.DESCRIPTORS.SIGIL.${key.titleCase()}`,
+		// hint: `SKYFALL.DESCRIPTORS.SIGIL.${key.titleCase()}HINT`,
+	}
+	return obj;
+}, SIGILDESCRIPTOR.RANK);
+
+const sigilGears = ["weapon","armor","shield","clothing"];
+sigilGears.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: ["sigil"],
+		label: `SKYFALL.DESCRIPTORS.SIGIL.${key.titleCase()}`,
+		// hint: `SKYFALL.DESCRIPTORS.SIGIL.${key.titleCase()}HINT`,
+	}
+	return obj;
+}, SIGILDESCRIPTOR.GEAR);
+
+let sigilKeys = ["grade1","grade2","grade3","grade4","weapon","armor","shield","clothing","head", "chest", "arms", "legs", "jewel"];
+_clothings.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: ["sigil"],
+		label: `SKYFALL.ITEM.CLOTHINGTYPES.${key.titleCase()}`,
+		// hint: `SKYFALL.DESCRIPTORS.SIGIL.${key.titleCase()}HINT`,
+	}
+	return obj;
+}, SIGILDESCRIPTOR.CLOTHING);
+
+
+export const SIGILDESCRIPTORS = Object.freeze({
+	...SIGILDESCRIPTOR.RANK,
+	...SIGILDESCRIPTOR.GEAR,
+	...SIGILDESCRIPTOR.CLOTHING,
+	...SIGILDESCRIPTOR.EQUIPMENT
+});

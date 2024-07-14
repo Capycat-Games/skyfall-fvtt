@@ -38,12 +38,10 @@ export default class SkyfallActor extends Actor {
 	/** @override */
 	prepareData() {
 		super.prepareData();
-		console.log(`${this.documentName}.prepareData()`);
 	}
 
 	/** @override */
 	prepareBaseData() {
-		console.log(`${this.documentName}.prepareBaseData()`);
 		// ABILITIES
 		for (let [key, abl] of Object.entries(this.system.abilities)) {
 			abl.label = SYSTEM.abilities[key].abbr;
@@ -60,7 +58,6 @@ export default class SkyfallActor extends Actor {
 
 	/** @override */
 	prepareDerivedData() {
-		console.log(`${this.documentName}.prepareDerivedData()`);
 		const actorData = this;
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};
@@ -119,6 +116,10 @@ export default class SkyfallActor extends Actor {
 		let fragAbl = systemData.fragments.abl;
 		fragAbl = systemData.abilities[fragAbl].value ?? 0;
 		systemData.fragments.max = fragAbl + (systemData.proficiency * 2);
+		systemData.fragments.value = this.items.filter( i => i.type=='sigil' && i.system.infused).reduce((acc, i) => {
+			acc += i.system.fragments.amount;
+			return acc;
+		}, 0);
 		
 		if ( systemData.spellcasting ) {
 			systemData.abilities[systemData.spellcasting].spellcasting = true;
@@ -141,7 +142,6 @@ export default class SkyfallActor extends Actor {
 	 */
 	_prepareCharacterData(actorData) {
 		if (actorData.type !== 'character') return;
-		console.log(`${this.documentName}._prepareCharacterData()`);
 		const systemData = actorData.system;
 	}
 
@@ -150,7 +150,6 @@ export default class SkyfallActor extends Actor {
 	 */
 	_prepareNpcData(actorData) {
 		if (actorData.type !== 'npc') return;
-		console.log(`${this.documentName}._prepareNpcData()`);
 		const systemData = actorData.system;
 		
 	}
@@ -189,10 +188,8 @@ export default class SkyfallActor extends Actor {
 		// Pseudo Roll to calculate total hp
 		console.warn(systemData, hpConfig, rollData, hpData);
 		const roll = new SkyfallRoll(`@dieMax + @dieMean + @abl + @levelExtra + ((@abl + @levelExtra) * @level) + @totalExtra`, hpData);
-		console.log(roll);
 		roll.evaluateSync();
 		
-		console.log(roll);
 		// Set max HIT POINTS
 		systemData.resources.hp.max = roll.total;
 	}
@@ -202,7 +199,6 @@ export default class SkyfallActor extends Actor {
 	
 	/** @inheritDoc */
 	applyActiveEffects(){
-		console.log('applyActiveEffects');
 		super.applyActiveEffects();
 	}
 	/**
@@ -276,7 +272,6 @@ export default class SkyfallActor extends Actor {
 	/** @inheritdoc */
 	_onUpdate(data, options, userId) {
 		this.someProperty = "XABLAU";
-		console.log( this.someProperty );
 		return super._onUpdate(data, options, userId);
 	}
 
@@ -327,6 +322,28 @@ export default class SkyfallActor extends Actor {
 	}
 
 	/* -------------------------------------------- */
+	/*  Methods                                     */
+	/* -------------------------------------------- */
+	
+	/* -------------------------------------------- */
+
+	async modifyTokenAttribute(attribute, value, isDelta=false, isBar=true) {
+		const attr = foundry.utils.getProperty(this.system, attribute);
+		const current = isBar ? attr.value : attr;
+		const update = isDelta ? current + value : value;
+		if ( update === current ) return this;
+
+		// Determine the updates to make to the actor data
+		let updates;
+		if ( isBar ) updates = {[`system.${attribute}.value`]: Math.clamp(update, (attr.max * -1), attr.max)};
+		else updates = {[`system.${attribute}`]: update};
+
+		// Allow a hook to override these changes
+		const allowed = Hooks.call("modifyTokenAttribute", {attribute, value, isDelta, isBar}, updates);
+		return allowed !== false ? this.update(updates) : this;
+	}
+	
+	/* -------------------------------------------- */
 	/*  Actions                                     */
 	/* -------------------------------------------- */
 	
@@ -338,7 +355,6 @@ export default class SkyfallActor extends Actor {
 	*/
 	async applyDamage(roll, multiplier = 1, applyDR = false) {
 		console.groupCollapsed( 'applyDamage' );
-		console.log(roll, multiplier );
 		// Get current resource values
 		const hp = this.system.resources.hp;
 		const ep = this.system.resources.ep;
@@ -350,7 +366,6 @@ export default class SkyfallActor extends Actor {
 				acc[dr[0]] = drMods[dr[1]];
 				return acc;
 		}, {});
-		console.log(drTypes);
 
 		let damage, typeDamage;
 		
@@ -372,11 +387,9 @@ export default class SkyfallActor extends Actor {
 		// Apply Damage Reduction for each type of damage
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
 			const typeMod = drTypes[type] ?? 1;
-			console.log(type, dmg, multiplier, typeMod);
 			dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
 			damage += dmg;
 		}
-		console.log( damage );
 		// Deduct value from temp resource first
 		let updHPT = hp.temp;
 		if ( damage > 0 ) {
@@ -392,7 +405,6 @@ export default class SkyfallActor extends Actor {
 			"system.resources.hp.temp": updHPT,
 			"system.resources.hp.value": updHPV,
 		};
-		console.log(updateData);
 
 		await this.update(updateData);
 		
@@ -472,13 +484,29 @@ export default class SkyfallActor extends Actor {
 		}
 
 	}
-	// 
+
+	/** @inheritdoc */
+	async rollInitiative({createCombatants=false, rerollInitiative=false, initiativeOptions={}}={}) {
+		const roll = await new RollConfig({
+			type: 'initiative',
+			ability: 'dex',
+			// skill: null,
+			actor: this,
+			createMessage: true,
+			skipConfig: initiativeOptions.skipConfig ?? false,
+			advantageConfig: initiativeOptions.advantageConfig ?? 0,
+		}).render( !(initiativeOptions.skipConfig ?? false) );
+		
+		return;
+		return super.rollInitiative({createCombatants, rerollInitiative, initiativeOptions});
+	}
+
 	async shortRest(message){
 		const updateData = message.system.restUpdate;
-		console.log(updateData);
 		// TODO UPDATE ITEMS USES
 		this.update(updateData);
 	}
+
 	async longRest(){
 		const systemData = this.system;
 		const updateData = {};
@@ -507,14 +535,12 @@ export default class SkyfallActor extends Actor {
 	}
 
 	async toggleStatusEffect(statusId, {active, overlay=false}={}) {
-		console.log(statusId, active, overlay );
 		const rightClick = overlay ? true : false;
 		if ( overlay ) overlay = false; // DEAD is the only overlay;
 		if ( statusId === 'dead' ) overlay = true;
 		let status = SYSTEM.conditions[statusId];
 		if ( status?.system?.stack ) {
 			const effect = this.effects.find(ef => ef.id.startsWith(statusId) );
-			console.log(effect);
 			if ( effect && effect.stack > 1 ) {
 				return effect.stack =  rightClick ? -1 : 1;
 			} //else if ( !effect ) return;

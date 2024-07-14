@@ -9,7 +9,7 @@
 	</div>
 	
 	<ul class="plain flexcol">
-		{{log items.actions}}
+		{{!-- {{log items.actions}} --}}
 		{{#each items.actions as | item |}}
 		{{#if item.weapons}}
 		<li class="item {{item.type}} weapon entry flexcol {{item.filtered}}" data-entry-id="{{item.id}}">
@@ -27,7 +27,7 @@
 		<li class="item {{item.type}} entry flexrow {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-name">
 				<a data-action="abilityUse" data-entry-id="{{item.id}}" >
-					{{item.name}}
+					{{ifThen item.magicName item.magicName item.name }}
 				</a>
 			</div>
 			<div class="item-controls" style="flex:1;">
@@ -40,12 +40,12 @@
 				{{/each}}
 			</div>
 		</li>
-		{{else if (or (eq item.type 'spell') (eq item.type 'ability'))}}
+		{{else if (or (eq item.type 'spell') (eq item.type 'ability') (eq item.type 'sigil'))}}
 		<li class="item {{item.type}} entry flexrow {{item.filtered}}" data-entry-id="{{item.id}}">
 			<div class="item-name">
 				<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
 				{{{item.system.labels.action.icon}}}
-				{{item.name}} {{#if item.system.labels.cost.label}}({{item.system.labels.cost.label}}){{/if}}
+				{{item.name}} {{#if item.system.labels.cost.label}}({{item.system.labels.cost.label}}){{/if}} {{#if item.system.labels.charges}}({{item.system.labels.charges.descriptive}}){{/if}} 
 				</a>
 			</div>
 			<div class="item-controls">

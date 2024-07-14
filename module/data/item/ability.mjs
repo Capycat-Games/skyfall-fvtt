@@ -11,7 +11,6 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		console.log(SYSTEM.areaTargets);
 		return {
 			description: new fields.SchemaField({
 				value: new fields.HTMLField({required: true, blank: true}),

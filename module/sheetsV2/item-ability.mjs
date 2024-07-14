@@ -1,4 +1,3 @@
-import { abilities } from "../config/creature.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -20,18 +19,16 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	/** @override */
 	static PARTS = {
 		ability: {template: "systems/skyfall/templates/v2/item/ability-card.hbs"},
+		sigil: {template: "systems/skyfall/templates/v2/item/sigil-card.hbs"},
 		configuration: {
 			template: "systems/skyfall/templates/v2/item/ability.hbs",
 			templates: [
 				"templates/generic/tab-navigation.hbs",
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
+				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
-				"systems/skyfall/templates/v2/shared/effects.hbs"
 			]
 		},
-		// tabs: {template: "templates/generic/tab-navigation.hbs"},
-		// config: {template: "systems/skyfall/templates/v2/item/ability-config.hbs", scrollable: [""]},
-		// effects: {template: "systems/skyfall/templates/v2/shared/effects.hbs",scrollable: [""]}
 	};
 
 	/** @override */
@@ -55,8 +52,6 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 
 	/** @override */
 	async _preparePartContext(partId, context) {
-		console.log(partId);
-		
 		if ( context.tabs[partId] ){
 			context.tab = context.tabs[partId];
 		} else if ( this.tabGroups[partId] ){
@@ -133,7 +128,6 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
-		console.log(formData);
 		if ( formData.object["system.components"] ) {
 			formData.object["system.components"] = formData.object["system.components"].filter(Boolean);
 		}

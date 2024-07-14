@@ -12,12 +12,12 @@
 		position: relative;
 		overflow: hidden;
 	}
+	&.minimized {
+		min-height: unset;
+	}
 	&.character {
 		--actor-color: @colorSFPlayer;
 		--actor-color-faint: @colorSFPlayerFaint;
-		&.minimized {
-			min-height: unset;
-		}
 		.window-content {
 			padding-top: 0;
 			padding-left: 190px;
@@ -188,7 +188,7 @@
 				}
 				.inventory-list {
 					width: 100%;
-					text-align: center;
+					// text-align: center;
 					.SF-item-list;
 				}
 			}
@@ -216,6 +216,8 @@
 			}
 			.item-controls {
 				float: right;
+				* { text-align: right; }
+				text-align: right;
 			}
 			.npc-statblock {
 				* { color: @colorSFFoe; }
@@ -415,7 +417,7 @@
 			}
 			li.ability.weapon {
 				.item-controls {
-					width: 100%;	
+					width: 100%;
 					text-align: right;
 					align-self: flex-end;
 					justify-content: flex-end;
@@ -425,10 +427,6 @@
 					}
 
 				}
-			}
-
-			.item-controls {
-				text-align: left;
 			}
 		}
 	}
@@ -459,6 +457,7 @@
 			.item-controls {
 				float: right;
 				margin-right: 5px;
+				text-align: right;
 			}
 		}
 		input {

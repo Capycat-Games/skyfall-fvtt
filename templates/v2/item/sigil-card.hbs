@@ -1,0 +1,45 @@
+<div class="ability-card flexcol {{ifThen @root.isPlayMode '' 'editing'}}" data-entry-id="{{item.id}}">
+	<div class="ability-header flexrow"> 
+		{{{labels.action.icon}}} &nbsp;
+		{{#if (or (eq @root.document.type "ability" ) (eq @root.document.type "spell" ) (eq @root.document.type "sigil" ))  }}
+		<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name"/>
+		<span class="cost flex1">{{{labels.cost.label}}}</span>
+		{{{labels.spell.icon}}}
+		{{!-- <a class="isEditing flex0" data-edit="toggle">{{{@root.SYSTEM.icons.gear}}}</a> --}}
+		<a data-action="toggleMode" class="toggle-edit flex0">{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}</a>
+		{{else}}
+		<h5>{{item.name}}</h5>
+		<span class="cost flex1">{{{labels.cost.label}}}</span>
+		{{{labels.spell.icon}}}
+		<a class="isEditing flex0" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>&nbsp;
+		<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>&nbsp;
+			{{#if collapse }}
+			<a  data-action="collapse" class="isEditing flex0">{{{@root.SYSTEM.icons.gear}}}</a>
+			{{/if}}
+		{{/if}}
+	</div>
+	{{#if labels.descriptors }}
+	<div class="ability-descriptors">
+		{{#each labels.descriptors as | tag key |}}
+			{{#if tag.value }}
+			<label class="descriptor active" >{{tag.label}}</label>
+			{{/if}}
+		{{/each}}
+	</div>
+	{{/if}}
+	{{#if labels.charges }}
+	<div class="">
+		<label>{{{localize labels.charges.label}}}:</label> {{system.charges.value}}/{{system.charges.max}}
+	</div>
+	{{/if}}
+	{{#if labels.effect }}
+	<div class="rich">
+		<label>{{{localize labels.effect.label}}}:</label> {{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
+	</div>
+	{{/if}}
+	{{#if labels.fragments }}
+	<div class="rich">
+		<label>{{{localize labels.fragments.label}}}:</label> {{{labels.fragments.descriptive}}}
+	</div>
+	{{/if}}
+</div>

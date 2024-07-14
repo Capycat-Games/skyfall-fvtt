@@ -1,0 +1,74 @@
+<form class="test-app">
+	{{log this}}
+	<div class="app-header">
+		{{title}}
+	</div>
+	<div class="body-list-a flexcol">
+		<div class="list-header flexrow">
+			<div class="column-a">COLA</div>
+			<div class="column-b">COLB</div>
+			<div class="column-c">COLC</div>
+			<div class="column-d">COLD</div>
+		</div>
+		{{#each listA as | item i |}}
+		<div class="list item flexrow">
+			<div class="column-a">
+				<input type="hidden" name="result.listA.{{i}}.a" value="{{item.a}}">
+				{{item.a}}
+			</div>
+			<div class="column-b">
+				<input type="hidden" name="result.listA.{{i}}.b" value="{{item.b}}">
+				{{item.b}}
+			</div>
+			<div class="column-c">
+				<input type="hidden" name="result.listA.{{i}}.c" value="{{item.c}}">
+				{{item.c}}
+			</div>
+			<div class="column-d">
+				<input type="hidden" name="result.listA.{{i}}.d" value="{{item.d}}">
+				{{item.d}}
+			</div>
+		</div>
+		{{/each}}
+		<div class="list-footer flexrow">
+			<div class="column-a"><input type="text" name="add.listA.a"></div>
+			<div class="column-b"><input type="text" name="add.listA.b"></div>
+			<div class="column-c"><input type="text" name="add.listA.c"></div>
+			<div class="column-d"><a data-action="add" data-field-path="listA">NEW B</a></div>
+		</div>
+	</div>
+	<div class="body-list-b flexcol">
+		<div class="list-header flexrow">
+			<div class="column-a">COLA</div>
+			<div class="column-b">COLB</div>
+			<div class="column-c">COLC</div>
+			<div class="column-d">COLD</div>
+		</div>
+		{{#each listB as | item i |}}
+		<div class="list item flexrow">
+			<div class="column-a">
+				<input type="hidden" name="result.listB.{{i}}.a" value="{{item.a}}">
+				{{item.a}}
+			</div>
+			<div class="column-b">
+				<input type="hidden" name="result.listB.{{i}}.b" value="{{item.b}}">
+				{{item.b}}
+			</div>
+			<div class="column-c">
+				<input type="hidden" name="result.listB.{{i}}.c" value="{{item.c}}">
+				{{item.c}}
+			</div>
+			<div class="column-d">
+				<input type="checkbox" name="result.listB.{{i}}.d" {{checked item.d}}>
+				{{item.d}}
+			</div>
+		</div>
+		{{/each}}
+		<div class="list-footer flexrow">
+			<div class="column-a"><input type="text" name="add.listB.a"></div>
+			<div class="column-b"><input type="text" name="add.listB.b"></div>
+			<div class="column-c"><input type="text" name="add.listB.c"></div>
+			<div class="column-d"><a data-action="add" data-field-path="listB">NEW B</a></div>
+		</div>
+	</div>
+</form>

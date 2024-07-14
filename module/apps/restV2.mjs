@@ -70,7 +70,6 @@ export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 
 	}
 
 	async _renderHTML(context, options) {
-		console.log(this.template);
 		return renderTemplate(this.template, context);
 	}
 	_replaceHTML(result, content, options) {
@@ -118,7 +117,6 @@ export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 
 	/*  Event Listeners and Handlers                */
 	/* -------------------------------------------- */
 	static async onRollHitDice(event) {
-		console.log(event);
 		return;
 		// const button = event.
 		const formula = button.dataset.formula;

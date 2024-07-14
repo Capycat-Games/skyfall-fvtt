@@ -1,6 +1,10 @@
 <section class="ability-configuration {{ifThen isPlayMode 'hidden' ''}}  flexcol">
 	{{> "templates/generic/tab-navigation.hbs"}}
+	{{#if (eq document.type "sigil")}}
+	{{> "systems/skyfall/templates/v2/item/sigil-config.hbs" tab=tabs.config}}
+	{{else}}
 	{{> "systems/skyfall/templates/v2/item/ability-config.hbs" tab=tabs.config}}
+	{{/if}}
 
 	{{> "systems/skyfall/templates/v2/shared/effects.hbs" tab=tabs.effects}}
 </section>

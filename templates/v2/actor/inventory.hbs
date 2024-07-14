@@ -51,12 +51,12 @@
 			{{#each list as | item | }}
 			<li class="item draggable entry flexrow" data-entry-id="{{item.id}}">
 				<div class="item-name flexrow flex3">
-					<img src="{{item.img}}" class="flex0" width="28px" height="28px" style="display: inline;">{{item.name}}
+					<img src="{{item.img}}" class="flex0" width="28px" height="28px" style="display: inline;">{{ifThen item.magicName item.magicName item.name}}
 				</div>
 				<div class="item-quantity">{{item.system.quantity}}</div>
 				<div class="item-capacity">{{item.system.capacity}}</div>
 				<div class="item-controls">
-					<a class="control" data-action="itemToChat">{{{@root.SYSTEM.icons.chat}}}</a>
+					
 					{{#unless (eq item.system.equipped undefined) }}
 					<a class="control" data-action="toggle" data-field-path="system.equipped">
 						{{#if item.system.equipped }}
@@ -66,6 +66,7 @@
 						{{/if}}
 					</a>
 					{{/unless}}
+					<a class="control" data-action="itemToChat">{{{@root.SYSTEM.icons.chat}}}</a>
 					<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
 					<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
 				</div>

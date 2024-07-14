@@ -122,9 +122,6 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 		if ( formData['_descriptor'] ) {
 			formData['system.apply.descriptors'] = [formData['_descriptor'], ...formData['system.apply.descriptors']];
 		}
-		console.log(formData['system.apply.itemType']);
-		console.log(formData['system.apply.descriptors']);
-		console.log(formData);
 		// formData['system.apply.descriptors'] = [];
 		return this.object.update(formData);
 	}

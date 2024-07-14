@@ -74,19 +74,16 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	/** @override */
 	prepareData() {
-		// console.log(`${this.documentName}.prepareData()`, this.id);
 		super.prepareData();
 	}
 
 	/** @override */
 	prepareBaseData() {
-		// console.log(`${this.documentName}.prepareBaseData()`);
 		
 	}
 
 	/** @override */
 	prepareDerivedData() {
-		// console.log(`${this.documentName}.prepareDerivedData()`);
 		const actorData = this;
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};

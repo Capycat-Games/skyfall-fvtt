@@ -2,7 +2,6 @@
 export function registerHandlebarsHelpers() {
 	Handlebars.registerHelper("toArray", function (...values) {
 		const options = values.pop();
-		console.log(values);
 		return values;
 	});
 

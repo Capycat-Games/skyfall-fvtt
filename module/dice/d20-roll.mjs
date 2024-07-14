@@ -112,7 +112,6 @@ export default class D20Roll extends SkyfallRoll {
 		d20.modifiers = [];
 
 		const advDice = 0 + Number(this.options.advantage) - Number(this.options.disadvantage);
-		console.log( this );
 		if ( advDice > 0 ) d20.modifiers.push('kh');
 		else if ( advDice < 0 ) d20.modifiers.push('kl');
 		d20.number = 1 + ( Math.abs(advDice) > 0 ? 1 : 0 );//Math.abs(advDice);

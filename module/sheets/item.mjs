@@ -244,8 +244,7 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		let mods = this.document.effects.filter( ef => ef.type == 'modification' && ef.system.apply.itemType.includes('self') );
 		mods = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		context.enriched.modifications = await TextEditor.enrichHTML(`<div>${mods}</div>`);
-		console.log(mods);
-		console.log(context.enriched.modifications);
+
 		context.modifications = [
 			{
 				cost: 0, resource:'ep', type: "[AMPLIAR 15+]",
@@ -295,7 +294,6 @@ export default class SkyfallItemSheet extends SkyfallSheetMixin(ItemSheet) {
 		context._selOpts['descriptors'] = {};
 		
 		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
-			console.log( category, descriptors );
 			if ( types.length && !types.includes(category) ) continue;
 			for (const [id, desc] of Object.entries(descriptors)) {
 				context._selOpts['descriptors'][category] ??= {};

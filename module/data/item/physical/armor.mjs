@@ -24,6 +24,11 @@ export default class Armor extends PhysicalItemData {
 				formula: new fields.StringField({required: true, blank: true, label:"SKYFALL2.Damage"}),
 				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
 			}),
+			sigils: new fields.ArrayField(new fields.SchemaField({
+				uuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),
+				parentUuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),
+				infused: new fields.BooleanField({required:true, initial:false})
+			}), {max: 4}),
 		})
 	}
 

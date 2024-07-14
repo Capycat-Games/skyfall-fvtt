@@ -52,7 +52,6 @@ export const SkyfallSheetMixin = Base => {
 				filter: {handler: BaseSheetSkyfall.#onFilter, buttons: [0, 2]},
 				collapse: BaseSheetSkyfall.#onCollapse,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
-				// renderGriddy: BaseSheetSkyfall.#renderGriddy,
 			}
 		};
 
@@ -150,11 +149,6 @@ export const SkyfallSheetMixin = Base => {
 		async _renderFrame(options) {
 			const frame = await super._renderFrame(options);
 			
-			// Add Griddy button
-			// const griddyLabel = "Griddy";
-			// const griddyBtn = `<button type="button" class="header-control fa-solid fa-table-cells" data-action="renderGriddy" data-tooltip="${griddyLabel}" aria-label="${griddyLabel}"></button>`;
-			// this.window.close.insertAdjacentHTML("beforebegin", griddyBtn);
-
 			// Add console.log button
 			const logLabel = game.i18n.localize("CONSOLE.LOG");
 			const logBtn = `<button type="button" class="header-control fa-solid fa-terminal" data-action="logToConsole" data-tooltip="${logLabel}" aria-label="${logLabel}"></button>`;
@@ -306,8 +300,7 @@ export const SkyfallSheetMixin = Base => {
 			const id = event.currentTarget.closest("[data-entry-id]").dataset.entryId;
 			const uuid = event.currentTarget.closest("[data-entry-id]").dataset.itemUuid;
 
-			const item = this.document.items.get(id) ?? this.document.effects.get(id) ?? await fromUuid(uuid);
-			
+			const item = this.document.items?.get(id) ?? this.document.effects?.get(id) ?? await fromUuid(uuid);
 			if ( !item ) return;
 			const data = item.toDragData();
 			event.dataTransfer.setData("text/plain", JSON.stringify(data));
@@ -321,7 +314,6 @@ export const SkyfallSheetMixin = Base => {
 			event.preventDefault();
 			const target = event.target;
 			const {type, uuid} = TextEditor.getDragEventData(event);
-			console.log("_onDrop", type, uuid, target);
 			if (!this.isEditable) return;
 			const item = await fromUuid(uuid);
 			const itemData = item.toObject();
@@ -391,15 +383,10 @@ export const SkyfallSheetMixin = Base => {
 		/* ---------------------------------------- */
 
 		async getDescriptors(context, types = []) {
-			context.descriptors = context.system.descriptors.reduce((acc, key) => {
-				acc[key] = true;
-				return acc;
-			}, {});
-			
 			context.descriptors = {};
 			context._selOpts['descriptors'] = {};
-			
-			for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
+			const catDesc = this.document.type == 'sigil' ? Object.entries(SYSTEM.SIGILDESCRIPTOR) : Object.entries(SYSTEM.DESCRIPTOR);
+			for ( const [category, descriptors] of catDesc ) {
 				if ( types.length && !types.includes(category) ) continue;
 				for (const [id, desc] of Object.entries(descriptors)) {
 					context._selOpts['descriptors'][category] ??= {};
@@ -510,7 +497,6 @@ export const SkyfallSheetMixin = Base => {
 			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId);
 			if ( type == 'id' ) {
 				const list = foundry.utils.getProperty(this.document, fieldPath);
-				console.log(list);
 				if ( !list ) return;
 				list.delete(itemId);
 				const updateData = {};
@@ -589,6 +575,7 @@ export const SkyfallSheetMixin = Base => {
 					itemId: item?.id ?? null,
 				}}, {skipConfig: skip});
 		}
+		
 		/**
 		 * Handle creating new Embbeded Document or Property to the document.
 		 * @param {Event} event             The initiating click event.
@@ -597,8 +584,7 @@ export const SkyfallSheetMixin = Base => {
 		static async #onAbilityUse(event, target) {
 			let abilityId = target.dataset.abilityId;
 			let itemId = target.dataset.entryId;
-			let commom = SYSTEM.actions.find( action => action.id == abilityId )
-			console.log(abilityId);
+			let commom = SYSTEM.actions.find( action => action.id == abilityId );
 			if ( itemId == abilityId ) return;
 			if ( commom ){
 				await ChatMessage.create({
@@ -658,7 +644,6 @@ export const SkyfallSheetMixin = Base => {
 
 			const id = target.dataset.id;
 			const rollType = target.dataset.rollType;
-			console.log(target, rollType, id);
 			if ( event.type == 'contextmenu' ) {
 				this.rolling = null;
 				return this.render(true);
@@ -667,7 +652,11 @@ export const SkyfallSheetMixin = Base => {
 			if ( rollType == 'levelHitDie' ) { return; }
 			else if ( rollType == 'healHitDie' ) { return; }
 			else if ( rollType == 'deathSave' ) { return; }
-			
+			else if ( rollType == 'initiative' ) {
+				this.rolling = null;
+				return this.actor.rollInitiative();
+			}
+
 			if ( !this.rolling ) {
 				if ( rollType == 'ability') this.rolling = {type:null, id:null, abl: id};
 				else this.rolling = {type: rollType, id: id, abl: null};
@@ -731,9 +720,7 @@ export const SkyfallSheetMixin = Base => {
 		}
 
 		static #onToggleMode(event, target) {
-			console.log( this._sheetMode, this.isEditMode );
 			this._sheetMode = this._sheetMode == 1 ? 0 : 1;
-			console.log( this._sheetMode, this.isEditMode );
 			this.render();
 		}
 
@@ -781,7 +768,6 @@ export const SkyfallSheetMixin = Base => {
 
 		/** @overwrite */
 		static async #onSubmitDocumentForm(event, form, formData) {
-			console.log(formData);
 			const submitData = this._prepareSubmitData(event, form, formData);
 			await this.document.update(submitData);
 		}

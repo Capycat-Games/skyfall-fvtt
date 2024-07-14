@@ -10,12 +10,6 @@ export default class TokenSkyfall extends Token {
 	 * @returns {Promise<PIXI.Sprite|undefined>}
 	 * @protected
 	 */
-	async _drawEffect2(src, tint) {
-		const icon = await super._drawEffect(src, tint);
-		if (icon) icon.name = src;
-		console.log(icon);
-		return icon;
-	}
 	async _drawEffect(src, tint) {
 		if ( !src ) return;
 		const tex = await loadTexture(src, {fallback: "icons/svg/hazard.svg"});
@@ -26,81 +20,35 @@ export default class TokenSkyfall extends Token {
 
 	_refreshEffects() {
 		super._refreshEffects();
-		this.drawEffectsCounter(this);
 	}
-
-	
-
-	/**
-	 * Creates rendering objects for every effect sprite that matches any of the 
-	 *  active status icons. The text is added as an additional effect on top of 
-	 *  the original sprite.
-	 * @param {Token} token The token to draw the effect counters for.
-	 */
-	drawEffectsCounter(token) {
-		console.log(token);
-		console.log(token.document);
-		return;
-		const tokenDoc = token.document;
-		const effectCounters = EffectCounter.getAllCounters(tokenDoc);
-
-		if (token.effectCounters) {
-			token.effectCounters.removeChildren().forEach(c => c.destroy());
-		}
-
-		// The child may have been removed due to redrawing the token entirely.
-		if (!token.children.find(c => c.name === "effectCounters")) {
-				const counterContainer = new PIXI.Container();
-				counterContainer.name = "effectCounters";
-				token.effectCounters = token.addChild(counterContainer);
-		}
-
-		for (let sprite of token.effects.children.filter(effect => effect.isSprite && effect.name)) {
-			if (sprite === token.effects.overlay) continue;
-			const counter = effectCounters.find(effect => sprite.name === effect.path);
-			if (counter) token.effectCounters.addChild(createEffectCounter(tokenDoc, counter, sprite));
-		}
-	}
-
 
 	/* -------------------------------------------- */
 
 	/** @inheritdoc */
-	_drawBarTODO(number, bar, data) {
-		if ( data.attribute === "attributes.pv" || data.attribute === "attributes.pm" ){
-			return this._drawHPBar(number, bar, data);
+	_drawBar(number, bar, data) {
+		if ( data.attribute === "resources.hp" || data.attribute === "resources.ep" ){
+			return this._drawHPEPBar(number, bar, data);
 		}
 		return super._drawBar(number, bar, data);
 	}
 
-
 	/* -------------------------------------------- */
 
-	/**
-	 * Specialized drawing function for HP bars.
-	 * @param {number} number      The Bar number
-	 * @param {PIXI.Graphics} bar  The Bar container
-	 * @param {object} data        Resource data for this bar
-	 * @private
-	 */
-	_drawHPBarTODO(number, bar, data) {
+	_drawHPEPBar(number, bar, data) {
+		console.warn('_drawHPEPBar');
 		// Extract health data
-
 		const actorData = this.document.actor.system;
-		let {value, max, temp, tempmax, min} = foundry.utils.getProperty(actorData, data.attribute);
+		let {value, max, temp, tempmax} = foundry.utils.getProperty(actorData, data.attribute);
+		let min = max * -1;
 		
 		temp = Number(temp || 0);
 		tempmax = Number(tempmax || 0);
 
-		// Differentiate between effective maximum and displayed maximum
-		const effectiveMax = Math.max(0, max + tempmax);
-		let displayMax = max + (tempmax > 0 ? tempmax : 0);
-
 		// Allocate percentages of the total
-		const tempPct = Math.clamp(temp, 0, displayMax) / displayMax;
-		const valuePct = Math.clamp(value, 0, effectiveMax) / displayMax;
+		const tempPct = Math.clamp(temp, 0, max) / max;
+		const valuePct = Math.clamp(value, 0, max) / max;
 		const negativePct = Math.clamp(value, min, 0) / min;
-		const colorPct = Math.clamp(value, 0, effectiveMax) / displayMax;
+		const colorPct = Math.clamp(value, 0, max) / max;
 
 		// Determine colors to use
 		const blk = 0x000000;
@@ -109,7 +57,20 @@ export default class TokenSkyfall extends Token {
 			[(0.5 * colorPct), (0.7 * colorPct), 0.5 + (colorPct / 2)]
 		]
 		const hpColor = PIXI.utils.rgb2hex(tknBarColor[number]);
-		const c = data.attribute === "attributes.pm" ? CONFIG.T20.tokenMPColors : CONFIG.T20.tokenHPColors;
+
+		const COLORS = {
+			"resources.hp": {
+				temp: 0xFF0000,
+				tempmax: 0x440066,
+				negmax: 0xAA0000,
+			},
+			"resources.ep": {
+				temp: 0x0000FF,
+				tempmax: 0x440066,
+				negmax: 0x550000,
+			},
+		}
+		const c = COLORS[data.attribute];
 		
 		// Determine the container size (logic borrowed from core)
 		const w = this.w;
@@ -121,12 +82,6 @@ export default class TokenSkyfall extends Token {
 		// Overall bar container
 		bar.clear()
 		bar.beginFill(blk, 0.5).lineStyle(bs, blk, 1.0).drawRoundedRect(0, 0, w, h, 3);
-
-		// // Maximum HP penalty
-		// else if (tempmax < 0) {
-		//   const pct = (max + tempmax) / max;
-		//   bar.beginFill(c.negmax, 1.0).lineStyle(1, blk, 1.0).drawRoundedRect(pct*w, 0, (1-pct)*w, h, 2);
-		// }
 
 		// Health bar
 		bar.beginFill(hpColor, 1.0).lineStyle(bs, blk, 1.0).drawRoundedRect(0, 0, valuePct*w, h, 2)
@@ -146,4 +101,5 @@ export default class TokenSkyfall extends Token {
 		let posY = (number === 0) ? (this.h - h) : 0;
 		bar.position.set(0, posY);
 	}
+	
 }

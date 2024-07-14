@@ -27,7 +27,7 @@
       }
 
       .cls-4 {
-        fill: #222b54;
+        fill: #750703;
       }
 
       .cls-9 {
@@ -36,6 +36,7 @@
 
       .cls-5 {
         fill: #1d1d1b;
+        
         mix-blend-mode: multiply;
         opacity: .23;
       }

@@ -87,6 +87,7 @@
 .SF-item-list ol .item-controls,
 .SF-item-list ul .item-controls {
   flex: 0 0 80px;
+  text-align: right;
 }
 .SF-ability div {
   padding: 5px;
@@ -425,12 +426,12 @@ dropdown-tags .tags-dropdown fieldset legend {
   position: relative;
   overflow: hidden;
 }
+.skyfall.sheet.actor.minimized {
+  min-height: unset;
+}
 .skyfall.sheet.actor.character {
   --actor-color: #182657;
   --actor-color-faint: #babecd;
-}
-.skyfall.sheet.actor.character.minimized {
-  min-height: unset;
 }
 .skyfall.sheet.actor.character .window-content {
   padding-top: 0;
@@ -726,6 +727,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .actor-effects .modification-effects ul .item-controls,
 .skyfall.sheet.actor.character .window-content .actor-effects .base-effects ul .item-controls {
   flex: 0 0 80px;
+  text-align: right;
 }
 .skyfall.sheet.actor.character .window-content .actor-effects .status-effects .status-list {
   column-count: 3;
@@ -757,7 +759,6 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list {
   width: 100%;
-  text-align: center;
 }
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list ol *,
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list ul * {
@@ -793,6 +794,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list ol .item-controls,
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list ul .item-controls {
   flex: 0 0 80px;
+  text-align: right;
 }
 .skyfall.sheet.actor.npc {
   --actor-color: #750703;
@@ -813,6 +815,10 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet.actor.npc .window-content .item-controls {
   float: right;
+  text-align: right;
+}
+.skyfall.sheet.actor.npc .window-content .item-controls * {
+  text-align: right;
 }
 .skyfall.sheet.actor.npc .window-content .npc-statblock {
   font-size: 16px;
@@ -1055,9 +1061,6 @@ dropdown-tags .tags-dropdown fieldset legend {
   flex: 0;
   padding: 0 5px;
 }
-.skyfall.sheet.actor .actions .list-items.actions .item-controls {
-  text-align: left;
-}
 .skyfall.sheet.actor .features .character-progression {
   width: 160px;
   flex: 0 0 200px;
@@ -1081,6 +1084,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor .header-fields label .item-controls {
   float: right;
   margin-right: 5px;
+  text-align: right;
 }
 .skyfall.sheet.actor .header-fields input {
   width: auto;
@@ -1442,6 +1446,9 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.application.item .window-content nav.tabs {
   gap: 5px;
 }
+.skyfall.sheet.application.item .window-content .sigils {
+  gap: 10px;
+}
 .skyfall.sheet.ability .window-content {
   padding: 0;
   position: relative;
@@ -1551,9 +1558,22 @@ dropdown-tags .tags-dropdown fieldset legend {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url(assets/sheet/bg-top-right.svg) no-repeat;
+}
+.chat-message:has( .usage-card ) .header-overlay.character {
+  background: url(assets/sheet/chat-header-player.svg) no-repeat;
   background-size: 140%;
   background-position: 30% -75px;
+}
+.chat-message:has( .usage-card ) .header-overlay.npc {
+  background: url(assets/sheet/chat-header-foe.svg) no-repeat;
+  background-size: 140%;
+  background-position: 30% -75px;
+}
+.chat-message:has( .usage-card ).character {
+  color: #182657;
+}
+.chat-message:has( .usage-card ).npc {
+  color: #750703;
 }
 .chat-message:has( .usage-card ) .message-header {
   color: white;
@@ -1561,7 +1581,6 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.usage-card {
   position: relative;
-  color: #182657;
 }
 .skyfall.usage-card .card-header {
   font-family: NORTHWEST;

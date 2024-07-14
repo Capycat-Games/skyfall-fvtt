@@ -38,7 +38,7 @@
 			"loot": "Tesouro",
 			"lootPL": "Tesouros",
 			"sigil": "Sigilo",
-			"sigilPL": "Sigilos"
+			"sigilPl": "Sigilos"
 		},
 		"ActiveEffect": {
 			"base": "Efeito",
@@ -408,11 +408,11 @@
 				"SHIELD": "Escudo"
 			},
 			"CLOTHINGTYPES": {
-				"HEAD": "Cabeça",
-				"CHEST": "Torso",
-				"ARMS": "Braços/Mãos",
-				"LEGS": "Pernas/Pés",
-				"JEWEL": "Jóias"
+				"Head": "Cabeça",
+				"Chest": "Torso",
+				"Arms": "Mãos",
+				"Legs": "Pés",
+				"Jewel": "Jóias"
 			},
 			"CONSUMABLETYPES": {
 				"POTION": "Poção",
@@ -464,7 +464,10 @@
 				"CATEGORY": "Categoria",
 				"DIVERSE": "Diverso",
 				"ORIGIN": "Origem",
-				"SPELL": "Magia"
+				"SPELL": "Magia",
+				"RANK": "Grau",
+				"GEAR": "Equipamentos",
+				"CLOTHING": "Vestimentas"
 			},
 			"DAMAGE": {
 				"ACID": "Ácido",
@@ -602,6 +605,16 @@
 				"SUPPORTHINT": "habilidades ou magias que afetam outras criaturas e concedem benefícios (geralmente mágicos). Características e habilidades podem referenciar esse descritor, aumentando duração ou concedendo benefícios adicionais.",
 				"VOICE": "Vóz",
 				"VOICEHINT": "habilidades ou magias diretamente relacionadas com sua potência vocal. Você não pode usar essa habilidade ou magia caso esteja impossibilitado de falar. Criaturas que não falam podem utilizar esse descritor através de outros mecanismos, mas devem determinar também como ficam impossibilitados de utilizá-lo."
+			},
+			"SIGIL": {
+				"Grade1": "1º Grau",
+				"Grade2": "2º Grau",
+				"Grade3": "3º Grau",
+				"Grade4": "4º Grau",
+				"Weapon": "Armas",
+				"Armor": "Armaduras",
+				"Shield": "Escudos",
+				"Clothing": "Vestimentas"
 			}
 		},
 		"SPELLLAYERS":{
@@ -815,8 +828,14 @@
 		"Death": "Morte",
 		"Cost": "Custo",
 		"Capacity": "Volume",
-		"Fragment": "Fragmento",
-		"FragmentPl": "Fragmentos",
+		"Fragment": "Fragmento Arcano",
+		"FragmentPl": "Fragmentos Arcanos",
+		"FRAGMENT": {
+			"Recharge": "Efeito Recarregável.",
+			"Permanent": "Efeito Permanente (muda de {action} para <span class='skyfall-icon'>P</span> passivo).",
+			"Infuse": "{amount} {fragments}. {type}",
+			"Infusing": "Imbuindo Fragmentos"
+		},
 		"Quantity": "Quantidade",
 		"QuantityAbbr": "Qtd",
 		"Unit": "Unidade",
@@ -857,9 +876,18 @@
 		"DamageReduction": "Redução de Dano",
 		"DamageReductionAbbr": "RD",
 		"Melancholy": "Melancolia",
+		"Consume": "Consumir",
+		"Configure": "Configurar",
+		"Config": "Configuração",
+		"ConfigPl": "Configurações",
 		"Chosen": "Escolhido",
 		"Equipped": "Equipado",
 		"Attuned": "Sintonizado",
+		"Charge": "Carga",
+		"ChargePl": "Cargas",
+		"Infused": "Imbuído",
+		"Recharge": "Recarregável",
+		"Permanent": "Permanent",
 		"Unidentified": "Não Identificado",
 		"Activation": "Ativação",
 		"ACTIVATION": {
@@ -880,7 +908,7 @@
 			"DAY": "Dias"
 		},
 		"ACTION": {
-			"Aid": "Aid",
+			"Aid": "Ajudar",
 			"AidHint": "<p>Uma das ações mais simples é prestar ajuda para um aliado ou uma criatura. Escolha uma criatura que possa ver. Até o final do próximo turno daquela criatura, ela realiza o próximo teste com vantagem.</p>",
 			"Run": "Correr",
 			"RunHint": "<p>Ao usar essa ação, você dobra seu deslocamento até o final do turno. Essa ação não aumenta seu deslocamento para salto, por exemplo, mas pode dobrar outros tipos de deslocamento que você tenha naturalmente (como voo ou natação)</p>",
@@ -988,6 +1016,10 @@
 			"War": "Trilha de Guerra",
 			"Mystic": "Trilha Mística"
 		},
+		"SIGIL": {
+			"Prefix": "Prefixo",
+			"Sufix": "Sufixo"
+		},
 		"APP": {
 			"IRVConfig": "Resistências",
 			"DamageDealt": "Dano Causado",
@@ -1009,6 +1041,10 @@
 			"SelectAbility": "Selecione o Atributo",
 			"SelectAbilityItem": "Selecione a Habilidade"
 		}
+	},
+	"NOTIFICATION": {
+		"InvalidItemSigil": "Este Sígilo não é compatível com este item.",
+		"DuplicatedItemSigil": "O item já possuí o Sígilo"
 	},
 	"Teste": "BBBB"
 }

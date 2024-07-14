@@ -51,7 +51,6 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
 	_getHeaderControls() {
 		const controls = [].concat(this.options.window.controls);
-		console.log("_getHeaderControls", controls, this);
 		// Portrait image
 		const img = this.actor.img;
 		if ( img === CONST.DEFAULT_TOKEN ) controls.findSplice(c => c.action === "showPortraitArtwork");
@@ -68,7 +67,6 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
-		console.log(this);
 		if (this.document.limited) return;
 		options.parts = ["tabs", "statblock", "effects"];
 	}
@@ -174,8 +172,19 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 				type: 'descriptor',
 			});
 		});
+
+		// MOVEMENT
+		context.movement = {};
+		for (let [key, movement] of Object.entries(context.system.movement)) {
+			if ( movement == 0 ) continue;
+			if ( !foundry.utils.hasProperty(context.movement, key ) ) context.movement[key] = {};
+			context.movement[key].value = movement;
+			context.movement[key].label = SYSTEM.movement[key].label;
+			context.movement[key].icon = SYSTEM.icons[key];
+		}
 	}
-	_prepareAbilities(context){
+
+	async _prepareAbilities(context){
 		context.abilities = {};
 		["passive","reaction","action","bonus","free","maction"].reduce((acc, key) => {
 			let cat = { id: key,

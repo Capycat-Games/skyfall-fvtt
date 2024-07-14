@@ -100,7 +100,7 @@ export default class SkyfallRoll extends Roll {
 		if ( !messageData.flavor ) {
 			messageData.flavor = skyfall.utils.rollTitle(this.options);
 		}
-		super.toMessage(messageData, {rollMode, create});
+		return super.toMessage(messageData, {rollMode, create});
 	}
 
 	/* ------------------------------ */

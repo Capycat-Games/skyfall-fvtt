@@ -32,4 +32,16 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 			favorite: new fields.BooleanField({initial: false, label:"SKYFALL.FAVORITE"}),
 		}
 	}
+
+	/**
+	 * Validate that each entry in the talents Set is a UUID.
+	 * @param {string} uuid     The candidate value
+	 */
+	static validateUuid(uuid) {
+		return true;
+		const {documentType, documentId} = foundry.utils.parseUuid(uuid);
+		if ( CONST.DOCUMENT_TYPES.includes(documentType) || !foundry.data.validators.isValidId(documentId) ) {
+			throw new Error(`"${uuid}" is not a valid UUID string`);
+		}
+	}
 }

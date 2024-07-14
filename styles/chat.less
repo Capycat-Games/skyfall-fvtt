@@ -15,13 +15,27 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: url(./assets/sheet/bg-top-right.svg) no-repeat;
-		background-size: 140%;
-		background-position: 30% -75px;
+		&.character {
+			background: url(./assets/sheet/chat-header-player.svg) no-repeat;
+			background-size: 140%;
+			background-position: 30% -75px;
+		}
+		&.npc {
+			background: url(./assets/sheet/chat-header-foe.svg) no-repeat;
+			background-size: 140%;
+			background-position: 30% -75px;
+		}
+		// background: url(./assets/sheet/chat-header-playerfoe.svg) no-repeat;
 	}
+
 	// border-image: url(./assets/sheet/border.svg) 1;
 	// border-image: url(./assets/sheet/card-border.svg) 1;
-	&.player { }
+	&.character {
+		color: @colorSFPlayer;
+	}
+	&.npc {
+		color: @colorSFFoe;
+	}
 
 	// border-image-repeat: stretch;
 	// border-image-outset: 0;
@@ -40,7 +54,7 @@
 .skyfall {
 	&.usage-card {
 		position: relative;
-		color: @colorSFPlayer;
+		// color: @colorSFPlayer;
 		// padding: 0 10px 10px 10px;
 		// padding-top: 20px;
 		.card-header {

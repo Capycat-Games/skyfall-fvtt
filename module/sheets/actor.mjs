@@ -35,7 +35,6 @@ export default class SkyfallActorSheet extends ActorSheet {
 	/** @override */
 	getData() {
 		const context = super.getData();
-		console.log(context);
 		const actorData = context.data;
 		context.system = actorData.system;
 		context.flags = actorData.flags;
@@ -297,7 +296,6 @@ export default class SkyfallActorSheet extends ActorSheet {
 	async _onClickControl(event) {
 		event.preventDefault();
 		const button = event.currentTarget;
-		console.log(event);
 		button.event = event; //.type; //Pass the trigger mouse click event
 		switch ( button.dataset.action ) {
 			case "toggle":
@@ -343,7 +341,6 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let target = button.dataset.target;
 		let id = button.closest('.entry').dataset.entryId;
 		let document = this.actor.items.get(id) ?? this.actor.effects.get(id) ?? this.actor;
-		console.log(target, id, document);
 		// if ( !document ) this.actor;
 		if ( !target || !id ) return;
 		if ( target == 'effect' && SYSTEM.conditions[id] ) {
@@ -444,7 +441,6 @@ export default class SkyfallActorSheet extends ActorSheet {
 	#onActionDelete(button) {
 		const _delete = button.dataset.delete;
 		const id = button.closest('.entry').dataset.entryId;
-		console.log(_delete, id);
 		if ( !_delete || !id ) return;
 		if ( _delete == "skill" ) {
 			let deletekey = {system:{skills:{}}};
@@ -471,7 +467,6 @@ export default class SkyfallActorSheet extends ActorSheet {
 		let id = button.closest('.entry').dataset.entryId;
 		let withId = button.dataset.itemId;
 		// let id = button.dataset.itemId;
-		console.log(button.event);
 		if ( withId != id ) {}
 		const ability = this.actor.items.get(id);
 		if ( !ability ) return;

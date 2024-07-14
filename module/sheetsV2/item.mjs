@@ -14,6 +14,8 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		},
 		actions: {
 			heritageTab: ItemSheetSkyfall.#heritageTab,
+			infuse: ItemSheetSkyfall.#infuse,
+			deleteSigil: ItemSheetSkyfall.#deleteSigil,
 		}
 	};
 	
@@ -69,8 +71,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
-		console.log(options);
-		console.log(this);
 		if (this.document.limited) return;
 		
 		switch (this.document.type) {
@@ -125,15 +125,35 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		const {type, uuid} = TextEditor.getDragEventData(event);
 		if (!this.isEditable) return;
 		if ( type == "Item" ){
-			console.log("_onDrop ITEM", type, uuid, target);
-			const item = fromUuidSync(uuid);
+			const item = await fromUuid(uuid);
 			const fieldPath = target.closest("ol").dataset.fieldPath;
 			const itemType = target.closest("ol").dataset.itemType;
 			if ( !foundry.utils.hasProperty(this.document, fieldPath) || itemType != item.type ) return;
-			const updateData = {};
-			updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), uuid ];
-			return this.document.update(updateData);
-		}
+			if ( itemType == 'sigil' ) this._onDropSigils(item, fieldPath, itemType);
+			else this._onDropGranted(item, fieldPath, itemType);
+		} else if ( type == "ActiveEffect" ) return super._onDrop(event);
+	}
+
+	async _onDropSigils(item, fieldPath, itemType){
+		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
+		if ( type != item.system.equipment ) return ui.notifications.error("SKYFALL2.NOTIFICATION.InvalidItemSigil",{localize: true});
+		const updateData = {};
+		updateData[fieldPath] = foundry.utils.getProperty(this.document, fieldPath);
+		if ( updateData[fieldPath].find(i => i.uuid == item.uuid) ) return ui.notifications.error("SKYFALL2.NOTIFICATION.DuplicatedItemSigil",{localize: true});
+		updateData[fieldPath].push({
+			uuid: item.uuid,
+			parentUuid: '',
+			infused: false,
+		})
+		
+		return this.document.update(updateData);
+	}
+
+	async _onDropGranted(item, fieldPath, itemType){
+		
+		const updateData = {};
+		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), uuid ];
+		return this.document.update(updateData);
 	}
 
 	/* ---------------------------------------- */
@@ -192,7 +212,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			_selOpts: {},
 			_app: {
 				fields: foundry.applications.fields,
-				element: foundry.applications.elements
+				element: foundry.applications.elements,
 			},
 		};
 		await this._getDataFields(context),
@@ -210,7 +230,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			context.features = [];
 			for (const uuid of this.document.system.features ) {
 				const item = fromUuidSync(uuid);
-				console.log(uuid, item);
 				if ( !item ) continue;
 				context.features.push(item);
 			}
@@ -244,11 +263,13 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 		switch (this.document.type) {
 			case 'loot':
+			case 'consumable':
+			case 'equipment':
+				break;
 			case 'weapon':
 			case 'armor':
 			case 'clothing':
-			case 'consumable':
-			case 'equipment':
+				await this._getSigils(context);
 				break;
 			case 'legacy':
 				context.heritages = {};
@@ -314,7 +335,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		context._selOpts['descriptors'] = {};
 		
 		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
-			console.log( category, descriptors );
 			if ( types.length && !types.includes(category) ) continue;
 			for (const [id, desc] of Object.entries(descriptors)) {
 				context._selOpts['descriptors'][category] ??= {};
@@ -331,33 +351,46 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				id: desc, hint: "", type: ["origin"], label: desc.toUpperCase(), value: true
 			}
 		}
-
-		return;
-		const _descriptors = [ ...context.system.descriptors , ...Object.keys(SYSTEM.DESCRIPTORS) ];
-		context.descriptors = _descriptors.reduce((acc, key) => {
-			if ( type && !SYSTEM.DESCRIPTORS[key]?.type.includes(type) ) return acc;
-			acc[key] = {
-				value: (context.system.descriptors.includes(key)),
-				...SYSTEM.DESCRIPTORS[key] ?? {
-					id: key, hint: "", type: "origin", label: key.toUpperCase(),
-				}
-			}
-			return acc;
-		}, {});
-		
-		context._selOpts['descriptors'] = _descriptors.reduce((acc, key) => {
-			let desc = SYSTEM.DESCRIPTORS[key] ?? {
-				id: key, hint: "", type: ["origin"], label: key.toUpperCase(),
-			}
-			if ( type && !desc.type.some( t=> type.includes(t)) ) return acc;
-			desc.value = (context.system.descriptors.includes(desc.id));
-			desc.type.map( (t) => {
-				acc[t.toUpperCase()] ??= {};
-				acc[t.toUpperCase()][desc.id] = desc;
+	}
+	
+	async _getSigils(context){
+		context.sigils = {
+			prefix: [],
+			sufix: [],
+		}
+		const sigils = this.document.system.sigils;
+		for (const sigilData of sigils) {
+			const sigil = await fromUuid(sigilData.parentUuid || sigilData.uuid);
+			const type = sigil.system.type;
+			context.sigils[type].push({
+				id: sigil.id,
+				uuid: sigil.uuid,
+				name: sigil.name,
+				label: sigil.name,
+				infused: sigil.system.fragments.value
 			});
-			return acc;
-		}, {});
+		}
+		
 		return;
+		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
+		const actor = this.document.actor;
+		context._selOpts['sigils'] = { prefix: {}, sufix: {} }
+		const selectedSigils = this.document.system.sigils;
+		const sigils2 = actor.items.filter( i => i.type == 'sigil' && i.system.equipment == type );
+		
+		sigils2.reduce( (acc, s) => {
+			if ( s.system.item && s.system.item != this.document.uuid ) return acc;
+			acc[s.system.type][s.id] = {
+				id: s.id,
+				uuid: s.uuid,
+				name: s.name,
+				label: s.name,
+				enchanted: s.system.item == this.document.uuid,
+				infused: s.system.fragments.value,
+				selected: selectedSigils[s.system.type].has(s.uuid) ? 'selected' : ''
+			};
+			return acc
+		}, context._selOpts.sigils );
 	}
 
 	/* ---------------------------------------- */
@@ -370,8 +403,55 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	 * @param {HTMLElement} target      The current target of the event listener.
 	 */
 	static #heritageTab(event, target) {
-		console.log('heritageTab', target);
 		this.heritage = target.dataset.heritage;
 		this.render();
+	}
+
+	/**
+	 * Handle click events to infuse a sigil.
+	 * @param {Event} event             The initiating click event.
+	 * @param {HTMLElement} target      The current target of the event listener.
+	 */
+	static async #infuse(event, target) {
+		const uuid = target.closest('li').dataset.uuid;
+		if ( uuid.startsWith("Compendium") ) {
+			const sigils = this.document.system.sigils;
+			const updateData = {};
+			updateData['system.sigils'] = sigils.reduce( (acc, sigil) => {
+				if ( sigil.uuid == uuid ) {
+					sigil.infused = !sigil.infused;
+				}
+				acc.push(sigil);
+				return acc;
+			}, []);
+			this.document.update( updateData );
+		} else {
+			const item = await fromUuid(uuid);
+			const current = foundry.utils.getProperty(item, 'system.fragments.value');
+			await item.update({"system.fragments.value": !current });
+		}
+		this.render();
+	}
+
+	static async #deleteSigil(event, target) {
+		const uuid = target.closest('li').dataset.uuid;
+		const sigils = this.document.system.sigils;
+		const deleteDocuments = [];
+		const updateData = {};
+		updateData['system.sigils'] = sigils.reduce( (acc, sigil) => {
+			if ( sigil.uuid == uuid || sigil.parentUuid == uuid ) {
+				if ( sigil.parentUuid ) {
+					const partenId = foundry.utils.parseUuid(sigil.parentUuid);
+					if( partenId ) deleteDocuments.push( partenId.id );
+				}
+				return acc;
+			}
+			acc.push(sigil);
+			return acc;
+		}, []);
+		this.document.update( updateData );
+		if ( this.document.actor ) {
+			this.document.actor.deleteEmbeddedDocuments("Item", deleteDocuments);
+		}
 	}
 }

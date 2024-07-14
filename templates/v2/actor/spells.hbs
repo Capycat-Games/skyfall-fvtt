@@ -2,4 +2,8 @@
 	{{#each items.spells as | spell | }}
 	{{> "systems/skyfall/templates/v2/item/ability-card.hbs" item=spell labels=spell.system.labels collapse=true}}
 	{{/each }}
+	<hr class="flex100">
+	{{#each items.sigils as | sigil | }}
+	{{> "systems/skyfall/templates/v2/item/sigil-card.hbs" item=sigil labels=sigil.system.labels collapse=true}}
+	{{/each }}
 </section>

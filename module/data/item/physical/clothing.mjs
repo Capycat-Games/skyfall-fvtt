@@ -15,6 +15,11 @@ export default class Clothing extends PhysicalItemData {
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			...this.equippableSchema(),
 			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.clothings, initial: "head"}),
+			sigils: new fields.ArrayField(new fields.SchemaField({
+				uuid: new fields.StringField({required: true}, {validate: Clothing.validateUuid}),
+				parentUuid: new fields.StringField({required: true}, {validate: Clothing.validateUuid}),
+				infused: new fields.BooleanField({required:true, initial:false})
+			}), {max: 4}),
 		})
 	}
 }

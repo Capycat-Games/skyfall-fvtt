@@ -15,7 +15,6 @@ export default class AbilityTemplate extends MeasuredTemplate {
 		let distance = rangeData.length;
 		let width = rangeData.width;
 		let units = rangeData.units;
-		console.log(rangeData);
 		
 		if (!distance || !CONFIG.MeasuredTemplate.types[shape]) return null;
 		// Prepare template data
@@ -28,7 +27,6 @@ export default class AbilityTemplate extends MeasuredTemplate {
 			y: 0,
 			fillColor: game.user.color
 		};
-		console.log(templateData);
 		// Additional type-specific data
 		switch ( shape ) {
 			case "cone":

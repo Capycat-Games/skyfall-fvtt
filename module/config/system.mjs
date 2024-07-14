@@ -76,6 +76,7 @@ const SHEETICONS = {
   food: '<i class="fa-solid fa-utensils"></i>',
   tent: '<i class="fa-solid fa-campground"></i>',
   bed: '<i class="fa-solid fa-bed"></i>',
+  gem: '<i class="fa-solid fa-gem"></i>',
   coin: '<i class="fa-regular fa-star"></i>',
   chat: '<i class="fa-solid fa-message"></i>',
   walk: '<i class="fa-solid fa-person-walking"></i>',

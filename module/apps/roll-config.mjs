@@ -6,7 +6,6 @@ const {HandlebarsApplicationMixin, ApplicationV2, DialogV2} = foundry.applicatio
 export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2) {
 	constructor(options={}) {
 		super(options);
-		// console.log("RollConfig", options);
 		this.system = new skyfall.models.other.RollConfiguration({rollMode:game.settings.get("core", "rollMode")});
 		this._reset(options);
 		if ( options.skipConfig ) this._roll();
@@ -34,10 +33,10 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	_configFromRequest( options ){
-		if ( foundry.utils.getType(options.ability) == 'string' ) {
-			this.rollData['mod'] = 5 ?? Number(options.ability) ?? `${options.ability}`;
-			options.ability = `@mod`;
-		}
+		// if ( foundry.utils.getType(options.ability) == 'string' ) {
+		// 	this.rollData['mod'] = 5 ?? Number(options.ability) ?? `${options.ability}`;
+		// 	options.ability = `@mod`;
+		// }
 		this.config = {
 			type: options.type,
 			ability: options.ability,
@@ -68,7 +67,6 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			}, this.system.terms);
 		} else {
 			// this.terms.push({expression:'1d20',label:'d20',flavor:'d20'});
-			// console.log(this);
 			if ( this.ability?.id ){
 				this.system.terms.push({
 					expression:`@${this.ability.id}`,
@@ -98,7 +96,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 					active: true,
 				});
 			}
-			if ( this.config.type == "attack" && this.config.ability != "@mod" ){
+			if ( this.config.type == "attack" ){
 				this.system.terms.push({
 					expression: `@prof`,
 					label:`Proficiência`,
@@ -155,13 +153,11 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		result += this.options.advantageConfig ? this.options.advantageConfig : 0;
 		result += rollMods.includes("kh") ? 1 : 0;
 		result += rollMods.includes("kl") ? -1 : 0;
-		console.log( isNaN(result) );
 		if ( this.config.protection ) {
 			result += statuses.has( `protected-${this.config.protection}` ) ? -1 : 0;
 			result += statuses.has( `protected-all` ) ? -1 : 0;
 			result += statuses.has( `unprotected-${this.config.protection}` ) ? 1 : 0;
 			result += statuses.has( `unprotected-all` ) ? 1 : 0;
-			console.log( isNaN(result) );
 			if ( ["str","dex","con"].includes(this.config.protection) ) {
 				result += statuses.has( `protected-physical` ) ? -1 : 0;
 				result += statuses.has( `unprotected-physical` ) ? 1 : 0;
@@ -169,9 +165,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				result += statuses.has( `protected-mental` ) ? -1 : 0;
 				result += statuses.has( `unprotected-mental` ) ? 1 : 0;
 			}
-			console.log( isNaN(result) );
 		}
-		console.log(statuses, this.config.protection, result);
 		return Math.clamp(-1, result , 1);
 	}
 
@@ -255,8 +249,6 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				{type: "button", action:"roll", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
 			]
 		}
-		console.log(this);
-		console.log(this.message);
 		console.log(context);
 		return context;
 	}
@@ -312,6 +304,8 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	static #onRoll(event, target) {
+		const rollMode = target.closest('form').querySelector('select[name=rollMode]');
+		this.system.rollMode = rollMode.value;
 		this._roll();
 		this.close();
 	}
@@ -346,7 +340,25 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				}
 			}
 		}
-		if ( this.message?.type == 'usage' && this.config.rollIndex !== null ) { //this.message?.type == 'usage' && 
+		// Initiative
+		if ( this.config.type == 'initiative') {
+			try {
+				roll.options.flavor = skyfall.utils.rollTitle(this.config);
+				await roll.evaluate();
+				roll.toMessage({}, {rollMode: this.system.rollMode});
+				let combat = game.combats.active;
+				if (!combat) return;
+				let combatant = combat.combatants.find(
+					(c) => c.actor.id === this.actor.id
+				);
+				if ( !combatant || combatant.initiative != null ) return;
+				combat.setInitiative(combatant.id, roll.total);
+				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
+			} catch (error) {
+				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
+			}
+		}
+		else if ( this.message?.type == 'usage' && this.config.rollIndex !== null ) { //this.message?.type == 'usage' && 
 			// TODO Evaluate and ADD to a existing message;
 			roll.options.flavor = skyfall.utils.rollTitle(this.config);
 			await roll.evaluate();
@@ -361,18 +373,11 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	static async #onSubmit(event, form, formData) {
-		// console.log(form, formData);
-		// console.log(this);
 		let updateSource = formData.object;
 		updateSource = foundry.utils.mergeObject(updateSource, foundry.utils.flattenObject(this.system.toObject()));
 		
 		this.system.updateSource(updateSource);
 		this.render();
-		// if ( ['damage','catharsis'].includes(this.config.type) ) {
-
-		// } else {
-		// 	console.log(this.terms);
-		// }
 		return;
 	}
 }

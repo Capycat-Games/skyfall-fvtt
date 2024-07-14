@@ -44,6 +44,7 @@
 		<div class="movement flexrow" data-tooltip="{{localize "SKYFALL.ACTOR.MOVEMENT"}}">
 			<a data-action="manage" data-manage="movement">{{{SYSTEM.icons.walk}}}</a>
 			<div class="values">
+				{{log movement}}
 				{{#each movement as | move | }}
 				<span data-tooltip="{{localize move.label}}">
 					{{{move.icon}}} {{move.value}} 

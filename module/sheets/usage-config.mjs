@@ -1,6 +1,6 @@
 import SkyfallActor from "../documents/actor.mjs";
 
-export default class ItemUsageConfig extends DocumentSheet {
+export default class SKyfallUsageConfig extends DocumentSheet {
 	// constructor(message, options) {
 	// 	super(message, options);
 		
@@ -41,11 +41,7 @@ export default class ItemUsageConfig extends DocumentSheet {
 		context.modifications = this.document.system.modifications;
 
 		// this.getUsageEffects(context);
-		// console.log( this.document.system );
-		// console.log( context.system.abilityState.system );
-		// console.log( context.system.itemState.system );
-		// console.log( context.system.item );
-		console.log("ItemUsageConfig", context);
+		console.log("UsageConfig", context);
 		return context;
 	}
 
@@ -57,19 +53,13 @@ export default class ItemUsageConfig extends DocumentSheet {
 		const actor = new SkyfallActor( context.system.actorState );
 		if ( !actor ) return;
 		const mods = actor.allModifications;
-		// console.log( this.document.system.modifications );
 		//await foundry.utils.fromUuid(actorId);
 		for (const mod of actor.allModifications) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
-			// console.log(itemType, context.system.item.type);
 			if ( itemName && !itemName.split(',').map(n=>n.trim()).includes(context.system.item.name) ) continue;
-			// console.log("NAME OK");
 			if ( itemType.includes('self') && mod.parent.id != context.system.abilityId ) continue;
-			// console.log("SELF OK");
 			if ( !foundry.utils.isEmpty(itemType) && !itemType.includes('self') && !itemType.includes(context.system.item.type) ) continue;
-			// console.log("TYPE OK");
 			if ( !foundry.utils.isEmpty(descriptors) && !descriptors.every( d => context.system.item.system.descriptors.includes(d) ) ) continue;
-			// console.log("DESCRIPTOR OK");
 			if ( this.document.system.modifications[mod.id] ) {
 				mod.apply = Number(this.document.system.modifications[mod.id].apply);
 			} else if ( mod.system.apply.always ) {

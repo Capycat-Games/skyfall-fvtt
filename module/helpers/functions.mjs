@@ -1,9 +1,10 @@
 export const descriptorsTags = (descriptors, options = {}) => {
+	const list = options.sigil ? SYSTEM.SIGILDESCRIPTORS : SYSTEM.DESCRIPTORS;
 	return descriptors.reduce((acc, key) => {
-		if ( options.type && SYSTEM.DESCRIPTORS[key]?.type.includes(type) ) return acc;
+		if ( options.type && list[key]?.type.includes(type) ) return acc;
 		acc[key] = {
 			value: ( descriptors.includes(key) ),
-			...SYSTEM.DESCRIPTORS[key] ?? {
+			...list[key] ?? {
 				id: key, hint: "", type: "origin", label: key.toUpperCase(),
 			}
 		}

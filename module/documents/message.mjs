@@ -4,11 +4,16 @@ import SkyfallRoll from "../dice/skyfall-roll.mjs";
 
 export default class SkyfallMessage extends ChatMessage {
 
-	actor;
-	ability;
-	item;
+	// INITIAL DOCUMENTS
+	_actor;
+	_ability;
+	_item;
 	updateData;
 	
+	// FINAL DOCUMENT
+	get item(){
+		return this.system.item;
+	}
 
 	/* -------------------------------------------- */
 	/*  Usage Workflows                             */
@@ -42,12 +47,12 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 
 	async getDocuments(){
-		if ( this.actor ) return;
+		if ( this._actor ) return;
 		const {actorId, abilityId, itemId} = this.system;
-		this.actor = await fromUuid(actorId);
-		if ( !this.actor ) return ui.notifications.warn("Não é possível configurar esta mensagem, Actor não foi encontrado.");
-		this.ability = this.actor.items.get(abilityId);
-		this.item = this.actor.items.get(itemId);
+		this._actor = await fromUuid(actorId);
+		if ( !this._actor ) return ui.notifications.warn("Não é possível configurar esta mensagem, Actor não foi encontrado.");
+		this._ability = this._actor.items.get(abilityId);
+		this._item = this._actor.items.get(itemId);
 	}
 	
 	/**
@@ -56,10 +61,9 @@ export default class SkyfallMessage extends ChatMessage {
 	 * - Overwrite Ability range and damage for Weapon range and damage
 	 */
 	#applyItemToAbility(){
-		const {actorId, abilityId, itemId} = this.system;
-		const actor = this.actor; //game.actor.get(actorId);
-		const ability = this.ability; //actor.items.find( i => i.id == abilityId);
-		const item = this.item;
+		const actor = this._actor;
+		const ability = this._ability;
+		const item = this._item;
 		this.system.item = ability.toObject();
 		this.system.item.img = item?.img ?? ability.img;
 		
@@ -105,7 +109,7 @@ export default class SkyfallMessage extends ChatMessage {
 	#prepareModifications(){
 		const item = this.system.item;
 		if ( !foundry.utils.isEmpty(this.system.modifications) ) return;
-		for (const mod of this.actor?.allModifications ) {
+		for (const mod of this._actor?.allModifications ) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
 			// Ignore modifications if apply condition is not met;
 			if ( itemName && !itemName.split(',').map(n=>n.trim()).includes(item.name) ) continue;
@@ -135,12 +139,11 @@ export default class SkyfallMessage extends ChatMessage {
 		const ability = this.system.item.system.activation;
 		// if ( act.resource )
 		this.system.costs['ep'] += ability.cost;
-		console.log(ability.cost);
+		
 		for ( const mod of Object.values(this.system.modifications) ) {
-			const effect = this.actor?.allModifications.find( ef => ef.id == mod.id);
+			const effect = this._actor?.allModifications.find( ef => ef.id == mod.id);
 			if ( !mod.apply || Number(mod.apply) < 1 ) continue;
 			this.system.costs[mod.resource] += mod.cost;
-			console.log(mod);
 			continue;
 			/**
 			 * TODO APPLY SPECIAL CASES USAGE EFFECTS
@@ -148,14 +151,13 @@ export default class SkyfallMessage extends ChatMessage {
 			 * Ones that Change Effect 
 			 */
 			for (const change of effect.changes) {
-				effect.apply(this.ability, change);
+				effect.apply(this._ability, change);
 			}
 		}
 		this.updateData ??= {};
 		this.updateData.system ??= {};
 		this.updateData.system.item = this.system.item;
-		this.updateData.system.cost = this.system.costs;
-		console.log(this.updateData);
+		this.updateData.system.costs = this.system.costs;
 		console.groupEnd();
 	}
 
@@ -166,8 +168,8 @@ export default class SkyfallMessage extends ChatMessage {
 
 		this.system.rolls = [];
 		let damageType = item.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
-		const rollData = foundry.utils.mergeObject(this.actor.getRollData(), this.ability.getRollData());
-		if ( this.item ) rollData.item = this.item.getRollData();
+		const rollData = foundry.utils.mergeObject(this._actor.getRollData(), this._ability.getRollData());
+		if ( this._item ) rollData.item = this._item.getRollData();
 		if ( item.system.attack?.type ) {
 			// TODO REWORK USING ROLLCONFIG APP
 			
@@ -175,11 +177,9 @@ export default class SkyfallMessage extends ChatMessage {
 			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
 			
 			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
-			if ( this.actor?.type == 'character' ) { 
-				rollData['prof'] = rollData.proficiency;
-				terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			}
-
+			rollData['prof'] = rollData.proficiency;
+			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
+			
 			let rollConfig = {
 				advantage: advantage ?? 0,
 				disadvantage: disadvantage ?? 0,
@@ -199,7 +199,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		if ( item.system.attack?.damage ) {
-			if ( this.item ) rollData.weapon = rollData.item.weapon;
+			if ( this._item ) rollData.weapon = rollData.item.weapon;
 			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {
 				types:['damage'],
 				flavor:'Dano Acerto',
@@ -210,7 +210,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 
 		if ( item.system.effect?.damage ) {
-			if ( this.item ) rollData.weapon = rollData.item.weapon;
+			if ( this._item ) rollData.weapon = rollData.item.weapon;
 			let roll = new SkyfallRoll(`${item.system.effect.damage}`, rollData, {
 				types:['damage'],
 				flavor:'Dano Efeito',
@@ -227,13 +227,13 @@ export default class SkyfallMessage extends ChatMessage {
 	async #evaluateRolls(index = null){
 		await this.getDocuments();
 		this.rollData = {};
-		if ( this.actor ) {
-			this.rollData = this.actor?.getRollData();
-			if ( this.ability ) {
-				this.rollData = foundry.utils.mergeObject(this.rollData, (this.ability?.getRollData() ?? {}));
+		if ( this._actor ) {
+			this.rollData = this._actor?.getRollData();
+			if ( this._ability ) {
+				this.rollData = foundry.utils.mergeObject(this.rollData, (this._ability?.getRollData() ?? {}));
 			}
-			if ( this.item ) { 
-				this.rollData = foundry.utils.mergeObject(this.rollData, (this.item?.getRollData() ?? {}));
+			if ( this._item ) { 
+				this.rollData = foundry.utils.mergeObject(this.rollData, (this._item?.getRollData() ?? {}));
 				// rollData.weapon = rollData.item.weapon ?? null;
 			}
 		}
@@ -274,12 +274,12 @@ export default class SkyfallMessage extends ChatMessage {
 	
 	#prepareAreaTemplate(){
 		const item = this.system.item;
-		if ( item.system.target.shape ) {
+		if ( item.system.target?.shape ) {
 			this.system.measuredTemplate.push({t: item.system.target.shape});
+			this.updateData ??= {};
+			this.updateData.system ??= {};
+			this.updateData.system.measuredTemplate = this.system.templates;
 		}
-		this.updateData ??= {};
-		this.updateData.system ??= {};
-		this.updateData.system.measuredTemplate = this.system.templates;
 	}
 
 	#prepareEffects() {
@@ -304,8 +304,9 @@ export default class SkyfallMessage extends ChatMessage {
 			modifications: this.system.modifications,
 			effects: this.system.effects,
 			rolls: this.system.rolls,
+			buttons: this._getButtons(),
 		}
-		const tempItem = new Item(templateData.usage.item);
+		const tempItem = new Item(this.item);
 		// templateData.usage.item._labels = tempItem.system._labels;
 		templateData.item = tempItem;
 		const mods = {};
@@ -337,15 +338,14 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
 		await super._onCreate(data, options, user);
-		console.warn(this, data, options, user);
-		if ( data.type == 'usage' && user == data.author ) {
+		if ( data.type == 'usage' && user == game.userId ) {
 			await this.#updateUsagePrepareData();
 			if ( !foundry.utils.isEmpty(this.updateData) ) {
 				// delete this.updateData._id;
 				await this.update(this.updateData, {contentRendered:true})
 				this.updateData = null;
 			}
-
+			
 			if ( options.skipConfig ) {
 				await this.#evaluateRolls();
 				if ( !foundry.utils.isEmpty(this.updateData) ) { 
@@ -409,13 +409,15 @@ export default class SkyfallMessage extends ChatMessage {
 	 * @returns {Promise<jQuery>}
 	 */
 	async getHTML() {
-		console.log("getHTML");
 		const html = await super.getHTML();
 		html[0].classList.add('skyfall');
-		console.log('getHTML');
 		if ( this.type == 'usage' ) {
+			const actor = fromUuidSync(this.system.actorId);
+			html[0].classList.add(actor.type);
 			const bgOverlay = document.createElement("div");
 			bgOverlay.classList.add("header-overlay");
+			bgOverlay.classList.add(actor.type);
+			// this.system.
 			html.prepend( bgOverlay );
 			if ( this.system.modifications ){
 				let mods = Object.values(this.system.modifications);
@@ -451,6 +453,16 @@ export default class SkyfallMessage extends ChatMessage {
 		else itemName.addClass("fonts12");
 
 		return html;
+	}
+
+	_getButtons(){
+		const buttons = [];
+		if( game.user == this.author.id ) return buttons;
+		buttons.push(
+			{action: 'configure', label: "SKYFALL2.Configure"},
+			{action: 'consumeResources', label: "SKYFALL2.Consume"},
+		);
+		return buttons;
 	}
 
 	/**
@@ -637,7 +649,55 @@ export default class SkyfallMessage extends ChatMessage {
 					}
 				}
 				break;
+			case "consumeResources":
+				this._onConsumeResources();
+				break;
 		}
+	}
+
+	_onConsumeResources(){
+		if ( game.userId != this.author.id ) return;
+		const content = ""
+		const updateData = {};
+		const costs = this.system.costs;
+		const actor = this._actor;
+		
+		if ( costs.hp ) {
+			const hp = foundry.utils.getProperty(this._actor, 'system.resources.hp');
+			updateData['system.resources.hp.value'] = hp.value - costs.hp;
+		}
+		// costs.ep = this.item.system?.activation?.cost ?? 0;
+		if ( costs.ep ) { //costs.ep
+			const ep = foundry.utils.getProperty(this._actor, 'system.resources.ep');
+			updateData['system.resources.ep.value'] = ep.value - costs.ep;
+		}
+		if ( costs.catharsis ) {
+			const catharsis = foundry.utils.getProperty(this._actor, 'system.resources.catharsis');
+			updateData['system.resources.catharsis.value'] = catharsis.value - costs.catharsis;
+		}
+		if ( costs.shadow ) {
+			const shadow = foundry.utils.getProperty(this._actor, 'system.resources.shadow');
+			updateData['system.resources.shadow.value'] = shadow.value - costs.shadow;
+		}
+		// TODO - Consume Ammo, Potions, Extras
+		// Consumable with uses
+		if ( costs.uses ) {
+			// updateData['items'] ??= [];
+		}
+		// Consumable
+		if ( costs.quantity ) {
+			// updateData['items'] ??= [];
+		}
+		// SIGIL
+		const sigil = this._ability.type == "sigil" ? this._ability : null;
+		if ( sigil ) { //sigil
+			updateData['items'] ??= [];
+			updateData['items'].push({
+				"_id": sigil.id,
+				"system.charges.value": sigil.system.charges.value - 1
+			});
+		}
+		this._actor.update(updateData);
 	}
 
 	/* -------------------------------------------- */

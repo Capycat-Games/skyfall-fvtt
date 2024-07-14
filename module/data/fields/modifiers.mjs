@@ -6,7 +6,6 @@ export default class RollModifiersField extends foundry.data.fields.ArrayField {
 
 	/** @override */
 	_applyChangeAdd(value, delta, model, change) {
-		console.log( value, delta, model, change );
 		// value.push(...delta);
 		value.push( change );
 		return value;

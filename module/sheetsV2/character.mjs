@@ -39,6 +39,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			template: "systems/skyfall/templates/v2/actor/abilities.hbs",
 			templates: [
 				"systems/skyfall/templates/v2/item/ability-card.hbs",
+				"systems/skyfall/templates/v2/item/sigil-card.hbs",
 			],
 			scrollable: [".actor-abilities"]
 		},
@@ -83,6 +84,11 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				active: true,
 				icon: SYSTEM.icons.sfranged,
 				label:"SKYFALL2.ATTACK.Ranged"
+			},
+			sigil: {
+				active: true,
+				icon: SYSTEM.icons.gem,
+				label:"TYPES.Item.sigil"
 			},
 			action: {
 				active: true,
@@ -268,6 +274,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			actions: [],
 			spells: [],
 			inventory: {},
+			sigils: [],
 			features: [],
 			class: [],
 			path: [],
@@ -289,6 +296,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			if ( ['feature','feat'].includes(item.type) ) items.features.push(item);
 			if ( item.type == 'ability' ) items.abilities.push(item);
 			if ( item.type == 'spell' ) items.spells.push(item);
+			if ( item.type == 'sigil' ) items.sigils.push(item);
 			if ( progression.includes(item.type) ) items[item.type] = item;
 			if ( classPaths.includes(item.type) ) items[item.type].push(item);
 		}
@@ -319,7 +327,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		// 	ability.weapons = weapons;
 		// 	context.items.actions.push(ability);
 		// }
-		
+		const sigils = this.document.items.filter( i => i.type == 'sigil' && context.items.actions.find(a => a.uuid == i.system.item) );
+		context.items.actions.push(...sigils);
+
 		const abilities = this.document.items.filter( i => i.type == 'ability' && !i.system.descriptors.includes('weapon') );
 		context.items.actions.push(...abilities);
 		
@@ -335,17 +345,15 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const isRanged = (d) => ['thrown', 'shooting'].includes(d);
 		const isMelee = (d) => !['shooting'].includes(d);
 		for (const item of Object.values(context.items.actions)) {
-			console.log(item);
 			let show = true;
 			// RANGED == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING 
-			if ( !actions.ranged.active && item.system.descriptors?.some(isRanged) )show = false;
+			if ( ['weapon','armor'].includes(actions.type) && !actions.ranged.active && item.system.descriptors?.some(isRanged) )show = false;
 			// MELEE == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING
-			if ( !actions.melee.active && !item.system.descriptors?.some(isMelee) ) show = false;
-			
-			if ( item.system.action && !actions[item.system.action]?.active ) show = false;
+			if ( ['weapon','armor'].includes(actions.type) && !actions.melee.active && !item.system.descriptors?.some(isMelee) ) show = false;
+			if ( item.system && item.system.action && !actions[item.system.action]?.active ) show = false;
+			if ( item.type=='sigil' && !actions[item.type]?.active ) show = false;
 			item.filtered = show ? '' : 'hidden';
 		}
-
 	}
 	
 

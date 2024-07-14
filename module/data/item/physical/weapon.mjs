@@ -22,6 +22,11 @@ export default class Weapon extends PhysicalItemData {
 				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str", label:"SKYFALL.ACTOR.ABILITY"}),
 			}),
 			range: new fields.NumberField({required: true, min: 0, label:"SKYFALL2.Range"}),
+			sigils: new fields.ArrayField(new fields.SchemaField({
+				uuid: new fields.StringField({required: true}, {validate: Weapon.validateUuid}),
+				parentUuid: new fields.StringField({required: true}, {validate: Weapon.validateUuid}),
+				infused: new fields.BooleanField({required:true, initial:false})
+			}), {max: 4}),
 		})
 	}
 
@@ -31,5 +36,9 @@ export default class Weapon extends PhysicalItemData {
 
 	get isMelee(){
 		return !this.descriptors.includes('shooting');
+	}
+
+	get fullName(){
+		return this.parent.name;
 	}
 }

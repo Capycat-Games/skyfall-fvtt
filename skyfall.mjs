@@ -22,7 +22,8 @@ import AbilityTemplate from "./module/helpers/ability-template.mjs";
 import ShortRestV2 from "./module/apps/restV2.mjs";
 import TokenSkyfall from "./module/token.mjs";
 import * as functions from "./module/helpers/functions.mjs";
-import griddySystemSetup from "./module/hooks/griddy.mjs";
+import TestApp from "./module/apps/dialogV2-Test.mjs";
+import { CombatTrackerSkyfall } from "./module/combat.mjs";
 
 globalThis.skyfall = {
 	CONST: SYSTEM,
@@ -37,7 +38,8 @@ globalThis.skyfall = {
 		AbilityTemplate
 	},
 	wip: {
-		ShortRestV2
+		ShortRestV2,
+		TestApp
 	},
 	utils: functions
 }
@@ -65,7 +67,8 @@ Hooks.once('init', function () {
 	// CONFIG.Token.documentClass = documents.SkyfallToken;
 	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
 	CONFIG.Token.objectClass = TokenSkyfall;
-	
+	CONFIG.ui.combat = CombatTrackerSkyfall;
+
 	// DATA MODEL
 	CONFIG.Actor.dataModels["character"] = models.actor.Character;
 	CONFIG.Actor.dataModels["npc"] = models.actor.NPC;
@@ -83,6 +86,7 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["feat"] = models.item.Feat;
 	CONFIG.Item.dataModels["ability"] = models.item.Ability;
 	CONFIG.Item.dataModels["spell"] = models.item.Spell;
+	CONFIG.Item.dataModels["sigil"] = models.item.Sigil;
 	CONFIG.Item.dataModels["weapon"] = models.item.Weapon;
 	CONFIG.Item.dataModels["armor"] = models.item.Armor;
 	CONFIG.Item.dataModels["clothing"] = models.item.Clothing;
@@ -105,10 +109,6 @@ Hooks.once('init', function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	// Actors.registerSheet("skyfall", sheets.SkyfallActorSheet, {
-	// 	types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
-	// 	makeDefault: true,
-	// });
 	Actors.registerSheet("skyfall", sheetsV2.CharacterSheetSkyfall, {
 		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
 		makeDefault: true,
@@ -118,27 +118,22 @@ Hooks.once('init', function () {
 		makeDefault: true,
 	});
 	
-	// Items.unregisterSheet("core", ItemSheet);
-	// Items.registerSheet("skyfall", sheets.SkyfallItemSheet, {
-	// 	types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
-	// 	makeDefault: true,
-	// });
+	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
 		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
 		makeDefault: true,
 	});
 
-	// Items.registerSheet("skyfall", sheets.SkyfallAbilitySheet, {
-	// 	types: ['ability','spell','sigil'],
-	// 	makeDefault: true,
-	// });
 	Items.registerSheet("skyfall", sheetsV2.AbilitySheetSkyfall, {
-		types: ['ability','spell','sigil'],
+		types: ['ability','spell'],
+		makeDefault: true,
+	});
+	Items.registerSheet("skyfall", sheetsV2.SigilSheetSkyfall, {
+		types: ['sigil'],
 		makeDefault: true,
 	});
 	
-	
-	Messages.registerSheet('skyfall', sheets.ItemUsageConfig, {
+	Messages.registerSheet('skyfall', sheets.UsageConfig, {
 		types: ['usage'],
 		makeDefault: true,
 	});
@@ -402,9 +397,6 @@ function rollItemMacro(itemUuid) {
 		item.roll();
 	});
 }
-
-/* DEBUG */
-// griddySystemSetup();
 
 function registerCustomEnrichers(){
 	CONFIG.TextEditor.enrichers.push({
