@@ -45,7 +45,7 @@ export default class SkyfallRoll extends Roll {
 		if ( this.evaluated ) return; //TODO NOTICE
 		const catharsis = new RollSF(`1d6[catharsis${operator}]`);
 		await catharsis.evaluate();
-		const catTerm = this.terms.find( 				t => t.flavor == `catharsis${operator}` );
+		const catTerm = this.terms.find( t => t.flavor == `catharsis${operator}` );
 		if ( catTerm ){
 			catTerm.number = catTerm.number + 1;
 			catTerm.results = catTerm.results.concat( catharsis.terms[0].results );
@@ -58,7 +58,8 @@ export default class SkyfallRoll extends Roll {
 		this._formula = this.resetFormula(this.terms);
 		this._formula = this._formula.replaceAll(/(\[\w*(\+|\-)?\])/g, '');
 		try {
-			if ( game.dice3d ) game.dice3d.renderRolls( {}, [ catharsis ])
+			if ( game.dice3d ) game.dice3d.showForRoll( catharsis, game.user, true, null, false, null, null);
+				
 		} catch (error) {
 			
 		}

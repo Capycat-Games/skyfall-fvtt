@@ -67,7 +67,7 @@ const SHEETICONS = {
   starfill: '<i class="fa-solid fa-star"></i>',
   square: '<i class="fa-regular fa-square"></i>',
   squarefill: '<i class="fa-solid fa-square"></i>',
-  heart: '<i class="fa-solid fa-square"></i>',
+  heart: '<i class="fa-solid fa-heart"></i>',
   heartline: '<i class="fa-solid fa-heart-pulse"></i>',
   heartcrack: '<i class="fa-solid fa-heart-crack"></i>',
   skull: '<i class="fa-solid fa-skull"></i>',
@@ -77,7 +77,7 @@ const SHEETICONS = {
   tent: '<i class="fa-solid fa-campground"></i>',
   bed: '<i class="fa-solid fa-bed"></i>',
   gem: '<i class="fa-solid fa-gem"></i>',
-  coin: '<i class="fa-regular fa-star"></i>',
+  coin: '<i class="fa-solid fa-coins"></i>',
   chat: '<i class="fa-solid fa-message"></i>',
   walk: '<i class="fa-solid fa-person-walking"></i>',
   flight: '<i class="fa-solid fa-dove"></i>',
@@ -87,14 +87,6 @@ const SHEETICONS = {
   // TODO
   ...SVGICONS,
   ..._FONTICONS,
-  
-  skaction: '<i class="fa-solid fa-forward"></i>',
-  skbonus: '<i class="fa-solid fa-angles-right"></i>',
-  skfree: '<i class="fa-solid fa-angles-right"></i>',
-  skreaction: '<i class="fa-solid fa-reply"></i>',
-  skmaction: '<i class="fa-solid fa-recycle"></i>',
-  skcostscale: '<i class="fa-solid fa-rotate"></i>',
-  skmod: '<i class="fa-solid fa-caret-right"></i>',
 }
 
 /**

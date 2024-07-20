@@ -1039,12 +1039,15 @@
 		"DIALOG": {
 			"SelectSkill": "Selecion a Perícia",
 			"SelectAbility": "Selecione o Atributo",
-			"SelectAbilityItem": "Selecione a Habilidade"
+			"SelectAbilityItem": "Selecione a Habilidade",
+			"CreateGrantedItems": "Adicionar {type}",
+			"OverwriteExistingItem": "O {actor} já possuí um(a) {type}. Deseja subtstituir?"
 		}
 	},
 	"NOTIFICATION": {
 		"InvalidItemSigil": "Este Sígilo não é compatível com este item.",
-		"DuplicatedItemSigil": "O item já possuí o Sígilo"
+		"DuplicatedItemSigil": "O item já possuí o Sígilo",
+		"PathsLimitReached": "Limite de Trilhas alcançado"
 	},
 	"Teste": "BBBB"
 }

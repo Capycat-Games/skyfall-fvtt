@@ -111,8 +111,9 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 
 	_prepareTransforms(){
 		const keep = this._hasKeep();
-		
-		if ( ['damage','catharsis'].includes(this.config.type) ) {
+		if ( ['catharsis'].includes(this.config.type) ) {
+
+		} else if ( ['damage'].includes(this.config.type) ) {
 			this.system.transformers.push({
 				label: "Crítico",
 				expression: ["d*2"], //"critical",
@@ -318,6 +319,11 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				...this.system.terms.filter(t => t.active )
 			].map(t => `${t.expression}${t.options?.flavor?'['+t.options.flavor+']':''}`).join('+'), this.rollData, this.config);
 			// this.actor.getRollData()
+			// TODO APPLY TRANSFORMERS
+			const trns = this.system.transformers.filter(t => t.active );
+			for (const transformer of trns) {
+				if ( transformer.expression == "d*2" ) roll.alter(2);
+			}
 		} else if ( ['catharsis'].includes(this.config.type) ) {
 			roll = new RollSF([
 				...this.system.terms.filter(t => t.active )

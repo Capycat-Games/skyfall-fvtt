@@ -171,7 +171,9 @@ export default class Character extends foundry.abstract.TypeDataModel {
 
 	/** @override */
 	prepareBaseData() {
-		const level = this.level.value;
+		const level = this.parent.items.filter( i => i.type == 'class' )
+			.reduce( (acc, i) => acc + i.system.level, 0 );
+		console.log( 'prepareBaseData' , level );
 		this.proficiency = (level >= 9 ? 4 : (level >= 5 ? 3 : 2));
 	}
 

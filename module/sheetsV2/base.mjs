@@ -230,7 +230,7 @@ export const SkyfallSheetMixin = Base => {
 		 * Bind a new context menu.
 		 */
 		_setupContextMenu() {
-			new ContextMenu(this.element, '.window-content .class', [], {
+			new ContextMenu(this.element, '.window-content .class, .window-content .path', [], {
 				onOpen: entry => {
 					const entryId = entry.dataset.entryId;
 					const item = this.document.items.find(it => it.id==entryId);
@@ -462,7 +462,7 @@ export const SkyfallSheetMixin = Base => {
 				}
 				this.document.createEmbeddedDocuments( create, [effectData] );
 			} else if ( create == "Item" ) {
-				let type = target.closest('section')?.dataset?.type ?? 'base';
+				let type = target.dataset.type ?? target.closest('section')?.dataset?.type ?? 'base';
 				const itemData = {
 					type: type,
 					name: game.i18n.format("DOCUMENT.Create", {

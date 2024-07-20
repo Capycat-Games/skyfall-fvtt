@@ -152,7 +152,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	async _onDropGranted(item, fieldPath, itemType){
 		
 		const updateData = {};
-		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), uuid ];
+		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), item.uuid ];
 		return this.document.update(updateData);
 	}
 

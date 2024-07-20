@@ -155,6 +155,8 @@ Hooks.once('init', function () {
 	registerFonts();
 	// Enrichers
 	registerCustomEnrichers();
+	// TODO Sockets
+	
 });
 
 /* -------------------------------------------- */
@@ -267,8 +269,10 @@ function _giveCatharsis(event) {
 	const userId = button.closest('li').dataset.userId;
 	const character = game.users.get(userId).character; 
 	const catharsis = character.system.resources.catharsis.value;
-	character.update({"system.resources.catharsis.value": catharsis + 1});
-	ChatMessage.create({content: `${character.name} recebeu 1 Ponto de Catarse`});
+	Promise.all([
+		character.update({"system.resources.catharsis.value": catharsis + 1}),
+		ChatMessage.create({content: `${character.name} recebeu 1 Ponto de Catarse`}),
+	]).then(() => ui.players.render() );
 }
 
 /**

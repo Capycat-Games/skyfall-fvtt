@@ -583,10 +583,18 @@ dropdown-tags .tags-dropdown fieldset legend {
   padding: 0 5px;
   margin: 0;
 }
+.skyfall.sheet.actor.character .window-content .actor-features .character-progression .form-group .item-controls {
+  float: right;
+}
 .skyfall.sheet.actor.character .window-content .actor-abilities,
 .skyfall.sheet.actor.character .window-content .actor-spells {
   padding: 5px;
   gap: 10px;
+}
+.skyfall.sheet.actor.character .window-content .actor-abilities .item.entry,
+.skyfall.sheet.actor.character .window-content .actor-spells .item.entry {
+  max-width: 50%;
+  min-width: 45%;
 }
 .skyfall.sheet.actor.character .window-content .actor-abilities div,
 .skyfall.sheet.actor.character .window-content .actor-spells div {
@@ -652,11 +660,6 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .actor-abilities .rich *,
 .skyfall.sheet.actor.character .window-content .actor-spells .rich * {
   margin: 0;
-}
-.skyfall.sheet.actor.character .window-content .actor-abilities .item.entry,
-.skyfall.sheet.actor.character .window-content .actor-spells .item.entry {
-  max-width: 50%;
-  min-width: 45%;
 }
 .skyfall.sheet.actor.character .window-content .actor-abilities .ability-card,
 .skyfall.sheet.actor.character .window-content .actor-spells .ability-card {
@@ -795,6 +798,79 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .actor-inventory .inventory-list ul .item-controls {
   flex: 0 0 80px;
   text-align: right;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils {
+  padding: 5px;
+  gap: 10px;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils div {
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+  font-size: 14px;
+  width: 100%;
+  background-color: #e7e8ed;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils div label {
+  font-weight: bold;
+  color: #182657;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils > figure.content-embed {
+  margin: 0;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-header {
+  background-color: #182657;
+  color: white;
+  font-family: NORTHWEST;
+  align-items: center;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-header * {
+  color: white;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-header .skyfall-icon {
+  flex: 0 0 25px;
+  text-align: center;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-header .cost {
+  flex: 0 0 50px;
+  text-align: center;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-description {
+  text-align: center;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-descriptors {
+  padding: 5px;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-descriptors label.descriptor {
+  border: 1px solid gray;
+  color: white;
+  line-height: 2em;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-properties {
+  background-color: #babecd;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .rich label + * {
+  display: inline;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .rich * {
+  margin: 0;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .item.entry {
+  max-width: 50%;
+  min-width: 45%;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-card {
+  padding: 0;
+  flex: 0 0 49%;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-card .ability-header * {
+  color: white !important;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-card.collapsed > div:not(:first-child) {
+  display: none;
+}
+.skyfall.sheet.actor.character .window-content .actor-inventory .inventory-sigils .ability-card .space {
+  display: none;
 }
 .skyfall.sheet.actor.npc {
   --actor-color: #750703;
@@ -958,7 +1034,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet.actor aside.sheet-header .actor-actions .hitDie {
   flex-wrap: nowrap;
-  max-width: 60px;
+  max-width: 80px;
   flex: 1;
   justify-content: center;
 }
@@ -1061,21 +1137,21 @@ dropdown-tags .tags-dropdown fieldset legend {
   flex: 0;
   padding: 0 5px;
 }
-.skyfall.sheet.actor .features .character-progression {
+.skyfall.sheet.actor .features-deprecated .character-progression {
   width: 160px;
   flex: 0 0 200px;
   margin-right: 5px;
 }
-.skyfall.sheet.actor .features .character-progression input {
+.skyfall.sheet.actor .features-deprecated .character-progression input {
   width: 100%;
   margin: 0;
 }
-.skyfall.sheet.actor .features .character-progression .class input.level {
+.skyfall.sheet.actor .features-deprecated .character-progression .class input.level {
   width: 15%;
   text-align: center;
   float: left;
 }
-.skyfall.sheet.actor .features .character-progression .class input {
+.skyfall.sheet.actor .features-deprecated .character-progression .class input {
   width: 85%;
 }
 .skyfall.sheet.actor .header-fields label {

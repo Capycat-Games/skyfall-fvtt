@@ -1,17 +1,24 @@
 <section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	<div class="character-progression">
 		{{!-- LEGACY --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.legacy label="TYPES.Item.legacy" }}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.legacy type='legacy' label="TYPES.Item.legacy" }}
 
 		{{!-- CURSE --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.curse label="TYPES.Item.curse" }}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.curse type='curse' label="TYPES.Item.curse" }}
 
 		{{!-- BACKGROUND --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.background label="TYPES.Item.background" }}
+		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.background type='background' label="TYPES.Item.background" }}
 
 		{{!-- Classes --}}
-		<div class="from-group slim">
-			<label>{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}</label>
+		<div class="form-group stacked">
+			<label>
+				{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}
+				<span class="item-controls">
+					<a class="control" data-action="create" data-create="Item" data-type="class">
+						{{{@root.SYSTEM.icons.create}}}
+					</a>
+				</span>
+			</label>
 			{{#unless items.class }}
 			<div class="form-fields entry class" data-entry-id="{{path.id}}">
 				<input type="text" disabled>
@@ -26,8 +33,14 @@
 		</div>
 		
 		{{!-- Paths --}}
-		<div class="from-group">
-			<label>{{localize "TYPES.Item.path"}}</label>
+		<div class="form-group stacked">
+			<label>{{localize "TYPES.Item.path"}}
+				<span class="item-controls">
+					<a class="control" data-action="create" data-create="Item" data-type="path">
+						{{{@root.SYSTEM.icons.create}}}
+					</a>
+				</span>
+			</label>
 			{{#unless items.path }}
 			<div class="form-fields entry path" data-entry-id="{{path.id}}">
 				<input type="text" disabled>

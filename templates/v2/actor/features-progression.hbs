@@ -1,6 +1,7 @@
-<div class="form-fields stack entry {{#if level}}class{{/if}}" data-entry-id="{{item.id}}">
+<div class="form-group stacked entry {{#if level}}class{{/if}}" data-entry-id="{{item.id}}">
 	<label>{{localize label}}
 		<span class="item-controls">
+
 			{{#if item.id }}
 			<a class="control" data-action="edit" data-target="item">
 				{{{@root.SYSTEM.icons.edit}}}
@@ -12,15 +13,21 @@
 			<a class="control" data-action="search" data-target="item">
 				{{{@root.SYSTEM.icons.search}}}
 			</a>
+			{{else}}
+			<a class="control" data-action="create" data-create="Item" data-type="{{type}}">
+				{{{@root.SYSTEM.icons.create}}}
+			</a>
 			{{/if}}
 		</span>
 	</label>
-	{{#if level}}
-	<input type="number" class="level" data-action="update" name="system.level" value="{{item.system.level}}">
-	{{/if}}
-	{{#if item.system.heritage}}
-	<input type="text" value="{{item.name}} ( {{item.system.heritage}} )" disabled >
-	{{else}}
-	<input type="text" value="{{item.name}}" disabled>
-	{{/if}}
+	<div class="form-fields">
+		{{#if level}}
+		<input type="number" class="level" data-action="update" name="system.level" value="{{item.system.level}}">
+		{{/if}}
+		{{#if item.system.heritage}}
+		<input type="text" value="{{item.name}} ( {{item.system.heritage}} )" disabled >
+		{{else}}
+		<input type="text" value="{{item.name}}" disabled>
+		{{/if}}
+	</div>
 </div>

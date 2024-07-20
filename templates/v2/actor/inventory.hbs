@@ -1,4 +1,4 @@
-<section class="tab actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	<div class="inventory-header flexrow">
 		{{!-- CURRENCY --}}
 		<div class="currency text-center flexcol">
@@ -74,5 +74,11 @@
 			{{/each}}
 			{{/each}}
 		</ol>
+	</div>
+	<div class="inventory-sigils flexrow ">
+		<h1 class="text-center flex100">{{localize "TYPES.Item.sigilPl"}}</h1>
+		{{#each items.sigils as | sigil | }}
+		{{> "systems/skyfall/templates/v2/item/sigil-card.hbs" item=sigil labels=sigil.system.labels collapse=true}}
+		{{/each }}
 	</div>
 </section>

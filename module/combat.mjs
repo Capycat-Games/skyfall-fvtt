@@ -10,7 +10,14 @@ export class CombatTrackerSkyfall extends CombatTracker {
 		const combatantId = btn.closest(".combatant").dataset.combatantId;
 		const combatant = this.viewed.combatants.get(combatantId);
 		if ( (btn.dataset.control === "rollInitiative") && combatant?.actor ) {
-			return combatant.actor.rollInitiative();
+			const actor = combatant?.actor;
+			if ( actor.type == 'npc' && actor.system.hierarchy == 'boss' ) {
+				actor.rollInitiative({createCombatants:true});
+				actor.rollInitiative({createCombatants:true});
+				return actor.rollInitiative({createCombatants:true});
+			} else {
+				return actor.rollInitiative();
+			}
 		}
 		return super._onCombatantControl(event);
 	}

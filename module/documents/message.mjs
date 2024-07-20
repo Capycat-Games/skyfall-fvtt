@@ -735,9 +735,11 @@ export default class SkyfallMessage extends ChatMessage {
 	async #applyCatharsis(event) {
 		event.preventDefault();
 		if ( !game.user.isGM && canvas.tokens.controlled) {
-			const actor = canvas.tokens.controlled[0]?.actor;
+			const actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
+			if ( !actor ) ui.notifications.warn("Nenhum personagem selecionado");
 			const current = actor.system.resources.catharsis.value;
 			if ( current == 0 ) return ui.notifications.info("Catarse Insuficiente");
+			actor.update({"system.resources.catharsis.value": current - 1});
 		}
 		const rollTerms = foundry.dice.terms;
 		const button = event.currentTarget;
@@ -747,24 +749,26 @@ export default class SkyfallMessage extends ChatMessage {
 		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
 		const rollIndex = button.closest(".roll-entry").dataset.rollIndex;
 		// const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
-		const roll = message.rolls.find( r => r.options.rollIndex == rollIndex );
-		await roll.applyCatharsis({operator});
-		message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
-		
-		message.updateData = {};
-		message.updateData.system = {};
-		message.updateData.rolls = message.rolls;
-		message.updateData.system.rolls = message.system.rolls;
-
-		await message.#prepareUsageHTML();
-		if ( !foundry.utils.isEmpty(message.updateData) ) {
-			await message.update(message.updateData);
-			message.updateData = null;
-		}
-		if ( !game.user.isGM && canvas.tokens.controlled) {
-			const actor = canvas.tokens.controlled[0]?.actor;
-			const current = actor.system.resources.catharsis.value;
-			actor.update({"system.resources.catharsis.value": current - 1});
+		if ( !game.user.isGM && game.userId != this.author.id ) {
+			console.warn('WIP. Usuário sem permissão para modifcar a mensagem rola a catarse fora.\nFuturamente adicionaremos na mesma e mostraremos já concedeu catarse na rolagem.');
+			let r = new Roll('1d6', {}, {flavor: `${rollTitle}: Catarse${operator}`});
+			r.toMessage();
+		} else {
+			
+			await roll.applyCatharsis({operator});
+			message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
+			
+			message.updateData = {};
+			message.updateData.system = {};
+			message.updateData.rolls = message.rolls;
+			message.updateData.system.rolls = message.system.rolls;
+	
+			
+			await message.#prepareUsageHTML();
+			if ( !foundry.utils.isEmpty(message.updateData) ) {
+				await message.update(message.updateData);
+				message.updateData = null;
+			}
 		}
 	}
 

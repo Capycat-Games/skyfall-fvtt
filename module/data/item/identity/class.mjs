@@ -15,7 +15,7 @@ export default class Class extends Identity {
 			hitDie: {"1d6":"1d6","1d8":"1d8","1d10":"1d10"}
 		}
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			level: new fields.NumberField({required:true, integer: true, min: 1, max: 12}),
+			level: new fields.NumberField({required:true, integer: true, min: 1, max: 12, initial: 1}),
 			initial: new fields.BooleanField({required: true, initial:false, label:"Inicial"}),
 			hitDie2: new fields.StringField({required: true, choices:["1d6","1d8","1d10"], initial: "1d6"}),
 			hitDieLevel: new fields.ArrayField(new fields.NumberField({required: true, interger:true})),
