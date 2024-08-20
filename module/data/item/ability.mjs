@@ -11,6 +11,11 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		const AttackAbilities = {
+			...SYSTEM.abilities,
+			magic: {id: 'magic', label:'SKYFALL2.ABILITY.Spellcasting'},
+			// weapon: {id: 'weapon', label:'TYPES.Item.weapon'},
+		}
 		return {
 			description: new fields.SchemaField({
 				value: new fields.HTMLField({required: true, blank: true}),
@@ -32,6 +37,10 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
 				value: new fields.NumberField({required: true, integer: true, min: 0, label: "SKYFALL2.Value"}),
 				units: new fields.StringField({required: true, blank: true, choices: SYSTEM.durations, initial: "", label: "SKYFALL2.UnitPl"}),
+				concentration: new fields.BooleanField({
+					required: true,
+					initial: false,
+					label: "SKYFALL2.DURATION.Concentration"}),
 			}, {label: "SKYFALL2.Duration"}),
 			target: new fields.SchemaField({
 				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
@@ -53,8 +62,21 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				hit: new fields.HTMLField({required: true, blank: true, label: "SKYFALL2.ATTACK.Hit"}),
 				miss: new fields.HTMLField({required: true, blank: true, label: "SKYFALL2.ATTACK.Miss"}),
 				//Formula Variable @for, @des, @magico, @weaponName
-				type: new fields.StringField({required: true, blank: true, label: "SKYFALL2.ATTACK.Type"}),
-				protection: new fields.StringField({required: true, blank: true, choices: SYSTEM.abilities, label: "SKYFALL2.ATTACK.Protection"}),
+				type: new fields.StringField({
+					required: false,
+					nullable: true,
+					initial: null,
+					label: "SKYFALL2.Ability"
+				}),
+				ability: new fields.StringField({
+					required: true,
+					blank: true,
+					nullable: true,
+					choices: AttackAbilities,
+					initial: null,
+					label: "SKYFALL2.Ability"
+				}),
+				protection: new fields.StringField({required: true, blank: true, choices: SYSTEM.abilities, label: "SKYFALL2.ABILITY.Protection"}),
 				damage: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Damage"}),
 			}),
 			effect: new fields.SchemaField({
@@ -93,6 +115,35 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			throw new Error(`"${uuid}" is not a valid UUID string`);
 		}
 	}
+
+	/* -------------------------------------------- */
+
+	static migrateData(source) {
+		if ( source.attack ) {
+			let { type, ability } = source.attack;
+
+			if ( type === null && ability === null ){
+				// NEW ITEM
+				source.attack.ability = '';
+			} else if ( type !== null && ability == null ){
+				const AttackAbilities = {
+					magic: {id: 'magic', label:'SKYFALL2.ABILITY.Spellcasting'},
+					...SYSTEM.abilities,
+				}
+				let newType = type.replace('@','');
+				if ( newType in AttackAbilities ) {
+					source.attack.ability = newType;
+				} else {
+					source.attack.ability = '';
+				}
+			} else if ( ability !== null && ability.startsWith('@') ){
+				source.attack.ability = ability.replace('@','');
+			}
+		}
+		return super.migrateData(source);
+	}
+
+	
 	/* -------------------------------------------- */
 	/*  Getters                                     */
 	/* -------------------------------------------- */
@@ -103,13 +154,13 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 
 	
 	get isRanged(){
-		return this.range.value > 1.5;
+		return this.range.value != 1.5;
 	}
 
 	get labels() {
 		const labels = {};
 		// ACTIVATION
-		const actions = new Set(['action','bonus','reaction','free']);
+		const actions = new Set(['action','bonus','reaction','free','passive']);
 		labels.action = {
 			label: SYSTEM.activations[this.action].label,
 			icon: actions.has(this.action) ? SYSTEM.icons[`sf${this.action}`] : SYSTEM.icons.sfmaction
@@ -163,13 +214,23 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		// Attack
 		if ( labels.properties?.attack ) {
 			labels.attack = {};
-			if ( this.attack.hit ) labels.attack.hit = {
-				label: `SKYFALL.ITEM.ABILITY.HIT`,
-				descriptive: this.attack.hit,
+			if ( this.attack.hit ) {
+				labels.attack.hit = {
+					label: `SKYFALL.ITEM.ABILITY.HIT`,
+					descriptive: this.attack.hit,
+				}
+				TextEditor.enrichHTML(this.attack.hit, {}).then(
+					(data) => labels.attack.hit.descriptive = data
+				);
 			}
-			if ( this.attack.miss ) labels.attack.miss = {
-				label: `SKYFALL.ITEM.ABILITY.MISS`,
-				descriptive: this.attack.miss,
+			if ( this.attack.miss ) {
+				labels.attack.miss = {
+					label: `SKYFALL.ITEM.ABILITY.MISS`,
+					descriptive: this.attack.miss,
+				}
+				TextEditor.enrichHTML(this.attack.miss, {}).then(
+					(data) => labels.attack.miss.descriptive = data
+				);
 			}
 		}
 
@@ -179,19 +240,33 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				label: `SKYFALL.ITEM.ABILITY.EFFECT`,
 				descriptive: this.effect.descriptive,
 			};
+			TextEditor.enrichHTML(this.effect.descriptive, {}).then(
+				(data) => labels.effect.descriptive = data
+			);
 		}
 		if ( this.special.descriptive ) {
 			labels.special = {
 				label: `SKYFALL.ITEM.ABILITY.SPECIAL`,
 				descriptive: this.special.descriptive,
 			};
+			TextEditor.enrichHTML(this.special.descriptive, {}).then(
+				(data) => labels.special.descriptive = data
+			);
+		}
+		
+		// Modifications
+		const modifications = this.parent?.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
+		if ( modifications ) {
+			Promise.all([
+				TextEditor.enrichHTML(modifications,{})
+			]).then((data) => labels.modifications = data );
 		}
 		return labels;
 	}
 
 
 	/* -------------------------------------------- */
-	/*  Database Workflows                          */
+	/*  Data Preparation                            */
 	/* -------------------------------------------- */
 	
 	/** @override */
@@ -205,134 +280,58 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	 */
 	prepareDerivedData() {
 		this.range.icon = this.isRanged ? SYSTEM.icons.sfranged : SYSTEM.icons.melee;
-
-		this._labels = {};
-		let actions = ['action','bonus','reaction','free'];
-		let action = this.activation.type;
-		if ( action && !actions.includes(action) ){
-			this._labels.action = {
-				label: SYSTEM.activations[action].label,
-				icon: SYSTEM.icons.sfmaction,
-			}
-		} else { 
-			this._labels.action = {
-				label: SYSTEM.activations[action].label,
-				icon: SYSTEM.icons[`sf${action}`]
-			}
-		}
-		
-		if ( this.activation.repeatable ) {
-			this._labels.cost = SYSTEM.icons.sfrepeatable;
-		} else if ( this.activation.cost == 0 ) {
-			this._labels.cost = "-";
-		} else {
-			this._labels.cost = game.i18n.format('{cost} {rsc}', {
-				cost: this.activation.cost ?? "-",
-				rsc: game.i18n.localize("SKYFALL.ACTOR.RESOURCES.EPABBR")
-			});
-		}
-		
-		// Prepare descriptor structure {id, type, label, hint, value}
-		if ( this.descriptors ) {
-			const _descriptors = [ ...this.descriptors ];
-			this._labels.descriptors = _descriptors.reduce((acc, key) => {
-				acc[key] = {
-					value: (this.descriptors.includes(key)),
-					...SYSTEM.DESCRIPTORS[key] ?? {
-						id: key, hint: "", type: "origin", label: key.toUpperCase(),
-					}
-				}
-				return acc;
-			}, {});
-		}
-		// Prepare spellIcon
-		const spellDescriptors = ['control','ofensive','utility'];
-		for ( const spelld of spellDescriptors ) {
-			if ( this.descriptors.includes(spelld) ) {
-				this._labels.spell = {
-					label: SYSTEM.DESCRIPTORS[spelld].label,
-					icon: SYSTEM.icons[`sfspell${spelld}`]
-				}
-			}
-		}
-
-		this._labels.properties = {};
-		if ( this.range.descriptive ) {
-			this._labels.properties.range = {
-				label: "SKYFALL.ITEM.ABILITY.RANGE",
-				descriptive: this.range.descriptive,
-			}
-		} else {
-			let tileSize = canvas.grid?.options?.dimensions?.distance ?? 1.5;
-			this._labels.properties.range = {
-				label: "SKYFALL.ITEM.ABILITY.RANGE",
-				descriptive: game.i18n.format('{value} {unit} ({sqr} q)', {
-						value: this.range.value,
-						unit: this.range.unit,
-						sqr: ( tileSize ) * this.range.value,
-					}),
-			}
-		}
-		if ( this.target.descriptive ) {
-			this._labels.properties.target = {
-				label: "SKYFALL.ITEM.ABILITY.TARGET",
-				descriptive: this.target.descriptive
-			}
-		} else {}
-
-		if ( this.duration.descriptive ) {
-			this._labels.properties.duration = {
-				label: "SKYFALL.ITEM.ABILITY.DURATION",
-				descriptive: this.duration.descriptive
-			}
-		} else {}
-
-		if ( this.attack.descriptive ) {
-			this._labels.properties.attack = {
-				label: "SKYFALL.ITEM.ABILITY.ATTACK",
-				descriptive: this.attack.descriptive,
-			}
-			this._labels.attack ={
-				hit: {
-					label: "SKYFALL.ITEM.ABILITY.HIT",
-					descriptive: this.attack.hit,
-				},
-				miss: {
-					label: "SKYFALL.ITEM.ABILITY.MISS",
-					descriptive: this.attack.miss,
-				}
-			}
-		} else {}
-
-		if ( this.activation.trigger ) {
-			this._labels.properties.trigger = {
-				label: "SKYFALL.ITEM.ABILITY.TRIGGER",
-				descriptive: this.activation.trigger,
-			}
-		} else {}
-
-		if ( this.effect.descriptive ) {
-			this._labels.effect = {
-				label: "SKYFALL.ITEM.ABILITY.EFFECT",
-				descriptive: this.effect.descriptive,
-			}
-		} else {}
-
-		if ( this.special.descriptive ) {
-			this._labels.special = {
-				label: "SKYFALL.ITEM.ABILITY.SPECIAL",
-				descriptive: this.special.descriptive,
-			}
-		} else {}
-
-		if ( this.components && this.components.length ) { 
-			this._labels.properties.components = {
-				label: "SKYFALL.ITEM.SPELL.COMPONENTS",
-				descriptive: this.components.map(i => i[0]).join(", ").toUpperCase(),
-			}
-		}
 	}
 
+	/* -------------------------------------------- */
+	/*  Database Workflows                          */
+	/* -------------------------------------------- */
+
+	// async _preUpdate(changes, options, user) {
+	// 	if ( user.id != game.user.id ) return false;
+	// 	console.groupCollapsed("DataModel: Ability._preUpdate");
+	// 	console.log( changes );
+	// 	console.log( this );
+	// 	// console.log( this.parent );
+
+	// 	console.log( "changes.system.attack.type", changes.system.attack.type );
+	// 	console.log( "system.attack.type", this.attack.type );
+	// 	console.log( "_source.attack.type", this._source.attack.type );
+	// 	console.log( "changes.system.attack.ability", changes.system.attack.ability );
+	// 	console.log( "system.attack.ability", this.attack.ability );
+	// 	console.log( "_source.attack.ability", this._source.attack.ability );
+		
+	// 	console.groupEnd();
+	// 	// if ( 'type' in this.attack ) {
+	// 	// 	this.updateSource({
+	// 	// 		"attack.-=type": null
+	// 	// 	});
+	// 	// }
+	// }
+
+	/** @override */
+	async toEmbed(config, options={}) {
+		config.classes = "ability-embed";
+		config.cite = false;
+		config.caption = false;
+		let modifications = this.parent.effects.filter(ef => ef.type == "modification").map(ef => `@EMBED[${ef.uuid}]`);
+		
+		const abilityCard = await renderTemplate("systems/skyfall/templates/v2/item/ability-card.hbs", {
+			SYSTEM: SYSTEM,
+			document: this.parent,
+			item: this.parent,
+			system: this,
+			labels: this.labels,
+			isPlayMode: true,
+			isEmbed: true,
+			enriched: [],
+			modifications: modifications.join(''),
+		});
+		
+		const container = document.createElement("div");
+		container.innerHTML = await TextEditor.enrichHTML(abilityCard, {});
+		
+		return container.firstChild;
+	}
 	/**
 	 * 
 	 * @param {*} config 
@@ -341,7 +340,6 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	 */
 	async _embed(config, options={}) {
 		const container = document.createElement("div");
-		
 		container.innerHTML = `
 			<div class="ability-header">
 				<span>action</span>

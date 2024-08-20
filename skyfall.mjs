@@ -44,6 +44,7 @@ globalThis.skyfall = {
 	utils: functions
 }
 globalThis.RollSF = dice.SkyfallRoll;
+globalThis.SkyfallRoll = dice.SkyfallRoll;
 
 Hooks.once('init', function () {
 	console.log(`Initializing Skyfall Game System`);
@@ -59,12 +60,12 @@ Hooks.once('init', function () {
 	CONFIG.ActiveEffect.legacyTransferral = false;
 	CONFIG.Combat.initiative.formula = '1d20 + @dex';
 	CONFIG.Combat.initiative.decimals = 2;
-
+	
 	// Define system Document classes
 	CONFIG.Actor.documentClass = documents.SkyfallActor;
 	CONFIG.Item.documentClass = documents.SkyfallItem;
 	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
-	// CONFIG.Token.documentClass = documents.SkyfallToken;
+	CONFIG.Token.documentClass = documents.SkyfallToken;
 	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
 	CONFIG.Token.objectClass = TokenSkyfall;
 	CONFIG.ui.combat = CombatTrackerSkyfall;
@@ -72,9 +73,10 @@ Hooks.once('init', function () {
 	// DATA MODEL
 	CONFIG.Actor.dataModels["character"] = models.actor.Character;
 	CONFIG.Actor.dataModels["npc"] = models.actor.NPC;
-	// CONFIG.Actor.dataModels["vehicle"] = models.actor.Vehicle;
+	CONFIG.Actor.dataModels["guild"] = models.actor.Guild;
+	CONFIG.Actor.dataModels["partner"] = models.actor.Partner;
+	CONFIG.Actor.dataModels["creation"] = models.actor.Creation;
 	// CONFIG.Actor.dataModels["party"] = models.actor.Party;
-	// CONFIG.Actor.dataModels["guild"] = models.actor.Guild;
 	
 	
 	CONFIG.Item.dataModels["legacy"] = models.item.Legacy;
@@ -94,6 +96,10 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["consumable"] = models.item.Consumable;
 	CONFIG.Item.dataModels["loot"] = models.item.Loot;
 
+	CONFIG.Item.dataModels["seal"] = models.item.Seal;
+	CONFIG.Item.dataModels["facility"] = models.item.Facility;
+	CONFIG.Item.dataModels["guild-ability"] = models.item.GuildAbility;
+
 	CONFIG.ActiveEffect.dataModels["modification"] = models.other.Modification;
 	CONFIG.ChatMessage.dataModels["usage"] = models.other.UsageMessage;
 
@@ -110,17 +116,25 @@ Hooks.once('init', function () {
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("skyfall", sheetsV2.CharacterSheetSkyfall, {
-		types: ["character"], makeDefault: true, label: 'TYPES.Actor.character',
+		types: ["character"], label: 'TYPES.Actor.character',
 		makeDefault: true,
 	});
 	Actors.registerSheet("skyfall", sheetsV2.NPCSheetSkyfall, {
-		types: ["npc"], makeDefault: true, label: 'TYPES.Actor.npc',
+		types: ["npc"], label: 'TYPES.Actor.npc',
+		makeDefault: true,
+	});
+	Actors.registerSheet("skyfall", sheetsV2.PartnerSheetSkyfall, {
+		types: ["partner","creation"], label: 'TYPES.Actor.partner',
+		makeDefault: true,
+	});
+	Actors.registerSheet("skyfall", sheetsV2.GuildSheetSkyfall, {
+		types: ["guild"], label: 'TYPES.Actor.guild',
 		makeDefault: true,
 	});
 	
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
-		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot'],
+		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot','facility','seal'],
 		makeDefault: true,
 	});
 
@@ -130,6 +144,10 @@ Hooks.once('init', function () {
 	});
 	Items.registerSheet("skyfall", sheetsV2.SigilSheetSkyfall, {
 		types: ['sigil'],
+		makeDefault: true,
+	});
+	Items.registerSheet("skyfall", sheetsV2.GuildAbilitySheetSkyfall, {
+		types: ['guild-ability'],
 		makeDefault: true,
 	});
 	
@@ -204,6 +222,12 @@ function registerFonts() {
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
+Hooks.once("i18nInit", async function () {
+	
+	
+
+});
+
 Hooks.once('ready', async function () {
 	
 	// Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
@@ -215,6 +239,9 @@ Hooks.once('ready', async function () {
 	
 	prepareSystemLocalization();
 	prepareSystemStatusEffects();
+
+	// Re-Prepare Guild Data now that all member shall have been prepared;
+	game.actors.filter( i => i.type == 'guild').map( i => i.prepareData() );
 
 	const svg = await fetchSVG("systems/skyfall/assets/skyfall-logo-h.svg");
 	svg.id = "logo";
@@ -258,6 +285,12 @@ Hooks.on("targetToken", (user, token, target) => {
 		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
 });
+
+// Hooks.on("renderFormApplication", (app, html, data) => {
+// 	console.log(app, html, data);
+// 	if ( html ) html.addEventListener('.content-embed');
+// });
+
  
 /* -------------------------------------------- */
 /*  Helpers                                     */
@@ -355,6 +388,7 @@ async function prepareSystemStatusEffects() {
 			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
 		);
 	}
+	
 	for (const [i, ef] of CONFIG.statusEffects.entries()) {
 		ef.name = game.i18n.localize(ef.name);
 		// Search and include tooltips
@@ -415,19 +449,31 @@ function registerCustomEnrichers(){
 	// (?<type>ability|skill|attack|damage|healing)
 	document.body.addEventListener("click", rollConfig);
 }
-function enrichReference(match, options) {
-	let { type, config, label } = match.groups;
+
+async function enrichReference(match, options) {
+	let { type, config } = match.groups;
 	
-	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
+	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.SIGILDESCRIPTORS[config] ?? SYSTEM.GUILDDESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
 	if ( !reference ) return;
 	let style;
-	if ( SYSTEM.DESCRIPTORS[config] ) style = "descriptor-reference";
-	else if ( SYSTEM.conditions[config] ) style = "condition-reference";
+	let tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
+	let label = game.i18n.localize(reference.label);
+	if ( SYSTEM.DESCRIPTORS[config] || SYSTEM.SIGILDESCRIPTORS[config] || SYSTEM.GUILDDESCRIPTORS[config] ) style = "descriptor-reference";
+	else if ( SYSTEM.conditions[config] ) {
+		style = "condition-reference";
+		const journalConditions = await fromUuid(
+			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
+		);
+		const page = journalConditions.pages.find( p => p.name == label );
+		if ( page ) {
+			tooltip = `<section class='tooltip status-effect'><h3>${label}</h3>${page.text.content}</section>`;
+		}
+	}
 	
 	const inline = document.createElement('span');
 	inline.classList.add(style);
-	inline.dataset.tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
-	inline.innerHTML = game.i18n.localize(reference.label);
+	inline.dataset.tooltip = tooltip;
+	inline.innerHTML = label;
 	return inline;
 }
 

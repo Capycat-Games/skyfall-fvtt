@@ -39,9 +39,9 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
 		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
 		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
-		abilities: {id: "abilities", group: "primary", label: "SKYFALL.ABILITIES"},
+		abilities: {id: "abilities", group: "primary", label: "SKYFALL2.AbilityPl"},
 		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
-		effects: {id: "effects", group: "primary", label: "TYPES.ActiveEffect.basePL"}
+		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"}
 	};
 
 	/** @override */
@@ -72,7 +72,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		
 		switch (this.document.type) {
 			case 'loot':
 			case 'weapon':
@@ -95,6 +94,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'class':
 				options.parts = ["header","tabs","traits","features","feats","effects"];
 				this.tabs = ["traits","features","feats","effects"];
+				this.tabGroups.primary = 'traits';
 				break;
 			case 'curse':
 			case 'path':
@@ -106,6 +106,11 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				options.parts = ["header","tabs","description","abilities","effects"];
 				this.tabs = ["description","abilities","effects"];
 				break;
+			case 'facility':
+			case 'seal':
+				options.parts = ["header","tabs","description","effects"];
+				this.tabs = ["description","effects"];
+				break
 			case 'ability':
 			case 'spell':
 			case 'sigil':
@@ -144,9 +149,22 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			uuid: item.uuid,
 			parentUuid: '',
 			infused: false,
-		})
+		});
 		
-		return this.document.update(updateData);
+		if ( this.document.isEmbedded ) {
+			const sigil = item.toObject();
+			sigil.system.item = this.document.uuid;
+			const created = await	this.document.actor.createEmbeddedDocuments("Item", [sigil]);
+			updateData[fieldPath].pop();
+			updateData[fieldPath].push({
+				uuid: item.uuid,
+				parentUuid: created[0].uuid,
+				infused: false,
+			});
+			this.document.update(updateData);
+		} else {
+			return this.document.update(updateData);
+		}
 	}
 
 	async _onDropGranted(item, fieldPath, itemType){
@@ -367,30 +385,9 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				uuid: sigil.uuid,
 				name: sigil.name,
 				label: sigil.name,
-				infused: sigil.system.fragments.value
+				infused: this.document.isEmbedded ? sigil.system.fragments.value : sigilData.infused
 			});
 		}
-		
-		return;
-		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
-		const actor = this.document.actor;
-		context._selOpts['sigils'] = { prefix: {}, sufix: {} }
-		const selectedSigils = this.document.system.sigils;
-		const sigils2 = actor.items.filter( i => i.type == 'sigil' && i.system.equipment == type );
-		
-		sigils2.reduce( (acc, s) => {
-			if ( s.system.item && s.system.item != this.document.uuid ) return acc;
-			acc[s.system.type][s.id] = {
-				id: s.id,
-				uuid: s.uuid,
-				name: s.name,
-				label: s.name,
-				enchanted: s.system.item == this.document.uuid,
-				infused: s.system.fragments.value,
-				selected: selectedSigils[s.system.type].has(s.uuid) ? 'selected' : ''
-			};
-			return acc
-		}, context._selOpts.sigils );
 	}
 
 	/* ---------------------------------------- */
@@ -414,7 +411,12 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	 */
 	static async #infuse(event, target) {
 		const uuid = target.closest('li').dataset.uuid;
-		if ( uuid.startsWith("Compendium") ) {
+		const parsed = foundry.utils.parseUuid(uuid);
+		if ( parsed.embedded.includes("Item") ) {
+			const item = await fromUuid(uuid);
+			const current = foundry.utils.getProperty(item, 'system.fragments.value');
+			await item.update({"system.fragments.value": !current });
+		} else {
 			const sigils = this.document.system.sigils;
 			const updateData = {};
 			updateData['system.sigils'] = sigils.reduce( (acc, sigil) => {
@@ -424,11 +426,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				acc.push(sigil);
 				return acc;
 			}, []);
-			this.document.update( updateData );
-		} else {
-			const item = await fromUuid(uuid);
-			const current = foundry.utils.getProperty(item, 'system.fragments.value');
-			await item.update({"system.fragments.value": !current });
+			await this.document.update( updateData );
 		}
 		this.render();
 	}

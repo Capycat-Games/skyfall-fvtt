@@ -102,6 +102,7 @@ export default class SkyfallEffect extends ActiveEffect {
 		const data = this;
 		return data;
 	}
+
 	/* -------------------------------------------- */
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
@@ -211,6 +212,26 @@ export default class SkyfallEffect extends ActiveEffect {
 	// _onUpdate(data, options, userId) {
 	// 	return super._onUpdate(data, options, userId);
 	// }
+
+	/* -------------------------------------------- */
+  /*  Methods                                     */
+  /* -------------------------------------------- */
+	
+	apply(actor, change) {
+		this.applyRollData( change );
+		return super.apply( actor, change );
+	}
+
+	applyRollData( change ){
+		const parent = this.parent;
+		const granparent = this.parent ? this.parent.parent : null;
+
+		if ( !granparent ) return;
+		change.value = Roll.replaceFormulaData( change.value, parent.getRollData());
+		change.value = Roll.replaceFormulaData( change.value, granparent.getRollData());
+		const roll = new Roll(change.value);
+		if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;
+	}
 
 	/* -------------------------------------------- */
 	/*  Embed                                       */

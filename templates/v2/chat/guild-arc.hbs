@@ -1,0 +1,32 @@
+{{#if (eq phase 'start')}}
+<h1 class="text-center" style="line-height: 1em;">{{localize "SKYFALL2.GUILD.GuildArcStarted"}}</h1>
+{{else if (eq phase 'end')}}
+<h1 class="text-center" style="line-height: 1em;">{{localize "SKYFALL2.GUILD.GuildArcEnded"}}</h1>
+{{/if}}
+{{#if (eq phase 'start')}}
+<h3 class="text-center" style="line-height: 1em;">{{localize "SKYFALL2.GUILD.PointsSummary"}}</h3>
+{{else if (eq phase 'end')}}
+<h3 class="text-center" style="line-height: 1em;">{{localize "SKYFALL2.GUILD.PointsStored"}}</h3>
+{{/if}}
+<ol>
+	{{#each points as | point abl |}}
+	<li class="flexrow">
+		<div class="item-name">
+			{{{point.icon}}}
+			{{point.label}}
+		</div>
+		<div class="item-value">
+			{{#if (eq @root.phase 'start')}}
+			{{point.stored}} + {{point.earned}} = {{point.total}}
+			{{else if (eq @root.phase 'end')}}
+			{{point.stored}} | {{point.limit}} = {{point.total}}
+			{{/if}}
+		</div>
+	</li>
+	{{/each}}
+</ol>
+
+{{#if (eq phase 'start')}}
+<h3 class="text-center" style="line-height: 1em;">{{localize "SKYFALL2.GUILD.ActionSummary"}}</h3>
+<h1 class="text-center" style="line-height: 1em;">{{actions}}</h1>
+{{/if}}

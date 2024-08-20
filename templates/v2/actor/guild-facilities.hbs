@@ -1,0 +1,26 @@
+<section class="tab scrollable guild-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<div class="blueprints">
+		<div class="form-group stacked">
+			<label>{{localize "SKYFALL2.GUILD.BlueprintPl"}}</label>
+			<div class="form-fields">
+				<textarea name="system.blueprints">{{system.blueprints}}</textarea>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<ul class="plain facilities">
+		{{#each items.facilities as | facility i|}}
+		<li class="facility flexrow" data-entry-id="{{facility.id}}" data-index="{{i}}">
+			<div class="item-name flexrow flex2">
+				<img src="{{facility.img}}" class="flex0" width="36" height="36" >
+				{{facility.name}}
+			</div>
+			<div class="item-level">{{facility.system.level}}</div>
+			<div class="item-controls">
+				<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+				<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</div>

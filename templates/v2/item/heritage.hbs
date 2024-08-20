@@ -30,8 +30,6 @@
 			</div>
 		</div>
 		{{!-- FEATURES LIST --}}
-		{{log heritage}}
-		{{log heritage.features.length}}
 		<ol class="plain drop-item" data-field-path="system.heritages.{{key}}.features" data-item-type="feature">
 			{{#each heritage.features as | item id | }}
 			<li class="item feature entry flexrow" data-entry-id="{{item.uuid}}">

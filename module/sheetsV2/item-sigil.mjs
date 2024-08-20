@@ -15,6 +15,9 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			
 		}
 	};
+	get docType () {
+		return this.document?.type ?? ''
+	}
 	_sheetMode = 1;
 	/** @override */
 	static PARTS = {
@@ -36,7 +39,7 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	static TABS = {
 		config: {id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active'},
-		effects: {id: "effects", group: "configuration", label: "TYPES.ActiveEffect.basePL"}
+		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"}
 	};
 
 	/** @override */

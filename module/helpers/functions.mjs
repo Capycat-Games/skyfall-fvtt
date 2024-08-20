@@ -53,8 +53,21 @@ export const rollTitle = (config) => {
 	}
 }
 
-/*
 
+export const createHTMLElement = ({tag, cssClasses=[], content, value}) => {
+	const dom = document.createElement(tag);
+	cssClasses.map( cls => dom.classList.add( cls ) );
+	
+	if ( content && content instanceof HTMLElement) dom.html = content;
+	else if ( content ) {
+		dom.innerText = content;
+	}
+	if ( value ) dom.value = value;
+	return dom;
+}
+
+
+/*
 // Prepare descriptor structure {id, type, label, hint, value}
 if ( this.descriptors ) {
 	const _descriptors = [ ...this.descriptors ];

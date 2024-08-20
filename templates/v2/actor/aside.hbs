@@ -23,7 +23,11 @@
 	</div>
 
 	<div class="resource hp flexrow">
-		<h4 class="flex100">{{localize "SKYFALL.ACTOR.RESOURCES.HP"}}</h4>
+		<h4 class="flex100">
+			<a data-action="manage" data-manage="resources">
+				{{localize "SKYFALL.ACTOR.RESOURCES.HP"}}
+			</a>
+		</h4>
 		<div class="container">
 			<div class="bar {{#if system.resources.hp.negative }}negative{{/if}}" style="width:{{system.resources.hp.pct}}%;"></div>
 			<div class="bar temp" style="width:{{system.resources.hp.tpct}}%;"></div>
@@ -31,14 +35,23 @@
 				{{!-- {{formInput schema.resources.hp.max value=system.resources.hp.max disabled=true dataset=(toObject 'tooltip:SKYFALL.TOTAL')}} --}}
 				<span data-tooltip="SKYFALL2.Total">{{system.resources.hp.max}}</span>
 				/
-				{{formInput schema.resources.hp.value value=system.resources.hp.value dataset=(toObject 'tooltip:SKYFALL2.Current')}}
+				{{formInput
+					schema.resources.hp.value
+					value=system.resources.hp.value
+					max=system.resources.hp.max
+					dataset=(toObject 'tooltip:SKYFALL2.Current')
+				}}
 				({{formInput schema.resources.hp.temp value=system.resources.hp.temp  dataset=(toObject 'tooltip:SKYFALL2.Temporary')}})
 			</div>
 		</div>
 	</div>
 
 	<div class="resource ep flexrow">
-		<h4 class="flex100">{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}</h4>
+		<h4 class="flex100">
+			<a data-action="manage" data-manage="resources">
+				{{localize "SKYFALL.ACTOR.RESOURCES.EP"}}
+			</a>
+		</h4>
 		<div class="container">
 			<div class="bar {{#if system.resources.ep.negative }}negative{{/if}}" style="width:{{system.resources.ep.pct}}%;"></div>
 			<div class="bar temp" style="width:{{system.resources.ep.tpct}}%;"></div>
@@ -46,7 +59,12 @@
 				{{!-- {{formInput schema.resources.ep.max value=system.resources.ep.max disabled=true dataset=(toObject 'tooltip:SKYFALL2.Total')}} --}}
 				<span data-tooltip="SKYFALL2.Total">{{system.resources.ep.max}}</span>
 				/
-				{{formInput schema.resources.ep.value value=system.resources.ep.value dataset=(toObject 'tooltip:SKYFALL2.Current')}}
+				{{formInput
+					schema.resources.ep.value
+					value=system.resources.ep.value
+					max=system.resources.ep.max
+					dataset=(toObject 'tooltip:SKYFALL2.Current')
+				}}
 				({{formInput schema.resources.ep.temp value=system.resources.ep.temp  dataset=(toObject 'tooltip:SKYFALL2.Temporary')}})
 			</div>
 		</div>
@@ -74,9 +92,15 @@
 		<a data-action="vary" data-field-path="system.death.success" data-tooltip="{{localize "SKYFALL.ROLL.SUCCESSPLURAL"}}">
 			{{{SYSTEM.icons.heartline}}}
 			{{#with system.death}}
-			{{{ifThen (gte success 1) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-			{{{ifThen (gte success 2) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
-			{{{ifThen (gte success 3) ../SYSTEM.icons.squarefill ../SYSTEM.icons.square}}}
+			{{{ifThen (gte success 1)
+				@root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square
+			}}}
+			{{{ifThen (gte success 2)
+				@root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square
+			}}}
+			{{{ifThen (gte success 3)
+				@root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square
+			}}}
 			{{/with}}
 		</a></h4>
 		<h4><a data-action="vary" data-field-path="system.death.failure" data-tooltip="{{localize "SKYFALL.ROLL.FAILUREPLURAL"}}">

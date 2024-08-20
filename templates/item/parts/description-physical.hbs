@@ -44,7 +44,6 @@
 			<div class="form-group flex0">
 				<label for="">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</label>
 				{{!-- {{> "systems/skyfall/templates/shared/descriptor-field.hbs" fieldPath='system.descriptors' descriptors=descriptors }} --}}
-				{{log log @root.descriptors }}
 				{{#unless (eq @root.descriptors undefined) }}
 				<dropdown-tags name="system.descriptors" class="descriptors">
 					{{#each @root._selOpts.descriptors as | group id |}}

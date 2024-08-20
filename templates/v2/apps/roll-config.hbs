@@ -68,7 +68,6 @@
 			<div class="flex3">{{localize "SKYFALL2.APP.ROLLCONFIG.RollTransformer"}}</div>
 		</li>
 		{{#each transformers as | transformer t |}}
-		{{log transformer}}
 		<li class="roll-transformer flexrow">
 			<div class="transformer">
 				<label class="transformer {{ifThen transformer.active active}}">{{transformer.label}} <input type="checkbox" data-action="check" name="transformers.{{t}}.active" class="" {{checked transformer.active}}></label>

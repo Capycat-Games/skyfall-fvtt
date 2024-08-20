@@ -41,7 +41,6 @@ export default class SKyfallUsageConfig extends DocumentSheet {
 		context.modifications = this.document.system.modifications;
 
 		// this.getUsageEffects(context);
-		console.log("UsageConfig", context);
 		return context;
 	}
 

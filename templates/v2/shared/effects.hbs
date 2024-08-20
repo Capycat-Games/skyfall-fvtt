@@ -4,9 +4,11 @@
 			{{#each modifications as |section sid|}}
 			<li class="items- header entry2 flexrow" data-effect-type="{{section.type}}">
 				<div class="item-name"><h6>{{localize section.label}}</h6></div>
-				{{#if (eq section.type 'temporary') }}
-				<div class="item-duration"><h6>{{localize "SKYFALL.DURATION"}}</h6></div>
-				{{/if}}
+				<div class="item-duration">
+					{{#if (eq section.type 'temporary') }}
+					<h6>{{localize "SKYFALL.DURATION"}}</h6>
+					{{/if}}
+				</div>
 				<div class="item-source"><h6>{{localize "SKYFALL.SOURCE"}}</h6></div>
 				<div class="item-controls effect-controls">
 					<a class="item-control" data-action="create" data-create="ActiveEffect" data-category="{{sid}}" title="{{localize 'DOCUMENT.Create' type="Effect"}}">
@@ -83,7 +85,7 @@
 			{{/each}}
 		</ol>
 	</section>
-	{{#if (eq @root.document.documentName "Actor") }}
+	{{#if (or (eq @root.document.type "character") (eq @root.document.type "npc")) }}
 	<section class="status-effects">
 		<ol class="plain status-list">
 			{{#each statusEffects as | effect id | }}

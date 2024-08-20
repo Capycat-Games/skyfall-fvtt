@@ -28,6 +28,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			type: roll.options.type,
 			ability: roll.options.ability,
 			skill: roll.options.skill,
+			bonus: roll.options.bonus,
 			formula: roll.formula,
 		}
 	}
@@ -41,8 +42,10 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			type: options.type,
 			ability: options.ability,
 			skill: options.skill,
+			bonus: options.bonus,
 			formula: options.formula,
 			protection: options.protection,
+			damageType: options.damageType,
 			rollIndex: options.rollIndex,
 		}
 	}
@@ -103,6 +106,15 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 					flavor:'proficiency',
 					preview: this.rollData['prof'] ?? 0,
 					//this.actor.getRollData()['prof'] ?? 0,
+					active: true,
+				});
+			}
+			if ( this.config.bonus ){
+				this.system.terms.push({
+					expression: this.config.bonus,
+					label: `Bonus`,
+					flavor: 'bonus',
+					preview: this.config.bonus ?? 0,
 					active: true,
 				});
 			}
@@ -250,7 +262,6 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				{type: "button", action:"roll", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
 			]
 		}
-		console.log(context);
 		return context;
 	}
 
@@ -349,17 +360,43 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		// Initiative
 		if ( this.config.type == 'initiative') {
 			try {
+				const partner = this.actor.type == 'partner';
 				roll.options.flavor = skyfall.utils.rollTitle(this.config);
 				await roll.evaluate();
-				roll.toMessage({}, {rollMode: this.system.rollMode});
+				if ( !partner ) roll.toMessage({}, {rollMode: this.system.rollMode});
 				let combat = game.combats.active;
 				if (!combat) return;
+				const boss = ( this.actor.type == 'npc' && this.actor.system.hierarchy == 'boss' );
+				
 				let combatant = combat.combatants.find(
-					(c) => c.actor.id === this.actor.id
+					(c) => ( (boss && c.initiative == null && c.actor.id === this.actor.id ) || (!boss && c.actor.id === this.actor.id ) )
 				);
+				// SE EXISTE & !ROLOU ATUALIZA
+				// SE NÃO EXISTE CRIA
+				// SE EXISTE & ROLOU
+				
+				// if ( boss && !combatant ) {
+				// 	// TODO CREATE
+				// } else if ( boss && combatant && combatant.initiative == null){
+				// 	// BOSS WITHOUT INITIATIVE
+				// } else if ( boss && combatant ){
+					
+				// } else if ( combatant && combatant.initiative == null){
+				// 	combat.setInitiative(combatant.id, roll.total);
+				// } else if ( !combatant ) {
+					
+				// }
+				
 				if ( !combatant || combatant.initiative != null ) return;
-				combat.setInitiative(combatant.id, roll.total);
+				combat.setInitiative(combatant.id, (partner ? 0 : roll.total ));
 				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
+				return;
+				if ( options.createCombatants ) {
+					// toCreate.push({tokenId: t.id, sceneId: t.scene.id, actorId: this.id, hidden: t.document.hidden});
+					await combat.createEmbeddedDocuments("Combatant", [
+						{tokenId: t.id, sceneId: t.scene.id, actorId: this.id, hidden: t.document.hidden}
+					]);
+				}
 			} catch (error) {
 				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
 			}

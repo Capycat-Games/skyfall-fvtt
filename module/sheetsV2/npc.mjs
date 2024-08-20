@@ -1,4 +1,3 @@
-import { abilities } from "../config/creature.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
@@ -21,10 +20,14 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	static PARTS = {
 		tabs: {template: "templates/generic/tab-navigation.hbs"},
 		statblock: {
-			template: "systems/skyfall/templates/v2/actor/statblock.hbs",
+			template: "systems/skyfall/templates/v2/actor/statblock-npc.hbs",
 			templates: [
 				"systems/skyfall/templates/v2/actor/statblock-abilities.hbs",
 			]
+		},
+		inventory: {
+			template: "systems/skyfall/templates/v2/actor/inventory.hbs",
+			scrollable: [".actor-inventory"]
 		},
 		effects: {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
@@ -35,6 +38,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
 	static TABS = {
 		statblock: {id: "statblock", group: "actor", label: "SKYFALL.TAB.STATBLOCK", cssClass: 'active'},
+		inventory: {id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
 		effects: {id: "effects", group: "actor", label: "SKYFALL.TAB.EFFECTS" },
 	};
 
@@ -68,7 +72,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		options.parts = ["tabs", "statblock", "effects"];
+		options.parts = ["tabs", "statblock", "inventory", "effects"];
 	}
 	
 	/** @override */
@@ -132,7 +136,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		// Prepare data
 		this._prepareSystemData(context);
 		// // 
-		// this._prepareItems(context);
+		this._prepareItems(context);
 		this._prepareAbilities(context);
 		
 		// if ( context.items.abilities ) {
@@ -149,8 +153,20 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	}
 
 	_prepareSystemData(context){
-		
+		// SKILLS
+		const profIcons = [
+			SYSTEM.icons.square,
+			SYSTEM.icons.check,
+			SYSTEM.icons.checkdouble,
+		];
+		for (let [key, skill] of Object.entries(context.system.skills)) {
+			skill.id = key;
+			skill.label = SYSTEM.skills[key]?.label ?? skill.label ?? "SKILL";
+			skill.icon = profIcons[skill.value];
+			skill.type = SYSTEM.skills[key]?.type ?? 'apti' ?? 'custom';
+		}
 		context._skills = Object.values(context.system.skills).filter(i => i.value > 0);
+		
 		const damageTaken = this.document.system.modifiers.damage.taken;
 		const conditionImunity = this.document.system.modifiers.condition.imune;
 		context.irv = {};
@@ -182,6 +198,49 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			context.movement[key].label = SYSTEM.movement[key].label;
 			context.movement[key].icon = SYSTEM.icons[key];
 		}
+	}
+
+	
+	_prepareItems(context){
+		const items = {
+			abilities: [],
+			actions: [],
+			spells: [],
+			inventory: {},
+			sigils: [],
+			features: [],
+			class: [],
+			path: [],
+			attack: [],
+			progression: SYSTEM.characterProgression
+		}
+		const inventory = ['weapon','armor','equipment','clothing','loot','consumable'];
+		const progression = ['legacy','curse','background'];
+		const classPaths = ['class','path'];
+		for (const item of this.document.items ) {
+			const isAttack = item.getFlag('skyfall','attack');
+			if ( isAttack ) {
+				items.attack.push(item);
+				continue;
+			}
+			if ( inventory.includes(item.type) ) {
+				if ( this.inventory == 'category' ) {
+					items.inventory[item.type] ??= [];
+					items.inventory[item.type].push(item);
+				} else {
+					items.inventory.category ??= [];
+					items.inventory.category.push(item);
+				}
+			}
+			if ( ['feature','feat'].includes(item.type) ) items.features.push(item);
+			if ( item.type == 'ability' ) items.abilities.push(item);
+			if ( item.type == 'spell' ) items.spells.push(item);
+			if ( item.type == 'sigil' ) items.sigils.push(item);
+			if ( progression.includes(item.type) ) items[item.type] = item;
+			if ( classPaths.includes(item.type) ) items[item.type].push(item);
+		}
+		
+		context.items = items;
 	}
 
 	async _prepareAbilities(context){

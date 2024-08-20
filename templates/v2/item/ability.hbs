@@ -1,6 +1,8 @@
 <section class="ability-configuration {{ifThen isPlayMode 'hidden' ''}}  flexcol">
 	{{> "templates/generic/tab-navigation.hbs"}}
-	{{#if (eq document.type "sigil")}}
+	{{#if (eq document.type "guild-ability")}}
+	{{> "systems/skyfall/templates/v2/item/guild-ability-config.hbs" tab=tabs.config}}
+	{{else if (eq document.type "sigil")}}
 	{{> "systems/skyfall/templates/v2/item/sigil-config.hbs" tab=tabs.config}}
 	{{else}}
 	{{> "systems/skyfall/templates/v2/item/ability-config.hbs" tab=tabs.config}}

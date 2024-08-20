@@ -58,7 +58,6 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 	}
 
 	async getDescriptors(context, types = []) {
-		console.log(context);
 		context.descriptors = context.system.apply.descriptors.reduce((acc, key) => {
 			acc[key] = true;
 			return acc;

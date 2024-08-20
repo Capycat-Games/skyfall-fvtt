@@ -17,7 +17,6 @@ export default class EffectsMenu extends Application {
 	}
 
 	async getData(){
-		console.log(this.token);
 		return {};
 	}
 }

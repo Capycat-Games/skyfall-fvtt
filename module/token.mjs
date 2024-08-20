@@ -35,7 +35,6 @@ export default class TokenSkyfall extends Token {
 	/* -------------------------------------------- */
 
 	_drawHPEPBar(number, bar, data) {
-		console.warn('_drawHPEPBar');
 		// Extract health data
 		const actorData = this.document.actor.system;
 		let {value, max, temp, tempmax} = foundry.utils.getProperty(actorData, data.attribute);

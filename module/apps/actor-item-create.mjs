@@ -70,7 +70,6 @@ export default class ActorItemCreate extends FormApplication {
 			}
 			context.steps.push(step);
 		}
-		console.log(context);
 		
 		return context;
 	}

@@ -21,7 +21,6 @@ export default class SkyfallMessage extends ChatMessage {
 	
 	/* Set a reference to the Actor and items being used */
 	async #updateUsagePrepareData(){
-		console.warn("updateUsagePrepareData",this.system.modifications);
 		await this.getDocuments();
 		this.#applyItemToAbility();
 		this.#prepareModifications();
@@ -30,7 +29,6 @@ export default class SkyfallMessage extends ChatMessage {
 		this.#prepareAreaTemplate();
 		this.#prepareEffects();
 		await this.#prepareUsageHTML();
-		console.warn("updateData",this.updateData);
 		// return this.updateData;
 	}
 	
@@ -69,24 +67,74 @@ export default class SkyfallMessage extends ChatMessage {
 		
 		// Get a default active effect where ability changes are configured;
 		const itemover = ability.effects.find( ef => ef.name == 'FromItem');
-		if ( !item || !itemover  ) return;
+		if ( !item ) return;
 		this.system.item.system.descriptors = ability.system.descriptors.concat( item.system.descriptors );
 		this.system.item.img = item.img;
+		/* ITEM CHANGES */
+		if ( false ) {
+			const _attack = item.system.attack;
+			const _damage = item.system.damage;
+			let attack = [`@${_attack.ability}`, _attack.bonus];
+			let attackBonus = _attack.bonus.replace('-','+-').split('+');
+			attackBonus = attackBonus.map(bonus => {
+				return {
+					term: bonus.trim(),
+					options: {flavor: '', name: 'bonus', source: 'weapon'}
+				};
+			})
+			this.system.item.system.attack._formula = [
+				{
+					term: '1d20',
+					options: {flavor: '', name: 'd20', source: ''}
+				},
+				{
+					term: `@${_attack.ability}`,
+					options: {flavor: '', name: 'ability', source: 'weapon'}
+				},
+				...attackBonus,
+			];
+			let damage = [_damage.die, `@${_damage.ability}`, _damage.bonus];
+			let damageBonus = _damage.bonus.replace('-','+-').split('+');
+			damageBonus = damageBonus.map(bonus => {
+				return {
+					term: bonus.trim(),
+					options: {flavor: '', name: 'bonus', source: 'weapon'}
+				};
+			})
+			this.system.item.system.attack._damage = [
+				{
+					term: _damage.die,
+					options: {flavor: '', name: 'weapon', source: 'weapon'}
+				},
+				{
+					term: `@${_damage.ability}`,
+					options: {flavor: '', name: 'ability', source: 'weapon'}
+				},
+				...damageBonus,
+			];
+		}
+		// item.system.
+		/* ITEM CHANGES */
 
 		const AFMODES = CONST.ACTIVE_EFFECT_MODES;
-		for (const change of itemover.changes) {
-			if (!foundry.utils.hasProperty( this.system.item, change.key )) continue;
-			let value = RollSF.replaceFormulaData(change.value, item.getRollData() );
-			
-			if( change.mode == AFMODES.CUSTOM ){
-			} else if( change.mode == AFMODES.MULTIPLY ){
-			} else if( change.mode == AFMODES.ADD ){
-			} else if( change.mode == AFMODES.DOWNGRADE ){
-			} else if( change.mode == AFMODES.UPGRADE ){
-			} else if( change.mode == AFMODES.OVERRIDE ){
-				foundry.utils.setProperty(this.system.item, change.key, value);
+		if ( itemover ) {
+			for (const change of itemover?.changes) {
+				if (!foundry.utils.hasProperty( this.system.item, change.key )) continue;
+				let value = RollSF.replaceFormulaData(change.value, item.getRollData() );
+				
+				if( change.mode == AFMODES.CUSTOM ){
+				} else if( change.mode == AFMODES.MULTIPLY ){
+				} else if( change.mode == AFMODES.ADD ){
+				} else if( change.mode == AFMODES.DOWNGRADE ){
+				} else if( change.mode == AFMODES.UPGRADE ){
+				} else if( change.mode == AFMODES.OVERRIDE ){
+					foundry.utils.setProperty(this.system.item, change.key, value);
+				}
 			}
 		}
+		/* DESCRIPTOR CHANGES */
+		
+		/* /DESCRIPTOR CHANGES */
 		this.updateData ??= {};
 		this.updateData.system ??= {};
 		this.updateData.system.item = this.system.item;
@@ -126,8 +174,6 @@ export default class SkyfallMessage extends ChatMessage {
 				resource: mod.system.cost.resource,
 				apply: mod.system.apply.always ? 1 : 0,
 			}
-			console.warn(mod.system.cost);
-			console.warn(mod.system.cost);
 		}
 		this.updateData ??= {};
 		this.updateData.system ??= {};
@@ -138,7 +184,7 @@ export default class SkyfallMessage extends ChatMessage {
 		console.groupCollapsed('applyModifications');
 		const ability = this.system.item.system.activation;
 		// if ( act.resource )
-		this.system.costs['ep'] += ability.cost;
+		if ( ability.cost ) this.system.costs['ep'] += ability.cost;
 		
 		for ( const mod of Object.values(this.system.modifications) ) {
 			const effect = this._actor?.allModifications.find( ef => ef.id == mod.id);
@@ -165,21 +211,41 @@ export default class SkyfallMessage extends ChatMessage {
 		const item = this.system.item;
 		const advantage = this.getFlag('skyfall', 'advantage');
 		const disadvantage = this.getFlag('skyfall', 'disadvantage');
+		const weapon = this._item;
+		const descriptors = item.system.descriptors;
 
 		this.system.rolls = [];
-		let damageType = item.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
+		let damageType = descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
 		const rollData = foundry.utils.mergeObject(this._actor.getRollData(), this._ability.getRollData());
 		if ( this._item ) rollData.item = this._item.getRollData();
-		if ( item.system.attack?.type ) {
-			// TODO REWORK USING ROLLCONFIG APP
-			
-			const attack = item.system.attack;
-			const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
-			
-			terms.push( {term: `${attack.type}`, options: {flavor: '', name: 'ability', source: ''}} );
+		if ( item.system.attack?.ability ) {
 			rollData['prof'] = rollData.proficiency;
-			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			
+			const attack = item.system.attack;
+			const wAttack = weapon?.system?.attack ?? {};
+			const terms = [];
+			terms.push({
+				term: '1d20',
+				options: {flavor: '', name: 'd20', source: ''}
+			},{
+				term: `@${wAttack.ability || attack.ability}`,
+				options: {flavor: '', name: 'ability', source: 'weapon'}
+			},{
+				term: `@prof`,
+				options: {flavor: '', name: 'proficiency', source: 'weapon'}
+			},);
+			if ( wAttack.bonus ) {
+				terms.push({
+					term: wAttack.bonus,
+					options: {flavor: '', name: 'bonus', source: 'weapon'}
+				});
+			}
+			if ( attack.bonus ) {
+				terms.push({
+					term: attack.bonus,
+					options: {flavor: '', name: 'bonus', source: 'ability'}
+				});
+			}
+
 			let rollConfig = {
 				advantage: advantage ?? 0,
 				disadvantage: disadvantage ?? 0,
@@ -191,31 +257,58 @@ export default class SkyfallMessage extends ChatMessage {
 			roll.options.flavor = "Ataque";
 			roll.options.types = ["attack"];
 			roll.options.type = "attack";
-			roll.options.ability = (attack.type == "@magic" ? rollData.spellcasting : (attack.type.replace('@','') ?? 'str'));
+			roll.options.ability = (attack.ability == "magic" ? rollData.spellcasting : (wAttack.ability || attack.ability || 'str'));
+			roll.options.bonus = [wAttack.bonus, attack.bonus].filter(Boolean).join('+');
 			this.system.rolls.push( roll );
-			// let roll = new D20Roll(`${d20} + @prof + ${item.system.attack.type}`, rollData, {types:['check','attack'], flavor:'Ataque', advantage:advantage, disadvantage:disadvantage });
-			// this.system.rolls.push(roll);
-			
 		}
-
+		
 		if ( item.system.attack?.damage ) {
 			if ( this._item ) rollData.weapon = rollData.item.weapon;
-			let roll = new SkyfallRoll(`${item.system.attack.damage}`, rollData, {
+			const wDamage = weapon?.system?.damage ?? {};
+			const formula = !weapon ? item.system.attack.damage : [
+				(wDamage.die ? `${wDamage.die}`: '' ),
+				(wDamage.ability ? `@${wDamage.ability}`: '' ),
+				(wDamage.bonus ? `${wDamage.bonus}`: '' ),
+			].filter(Boolean).join('+');
+			let roll = new SkyfallRoll(`${formula}`,
+				rollData, {
 				types:['damage'],
 				flavor:'Dano Acerto',
+				title:'Dano Acerto',
 				type: "damage",
-				formula: item.system.attack.damage,
+				damageType: damageType,
+				formula: formula,
 			});
 			this.system.rolls.push(roll);
+			if ( descriptors.includes('versatile') ) {
+				const formulaV = !weapon ? item.system.attack.damage : [
+					(wDamage.versatile ? `${wDamage.versatile}`: '' ),
+					(wDamage.ability ? `@${wDamage.ability}`: '' ),
+					(wDamage.bonus ? `${wDamage.bonus}`: '' ),
+				].filter(Boolean).join('+');
+				let rollV = new SkyfallRoll(`${formulaV}`,
+					rollData, {
+					types:['damage'],
+					flavor:'Dano Acerto (Versátil)',
+					title:'Dano Acerto (Versátil)',
+					type: "damage",
+					damageType: damageType,
+					formula: formulaV,
+				});
+				this.system.rolls.push(rollV);
+			}
 		}
 
 		if ( item.system.effect?.damage ) {
 			if ( this._item ) rollData.weapon = rollData.item.weapon;
-			let roll = new SkyfallRoll(`${item.system.effect.damage}`, rollData, {
+			let roll = new SkyfallRoll(`${item.system.attack.damage}`,
+				rollData, {
 				types:['damage'],
 				flavor:'Dano Efeito',
+				title:'Dano Efeito',
 				type: "damage",
-				formula: item.system.effect.damage,
+				damageType: damageType,
+				formula: item.system.attack.damage,
 			});
 			this.system.rolls.push(roll);
 		}
@@ -224,7 +317,7 @@ export default class SkyfallMessage extends ChatMessage {
 		this.updateData.system.rolls = this.system.rolls;
 	}
 
-	async #evaluateRolls(index = null){
+	async #evaluateRolls(index = null, options){
 		await this.getDocuments();
 		this.rollData = {};
 		if ( this._actor ) {
@@ -240,21 +333,29 @@ export default class SkyfallMessage extends ChatMessage {
 		let criticalHit = false;
 		for (const [i, rollData] of Object.entries(this.system.rolls)) {
 			if( index != null && index != i ) continue;
-			console.warn(rollData, this, this.rollData);
 			const roll = await new RollConfig({
 				type: rollData.options.type,
 				ability: rollData.options.ability,
+				bonus: rollData.options.bonus,
 				formula: rollData.options.formula,
 				protection: rollData.options.protection,
-				rollIndex:i,
+				damageType: rollData.options.damageType,
+				rollIndex: i,
 				message: this.id,
 				rollData: this.rollData,
-				createMessage:false
-			}).render(true);
+				createMessage: false,
+				skipConfig: options.skipConfig ?? false,
+			}).render( !options.skipConfig );
 		}
 	}
 
 	async _updateRoll(roll, index){
+		if ( this.rolling && this.rolls.length < (this.system.rolls.length - 1 ) ) {
+			this.rolls[index] = roll;
+			this.system.rolls[index].evaluated = true;
+			this.system.rolls[index].template = await roll.render({flavor: roll.options.flavor});
+			return;
+		} else this.rolling = false;
 		this.rolls[index] = roll;
 		this.system.rolls[index].evaluated = true;
 		this.system.rolls[index].template = await roll.render({flavor: roll.options.flavor});
@@ -345,9 +446,11 @@ export default class SkyfallMessage extends ChatMessage {
 				await this.update(this.updateData, {contentRendered:true})
 				this.updateData = null;
 			}
-			
 			if ( options.skipConfig ) {
-				await this.#evaluateRolls();
+				this.rolling = true;
+				await this.#evaluateRolls(null, {
+					skipConfig: options.skipConfig
+				});
 				if ( !foundry.utils.isEmpty(this.updateData) ) { 
 					await this.update(this.updateData, {contentRendered:true})
 					this.updateData = null;
@@ -364,21 +467,8 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	async _preUpdate(data, options, userId) {
 		if ( this.type == 'usage' ){
-			console.warn("_preUpdate",data);
-			// delete data._id;
-
-			// foundry.utils.mergeObject(this, data);
-			// console.warn(options.contentRendered);
-			// if( !options.contentRendered ) {
-			// 	await this.#prepareUsageHTML();
-			// }
-			// if ( !foundry.utils.isEmpty(this.updateData) ) { 
-			// 	// await this.update(this.updateData)
-			// 	data = foundry.utils.mergeObject(data, this.updateData);
-			// 	// this.updateData = null;
-			// }
+			
 		}
-		console.warn(data, this.updateData);
 		return await super._preUpdate(data, options, userId);
 		// Prevent Update of commited message;
 		if ( data.type == 'usage' ) {
@@ -396,7 +486,6 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	_onUpdate(data, options, userId) {
 		super._onUpdate(data, options, userId);
-		console.warn("_onUpdate",data);
 		return;
 	}
 
@@ -460,8 +549,12 @@ export default class SkyfallMessage extends ChatMessage {
 		if( game.user == this.author.id ) return buttons;
 		buttons.push(
 			{action: 'configure', label: "SKYFALL2.Configure"},
-			{action: 'consumeResources', label: "SKYFALL2.Consume"},
 		);
+		if ( this.system.item.type !== 'guild-ability' ) {
+			buttons.push(
+				{action: 'consumeResources', label: "SKYFALL2.Consume"},
+			);
+		}
 		return buttons;
 	}
 
@@ -708,7 +801,10 @@ export default class SkyfallMessage extends ChatMessage {
 		const message = game.messages.get(chatCardId);
 		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
 		const rollIndex = message.system.rolls.findIndex( r => r.options.flavor == rollTitle );
-		await message.#evaluateRolls(rollIndex);
+		
+		await message.#evaluateRolls(rollIndex, {
+			skipConfig: event.shiftKey
+		});
 		if ( !foundry.utils.isEmpty(message.updateData) ) { 
 			await message.update(message.updateData);
 			message.updateData = null;
@@ -725,7 +821,9 @@ export default class SkyfallMessage extends ChatMessage {
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
 		const message = game.messages.get(chatCardId);
 		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
-		const roll =  message.rolls.find( r => r.options.flavor == rollTitle && r.options.types.includes('damage') );
+		const rollIndex = button.closest(".roll-entry").dataset.rollIndex;
+		const roll =  message.rolls[rollIndex];
+		//.find( r => r.options.title == rollTitle && r.options.types.includes('damage') );
 		
 		for (const token of canvas.tokens.controlled) {
 			token.actor.applyDamage( roll , modifier, true );

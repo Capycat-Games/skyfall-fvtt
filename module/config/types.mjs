@@ -108,6 +108,7 @@ categoryKeys.reduce((obj, key) => {
 		id: key,
 		type: ["category"],
 		label: `SKYFALL.DESCRIPTORS.CATEGORY.${key.toUpperCase()}`,
+		hint: `SKYFALL.DESCRIPTORS.CATEGORY.${key.toUpperCase()}HINT`,
 	}
 	return obj;
 }, DESCRIPTOR.CATEGORY);
@@ -206,4 +207,33 @@ export const SIGILDESCRIPTORS = Object.freeze({
 	...SIGILDESCRIPTOR.GEAR,
 	...SIGILDESCRIPTOR.CLOTHING,
 	...SIGILDESCRIPTOR.EQUIPMENT
+});
+
+
+const GUILDDESCRIPTOR = {
+	GUILD: {},
+	ABILITIES: {}
+}
+
+GUILDDESCRIPTOR.GUILD.guild = {
+	id: 'guild',
+	type: ["guild"],
+	label: `SKYFALL.DESCRIPTORS.GUILD.Guild`,
+	hint: `SKYFALL.DESCRIPTORS.GUILD.GuildHint`,
+}
+
+const guildAbilities = ["guild","cunning","crafting","knowledge","reputation"];
+guildAbilities.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: ["guild"],
+		label: `SKYFALL.DESCRIPTORS.GUILD.${key.titleCase()}`,
+		hint: `SKYFALL.DESCRIPTORS.GUILD.${key.titleCase()}Hint`,
+	}
+	return obj;
+}, GUILDDESCRIPTOR.ABILITIES);
+
+export const GUILDDESCRIPTORS = Object.freeze({
+	...GUILDDESCRIPTOR.GUILD,
+	...GUILDDESCRIPTOR.ABILITIES,
 });

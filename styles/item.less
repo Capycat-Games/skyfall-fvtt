@@ -79,6 +79,15 @@
 		}
 	}
 }
+
+.skyfall.sheet {
+	&.ability, &.sigil, &.guild-ability {
+		.ability-card {
+			min-width: 400px;
+			max-width: 400px;
+		}
+	}
+}
 .skyfall.sheet.ability {
 	.window-content {
 		padding: 0;
@@ -114,5 +123,15 @@
 			}
 		}
 
+	}
+}
+
+.skyfall.sheet.guild-ability {
+	.ability-card {
+		.sf-icon {
+			filter: brightness(0) saturate(100%) invert(100);
+			font-size: 32px;
+			flex: 0;
+		}
 	}
 }

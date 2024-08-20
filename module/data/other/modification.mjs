@@ -2,6 +2,17 @@
  * Data schema, attributes, and methods specific to Modification type ActiveEffects.
  */
 export default class Modification extends foundry.abstract.TypeDataModel {
+	static _RESOURCES = {
+		hp: { id: "hp", label: "SKYFALL.ACTOR.RESOURCES.HP" },
+		ep: { id: "ep", label: "SKYFALL.ACTOR.RESOURCES.EP" },
+		catharsis: { id: "catharsis", label: "SKYFALL.ACTOR.RESOURCES.CATHARSIS" },
+		shadow: { id: "shadow", label: "SKYFALL.ACTOR.RESOURCES.SHADOW" },
+		cunning: { id: "cunning", label: "SKYFALL2.GUILD.Cunning" },
+		knowledge: { id: "knowledge", label: "SKYFALL2.GUILD.Knowledge" },
+		crafting: { id: "crafting", label: "SKYFALL2.GUILD.Crafting" },
+		reputation: { id: "reputation", label: "SKYFALL2.GUILD.Reputation" },
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */
@@ -23,7 +34,7 @@ export default class Modification extends foundry.abstract.TypeDataModel {
 			}),
 			cost: new fields.SchemaField({
 				value: new fields.NumberField({required: true, integer: true, initial:0, label: "SKYFALL.ITEM.ABILITY.COST"}),
-				resource: new fields.StringField({required: true, blank: false, choices: SYSTEM.resources, initial: "ep", label: "SKYFALL.RESOURCE"}),
+				resource: new fields.StringField({required: true, blank: false, choices: this._RESOURCES, initial: "ep", label: "SKYFALL.RESOURCE"}),
 				multiple: new fields.BooleanField({required: true, initial:false, label: "SKYFALL.MODIFICATION.APPLYMULTIPLE"}),
 			}),
 			// TODO - ADD TARGET

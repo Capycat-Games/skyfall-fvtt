@@ -15,617 +15,52 @@
 	&.minimized {
 		min-height: unset;
 	}
-	&.character {
-		--actor-color: @colorSFPlayer;
-		--actor-color-faint: @colorSFPlayerFaint;
-		.window-content {
-			padding-top: 0;
-			padding-left: 190px;
-			
-			// }
-			.background-cut {
-				padding: 10px;
-				background-size: 100%;// cover;
-				background-repeat: no-repeat;
-				&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
-				&.attributes { background-image: url(assets/sheet/cut-attributes.svg); }
-				&.skills { background-image: url(assets/sheet/cut-skills.svg); }
-				&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
-			}
-			.box {
-				padding: 5px;
-				background-color: white;
-				border: 2px solid #424f66;
-			}
-			aside {
-				* { color: white; } //OVERWRITE THEME
-				.actor-actions {
-					input {padding: 0;}
-				}
-			}
-			nav.tabs {
-				position: relative;
-				float: right;
-				width: 100%;
-				i { display: none; }
-			}
-			.tab {
-				align-items: flex-start;
-				flex-basis: content;
-				height: 100%;
-				gap: 5px;
-			}
-			// TODO - CHECK CONFLICTS
-			.ability-scores {
-				height: 120px;
-				flex: 0 0 75%;
-				.bottom a { font-size: 12px; }
-			}
-			.ability-scores {
-				padding: 10px;
-				justify-content: space-around;
-				// font-family: @fontSkyfall;
-				flex: 0 0 75%;
-				.ability {
-					flex: 0 0 58px;
-					max-width: 58px;
-					height: 100px;
-					.top {
-						height: 60px!important;
-						background-image: url(./assets/sheet/abl-top.svg);
-					}
-					.bottom {
-						margin-top: 4px;
-						height: 36px!important;
-						background-image: url(./assets/sheet/abl-bot.svg);
-						a { font-size: 10px; }
-						label { font-size: 16px; line-height: 1; }
-					}
-					.top, .bottom {
-						background-size: 100%;
-						background-repeat: no-repeat;
-						background-position: center;
-						> div { align-content: center; }
-						.rolling { color: red; }
-						input { width: 80%; }
-						.active {
-							font-weight: bold;
-							text-decoration: underline;
-						}
-					}
-				}
-			}
-			.attributes {
-				h6 { line-height: 1;}
-				input { border: none; }
-				gap: 5px;
-				height: 120px;
-				flex: 0 0 20%
-			}
-			.skills, .actions {
-				height: auto;
-			}
-			.skills {
-				flex: 0 0 45%;
-				ul {
-					width: 90%;
-					margin: auto;
-					li {
-						line-height: normal;
-						a, span { flex: 0 0 20px; }
-						input {
-							text-align: center;
-						}
-						a, input {
-							&.rolling { color: red; }
-						}
-						* {
-							height: 20px;
-							line-height: 20px;
-						}
-					}
-				}
-			}
-			.actions {
-				.actions-filters {
-					padding: 5px;
-					
-				}
-				.filter-list {
-					li { 
-						flex: 0 0 auto;
-						padding: 0 5px;
-						margin: 0;
-					}
-				}
-			}
-			.actor-features {
-				.character-progression {
-					.form-group {
-						.item-controls {
-							float: right;
-						}
-					}
-				}
-			}
-			.actor-abilities, .actor-spells {
-				// text-align: left;
-				// margin: 5px;
-				.item.entry {
-					// flex: 0 0 50%;
-					max-width: 50%;
-					min-width: 45%;
-				}
-				padding: 5px;
-				gap: 10px;
-				.SF-ability;
-				.ability-card {
-					padding: 0;
-					flex: 0 0 49%;
-					// margin-right: 1rem;
-					.ability-header * {
-						color: white !important;
-					}
-					&.collapsed {
-						> div:not(:first-child) {
-							display: none;
-						}
-					}
-					.space { display: none; }
-				}
-			}
-			.actor-effects {
-				.modification-effects, .base-effects {
-					.SF-item-list;
-				}
-				.status-effects {
-					.SF-status-effects;
-				}
-			}
-			.actor-inventory {
-				.inventory-header {
-					width: 100%;
-					.capacity, .fragments {
-						input[type=number]{
-							padding: 0 5px;
-							max-width: 50px;
-						}
-					}
-				}
-				.inventory-list {
-					width: 100%;
-					// text-align: center;
-					.SF-item-list;
-				}
-				.inventory-sigils {
-					padding: 5px;
-					gap: 10px;
-					.SF-ability;
-					.item.entry {
-						// flex: 0 0 50%;
-						max-width: 50%;
-						min-width: 45%;
-					}
-					.ability-card {
-						padding: 0;
-						flex: 0 0 49%;
-						// margin-right: 1rem;
-						.ability-header * {
-							color: white !important;
-						}
-						&.collapsed {
-							> div:not(:first-child) {
-								display: none;
-							}
-						}
-						.space { display: none; }
-					}
-				}
-			}
-		}
-	}
-	&.npc {
-		--actor-color: @colorSFFoe;
-		--actor-color-faint: @colorSFFoeFaint;
-		--scroll-margin: 0px;
-		* {
-			scrollbar-color: @colorSFFoe transparent !important;
-		}
-		
-		.window-content {
-			
-			padding: 0;
-			.scrollable {
-				margin-right: 0px;
-
-			}
-			nav.tabs {
-				.toggle-mode {
-					padding: 0 10px;
-				}
-			}
-			.item-controls {
-				float: right;
-				* { text-align: right; }
-				text-align: right;
-			}
-			.npc-statblock {
-				* { color: @colorSFFoe; }
-				font-size: 16px;
-				input, select {
-					background-color: black;
-					color: white;
-				}
-				> div.teste { padding: 10px; }
-				.header {
-					align-items: flex-start;
-					padding: 10px;
-					background-color: @colorSFFoe;
-					* { color: white; }
-				}
-				.ability-scores {
-					.ability {
-						> div {
-							background-color: @colorSFFoeFaint;
-							padding: 5px;
-
-						}
-						.label {
-							background-color: @colorSFFoe;
-							font-weight: bold;
-							* {color: white;}
-						}
-					}
-				}
-				.abilities {
-					ol, ul {
-						padding: 10px;
-						.ability:nth-child(n+2){
-							border-top: 1px solid var(--actor-color);
-						}
-						* { font-size: 18px; }
-						label { font-weight: bold; }
-						.ability-properties :not(:first-child) {
-							border-left: 3px solid @colorSFFoe;
-							padding-left: 3px;
-						}
-					}
-				}
-				.irv.skills {
-					padding: 0 0 0 10px;
-					line-height: 24px;
-				}
-			}
-			.actor-effects {
-				padding: 0 10px;
-				.SF-status-effects;
-				.status-effects {
-					.status-list { columns: 2; }
-				}
-			}
-		}
-	}
-	aside.sheet-header {
-		// TODO MOVE TO CHARACTER
-		background-color: @colorSFPlayer;
-		background-opacity: 0.5;
-		position: absolute;
-		float: left;
-		left: 0;
-		width: 180px;
-		margin-right: 10px;
-		height: 100%;
-		button i {
-			margin: 0;
-		}
-		button, input, * {
+	.window-content {
+		button {
+			background-color: var(--actor-color);
 			color: white;
+			* {color: white;}
 		}
-		
-		> * {
-			align-content: flex-start;
+	}
+	nav.tabs {
+		position: relative;
+		float: right;
+		width: 100%;
+		i[class=""] { display: none; }
+	}
+	.actor-effects {
+		.modification-effects, .base-effects {
+			.SF-item-list;
+		}
+		.status-effects {
+			.SF-status-effects;
+			li.item {
+				background-color: var(--actor-color);
+			}
+		}
+	}
+	
+	.actor-inventory {
+		.inventory-header {
 			width: 100%;
-		}
-		> div {
-			text-align: center;
-			align-self: center;
-			justify-content: center;
-			align-items: center;
-			h1, h2, h3, h4, h5, h6 {
-				// min-height: 20px;
-				line-height: 150%;
-				margin: auto;
-			}
-		}
-		.actor-actions {
-			line-height: 2em;
-			button {
-				font-size: 10px;
-				padding: 2px;
-				line-height: 1;
-				flex: 0 0 25px;
-				width: 25px;
-				height: 25px;
-			}
-			> * {
-				flex: 0;
-				font-size: 14px;
-			}
-			.hitDie {
-				flex-wrap: nowrap;
-				max-width: 80px;
-    		flex: 1;
-				justify-content: center;
-				.die {
-					flex: 0 0 20px;
-					background-size: contain;
-					background-position: center;
-					background-repeat: no-repeat;
+			.capacity, .fragments {
+				input[type=number]{
+					padding: 0 5px;
+					max-width: 50px;
 				}
 			}
 		}
-		.resource { //-bar
-			flex: 0;
-			&.hp .bar {
-				background-color: red;
-				&.temp { background-color: orange; }
-				&.negative { background-color: crimson; }
-			}
-			&.ep .bar {
-				background-color: blueviolet;
-				&.temp { background-color: cyan; }
-			}
-			.container {
-				position: relative;
-				flex: 0 0 100%;
-				height: 28px;
-				background-color: black;// var(--input-background-color);
-				.bar {
-					position: absolute;
-					height: 20px;
-					margin: 4px 0;
-					max-width: 100%;
-					&.temp { opacity: 50%; }
-					&.negative { float: right; }
-				}
-				.fields {
-					position: absolute;
-					height: 100%;
-					input {
-						background: none;
-						border: none;
-					}
-				}
-			}
-			.form-fields {
-				flex: 100%;
-			}
-		}
-		.shadow, .death {
-			text-align: center;
-			h3 {
-				height: 43px;
-				flex: 0 0 43px;
-				flex: 0;
-			}
-			
-		}
-	}
-	
-	&.character2 {
-		nav.tabs {
-			position: relative;
-			float: right;
+		.inventory-list {
 			width: 100%;
-			i { display: none; }
-		}
-		div.tab {
-			height: 100%;
-		}
-	}
-	
-	section.sheet-body {
-		height: -webkit-fill-available;
-    overflow: scroll;
-	}
-	label, input[type=text] {
-		font-size: 14px;
-	}
-
-	.charname {
-		// background: url(./assets/sheet/name-title.svg) no-repeat;
-	}
-	
-	.actions {
-		.skills {
-			flex: 0 0 230px;
-			margin-right: 5px;
-		}
-		.list-items.actions{
-			li {
-				align-items: flex-start;
+			overflow: visible;
+			#context-menu {
+				left: unset;
+				right: 0;
 			}
-			li.ability.weapon {
-				.item-controls {
-					width: 100%;
-					text-align: right;
-					align-self: flex-end;
-					justify-content: flex-end;
-					a {
-						flex: 0;
-						padding: 0 5px;
-					}
-
-				}
-			}
+			// text-align: center;
+			.SF-item-list;
 		}
-	}
-	.features-deprecated {
-		.character-progression {
-			width: 160px;
-			flex: 0 0 200px;
-			margin-right: 5px;
-
-			input {
-				width: 100%;
-				margin: 0;
-			}
-			.class {
-				input.level {
-					width: 15%;
-					text-align: center;
-					float: left;
-				}
-				input { width: 85%;}
-			}
-		}
-	}
-
-	.header-fields {
-		label {
-			display: block;
-			.item-controls {
-				float: right;
-				margin-right: 5px;
-				text-align: right;
-			}
-		}
-		input {
-			width: auto;
-			margin-right: 5px;
-		}
-	}
-	
-	.proficiency {
-		width: 80%;
-		margin: 0 auto;
-		align-items: center;
-		> * {
-			background-color: white;
-		}
-		input {
-			text-align: center;
-			border: 2px solid @colorSFGray;
-			border-radius: 0;
-			flex: 0 0 2em;
-		}
-		span {
-			font-family: @fontSkyfall;
-			font-size: 12px;
-			border: 2px solid @colorSFGray;
-			border-left: none;
-			line-height: 1em;
-			padding: 1px 5px;
-		}
-	}
-
-	.resources {
-		> div {
-			margin-bottom: 5px;
-			width: 245px;
-			height: 87px;
-			min-height: 87px;
-			max-height: 87px;
-		}
-		.group-a {
-			justify-content: space-between;
-		}
-		.catharsis, .ep {
-			flex: 0 0 48%;
-			height: 65px;
-			input {
-				max-width: 50px;
-				margin: 5px auto;
-			}
-		}
-		.hp {
-			background: url(./assets/sheet/resource-a.webp) no-repeat;
-		}
-		.hitDie {
-			background: url(./assets/sheet/resource-b.webp) no-repeat;
-		}
-		.hp, .hitDie {
-			background-size: contain;
-			flex: 0 0 5em;
-			h6 {
-				width: 50px;
-				margin: auto;
-			}
-			input {
-				flex: 0;
-				width: 50px;
-				margin: 0.7em auto;
-			}
-			.temp, .die {
-				height: 70px;
-				align-self: center;
-				position: relative;
-				input {
-					margin: 0 auto;
-					flex: 0;
-					border: 0;
-					border-radius: 50px;
-					flex: 0 0 56px;
-					width: 56px;
-				}
-			}
-			.temp h6 {
-				position: absolute;
-				bottom: 2em;
-				margin: 0 auto;
-				width: 100%;
-			}
-			.die {
-				flex-direction: column-reverse;
-				h6 {
-					position: absolute;
-					top: 1.5em;
-					margin: 0 auto;
-					width: 100%;
-				}
-			}
-		}
-	}
-	.resources-check {
-		.shadow a {
-			width: 60px;
-			margin: auto;
-		}
-	}
-	
-	.list-items {
-		img {
-			width: 36px;
-			flex: 0 0 36px;
-		}
-		&.skills {
-			width: 95%;
-			margin: 0.5em auto;
-			padding: 5px;
-			background-color: white;
-			border: 2px solid @colorSFGray;
-			.skill {
-				> a, > span {
-					text-align: center;
-					flex: 0 0 2em;
-				}
-				> h3 {
-					margin: 0;
-				}
-				input {
-					text-align: center;
-					border: 2px solid @colorSFGray;
-					background-color: white;
-				}
-
-				.rolling {
-					color: red;
-				}
-			}
-		}
-		&.abilities, &.spells {
-			text-align: left;
-			margin: 5px;
+		.inventory-sigils {
 			padding: 5px;
 			gap: 10px;
 			.SF-ability;
@@ -634,10 +69,388 @@
 				max-width: 50%;
 				min-width: 45%;
 			}
+			.ability-card {
+				padding: 0;
+				flex: 0 0 49%;
+				// margin-right: 1rem;
+				.ability-header * {
+					color: white !important;
+				}
+				&.collapsed {
+					// > div:not(:first-child) {
+					> div:nth-child(n + 3) {
+						display: none;
+					}
+					.compress {
+						display: none;
+					}
+				}
+				&:not(.collapsed) {
+					.expand {
+						display: none;
+					}
+				}
+				.space { display: none; }
+			}
 		}
 	}
-	.middle {
-		flex: 0 0 265px;
+	
+}
+
+/* ----------------------------------------- */
+/*  Character Styles                         */
+/* ----------------------------------------- */
+.skyfall.sheet.actor.character {
+	--actor-color: @colorSFPlayer;
+	--actor-color-faint: @colorSFPlayerFaint;
+	.window-content {
+		padding-top: 0;
+		padding-left: 190px;
+		
+		.background-cut {
+			padding: 10px;
+			background-size: 100%;// cover;
+			background-repeat: no-repeat;
+			&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
+			&.attributes { background-image: url(assets/sheet/cut-attributes.svg); }
+			&.skills { background-image: url(assets/sheet/cut-skills.svg); }
+			&.abilities { background-image: url(assets/sheet/cut-abilities.svg); }
+		}
+		.box {
+			padding: 5px;
+			background-color: white;
+			border: 2px solid #424f66;
+		}
+		aside.sheet-header {
+			background-color: @colorSFPlayer;
+			background-opacity: 0.5;
+			position: absolute;
+			float: left;
+			left: 0;
+			width: 180px;
+			margin-right: 10px;
+			height: 100%;
+			* { color: white; } //OVERWRITE THEME
+			.actor-actions {
+				input {padding: 0;}
+			}
+			button i {
+				margin: 0;
+			}
+			button, input, * {
+				color: white;
+			}
+			
+			> * {
+				align-content: flex-start;
+				width: 100%;
+			}
+			> div {
+				text-align: center;
+				align-self: center;
+				justify-content: center;
+				align-items: center;
+				h1, h2, h3, h4, h5, h6 {
+					// min-height: 20px;
+					line-height: 150%;
+					margin: auto;
+				}
+			}
+			.actor-actions {
+				line-height: 2em;
+				button {
+					font-size: 10px;
+					padding: 2px;
+					line-height: 1;
+					flex: 0 0 25px;
+					width: 25px;
+					height: 25px;
+				}
+				> * {
+					flex: 0;
+					font-size: 14px;
+				}
+				.hitDie {
+					flex-wrap: nowrap;
+					max-width: 80px;
+					flex: 1;
+					justify-content: center;
+					.die {
+						flex: 0 0 20px;
+						background-size: contain;
+						background-position: center;
+						background-repeat: no-repeat;
+					}
+				}
+			}
+			.resource { //-bar
+				flex: 0;
+				&.hp .bar {
+					background-color: red;
+					&.temp { background-color: orange; }
+					&.negative { background-color: crimson; }
+				}
+				&.ep .bar {
+					background-color: blueviolet;
+					&.temp { background-color: cyan; }
+				}
+				.container {
+					position: relative;
+					flex: 0 0 100%;
+					height: 28px;
+					background-color: black;// var(--input-background-color);
+					.bar {
+						position: absolute;
+						height: 20px;
+						margin: 4px 0;
+						max-width: 100%;
+						&.temp { opacity: 50%; }
+						&.negative { float: right; }
+					}
+					.fields {
+						position: absolute;
+						height: 100%;
+						input {
+							background: none;
+							border: none;
+						}
+					}
+				}
+				.form-fields {
+					flex: 100%;
+				}
+			}
+			.shadow, .death {
+				text-align: center;
+				h3 {
+					height: 43px;
+					flex: 0 0 43px;
+					flex: 0;
+				}
+				
+			}
+		}
+		
+		.tab {
+			align-items: flex-start;
+			flex-basis: content;
+			height: 100%;
+			gap: 5px;
+		}
+		
+		.proficiency {
+			width: 80%;
+			margin: 0 auto;
+			align-items: center;
+			> * {
+				background-color: white;
+			}
+			input {
+				text-align: center;
+				border: 2px solid @colorSFGray;
+				border-radius: 0;
+				flex: 0 0 2em;
+			}
+			span {
+				font-family: @fontSkyfall;
+				font-size: 12px;
+				border: 2px solid @colorSFGray;
+				border-left: none;
+				line-height: 1em;
+				padding: 1px 5px;
+			}
+		}
+		// TODO - CHECK CONFLICTS
+		.ability-scores {
+			height: 120px;
+			flex: 0 0 75%;
+			.bottom a { font-size: 12px; }
+		}
+		.ability-scores {
+			padding: 10px;
+			justify-content: space-around;
+			// font-family: @fontSkyfall;
+			flex: 0 0 75%;
+			.ability {
+				flex: 0 0 58px;
+				max-width: 58px;
+				height: 100px;
+				.top {
+					height: 60px!important;
+					background-image: url(./assets/sheet/abl-top.svg);
+				}
+				.bottom {
+					margin-top: 4px;
+					height: 36px!important;
+					background-image: url(./assets/sheet/abl-bot.svg);
+					a { font-size: 10px; }
+					label { font-size: 16px; line-height: 1; }
+				}
+				.top, .bottom {
+					background-size: 100%;
+					background-repeat: no-repeat;
+					background-position: center;
+					> div { align-content: center; }
+					.rolling { color: red; }
+					input { width: 80%; }
+					.active {
+						font-weight: bold;
+						text-decoration: underline;
+					}
+				}
+			}
+		}
+		.attributes {
+			h6 { line-height: 1;}
+			input { border: none; }
+			gap: 5px;
+			height: 120px;
+			flex: 0 0 20%
+		}
+		.skills, .actions {
+			height: auto;
+		}
+		.skills {
+			flex: 0 0 45%;
+			ul {
+				width: 90%;
+				margin: auto;
+				li {
+					line-height: normal;
+					a, span { flex: 0 0 20px; }
+					input {
+						text-align: center;
+					}
+					a, input {
+						&.rolling { color: red; }
+					}
+					* {
+						height: 20px;
+						line-height: 20px;
+					}
+				}
+			}
+		}
+		.section-header {
+			div {
+				border: none;
+			}
+		}
+		.actions-filters, .spell-filters, .ability-filters {
+			padding: 5px;
+			.filter-list {
+				li { 
+					flex: 0 0 auto;
+					padding: 0 5px;
+					margin: 0;
+				}
+			}
+		}
+		.actor-features {
+			.character-progression {
+				.form-group {
+					.item-controls {
+						float: right;
+					}
+				}
+			}
+		}
+		.actor-abilities, .actor-spells {
+			// text-align: left;
+			// margin: 5px;
+			.item.entry {
+				// flex: 0 0 50%;
+				max-width: 50%;
+				min-width: 45%;
+			}
+			padding: 5px;
+			gap: 10px;
+			.SF-ability;
+			.ability-card {
+				padding: 0;
+				flex: 0 0 49%;
+				// margin-right: 1rem;
+				.ability-header * {
+					color: white !important;
+				}
+				&.collapsed {
+					// > div:not(:first-child) {
+					> div:nth-child(n + 3) {
+						display: none;
+					}
+					.compress {
+						display: none;
+					}
+				}
+				&:not(.collapsed) {
+					.expand {
+						display: none;
+					}
+				}
+				.space { display: none; }
+			}
+		}
+		.actor-effects {
+			.modification-effects, .base-effects {
+				.SF-item-list;
+			}
+			.status-effects {
+				.SF-status-effects;
+				.item {
+					background-color: var(--actor-color);
+				}
+			}
+		}
+		.actor-inventory {
+			.inventory-header {
+				width: 100%;
+				.capacity, .fragments {
+					input[type=number]{
+						padding: 0 5px;
+						max-width: 50px;
+					}
+				}
+			}
+			.inventory-list {
+				width: 100%;
+				overflow: visible;
+				// text-align: center;
+				.SF-item-list;
+			}
+			.inventory-sigils {
+				padding: 5px;
+				gap: 10px;
+				.SF-ability;
+				.item.entry {
+					// flex: 0 0 50%;
+					max-width: 50%;
+					min-width: 45%;
+				}
+				.ability-card {
+					padding: 0;
+					flex: 0 0 49%;
+					// margin-right: 1rem;
+					.ability-header * {
+						color: white !important;
+					}
+					&.collapsed {
+						// > div:not(:first-child) {
+						> div:nth-child(n + 3) {
+							display: none;
+						}
+						.compress {
+							display: none;
+						}
+					}
+					&:not(.collapsed) {
+						.expand {
+							display: none;
+						}
+					}
+					.space { display: none; }
+				}
+			}
+		}
 	}
 	.background-box {
 		background-image: url(./assets/sheet/background-cut.png);
@@ -670,6 +483,223 @@
 		.box {
 			background-color: white;
 			border: 2px solid #424f66;
+		}
+	}
+}
+
+/* ----------------------------------------- */
+/*  NPC Styles                               */
+/* ----------------------------------------- */
+.skyfall.sheet.actor.npc {
+	--actor-color: @colorSFFoe;
+	--actor-color-faint: @colorSFFoeFaint;
+	--scroll-margin: 0px;
+	* {
+		scrollbar-color: @colorSFFoe transparent !important;
+	}
+	
+	.window-content {
+		&:has(.npc-statblock.active) {
+		}
+		padding: 0;
+		.scrollable {
+			margin-right: 0px;
+		}
+
+		nav.tabs {
+			.toggle-mode {
+				padding: 0 10px;
+			}
+		}
+		.item-controls {
+			float: right;
+			* { text-align: right; }
+			text-align: right;
+		}
+		.npc-statblock {
+			* { color: var(--actor-color); }
+			font-size: 16px;
+			input, select {
+				background-color: black;
+				color: white;
+			}
+			> div.teste { padding: 10px; }
+			.header {
+				align-items: flex-start;
+				padding: 10px;
+				background-color: var(--actor-color);
+				* { color: white; }
+			}
+			.ability-scores {
+				.ability {
+					> div {
+						background-color: var(--actor-color-faint);
+						padding: 5px;
+						
+					}
+					.label {
+						background-color: var(--actor-color);
+						font-weight: bold;
+						* {color: white;}
+					}
+				}
+			}
+			.abilities {
+				ol, ul {
+					padding: 10px;
+					.ability:nth-child(n+2){
+						border-top: 1px solid var(--actor-color);
+					}
+					* { font-size: 18px; }
+					label { font-weight: bold; }
+					.ability-properties :not(:first-child) {
+						border-left: 3px solid var(--actor-color);
+						padding-left: 3px;
+					}
+				}
+			}
+			.irv.skills {
+				padding: 0 0 0 10px;
+				line-height: 24px;
+			}
+		}
+		.actor-effects {
+			padding: 10px;
+			&.scrollable {
+				--scroll-margin: 0;
+			}
+			.SF-status-effects;
+			.status-effects {
+				.status-list { columns: 2; }
+			}
+		}
+	}
+	.debug {}
+}
+
+
+/* ----------------------------------------- */
+/*  Partner Styles                           */
+/* ----------------------------------------- */
+.skyfall.sheet.actor.partner {
+	--actor-color: @colorSFFoe;
+	--actor-color-faint: @colorSFFoeFaint;
+}
+.skyfall.sheet.actor.creation {
+	--actor-color: @colorSFPlayer;
+	--actor-color-faint: @colorSFPlayerFaint;
+}
+
+.skyfall.sheet.actor.partner,
+.skyfall.sheet.actor.creation {
+	.window-content {
+		.npc-statblock {
+
+			.ability-scores {
+				.ability {
+					> div {
+						background-color: unset;
+					}
+				}
+				.form-group {
+					justify-content: center;
+					label {
+						white-space: nowrap;
+						flex: 0;
+					}
+					.form-fields:has(span) {
+						flex: 0 0 20px;
+					}
+				}
+			}
+			.form-group.health {
+				width: auto;
+				margin: auto;
+				white-space: nowrap;
+				.form-fields {
+					padding: 0 10px;
+					input {
+						width: 50px;
+					}
+				}
+			}
+			
+			div.ability-scores,
+			div.attack {
+				background-color: var(--actor-color-faint);
+			}
+			div.attack {
+				padding: 5px;
+			}
+			div.features {
+				padding: 5px;
+				li {
+					text-align: justify;
+				}
+				p {
+					display: inline;
+				}
+			}
+		}
+		.actor-effects {
+			padding: 10px!important;
+			&.scrollable {
+				padding-right: 10px;
+				--scroll-margin: 0px;
+			}
+		}
+	}
+}
+
+
+/* ----------------------------------------- */
+/*  Guild Styles                             */
+/* ----------------------------------------- */
+.skyfall.sheet.actor.guild {
+	--actor-color: @colorSFPlayer;
+	--actor-color-faint: @colorSFPlayerFaint;
+	.window-content {
+		.abilities  {
+			justify-content: space-between;
+			.ability {
+				flex: 0 0 120px;
+			}
+		}
+		.guild-members {
+			.SF-item-list;
+		}
+		.guild-abilities-list {
+			padding: 5px;
+			gap: 10px;
+			.SF-ability;
+			.item.entry {
+				// flex: 0 0 50%;
+				max-width: 50%;
+				min-width: 45%;
+			}
+			.ability-card {
+				padding: 0;
+				flex: 0 0 49%;
+				// margin-right: 1rem;
+				.ability-header * {
+					color: white !important;
+				}
+				&.collapsed {
+					// > div:not(:first-child) {
+					> div:nth-child(n + 3) {
+						display: none;
+					}
+					.compress {
+						display: none;
+					}
+				}
+				&:not(.collapsed) {
+					.expand {
+						display: none;
+					}
+				}
+				.space { display: none; }
+			}
 		}
 	}
 }

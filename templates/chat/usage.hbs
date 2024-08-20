@@ -1,6 +1,4 @@
 <div class="skyfall chat-card usage-card ability-card" data-actor-id="{{actor.id}}" data-item-id="{ {itemId} }">
-	{{log "usage.hbs"}}
-	{{log this}}
 	{{!-- usage == message.system --}}
 	<header class="card-header flexrow">
 		{{!-- Ability Image | Ability Name | Item Image --}}
@@ -24,7 +22,8 @@
 	<div class="ability-descriptors">
 		<label>&nbsp;</label>
 		{{#each item.system.labels.descriptors as | tag i | }}
-		<label class="descriptor active" >{{tag.label}}</label>
+		&REFERENCE[{{i}}]
+		{{!-- <label class="descriptor active" >{{tag.label}}</label> --}}
 		{{/each}}
 	</div>
 	
@@ -35,7 +34,6 @@
 	{{/if}}
 
 	<div class="ability-properties">
-		{{log item.system}}
 		{{#each item.system.labels.properties as | prop | }}
 		<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 		{{/each}}
@@ -72,10 +70,8 @@
 		</li>
 		{{/each}}
 	</ul>
-	{{log rolls }}
 	{{#each rolls as |r id|}}
 	{{#if r.evaluated }} 
-	{{log r.template}}
 	<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}" data-roll-index="{{id}}">
 		{{{r.template}}}
 	</div>

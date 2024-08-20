@@ -37,13 +37,27 @@ export default class UsageMessage extends foundry.abstract.TypeDataModel {
 			// Object data for Active Effects
 			effects: new fields.ArrayField( new fields.ObjectField() ),
 			costs: new fields.SchemaField({
-				hp: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				ep: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				catharsis: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				shadow: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				uses: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				quantity: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
-				charges: new fields.NumberField({required: true, integer: true, initial:0, min: 0}),
+				hp: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				ep: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				catharsis: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				shadow: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				uses: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				quantity: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
+				charges: new fields.NumberField({
+					nullable: true, blank: true, integer: true, initial:0, min: 0
+				}),
 			}),
 			status: new fields.SchemaField({
 				phase: new fields.NumberField({required: true, integer: true, initial:1, min: 1, max: 4, label: "SKYFALL.PHASE"}),

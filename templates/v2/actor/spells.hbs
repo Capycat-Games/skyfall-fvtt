@@ -1,5 +1,33 @@
-<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}"
+	data-group="{{tab.group}}">
+	<div class="section-header flexrow flex100">
+		<div class="ability-filters flexrow">
+			<ul class="plain filter-list flexrow" data-filter-id="spells">
+				<li class="">{{localize "SKYFALL.FILTER"}}</li>
+				{{#each filters.spells as | action key | }}
+					<li data-action="filter" data-filter="{{key}}" data-tooltip="{{localize action.label}}"
+						class="filter-item {{ifThen action.active 'active' '' }}">{{{action.icon}}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div class="item-controls">
+			<a class="control" data-action="collapseAll">
+				<i class="fa-solid fa-compress"></i>
+			</a>
+			<a class="control" data-action="expandAll">
+				<i class="fa-solid fa-expand"></i>
+			</a>
+			<a class="control" data-action="create" data-create="Item" data-type="ability">
+				{{{@root.SYSTEM.icons.create}}} {{localize "SKYFALL.Create"}}
+			</a>
+		</div>
+	</div>
 	{{#each items.spells as | spell | }}
-	{{> "systems/skyfall/templates/v2/item/ability-card.hbs" item=spell labels=spell.system.labels collapse=true}}
+		{{#if spell.layerLabel }}
+			<h2 class="flex100 text-center">
+				{{spell.layerLabel}}
+			</h2>
+		{{/if}}
+		{{> "systems/skyfall/templates/v2/item/ability-card.hbs" item=spell labels=spell.system.labels collapse=true}}
 	{{/each }}
 </section>

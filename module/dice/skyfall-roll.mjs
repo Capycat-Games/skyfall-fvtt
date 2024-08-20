@@ -70,6 +70,16 @@ export default class SkyfallRoll extends Roll {
 		return new RollConfig({roll: this}).render(true);
 	}
 
+	async _evaluate(options={}) {
+		this.terms.forEach(term => {
+			if( this.options.damageType && term.options && !term.options.flavor ) {
+				term.options.flavor = this.options.damageType;
+			}
+		});
+		await super._evaluate(options);
+		return this;
+	}
+
 	/* ------------------------------ */
 	/* Custom Alters                  */
 	/* ------------------------------ */
@@ -81,7 +91,7 @@ export default class SkyfallRoll extends Roll {
 		}
 		if ( options.extra ) this.terms[0].number += 1;
 		else this.terms[0].number = Math.min(this.terms[0].number+1, 2);
-		this.forEach
+		
 		this.resetFormula();
 	}
 

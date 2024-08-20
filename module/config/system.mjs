@@ -26,6 +26,11 @@ const _SVGICONS = {
   sfmelee: "icons/svg/sword.svg",
   sfranged: "icons/svg/target.svg",
   sfsigil: "icons/svg/sun.svg",
+
+  sfcunning: "systems/skyfall/assets/sheet/sfcunning.svg",
+  sfcrafting: "systems/skyfall/assets/sheet/sfcrafting.svg",
+  sfknowledge: "systems/skyfall/assets/sheet/sfknowledge.svg",
+  sfreputation: "systems/skyfall/assets/sheet/sfreputation.svg",
 }
 
 const _FONTICONS = {
@@ -93,12 +98,15 @@ const SHEETICONS = {
  * Include all constant definitions within the SYSTEM global export
  * @type {Object}
  */
-const conditions = {};
-CONDITIONS.statusEffects.reduce((acc,ef) => {
-  acc[ef.id] = ef;
-  return acc;
-}, conditions);
-export const SYSTEM = {
+// const conditions = {};
+// CONDITIONS.statusEffects.reduce((acc,ef) => {
+//   acc[ef.id] = ef;
+//   return acc;
+// }, conditions);
+
+
+
+const _SYSTEM = {
   id: SYSTEM_ID,
   ...CREATURES,
   ...EFFECTS,
@@ -106,6 +114,18 @@ export const SYSTEM = {
   actions: ACTIONS.actions,
   rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
-  conditions: conditions,
   icons: SHEETICONS
 };
+
+Object.defineProperty( _SYSTEM, 'conditions', {
+  get: () => {
+    let conditions = {};
+    CONFIG.statusEffects.reduce( (acc, ef) => {
+      acc[ ef.id ] = ef;
+      return acc;
+    }, conditions);
+    return conditions;
+  }
+})
+
+export const SYSTEM = _SYSTEM;

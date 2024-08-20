@@ -34,7 +34,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	/** @override */
 	static TABS = {
 		config: {id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active'},
-		effects: {id: "effects", group: "configuration", label: "TYPES.ActiveEffect.basePL"}
+		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"}
 	};
 
 	/** @override */

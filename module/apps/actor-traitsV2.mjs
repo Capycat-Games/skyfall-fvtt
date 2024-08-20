@@ -158,7 +158,6 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
-		console.log(formData);
 		const submitData = this._prepareSubmitData(event, form, formData);
 		await this.document.update(submitData);
 	}

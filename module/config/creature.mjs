@@ -1,11 +1,11 @@
 // for, des, con, int, sab, car
 // Forca Destreza Constituicao Inteligência Sabedoria Carisma
-let _abilities = ["str", "dex", "con", "int", "wis", "cha"];
+let _abilities = ["str", "dex", "con", "int", "wis", "cha","mental","physical"];
 export const abilities = _abilities.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ACTOR.ABILITIES.${key.toUpperCase()}`,
-		abbr: `SKYFALL.ACTOR.ABILITIES.${key.toUpperCase()}ABBR`,
+		label: `SKYFALL2.ABILITY.${key.titleCase()}`,
+		abbr: `SKYFALL2.ABILITY.${key.titleCase()}Abbr`,
 	}
 	return obj;
 }, {});

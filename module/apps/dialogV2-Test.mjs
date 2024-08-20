@@ -44,13 +44,11 @@ export default class TestApp extends HandlebarsApplicationMixin(DialogV2) {
 
 	_initializeApplicationOptions(options) {
 		options = super._initializeApplicationOptions(options);
-		console.log(options);
 		return options;
 	}
 
 	/** @override */
 	async _renderHTML(_context, _options) {
-		console.log(_context, _options, this);
 		_context.title = this.templateData.title;
 		_context.listA = this.templateData.listA;
 		_context.listB = this.templateData.listB;

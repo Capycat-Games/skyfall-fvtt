@@ -15,3 +15,7 @@ export {default as Loot} from "./physical/loot.mjs";
 export {default as Ability} from "./ability.mjs";
 export {default as Spell} from "./spell.mjs";
 export {default as Sigil} from "./sigil.mjs";
+
+export {default as Seal} from "./guild/seal.mjs";
+export {default as Facility} from "./guild/facility.mjs";
+export {default as GuildAbility} from "./guild/guild-ability.mjs";

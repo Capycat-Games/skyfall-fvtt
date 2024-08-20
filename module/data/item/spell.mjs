@@ -11,9 +11,21 @@ export default class Spell extends Ability {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
-		return foundry.utils.mergeObject(super.defineSchema(), {
+		return Object.assign(super.defineSchema(), {
 			type: new fields.StringField({required: true, blank: true, choices: SYSTEM.spells, initial: "", label: "SKYFALL2.Type"}),
 			components: new fields.ArrayField(new fields.StringField({required:true, blank: false, label: "SKYFALL2.ComponentPl"})),
 		});
+	}
+
+	get spellLayer() {
+		const layer = this.descriptors.includes('cantrip') ? 'cantrip'
+			: this.descriptors.includes('superficial') ? 'superficial'
+			: this.descriptors.includes('shallow') ? 'shallow'
+			: this.descriptors.includes('deep') ? 'deep' : '';
+		return layer;
+	}
+
+	get layerLabel() {
+		return game.i18n.localize(`SKYFALL.SPELLLAYERS.${this.spellLayer.toUpperCase()}`);
 	}
 }

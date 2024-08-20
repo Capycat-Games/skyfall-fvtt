@@ -111,8 +111,9 @@
 		}
 		li.header {
 			background-color: @colorSFPlayer;
+			background-color: var(--actor-color);
 			padding: 5px;
-			* { color: white !important; }
+			* { color: white  }
 		}
 		li.entry {
 			background-color: @colorSFPlayerFaint;
@@ -160,6 +161,11 @@
       flex: 0 0 50px;
       text-align: center;
     }
+    .sf-icon {
+			filter: brightness(0) saturate(100%) invert(100);
+			font-size: 32px;
+			flex: 0;
+		}
   }
   .ability-description {
     text-align: center;
@@ -188,7 +194,8 @@
   .status-list {
     column-count: 3;
     .item {
-      background-color: @colorSFPlayer;
+      // background-color: @colorSFPlayer;
+      background-color: var(--actor-color);
       padding: 4px 8px 6px 8px;
       * { color: white; }
       img {

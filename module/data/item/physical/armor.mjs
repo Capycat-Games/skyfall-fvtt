@@ -20,10 +20,8 @@ export default class Armor extends PhysicalItemData {
 			/* simples | marciais | fogo | regional */
 			category: new fields.StringField({required: true, blank: false, choices: SYSTEM.weapons, initial: "simple", label:"SKYFALL2.Category"}),
 			/* uma mão | duas mãos */
-			damage: new fields.SchemaField({
-				formula: new fields.StringField({required: true, blank: true, label:"SKYFALL2.Damage"}),
-				abl: new fields.StringField({required: true, blank: false, choices: SYSTEM.abilities, initial: "str"}),
-			}),
+			attack: this.attackSchema(),
+			damage: this.damageSchema(),
 			sigils: new fields.ArrayField(new fields.SchemaField({
 				uuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),
 				parentUuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),

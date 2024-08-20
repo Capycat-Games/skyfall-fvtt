@@ -13,7 +13,6 @@
 	<button data-action="rest" data-rest="long">{{{SYSTEM.icons.tent}}}</button>
 	{{!-- <a data-action="roll" data-target="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a> --}}
 	<div class="hitDie flexrow">
-		{{log this}}
 		{{#each hitDies.dies as | hd |}}
 			<span class="die" style="background-image:url({{hd.icon}})">{{hd.value}}</span>
 		{{/each}}

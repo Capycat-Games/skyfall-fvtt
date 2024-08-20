@@ -1,40 +1,40 @@
 <div class="character-progression">
 	{{!-- LEGACY --}}
 	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.legacy label=(localize "{legacy} ( {heritage} )" legacy=(localize "TYPES.Item.legacy") heritage=(localize "SKYFALL.ITEM.LEGACY.HERITAGE"))}}
-	
+
 	{{!-- Curse --}}
 	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.curse label="TYPES.Item.curse"}}
-	
+
 	{{!-- Background --}}
 	{{> 'systems/skyfall/templates/actor/parts/header-field.hbs' field=actorHeader.background label="TYPES.Item.background"}}
 
 	{{!-- Classes --}}
 	<label for="">{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}</label>
 	{{#unless actorHeader.class }}
-	<div class="header-fields entry class" data-entry-id="{{path.id}}">
-		<input type="text" disabled>
-	</div>
+		<div class="header-fields entry class" data-entry-id="{{path.id}}">
+			<input type="text" disabled>
+		</div>
 	{{/unless}}
 	{{#each actorHeader.class as | cls | }}
-	<div class="header-fields entry class" data-context-menu data-entry-id="{{cls.id}}">
-		<input type="number" class="level" data-action="update" data-target="system.level" value="{{cls.level}}">
-		<input type="text" value="{{cls.name}}" disabled>
-	</div>
+		<div class="header-fields entry class" data-context-menu data-entry-id="{{cls.id}}">
+			<input type="number" class="level" data-action="update" data-target="system.level" value="{{cls.level}}">
+			<input type="text" value="{{cls.name}}" disabled>
+		</div>
 
 	{{/each}}
-	
+
 	{{!-- Paths --}}
 	<label for="">{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.path"}}</label>
 	{{#unless actorHeader.path }}
-	<div class="header-fields entry path" data-entry-id="{{path.id}}">
-		<input type="text" disabled>
-	</div>
+		<div class="header-fields entry path" data-entry-id="{{path.id}}">
+			<input type="text" disabled>
+		</div>
 	{{/unless}}
 	{{#each actorHeader.path as | path | }}
-	<div class="header-fields entry path" data-context-menu data-entry-id="{{path.id}}">
-		{{!-- <input type="number" class="level" data-action="update" target="system.level" value="{{path.level}}"> --}}
-		<input type="text" value="{{cls.name}}" disabled>
-	</div>
+		<div class="header-fields entry path" data-context-menu data-entry-id="{{path.id}}">
+			{{!-- <input type="number" class="level" data-action="update" target="system.level" value="{{path.level}}"> --}}
+			<input type="text" value="{{cls.name}}" disabled>
+		</div>
 	{{/each}}
 
 	<div class="header-fields">
@@ -63,19 +63,20 @@
 			{{/each}}
 		</div>
 		<div class="modifiers-damage">
-			<h4><a data-action="manage" data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
+			<h4><a data-action="manage"
+					data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
 			{{#each system.modifiers.damage.taken as | damage key |}}
 				{{#unless (eq damage "nor") }}
-				<span class="modifiers-damage">
-					{{#if (eq damage "imu") }}
-					{{{../SYSTEM.icons.shield}}}
-					{{~else if (eq damage "res") }}
-					{{{../SYSTEM.icons.shieldhalf}}}
-					{{~else if (eq damage "vul") }}
-					{{{../SYSTEM.icons.heartcrack}}}
-					{{/if}}
-					{{localize (lookup (lookup @root.SYSTEM.DESCRIPTOR.DAMAGE key) "label")}}
-				</span>
+					<span class="modifiers-damage">
+						{{#if (eq damage "imu") }}
+							{{{../SYSTEM.icons.shield}}}
+						{{~else if (eq damage "res") }}
+							{{{../SYSTEM.icons.shieldhalf}}}
+						{{~else if (eq damage "vul") }}
+							{{{../SYSTEM.icons.heartcrack}}}
+						{{/if}}
+						{{localize (lookup (lookup @root.SYSTEM.DESCRIPTOR.DAMAGE key) "label")}}
+					</span>
 				{{/unless}}
 			{{/each}}
 			{{!-- <h4><a data-action="manage" data-target="modifiers-damage.dealt">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGEDEALT"}}</a></h4> --}}
@@ -85,16 +86,16 @@
 
 <ul class="list-items features flex-start flexcol">
 	{{#each features as | item |}}
-	<li class="item entry flexrow" data-entry-id="{{item._id}}">
-		<div class="item-name">{{item.name}}</div>
-		{{!-- <div class="item-xxx"></div> --}}
-		<div class="item-controls">
-			<a class="control" data-action="toggle" data-target="favorite">
-				{{{../SYSTEM.icons.star}}}
-			</a>
-			<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
-			<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
-		</div>
-	</li>
+		<li class="item entry flexrow" data-entry-id="{{item._id}}">
+			<div class="item-name">{{item.name}}</div>
+			{{!-- <div class="item-xxx"></div> --}}
+			<div class="item-controls">
+				<a class="control" data-action="toggle" data-target="favorite">
+					{{{../SYSTEM.icons.star}}}
+				</a>
+				<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+				<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+			</div>
+		</li>
 	{{/each}}
 </ul>

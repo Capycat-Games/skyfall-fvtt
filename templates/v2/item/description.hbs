@@ -1,15 +1,15 @@
 <section class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	{{#if (isDefined system.quantity)}}
 	<aside class="flexcol">
-		{{formField schema.quantity value=system.quantity classes="slim" localize=true}}
-		{{formField schema.price value=system.price classes="slim" localize=true}}
-		{{formField schema.capacity value=system.capacity classes="slim" localize=true}}
+		{{formGroup schema.quantity value=system.quantity classes="slim" localize=true}}
+		{{formGroup schema.price value=system.price classes="slim" localize=true}}
+		{{formGroup schema.capacity value=system.capacity classes="slim" localize=true}}
 		{{#if (and (isDefined system.equipped) document.isEmbedded)}}
-		{{formField schema.equipped value=system.equipped localize=true}}
-		{{formField schema.attuned value=system.attuned localize=true}}
+		{{formGroup schema.equipped value=system.equipped localize=true}}
+		{{formGroup schema.attuned value=system.attuned localize=true}}
 		{{/if}}
 		{{#if user.isGM }}
-		{{formField schema.unidentified.value value=system.unidentified.value localize=true}}
+		{{formGroup schema.unidentified.value value=system.unidentified.value localize=true}}
 		{{/if}}
 	</aside>
 	{{/if}}
@@ -25,25 +25,34 @@
 		{{/if}}
 
 		{{#if (and (eq document.type 'path') (isDefined system.type))}}
-		{{formField schema.type value=system.type localize=true}}
+		{{formGroup schema.type value=system.type localize=true}}
 		{{/if}}
 
-		{{formField schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=170 localize=true}}
+		{{#if (eq document.type 'facility')}}
+		<div class="form-group">
+			<label>{{localize schema.level.label}}</label>
+			<div class="form-fields">
+				<input type="number" name="system.level" value={{system.level}}>
+			</div>
+		</div>
+		{{/if}}
+
+		{{formGroup schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=170 localize=true}}
 		
 		{{#if (isDefined system.traits.melancholy)}}
 		<h3>{{localize "SKYFALL2.Melancholy"}}</h3>
-		{{formField schema.traits.melancholy value=system.traits.melancholy enriched=enriched.melancholy documentUUID=document.uuid toggled=true height=200 localize=true}}
+		{{formGroup schema.traits.melancholy value=system.traits.melancholy enriched=enriched.melancholy documentUUID=document.uuid toggled=true height=200 localize=true}}
 		{{/if}}
 
-		{{!-- {{formField schema.description.value value=description.value enriched=description.enriched localize=true toggled=true height=300 documentUUID=description.uuid}} --}}
+		{{!-- {{formGroup schema.description.value value=description.value enriched=description.enriched localize=true toggled=true height=300 documentUUID=description.uuid}} --}}
 
 		{{!-- {{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}} --}}
 		{{#if (isDefined system.origin)}}
-		{{formField schema.origin value=system.origin localize=true disabled=true}}
+		{{formGroup schema.origin value=system.origin localize=true disabled=true}}
 		{{/if}}
 
 		{{#if (isDefined system.requisites)}}
-		{{formField schema.requisites value=system.requisites localize=true disabled=true}}
+		{{formGroup schema.requisites value=system.requisites localize=true disabled=true}}
 		{{/if}}
 		
 		{{#if (and features (includes document.type 'background'))}}

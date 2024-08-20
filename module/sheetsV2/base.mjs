@@ -1,3 +1,4 @@
+import ActorResources from "../apps/actor-resources.mjs";
 import ActorTraits from "../apps/actor-traits.mjs";
 import ActorTraitsV2 from "../apps/actor-traitsV2.mjs";
 
@@ -45,12 +46,14 @@ export const SkyfallSheetMixin = Base => {
 				delete: BaseSheetSkyfall.#onDelete,
 				toggle: BaseSheetSkyfall.#onToggle,
 				vary: {handler: BaseSheetSkyfall.#onVary, buttons: [0, 2]},
-				use: BaseSheetSkyfall.#onUse,
-				abilityUse: BaseSheetSkyfall.#onAbilityUse,
+				use: {handler: BaseSheetSkyfall.#onUse, buttons: [0, 2]},
+				abilityUse: {handler: BaseSheetSkyfall.#onAbilityUse, buttons: [0, 2]},
 				roll: {handler: BaseSheetSkyfall.#onRoll, buttons: [0, 2]},
 				manage: BaseSheetSkyfall.#onManage,
 				filter: {handler: BaseSheetSkyfall.#onFilter, buttons: [0, 2]},
 				collapse: BaseSheetSkyfall.#onCollapse,
+				collapseAll: BaseSheetSkyfall.#onCollapseAll,
+				expandAll: BaseSheetSkyfall.#onExpandAll,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
 			}
 		};
@@ -126,7 +129,7 @@ export const SkyfallSheetMixin = Base => {
 					f.disabled = true;
 				});
 			}
-			if ( this.document.documentName == "Actor" ) this._getPlayMode();
+			if ( ['character','npc','partner','creation'].includes(this.document.type) ) this._getPlayMode();
 			this._setupDragAndDrop();
 		}
 
@@ -136,7 +139,6 @@ export const SkyfallSheetMixin = Base => {
 			toggleMode.classList = "toggle-mode";
 			toggleMode.dataset.action = "toggleMode";
 			toggleMode.innerHTML = ( this._sheetMode ? `<i class="fa-solid fa-lock"></i>` : `<i class="fa-solid fa-lock-open"></i>` );
-			// toggleMode.append(( this._sheetMode ? `<i class="fa-solid fa-lock-open"></i>` : `<i class="fa-solid fa-lock"></i>` ));
 			tabs.append(toggleMode);
 		}
 		/** @override */
@@ -230,6 +232,25 @@ export const SkyfallSheetMixin = Base => {
 		 * Bind a new context menu.
 		 */
 		_setupContextMenu() {
+			const itemTypes = ["weapon","armor","clothing","equipment","consumable","loot"];
+			
+			new ContextMenu(this.element, '.window-content [data-create-list]', [], {
+				eventName: "click",
+				onOpen: entry => {
+					ui.context.menuItems = itemTypes.map( type => {
+						return {
+							name: `TYPES.Item.${type}`,
+							icon: SYSTEM.icons.create,
+							callback: li => this.document.createEmbeddedDocuments("Item",[{
+								type:type,
+								name: game.i18n.format("DOCUMENT.Create", {
+									type: game.i18n.localize(`TYPES.Item.${type}`)
+								}),
+							}])
+						}
+					})
+				}
+			});
 			new ContextMenu(this.element, '.window-content .class, .window-content .path', [], {
 				onOpen: entry => {
 					const entryId = entry.dataset.entryId;
@@ -469,7 +490,8 @@ export const SkyfallSheetMixin = Base => {
 						type: game.i18n.localize(`TYPES.Item.${type}`)
 					}),
 				}
-				this.document.createEmbeddedDocuments( create, [itemData] );
+				const created = await this.document.createEmbeddedDocuments( create, [itemData] );
+				created[0].sheet.render(true);
 			}
 		}
 
@@ -478,9 +500,9 @@ export const SkyfallSheetMixin = Base => {
 		 * @param {Event} event             The initiating click event.
 		 * @param {HTMLElement} target      The current target of the event listener.
 		 */
-		static #onEdit(event, target) {
+		static async #onEdit(event, target) {
 			const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
-			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId);
+			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
 			if ( !document ) return;
 			document.sheet.render(true);
 		}
@@ -535,13 +557,17 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static #onVary(event, target) {
 			const fieldPath = target.dataset.fieldPath;
+			const max = target.dataset.max;
 			const itemId = target.closest(".entry")?.dataset.entryId;
 			const document = this.document.items.get(itemId) ?? this.document.effects.get(itemId) ?? this.document;
 			if ( !foundry.utils.hasProperty(document, fieldPath) ) return;
-			
+			let value = Number(foundry.utils.getProperty(document, fieldPath));
 			const updateData = {};
-			updateData[fieldPath] = Number(foundry.utils.getProperty(document, fieldPath));
+			updateData[fieldPath] = value;
 			event.type == 'click' ? updateData[fieldPath]++ : updateData[fieldPath]-- ;
+			if ( max && Number(max) ) {
+				updateData[fieldPath] = Math.min(updateData[fieldPath], Number(max));
+			}
 			document.update(updateData);
 		}
 
@@ -552,28 +578,34 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static async #onUse(event, target) {
 			let id = target.closest('.entry').dataset.entryId;
-			
-			let withId = target.dataset.itemId;
-			if ( withId != id ) {}
-			const ability = this.actor.items.get(id);
-			if ( !ability ) return;
-			const item = this.actor.items.get(withId);
-			const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
-			const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
-			await ChatMessage.create({
-				type: 'usage',
-				flags: {
-					skyfall: {
-						advantage: event.ctrlKey ? 1 : 0,
-						disadvantage: event.altKey ? 1 : 0,
-					}
-				},
-				speaker: ChatMessage.getSpeaker({actor: this}),
-				system: {
-					actorId: this.actor.uuid,
-					abilityId: ability.id,
-					itemId: item?.id ?? null,
-				}}, {skipConfig: skip});
+			if ( event.type == 'click' ) {
+				let withId = target.dataset.itemId;
+				if ( withId != id ) {}
+				const ability = this.actor.items.get(id);
+				if ( !ability ) return;
+				const item = this.actor.items.get(withId);
+				const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
+				const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
+				await ChatMessage.create({
+					type: 'usage',
+					flags: {
+						skyfall: {
+							advantage: event.ctrlKey ? 1 : 0,
+							disadvantage: event.altKey ? 1 : 0,
+						}
+					},
+					speaker: ChatMessage.getSpeaker({actor: this}),
+					system: {
+						actorId: this.actor.uuid,
+						abilityId: ability.id,
+						itemId: item?.id ?? null,
+					}}, {skipConfig: skip});
+			} else {
+				const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
+				const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
+				if ( !document ) return;
+				document.sheet.render(true);
+			}
 		}
 		
 		/**
@@ -582,53 +614,60 @@ export const SkyfallSheetMixin = Base => {
 		 * @param {HTMLElement} target      The current target of the event listener.
 		 */
 		static async #onAbilityUse(event, target) {
-			let abilityId = target.dataset.abilityId;
-			let itemId = target.dataset.entryId;
-			let commom = SYSTEM.actions.find( action => action.id == abilityId );
-			if ( itemId == abilityId ) return;
-			if ( commom ){
+			if ( event.type == 'click' ) {
+				let abilityId = target.dataset.abilityId;
+				let itemId = target.dataset.entryId;
+				let commom = SYSTEM.actions.find( action => action.id == abilityId );
+				if ( itemId == abilityId ) return;
+				if ( commom ){
+					await ChatMessage.create({
+						content: `<h5>${game.i18n.localize(commom.name)}</h5>${game.i18n.localize(commom.hint)}`,
+						speaker: ChatMessage.getSpeaker({actor: this}),
+					});
+					return;
+				}
+				const item = this.actor.items.get(itemId);
+				if ( !abilityId && ['weapon','armor'].includes(item?.type) ) {
+					const weaponAbilitiesOptions = this.actor.items.filter(i => i.type == 'ability' && i.system.descriptors.includes('weapon')).map( i => 				`<label><input type="radio" name="abilityId" value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon}</span> ${i.name}</label><br>` ).join('');
+					// `<option value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon} ${i.name}</option>`
+					//.map(i => [i.id, i.name, i.img, i.system.labels.action.icon]);
+					abilityId = await foundry.applications.api.DialogV2.prompt({
+						window: { title: "SKYFALL2.DIALOG.SelectAbilityItem" },
+						content: weaponAbilitiesOptions, //'<select name="abilityId" autofocus>'+weaponAbilitiesOptions+'</select>',
+						ok: {
+							label: "SKYFALL2.Confirm",
+							callback: (event, button, dialog) => button.form.elements.abilityId.value
+						}
+					});
+				}
+				
+				const ability = this.actor.items.get(abilityId);
+	
+				if ( !ability ) return;
+				
+				const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
+				const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
+				
 				await ChatMessage.create({
-					content: `<h5>${game.i18n.localize(commom.name)}</h5>${game.i18n.localize(commom.hint)}`,
+					type: 'usage',
+					flags: {
+						skyfall: {
+							advantage: event.ctrlKey ? 1 : 0,
+							disadvantage: event.altKey ? 1 : 0,
+						}
+					},
 					speaker: ChatMessage.getSpeaker({actor: this}),
-				});
-				return;
+					system: {
+						actorId: this.actor.uuid,
+						abilityId: ability.id,
+						itemId: item?.id ?? null,
+					}}, {skipConfig: skip});
+			} else {
+				const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
+				const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
+				if ( !document ) return;
+				document.sheet.render(true);
 			}
-			const item = this.actor.items.get(itemId);
-			if ( !abilityId && ['weapon','armor'].includes(item?.type) ) {
-				const weaponAbilitiesOptions = this.actor.items.filter(i => i.type == 'ability' && i.system.descriptors.includes('weapon')).map( i => 				`<label><input type="radio" name="abilityId" value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon}</span> ${i.name}</label><br>` ).join('');
-				// `<option value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon} ${i.name}</option>`
-				//.map(i => [i.id, i.name, i.img, i.system.labels.action.icon]);
-				abilityId = await foundry.applications.api.DialogV2.prompt({
-					window: { title: "SKYFALL2.DIALOG.SelectAbilityItem" },
-					content: weaponAbilitiesOptions, //'<select name="abilityId" autofocus>'+weaponAbilitiesOptions+'</select>',
-					ok: {
-						label: "SKYFALL2.Confirm",
-						callback: (event, button, dialog) => button.form.elements.abilityId.value
-					}
-				});
-			}
-			
-			const ability = this.actor.items.get(abilityId);
-
-			if ( !ability ) return;
-			
-			const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
-			const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
-			
-			await ChatMessage.create({
-				type: 'usage',
-				flags: {
-					skyfall: {
-						advantage: event.ctrlKey ? 1 : 0,
-						disadvantage: event.altKey ? 1 : 0,
-					}
-				},
-				speaker: ChatMessage.getSpeaker({actor: this}),
-				system: {
-					actorId: this.actor.uuid,
-					abilityId: ability.id,
-					itemId: item?.id ?? null,
-				}}, {skipConfig: skip});
 		}
 
 		/**
@@ -697,6 +736,8 @@ export const SkyfallSheetMixin = Base => {
 				case "modifiers-condition.imune":
 				case "irv":
 					return new ActorTraitsV2({document: this.actor, manage: "irv"}).render(true);
+				case "resources":
+					return new ActorResources({document: this.actor}).render(true);
 					// manage = manage.split('-')[1];
 					// return new ActorTraits(this.actor, manage).render(true);
 					// manage = manage.split('-')[1];
@@ -751,8 +792,17 @@ export const SkyfallSheetMixin = Base => {
 			else this.filters[filterId] = filter;
 			this.render();
 		}
+		
 		static #onCollapse(event, target) {
 			target.closest('.ability-card').classList.toggle('collapsed');
+		}
+		static #onCollapseAll(event, target) {
+			const cards = target.closest('section').querySelectorAll('.ability-card');
+			cards.forEach( c => c.classList.add('collapsed'));
+		}
+		static #onExpandAll(event, target) {
+			const cards = target.closest('section').querySelectorAll('.ability-card');
+			cards.forEach( c => c.classList.remove('collapsed'));
 		}
 
 		static #logToConsole(){

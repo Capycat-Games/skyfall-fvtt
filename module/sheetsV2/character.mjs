@@ -1,3 +1,4 @@
+import { abilities } from "../config/creature.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
@@ -89,6 +90,86 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				active: true,
 				icon: SYSTEM.icons.gem,
 				label:"TYPES.Item.sigil"
+			},
+			action: {
+				active: true,
+				icon: SYSTEM.icons.sfaction,
+				label:"SKYFALL.ITEM.ACTIVATIONS.ACTION"
+			},
+			bonus: {
+				active: true,
+				icon: SYSTEM.icons.sfbonus,
+				label:"SKYFALL.ITEM.ACTIVATIONS.BONUS"
+			},
+			reaction: {
+				active: true,
+				icon: SYSTEM.icons.sfreaction,
+				label:"SKYFALL.ITEM.ACTIVATIONS.REACTION"
+			},
+			free: {
+				active: true,
+				icon: SYSTEM.icons.sffree,
+				label:"SKYFALL.ITEM.ACTIVATIONS.FREE"
+			},
+		},
+		abilities: {
+			action: {
+				active: true,
+				icon: SYSTEM.icons.sfaction,
+				label:"SKYFALL.ITEM.ACTIVATIONS.ACTION"
+			},
+			bonus: {
+				active: true,
+				icon: SYSTEM.icons.sfbonus,
+				label:"SKYFALL.ITEM.ACTIVATIONS.BONUS"
+			},
+			reaction: {
+				active: true,
+				icon: SYSTEM.icons.sfreaction,
+				label:"SKYFALL.ITEM.ACTIVATIONS.REACTION"
+			},
+			free: {
+				active: true,
+				icon: SYSTEM.icons.sffree,
+				label:"SKYFALL.ITEM.ACTIVATIONS.FREE"
+			},
+		},
+		spells: {
+			// cantrip: {
+			// 	active: true,
+			// 	icon: game.i18n.localize("SKYFALL.SPELLLAYERS.CANTRIP").charAt(0),
+			// 	label: "SKYFALL.SPELLLAYERS.CANTRIP"
+			
+			// },
+			// superficial: {
+			// 	active: true,
+			// 	icon: game.i18n.localize("SKYFALL.SPELLLAYERS.SUPERFICIAL").charAt(0),
+			// 	label: "SKYFALL.SPELLLAYERS.SUPERFICIAL"
+			// },
+			// shallow: {
+			// 	active: true,
+			// 	icon: game.i18n.localize("SKYFALL.SPELLLAYERS.SHALLOW").charAt(0),
+			// 	label: "SKYFALL.SPELLLAYERS.SHALLOW"
+			// },
+			// deep: {
+			// 	active: true,
+			// 	icon: game.i18n.localize("SKYFALL.SPELLLAYERS.DEEP").charAt(0),
+			// 	label: "SKYFALL.SPELLLAYERS.DEEP"
+			// },
+			control: {
+				active: true,
+				icon: SYSTEM.icons.sfspellcontrol,
+				label:"SKYFALL.DESCRIPTORS.CATEGORY.CONTROL"
+			},
+			ofensive: {
+				active: true,
+				icon: SYSTEM.icons.sfspellofensive,
+				label:"SKYFALL.DESCRIPTORS.CATEGORY.OFENSIVE",
+			},
+			utility: {
+				active: true,
+				icon: SYSTEM.icons.sfspellutility,
+				label:"SKYFALL.DESCRIPTORS.CATEGORY.UTILITY"
 			},
 			action: {
 				active: true,
@@ -208,10 +289,24 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 
 	_prepareSystemData(context){
 		
+		// SKILLS
+		const profIcons = [
+			SYSTEM.icons.square,
+			SYSTEM.icons.check,
+			SYSTEM.icons.checkdouble,
+		];
+		for (let [key, skill] of Object.entries(context.system.skills)) {
+			skill.id = key;
+			skill.label = SYSTEM.skills[key]?.label ?? skill.label ?? "SKILL";
+			skill.icon = profIcons[skill.value];
+			skill.type = SYSTEM.skills[key]?.type ?? 'apti' ?? 'custom';
+		}
+
 		// SORT SKILLS
 		let coreSkill = Object.values(context.system.skills).filter((p)=> !p.custom);
 		let aptitudeSkills = Object.values(context.system.skills).filter((p)=> p.custom);
 		context.skills = [...coreSkill.slice(0,2), ...aptitudeSkills, ...coreSkill.slice(2)];
+		
 		
 		context.system.initiative = context.system.abilities.dex.value;
 		// MOVEMENT
@@ -300,14 +395,32 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			if ( progression.includes(item.type) ) items[item.type] = item;
 			if ( classPaths.includes(item.type) ) items[item.type].push(item);
 		}
-		
+		const spellLayer = {
+			'cantrip': 0,
+			'superficial': 1,
+			'shallow': 2,
+			'deep': 3,
+		}
+		items.spells.sort( (a, b) => {
+			const layerA = spellLayer[a.system.spellLayer];
+			const layerB = spellLayer[b.system.spellLayer];
+			return layerA > layerB ? 1 : layerA < layerB ? -1 : 0;
+		});
+		let layer = '';
+		for (const spell of items.spells) {
+			if ( layer != spell.system.layerLabel ) {
+				spell.layerLabel = spell.system.layerLabel;
+			}
+			layer = spell.system.layerLabel;
+		}
+
 		context.items = items;
 		this._prepareActions(context);
 	}
 	
 	/**
 	 * TODO - REFACTOR
-	 * ABILITIES NEED AND FIElD TO CONFIGURE WICTH ITEMS THEY MAY BE USE WITH
+	 * ABILITIES NEED A FIELD TO CONFIGURE WHICH ITEMS THEY MAY BE USE WITH?
 	 * IE.: type: ['weapon'], descriptor.allowed: ['thrown','shooty']
 	 * IE.: type: ['weapon','armor'] descriptor.notallowed: ['thrown','shooty']
 	 * IE.: type: ['consumable'], descriptor.allowed: ['granade']
@@ -320,13 +433,15 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		// Attack with Weapon
 		const weapons = this.document.items.filter( i => (i.type == 'weapon' || (i.type == 'armor' && i.system.type == 'shield')) && i.system.equipped );
 		for (const weapon of weapons) {
-			weapon.abilities = _weaponAbilities;
+			if ( weapon.system.purpose == 'melee' ) {
+				weapon.abilities = _weaponAbilities;
+				//.filter( i=> i.system.range.units == 'touch' );
+			} else {
+				weapon.abilities = _weaponAbilities.filter( i=> i.system.range.units == 'm' );
+			}
 			context.items.actions.push(weapon);
 		}
-		// for (const ability of _weaponAbilities) {
-		// 	ability.weapons = weapons;
-		// 	context.items.actions.push(ability);
-		// }
+		
 		const sigils = this.document.items.filter( i => i.type == 'sigil' && context.items.actions.find(a => a.uuid == i.system.item) );
 		context.items.actions.push(...sigils);
 
@@ -341,16 +456,51 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	}
 	
 	_prepareFilters(context){
+		let valid = (filters, key) => {
+			return filters[key] && !filters[key].active;
+		}
+		for (const [key, filters] of Object.entries(this.filters)) {
+			const list = context.items[key];
+			for (const item of Object.values(list)) {
+				let show = true;
+				const action = item.system?.action;
+				const sigil = item.type == 'sigil';
+				const tags = new Set(item.system.descriptors);
+				if ( item.system?.isRanged && valid(filters, 'ranged') ) show = false;
+				if ( item.system?.isMelee && valid(filters, 'melee') ) show = false;
+				if ( action && valid(filters, action) ) show = false;
+				if ( sigil && valid(filters, 'sigil') ) show = false;
+				
+
+				if ( tags.has('control') && valid(filters, 'control') ) show = false;
+				if ( tags.has('ofensive') && valid(filters, 'ofensive') ) show = false;
+				if ( tags.has('utility') && valid(filters, 'utility') ) show = false;
+
+				item.filtered = show ? '' : 'hidden';
+				continue;
+				if ( item.system?.isRanged  && !filters.ranged?.active ) show = false;
+				if ( item.system?.isMelee  && !filters.melee?.active ) show = false;
+				if ( item.system?.action && !filters[item.system.action]?.active ) show = false;
+				if ( item.type=='sigil' && !filters[item.type]?.active ) show = false;
+				
+				if ( descriptors.has('control') && !filters.control?.active ) show = false;
+				if ( descriptors.has('ofensive') && !filters.ofensive?.active ) show = false;
+				if ( descriptors.has('utility') && !filters.utility?.active ) show = false;
+
+				// if ( !filters.cantrip?.active && descriptors.has('cantrip') ) show = false;
+				// if ( !filters.superficial?.active && descriptors.has('superficial') ) show = false;
+				// if ( !filters.shallow?.active && descriptors.has('shallow') ) show = false;
+				// if ( !filters.deep?.active && descriptors.has('deep') ) show = false;
+				item.filtered = show ? '' : 'hidden';
+			}
+		}
+		return;
 		const actions = this.filters.actions;
-		const isRanged = (d) => ['thrown', 'shooting'].includes(d);
-		const isMelee = (d) => !['shooting'].includes(d);
 		for (const item of Object.values(context.items.actions)) {
 			let show = true;
-			// RANGED == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING 
-			if ( ['weapon','armor'].includes(actions.type) && !actions.ranged.active && item.system.descriptors?.some(isRanged) )show = false;
-			// MELEE == FALSE? ESCONDE TUDO QUE TIVER ARREMESSO SHOOTING
-			if ( ['weapon','armor'].includes(actions.type) && !actions.melee.active && !item.system.descriptors?.some(isMelee) ) show = false;
-			if ( item.system && item.system.action && !actions[item.system.action]?.active ) show = false;
+			if ( item.system?.isRanged  && !actions.ranged.active ) show = false;
+			if ( item.system?.isMelee  && !actions.melee.active ) show = false;
+			if ( item.system?.action && !actions[item.system.action]?.active ) show = false;
 			if ( item.type=='sigil' && !actions[item.type]?.active ) show = false;
 			item.filtered = show ? '' : 'hidden';
 		}
@@ -391,6 +541,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		this.inventory = this.inventory != 'default' ? 'default' : 'category';
 		this.render();
 	}
+
 	/**
 	 * Handle click events to remove a particular damage formula.
 	 * @param {Event} event             The initiating click event.

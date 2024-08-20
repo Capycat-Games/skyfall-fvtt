@@ -8,7 +8,10 @@ export default class SkyfallItem extends Item {
 	/* -------------------------------------------- */
 	/*  Item Attributes                             */
 	/* -------------------------------------------- */
-
+	
+	static async createDialog(data={}, {parent=null, pack=null, types, ...options}={}) {
+		super.createDialog(data, {parent, pack, types, ...options });
+	}
 	/**
 	 * Item-specific configuration data which is constructed before any additional data preparation steps.
 	 * @type {object}
@@ -23,36 +26,6 @@ export default class SkyfallItem extends Item {
 
 	/** @override */
 	prepareBaseData() {
-		switch ( this.type ) {
-			case "legacy":
-				break;
-			case "curse":
-				break;
-			case "background":
-				break;
-			case "class":
-				break;
-			case "path":
-				break;
-			case "feature":
-				break;
-			case "feat":
-				break;
-			case "ability":
-				break;
-			case "spell":
-				break;
-			case "weapon":
-				break;
-			case "armor":
-				break;
-			case "equipment":
-				break;
-			case "consumable":
-				break;
-			case "loot":
-				break;
-		}
 		return super.prepareBaseData();
 	}
 
@@ -68,8 +41,6 @@ export default class SkyfallItem extends Item {
 			case "background":
 				break;
 			case "class":
-				this.system.hitDie.max = this.system.level;
-				
 				break;
 			case "path":
 				break;
@@ -94,6 +65,8 @@ export default class SkyfallItem extends Item {
 			case "loot":
 				break;
 		}
+		
+		
 	}
 
 	/* -------------------------------------------- */
@@ -154,14 +127,43 @@ export default class SkyfallItem extends Item {
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
 		let allowed = super._preCreate(data, options, user);
+		if ( allowed && this.parent ) allowed = this._precreateValidateParent();
 		if ( allowed && this.parent ) allowed = await this._preCreateUniqueItem(data, options, user);
 		return allowed;
 	}
 
 	/* -------------------------------------------- */
-
+	_precreateValidateParent(){
+		const actorTypes = {
+			character: [
+				"legacy", "curse", "background", "class", "path", "feature", "feat", "ability", "spell", "weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
+			],
+			creation: [
+				"feature",
+			],
+			npc: [
+				"feature", "ability",
+				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
+			],
+			partner: [
+				"feature", "ability", "spell",
+				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
+			],
+			guild: [
+				"seal", "facility", "guild-ability", "guild-feature",
+				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
+			]
+		}
+		if ( actorTypes[this.parent.type].includes(this.type) ) return true;
+		else {
+			ui.notifications.warn(
+				game.i18n.localize("SKYFALL2.NOTIFICATION.InvalidParentType")
+			);
+			return false;
+		}
+	}
+	
 	async _preCreateUniqueItem( data, options, user ){
-		console.log( data, options, user );
 		const { DialogV2 }  = foundry.applications.api;
 
 		const uniques = ["legacy", "curse", "background", "class", "path"];
@@ -354,11 +356,11 @@ export default class SkyfallItem extends Item {
 
 	/* -------------------------------------------- */
 
-	/** @inheritdoc */
-	async _preUpdate(data, options, user) {
-		let allowed = super._preUpdate(data, options, user);
-		return allowed;
-	}
+	// /** @inheritdoc */
+	// async _preUpdate(data, options, user) {
+	// 	let allowed = super._preUpdate(data, options, user);
+	// 	return allowed;
+	// }
 
 	/** @inheritdoc */
 	async _onUpdate(data, options, userId) {
@@ -408,7 +410,7 @@ export default class SkyfallItem extends Item {
 
 	
 	/** @inheritDoc */
-	async _buildEmbedHTML(config, options={}) {
+	async _buildEmbedHTML2(config, options={}) {
 		config.caption = false;
 		config.cite = false;
 		const embed = await super._buildEmbedHTML(config, options);

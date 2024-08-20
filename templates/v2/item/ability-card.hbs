@@ -1,68 +1,82 @@
-<div class="ability-card flexcol {{ifThen @root.isPlayMode '' 'editing'}}" data-entry-id="{{item.id}}">
-	<div class="ability-header flexrow"> 
+<div class="ability-card flexcol {{item.filtered}} {{ifThen @root.isPlayMode '' 'editing'}}"
+	data-entry-id="{{item.id}}">
+	<div class="ability-header flexrow">
 		{{{labels.action.icon}}} &nbsp;
-		{{#if (or (eq @root.document.type "ability" ) (eq @root.document.type "spell" ) (eq @root.document.type "sigil" ))  }}
-		<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name"/>
-		<span class="cost flex1">{{{labels.cost.label}}}</span>
-		{{{labels.spell.icon}}}
-		{{!-- <a class="isEditing flex0" data-edit="toggle">{{{@root.SYSTEM.icons.gear}}}</a> --}}
-		<a data-action="toggleMode" class="toggle-edit flex0">{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}</a>
-		{{else}}
-		<h5>{{item.name}}</h5>
-		<span class="cost flex1">{{{labels.cost.label}}}</span>
-		{{{labels.spell.icon}}}
-		<a class="isEditing flex0" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>&nbsp;
-		<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>&nbsp;
+		{{#if (or @root.isEmbed (eq @root.document.documentName "Actor")) }}
+			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+				<h5>{{item.name}}</h5>
+			</a>
+			<span class="cost flex1">{{{labels.cost.label}}}</span>
+			{{{labels.spell.icon}}}
 			{{#if collapse }}
-			<a  data-action="collapse" class="isEditing flex0">{{{@root.SYSTEM.icons.gear}}}</a>
+				<a data-action="collapse" class="expand isEditing flex0">
+					<i class="fa-solid fa-expand"></i>
+				</a>
+				<a data-action="collapse" class="compress isEditing flex0">
+					<i class="fa-solid fa-compress"></i>
+				</a>&nbsp;
 			{{/if}}
+			<a class="isEditing flex0" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>&nbsp;&nbsp;
+			<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+		{{else}}
+			<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name" />
+			<span class="cost flex1">{{{labels.cost.label}}}</span>
+			{{{labels.spell.icon}}}
+			{{!-- <a class="isEditing flex0" data-edit="toggle">{{{@root.SYSTEM.icons.gear}}}</a> --}}
+			<a data-action="toggleMode"
+				class="toggle-edit flex0">{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}</a>
 		{{/if}}
 	</div>
 	{{#if labels.descriptors }}
-	<div class="ability-descriptors">
-		{{#each labels.descriptors as | tag key |}}
-			{{#if tag.value }}
-			<label class="descriptor active" >{{tag.label}}</label>
-			{{/if}}
-		{{/each}}
-	</div>
+		<div class="ability-descriptors">
+			{{#each labels.descriptors as | tag key |}}
+				{{#if tag.value }}
+					<label class="descriptor active">{{tag.label}}</label>
+				{{/if}}
+			{{/each}}
+		</div>
 	{{/if}}
 	{{#if system.description.value }}
-	<div class="ability-description">
-		<em><b>{{{system.description.value}}}</b></em>
-	</div>
+		<div class="ability-description">
+			<em><b>{{{system.description.value}}}</b></em>
+		</div>
 	{{/if}}
 	{{#if labels.properties }}
-	<div class="ability-properties">
-		<ul class="plain properties" style="columns: 2;">
-			{{#each labels.properties as | prop |}}
-			<li><label>{{{localize prop.label}}}:</label> {{prop.descriptive}}</li>
-			{{/each}}
-		</ul>
-	</div>
+		<div class="ability-properties">
+			<ul class="plain properties" style="columns: 2;">
+				{{#each labels.properties as | prop |}}
+					<li><label>{{{localize prop.label}}}:</label> {{prop.descriptive}}</li>
+				{{/each}}
+			</ul>
+		</div>
 	{{/if}}
 	{{#if labels.attack.hit }}
-	<div class="rich">
-		<label>{{{localize labels.attack.hit.label}}}:</label> {{#if enriched.hit}}{{{enriched.hit}}}{{else}}{{{labels.attack.hit.descriptive}}}{{/if}}
-	</div>
+		<div class="rich">
+			<label>{{{localize labels.attack.hit.label}}}:</label>
+			{{#if enriched.hit}}{{{enriched.hit}}}{{else}}{{{labels.attack.hit.descriptive}}}{{/if}}
+		</div>
 	{{/if}}
 
 	{{#if labels.attack.miss }}
-	<div class="rich">
-		<label>{{{localize labels.attack.miss.label}}}:</label> {{#if enriched.miss}}{{{enriched.miss}}}{{else}}{{{labels.attack.miss.descriptive}}}{{/if}}
-	</div>
+		<div class="rich">
+			<label>{{{localize labels.attack.miss.label}}}:</label>
+			{{#if enriched.miss}}{{{enriched.miss}}}{{else}}{{{labels.attack.miss.descriptive}}}{{/if}}
+		</div>
 	{{/if}}
 	{{#if labels.effect }}
-	<div class="rich">
-		<label>{{{localize labels.effect.label}}}:</label> {{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
-	</div>
+		<div class="rich">
+			<label>{{{localize labels.effect.label}}}:</label>
+			{{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
+		</div>
 	{{/if}}
 	{{#if labels.special }}
-	<div class="rich">
-		<label>{{{localize labels.special.label}}}:</label> {{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}
-	</div>
+		<div class="rich">
+			<label>{{{localize labels.special.label}}}:</label>
+			{{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}
+		</div>
 	{{/if}}
+
 	{{!-- MODIFICATIONS --}}
-	{{{enriched.modifications}}}
+	{{{labels.modifications}}}
 	{{!-- <div class="space flex100"></div> --}}
 </div>

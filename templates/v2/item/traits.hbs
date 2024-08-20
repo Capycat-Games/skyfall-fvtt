@@ -1,69 +1,48 @@
 <section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	{{#if (eq document.type 'weapon')}}
-		{{formGroup schema.category value=system.category localize=true}}
+		<div class="form-group">
+			<label for="">{{localize schema.category.label}}</label>
+			<div class="form-fields">
+				{{formInput schema.category value=system.category localize=true}}
+				{{formInput schema.purpose value=system.purpose localize=true}}
+			</div>
+		</div>
 		{{formGroup schema.wield value=system.wield localize=true}}
-		{{formGroup schema.damage.formula value=system.damage.formula localize=true}}
 		{{formGroup schema.range value=system.range localize=true}}
-		<fieldset class="flexrow sigils">
-			<legend>{{localize "TYPES.Item.sigilPl"}}</legend>
-			{{#each sigils as | list type | }}
-			<ol class="plain flexcol flex-start" data-field-path="system.sigils" data-item-type="sigil">
-				<li><label>
-					{{#if (eq type 'prefix' ) }}
-					{{localize "SKYFALL2.SIGIL.Prefix"}}
-					{{else}}
-					{{localize "SKYFALL2.SIGIL.Sufix"}}
-					{{/if}}
-				</label></li>
-				{{log list}}
-				{{#each list as | sigil |}}
-				<li class="sigil flexrow" data-uuid="{{sigil.uuid}}">
-					<div class="item-name flex2">{{sigil.label}}</div>
-					<div class="item-controls flex0">
-					<a data-action="infuse">
-						{{localize "SKYFALL2.Infused"}}
-						{{{ifThen sigil.infused  @root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square}}}
-					</a>
-					<a data-action="deleteSigil">&nbsp;{{{@root.SYSTEM.icons.delete}}}</a>
-					</div>
-				</li>
-				{{/each}}
-			</ol>
-			{{/each }}
+		<fieldset class="">
+			<legend>{{localize "SKYFALL2.Attack"}}</legend>
+			{{formGroup schema.attack.ability value=system.attack.ability localize=true}}
+			{{formGroup schema.attack.bonus value=system.attack.bonus localize=true}}
 		</fieldset>
-		{{#if true}}
-		{{!-- {{formGroup schema.sigils value=system.sigils localize=true}} --}}
-		{{/if}}
-		{{#if false}}
-		<div class="form-group">
-			<label>{{localize "SKYFALL2.SIGIL.Prefix"}}</label>
-			<div class="form-fields">
-				<multi-select name="system.sigils.prefix">
-				{{#each _selOpts.sigils.prefix as | sigil |}}
-					<option value="{{sigil.uuid}}" {{sigil.selected}}>{{sigil.label}}</option>
-				{{/each}}
-				</multi-select>
-			</div>
-		</div>
-		<div class="form-group">
-			<label>{{localize "SKYFALL2.SIGIL.Sufix"}}</label>
-			<div class="form-fields">
-				<multi-select name="system.sigils.sufix">
-				{{#each _selOpts.sigils.sufix as | sigil |}}
-					<option value="{{sigil.uuid}}" {{sigil.selected}}>{{sigil.label}}</option>
-				{{/each}}
-				</multi-select>
-			</div>
-		</div>
-		<div>
-		{{/if}}
+		<fieldset class="">
+			<legend>{{localize "SKYFALL2.Damage"}}</legend>
+			{{formGroup schema.damage.die value=system.damage.die localize=true}}
+			{{formGroup schema.damage.versatile value=system.damage.versatile localize=true}}
+			{{formGroup schema.damage.ability value=system.damage.ability localize=true}}
+			{{formGroup schema.damage.bonus value=system.damage.bonus localize=true}}
+			{{!-- {{formGroup schema.damage.formula value=system.damage.formula localize=true}} --}}
+		</fieldset>
+
 	{{/if}}
 	{{#if (eq document.type 'armor')}}
 		{{formGroup schema.type value=system.type localize=true}}
 		{{formGroup schema.dr value=system.dr localize=true}}
 		{{#if (eq system.type 'shield')}}
-		{{formGroup schema.category value=system.category}}
-		{{formGroup schema.damage.formula value=system.damage.formula}}
+			{{formGroup schema.category value=system.category}}
+
+			<fieldset class="">
+				<legend>{{localize "SKYFALL2.Attack"}}</legend>
+				{{formGroup schema.attack.ability value=system.attack.ability localize=true}}
+				{{formGroup schema.attack.bonus value=system.attack.bonus localize=true}}
+			</fieldset>
+			<fieldset class="">
+				<legend>{{localize "SKYFALL2.Damage"}}</legend>
+				{{formGroup schema.damage.die value=system.damage.die localize=true}}
+				{{formGroup schema.damage.versatile value=system.damage.versatile localize=true}}
+				{{formGroup schema.damage.ability value=system.damage.ability localize=true}}
+				{{formGroup schema.damage.bonus value=system.damage.bonus localize=true}}
+				{{!-- {{formGroup schema.damage.formula value=system.damage.formula localize=true}} --}}
+			</fieldset>
 		{{/if}}
 	{{/if}}
 	{{#if (eq document.type 'clothing')}}
@@ -84,24 +63,56 @@
 	{{/if}}
 
 	{{#if (eq document.type 'class')}}
-	<div class="form-group">
-		<label>{{localize "SKYFALL2.Level"}}</label>
-		<div class="form-fields">
-			<input type="number" name="system.level" value="{{system.level}}">
-			{{formGroup schema.initial value=system.initial}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Level"}}</label>
+			<div class="form-fields">
+				<input type="number" name="system.level" value="{{system.level}}">
+				{{formGroup schema.initial value=system.initial}}
+			</div>
 		</div>
-	</div>
-	<div class="form-group">
-		<label>{{localize "SKYFALL2.HitDie"}}</label>
-		<div class="form-fields">
-			{{formInput schema.hitDie.value value=system.hitDie.value}}/
-			{{formInput schema.hitDie.max value=system.hitDie.max}}
-			{{formInput schema.hitDie.die value=system.hitDie.die}}
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.HitDie"}}</label>
+			<div class="form-fields">
+				{{formInput schema.hitDie.value value=system.hitDie.value}}/
+				{{formInput schema.hitDie.max value=system.hitDie.max}}
+				{{formInput schema.hitDie.die value=system.hitDie.die}}
+			</div>
 		</div>
-	</div>
-	{{localize "SKYFALL2.ProficiencyPl"}}
-	{{formGroup schema.description.value value=system.description.value enriched=enriched.description toggled=true}}
+		{{formGroup schema.guild.ability value=system.guild.ability localize=true}}
+
+		{{localize "SKYFALL2.ProficiencyPl"}}
+		{{formGroup schema.description.value value=system.description.value enriched=enriched.description toggled=true}}
 	{{/if}}
 	{{#if (eq document.type 'template')}}
+	{{/if}}
+
+	{{!-- SIGILS --}}
+	{{#if (isDefined system.sigils)}}
+		<fieldset class="flexrow sigils">
+			<legend>{{localize "TYPES.Item.sigilPl"}}</legend>
+			{{#each sigils as | list type | }}
+				<ol class="plain flexcol flex-start" data-field-path="system.sigils" data-item-type="sigil">
+					<li><label>
+							{{#if (eq type 'prefix' ) }}
+								{{localize "SKYFALL2.SIGIL.Prefix"}}
+							{{else}}
+								{{localize "SKYFALL2.SIGIL.Sufix"}}
+							{{/if}}
+						</label></li>
+					{{#each list as | sigil |}}
+						<li class="sigil flexrow" data-uuid="{{sigil.uuid}}">
+							<div class="item-name flex2">{{sigil.label}}</div>
+							<div class="item-controls flex0">
+								<a data-action="infuse">
+									{{localize "SKYFALL2.Infused"}}
+									{{{ifThen sigil.infused  @root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square}}}
+								</a>
+								<a data-action="deleteSigil">&nbsp;{{{@root.SYSTEM.icons.delete}}}</a>
+							</div>
+						</li>
+					{{/each}}
+				</ol>
+			{{/each }}
+		</fieldset>
 	{{/if}}
 </section>

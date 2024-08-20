@@ -1,0 +1,23 @@
+<section class="tab scrollable ability-config {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- GUILD ABILITY --}}
+	<fieldset>
+		<legend>{{localize "TYPES.Item.guild-ability"}}</legend>
+		{{formGroup schema.type value=system.type localize=true}}
+	</fieldset>
+	{{!-- ACTIVATION --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Activation"}}</legend>
+		{{formGroup schema.activation.cost value=system.activation.cost localize=true}}
+		{{formGroup schema.consume.amount value=system.consume.amount localize=true}}
+	</fieldset>
+	{{!-- EFFECT --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Effect"}}</legend>
+		{{formGroup schema.effect.descriptive value=system.effect.descriptive localize=true}}
+	</fieldset>
+	{{!-- EFFECT --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Special"}}</legend>
+		{{formGroup schema.special.descriptive value=system.special.descriptive localize=true}}
+	</fieldset>
+</section>

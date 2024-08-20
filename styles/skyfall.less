@@ -183,18 +183,17 @@
 		}
 	}
 }
-/* BUG CORE */
-.sheet.journal-entry .scrollable {
-	position: relative;
-}
 
 .skyfall {
 	&.sheet #context-menu {
 		background-color: white;
+		* {
+			color: black;
+		}
 		li {
 			line-height: 14px;
 			font-size: 14px;
-			color: black;
+			
 			&:hover * { color: white; }
 		}
 	}
@@ -227,8 +226,32 @@
 	multi-select {
 		flex-direction: column-reverse;
 	}
+	&.sheet {
+		.plain {
+			li .item-name img {
+				margin-right: 5px;
+			}
+		}
+	}
 }
 
+#tooltip {
+	.property-summary {
+		ul, ol {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			&.ability-tooltip {
+				min-width: 130px;
+				li .name { text-align: left; }
+				li .value { max-width: 30%; }
+				li:last-child {
+					border-top: 1px solid white;
+				}
+			}
+		}
+	}
+}
 
 .inline-roll-request {
 	background: #DDD;

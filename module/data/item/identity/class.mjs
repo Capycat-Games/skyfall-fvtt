@@ -33,6 +33,14 @@ export default class Class extends Identity {
 				skills: this.grantedSchema(),
 				gear: this.grantedSchema(),
 			}),
+			guild: new fields.SchemaField({
+				ability: new fields.StringField({required: true, blank: true, choices: {
+					cunning: {value:'cunning', label:"SKYFALL2.GUILD.Cunning"},
+					knowledge: {value:'knowledge', label:"SKYFALL2.GUILD.Knowledge"},
+					crafting: {value:'crafting', label:"SKYFALL2.GUILD.Crafting"},
+					// reputation: {value:'reputation', label:"SKYFALL2.GUILD.Reputation"},
+				}, initial: "cunning", label:"SKYFALL2.GUILD.GuildAbility"}),
+			})
 		});
 	}
 
@@ -50,4 +58,15 @@ export default class Class extends Identity {
 	static migrateData(source) {
 		
 	}
+
+	
+	/* -------------------------------------------- */
+	/*  Data Preparation                            */
+	/* -------------------------------------------- */
+
+	/** @inheritDoc */
+	prepareBaseData() {
+		this.hitDie.max = this.level;
+	}
+
 }

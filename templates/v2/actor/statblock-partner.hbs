@@ -1,0 +1,226 @@
+<section class="tab scrollable npc-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- NAME AND TYPES --}}
+	<div class="header flexrow">
+		{{#if isEditMode }}
+		<h2 class="flex2">
+			<input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
+		</h2>
+		<h5 class="flex1 flexrow text-center">
+			{{#if (eq document.type 'partner') }}
+			<label>{{localize (concat "TYPES.Actor." document.type)}}:</label>
+			<input type="number" name="system.level.value" value="{{system.level.value}}">
+			{{else}}
+			<label>{{localize (concat "TYPES.Actor." document.type)}}</label>
+			{{/if}}
+		</h5>
+		{{else}}
+		<h1 class="flex2">{{actor.name}}</h1>
+			{{#if (eq document.type 'partner') }}
+			<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}:&nbsp;{{system.level.value}}</h3>
+			{{else}}
+			<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}</h3>
+			{{/if}}
+		{{/if}}
+		<div class="flex100"></div>
+		{{#if (eq document.type 'creation') }}
+			{{#if isEditMode }}
+			{{formGroup schema.creator.uuid value=system.creator.uuid localize=true stacked2=true}}
+			{{else}}
+			<label>{{system.creator.name}}</label>
+			{{/if}}
+		{{/if}}
+		<div class="flex100"></div>
+		{{!-- CREATURES TYPES --}}
+		{{#if isEditMode }}
+		{{formGroup schema.creatureType value=system.creatureType localize=true stacked=true}}
+		{{formGroup schema.size value=system.size localize=true stacked=true}}
+		{{else}}
+		<i>{{lookup (lookup SYSTEM.creatureTypes system.creatureType) "label"}}, {{lookup (lookup SYSTEM.actorSizes system.size) "label"}}</i>
+		<div class="flex100"></div>
+		{{/if}}
+	</div>
+	{{!-- ABILTY-SCORES --}}
+	{{#if (eq document.type 'partner') }}
+	<div class="ability-scores flexrow text-center">
+		<div class="flexcol ability mental">
+			<div class="form-group flexrow">
+				{{#if isEditMode }}
+				<label>{{localize "SKYFALL2.ABILITY.MentalPl"}}:</label>
+				<div class="form-fields">
+					<input type="number" name="system.abilities.mental.value" value="{{system.abilities.mental.value}}">
+				</div>
+				{{else}}
+				<a data-action="roll" data-type="ability" data-roll-type="ability" data-id="mental">
+					<b> {{localize "SKYFALL2.ABILITY.MentalPl"}}:
+						{{{ifThen (eq @root.rolling.type 'skill') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+						{{{ifThen (eq @root.rolling.abl 'mental') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					</b>
+					{{system.abilities.mental.value}}
+				</a>
+				{{/if}}
+			</div>
+			<div class="form-group flexrow">
+				<label>{{localize "SKYFALL2.ABILITY.MentalProtectionPl"}}:</label>
+				<div class="form-fields">
+					<span>{{system.abilities.mental.protection}}</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="flexcol ability physical">
+			<div class="form-group flexrow">
+				{{#if isEditMode }}
+				<label>{{localize "SKYFALL2.ABILITY.MentalPl"}}:</label>
+				<div class="form-fields">
+					<input type="number" name="system.abilities.physical.value" value="{{system.abilities.physical.value}}">
+				</div>
+				{{else}}
+				<a data-action="roll" data-type="ability" data-roll-type="ability" data-id="physical">
+					<b> {{localize "SKYFALL2.ABILITY.PhysicalPl"}}:
+						{{{ifThen (eq @root.rolling.type 'skill') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+						{{{ifThen (eq @root.rolling.abl 'physical') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					</b>
+					{{system.abilities.physical.value}}
+				</a>
+				{{/if}}
+			</div>
+			<div class="form-group flexrow">
+				<label>{{localize "SKYFALL2.ABILITY.PhysicalProtectionPl"}}:</label>
+				<div class="form-fields">
+					<span>{{system.abilities.physical.protection}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{else}}
+	<div class="ability-scores flexrow text-center">
+		<div class="flexcol ability">
+			<div class="label">&nbsp;</div>
+			<div class="protection" data-tooltip="{{localize "SKYFALL.ACTOR.PROTECTION"}}">
+				{{{SYSTEM.icons.sfdefense}}}
+			</div>
+		</div>
+		{{#each system.abilities as | ability abl | }}
+		<div class="flexcol ability">
+			<div class="label">
+				<a data-action="roll" data-type="ability" data-roll-type="ability" data-id="{{abl}}">
+					{{{ifThen (eq @root.rolling.type 'skill') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					{{{ifThen (eq @root.rolling.abl abl) '<i class="fa-solid fa-dice-d20"></i>' ''}}}
+					{{{localize ability.label}}}
+				</a>
+			</div>
+			<div class="protection">
+				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">{{ability.protection}}</a>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+	{{/if}}
+	{{!-- SKILLS & LIFE --}}
+	<div class="skills flexcol text-center">
+		{{!-- SKILLS --}}
+		{{#if (and (eq document.type 'partner') (or isEditMode _skills.length ))}}
+		<div class="skills">
+			<a data-action="manage" data-manage="skills">
+				<b>{{localize "SKYFALL2.SkillPl"}}:</b>
+			</a>
+			{{#each _skills as |skill key| }}
+			{{#if (gt skill.value 0) }}
+			<span class="skill entry" data-entry-id="{{key}}">
+				<a data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">
+					{{{ifThen @root.rolling.abl '<i class="fa-solid fa-dice-d20"></i>' ''}}} {{skill.label}}
+					
+					{{{numberFormat (ifThen @root.rolling.abl (lookup skill.roll @root.rolling.abl) skill.roll.pro) sign=true}}}{{#unless @last}},{{/unless}}
+					</a>
+			</span>
+			{{/if}}
+			{{/each}}
+		</div>
+		{{/if}}
+		<div class="health form-group">
+			<label class=""><b>{{localize "SKYFALL2.RESOURCE.HC"}}:</b></label>
+			{{#if isEditMode }}
+			<div class="form-fields">
+				<input type="number" name="system.resources.hc.value" value="{{system.resources.hc.value}}"  data-tooltip="{{schema.resources.hc.value.label}}">/
+				<input type="number" name="system.resources.hc.max" value="{{system.resources.hc.max}}" data-tooltip="{{schema.resources.hc.max.label}}">
+			</div>
+			{{else}}
+			<div class="form-fields" >
+				<a data-action="vary" data-field-path="system.resources.hc.value" data-max="{{system.resources.hc.max}}">
+					{{#each system.hc as | value index |}}
+					{{#if (gte @root.system.resources.hc.value value) }}
+					{{{@root.SYSTEM.icons.squarefill}}}
+					{{else}}
+					{{{@root.SYSTEM.icons.square}}}
+					{{/if}}
+					{{/each}}
+				</a>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	{{!-- ATTACK --}}
+	{{#if (eq document.type 'partner')}}
+	<div class="attack flexrow">
+		<ul class="plain">
+		{{#each items.attack as | ability | }}
+			<li class="ability entry" data-entry-id="{{ability.id}}">
+				<label><b>{{{@root.SYSTEM.icons.sfactive}}} <a data-action="use" data-target="ability">{{ability.name}}</a></b></label> {{{ability.system.attack.descriptive}}}, {{{ability.system.attack.damage}}}
+				{{#if @root.isEditMode}}
+				<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">
+					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+				</span>
+				{{/if}}
+			</li>
+		{{/each}}
+		</ul>
+	</div>
+	{{/if}}
+	{{!-- FEATURES --}}
+	<div class="features">
+		<ul class="plain">
+		{{#each items.features as | feature | }}
+			<li class="ability entry" data-entry-id="{{feature.id}}">
+				<label><b><a data-action="itemToChat">{{feature.name}}:</a></b></label> {{{feature.system.description.value}}}
+				{{#if @root.isEditMode}}
+				<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">
+					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+				</span>
+				{{/if}}
+			</li>
+		{{/each}}
+		</ul>
+	</div>
+	<div class="features">
+		<ul class="plain">
+		{{#each items.abilities as | ability | }}
+			<li class="ability entry" data-entry-id="{{ability.id}}">
+				<label><b><a data-action="use" data-target="ability">{{ability.name}}</a></b></label> {{{ability.system.labels.effect.descriptive}}}
+				{{#if @root.isEditMode}}
+				<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">
+					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+				</span>
+				{{/if}}
+			</li>
+		{{/each}}
+		</ul>
+	</div>
+	{{!-- SPELLS --}}
+	<div class="features">
+		<ul class="plain">
+		{{#each items.spells as | ability | }}
+			<li class="ability entry" data-entry-id="{{ability.id}}">
+				<label><b><a data-action="use" data-target="ability">{{ability.name}}</a></b></label> {{{ability.system.labels.effect.descriptive}}}
+				{{#if @root.isEditMode}}
+				<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">
+					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+				</span>
+				{{/if}}
+			</li>
+		{{/each}}
+		</ul>
+	</div>
+</section>

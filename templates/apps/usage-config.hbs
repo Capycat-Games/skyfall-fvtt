@@ -23,12 +23,10 @@
 			<div class="name">{{localize "SKYFALL.NAME"}}</div>
 			<div class="description">{{localize "SKYFALL.DESCRIPTION"}}</div>
 		</div>
-		{{log modifications}}
 		{{#each modifications as | mod | }}
 		<div class="modification flexrow">
 			{{!-- ACTION - COST - TYPE  --}}
 			{{!-- DESCRIPTION  --}}
-			{{log mod}}
 			<div class="controls flexrow">
 				{{#if mod.system.cost.multiple }}
 				<button type="button" data-action="apply-sub"><i class="fa-solid fa-minus"></i></button>
@@ -58,7 +56,6 @@
 	</div>
 
 	<div class="rolls">
-		{{log system.rolls }}
 		{{#each system.rolls as | roll i | }}
 		<div class="form-group">
 			<label for="">{{roll.options.flavor}} </label>

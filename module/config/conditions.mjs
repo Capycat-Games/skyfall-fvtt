@@ -84,6 +84,17 @@ export const statusEffects = [
 		disabled: false,
 	},
 	{
+		id: "concentrating",
+		// _id: "concentrating".padEnd(16,0),
+		name: "SKYFALL.CONDITIONS.CONCENTRATING",
+		label: "SKYFALL.CONDITIONS.CONCENTRATING",
+		description: "SKYFALL.CONDITIONS.CONCENTRATINGHINT",
+		img: "icons/svg/angel.svg",
+		// statuses: ["concentrating"],
+		changes: [],
+		disabled: false,
+	},
+	{
 		id: "unprotected",
 		// _id: "unprotected".padEnd(16,0),
 		name: "SKYFALL.CONDITIONS.UNPROTECTED",
@@ -92,7 +103,6 @@ export const statusEffects = [
 		img: "icons/svg/daze.svg",
 		// statuses: ["unprotected"],
 		changes: [],
-		disabled: false,
 		disabled: false,
 		system: {
 			group: {

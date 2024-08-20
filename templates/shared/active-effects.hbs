@@ -4,9 +4,11 @@
 		<li class="items-header entry flexrow" data-effect-type="{{section.type}}"  >
 			<h4 class="item-name effect-name flexrow">{{localize section.label}}</h4>
 			<div class="effect-source">{{localize "SKYFALL.ORIGIN"}}</div>
-			{{#if (eq section.type 'temporary') }}
-			<div class="effect-source">{{localize "SKYFALL.DURATION"}}</div>
-			{{/if}}
+			<div class="effect-source">
+				{{#if (eq section.type 'temporary') }}
+				{{localize "SKYFALL.DURATION"}}
+				{{/if}}
+			</div>
 			<div class="item-controls effect-controls flexrow">
 				<a class="effect-control" data-action="create" data-create="ActiveEffect" data-category="{{sid}}" title="{{localize 'DOCUMENT.Create' type="Effect"}}">
 					<i class="fas fa-plus"></i> {{localize "DOCUMENT.New" type="Effect"}}
