@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.9.504 - BETA
+
+- Ficha de Guilda - Adicionado.
+- Ficha de Comparsa - Adicionado.
+- Ficha de Criação - Adicionado.
+- Ficha de Personagem. Adicionado. Mais botões de criação de Item.
+- Ficha de Personagem. Adicionado. Filtros de Habilidade e Magias.
+- Ficha de Personagem. Adicionado. Uso de Habilidades atráves do card.
+- Ficha de Personagem. Adicionado. Configuração de Vida e Enfase.
+- Ficha de Personagem. Adicionado. Configuração de Vida por rolagem.
+- Concentração. Adicionado. Configuração em habilidade e condição.
+- Ficha de Habiliade. Alterado. Campo atributo nos ataques é um dropdown.
+- Ficha de Armas e Escudos. Alterado. Configuração de Ataque e Dano.
+- Ficha de Arma, Armadura, Vestuário. Corrigido. Imbuir um sigilo de um Item do mundo modificava o Sigilo.
+- Uso de Sigilo. Corrigido. Erro de custo em enfase ao usar Sígilo.
+- Pular Configuração de Uso. Corrigido. Agora também pula configuração e rolagem.
+
 ## 0.8.503 - BETA
 
 - Catarse - Adicionado. Tooltip com título do campo.
