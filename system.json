@@ -92,6 +92,8 @@
     "Actor": {
       "character": {},
       "npc": {},
+      "partner": {},
+      "creation": {},
       "guild": {}
     },
     "Item": {
@@ -110,7 +112,11 @@
       "equipment": {},
       "consumable": {},
       "loot": {},
-      "sigil": {}
+      "sigil": {},
+      "seal": {},
+      "facility": {},
+      "guild-ability": {},
+      "guild-feature": {}
     },
     "ActiveEffect": {
       "modification": {}

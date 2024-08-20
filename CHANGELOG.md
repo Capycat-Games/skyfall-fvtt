@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 0.8.503 - BETA
+
 - Catarse - Adicionado. Tooltip com título do campo.
 - Dados de Vida - Alterado. Tamanho.
 - Proficiência - Corrigido. Cálculo com base nos níveis de classe.
@@ -13,6 +14,7 @@
 - Rolagem de Catarse - Adicionado. Outros jogadores podem conceder catarse. Mas é exibido em outra mensagem.
 
 ## 0.8.502 - BETA
+
 - Item Sigilos - Adicionado. Ficha, controle no equipamento, uso personagem;
 - Rolagem de Iniciativa - Corrigido. Rolagem pela ficha;
 - Rolagem de Iniciativa - Adicionado. Configuração de Rolagem ao rolar pelo combate;
@@ -23,6 +25,7 @@
 - Ficha de Ameaças - Corrigido. Exibição de Movimento.
 
 ## 0.8.001 - BETA
+
 - Compêndio Beta - Corrigido: Fichas de personagem, ameaças e items;
 - Lista de Efeitos Flutuante - Adicionado: Exibição limitada a Efeitos temporários;
 - Lista de Efeitos Flutuante - Adicionado: Tooltip com informações de efeitos normais;
