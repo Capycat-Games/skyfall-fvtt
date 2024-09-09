@@ -1,6 +1,6 @@
 
 /**
- * Data schema, attributes, and methods specific to Personagem type Items.
+ * Data schema, attributes, and methods specific to TEMPLATE type Actors.
  */
 
 export default class Template extends foundry.abstract.TypeDataModel {

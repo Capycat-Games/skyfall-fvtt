@@ -1,11 +1,8 @@
-
-/**
- * Data schema, attributes, and methods specific to Personagem type Items.
- */
-
 import Creature from "./creature.mjs";
 
-
+/**
+ * Data schema, attributes, and methods specific to Partner type Actors.
+ */
 export default class Partner extends Creature {
 
 	/* -------------------------------------------- */

@@ -302,7 +302,7 @@ export default class SkyfallItem extends Item {
 		const granted = await DialogV2.prompt({
 			window: {
 				title: game.i18n.format("SKYFALL2.DIALOG.CreateGrantedItems",{
-					type: type + "PL"
+					type: type + "Pl"
 				})
 			},
 			position: { width: 300 },

@@ -25,12 +25,34 @@ export default class Modification extends foundry.abstract.TypeDataModel {
 		return {
 			//EFEITO => ActiveEffect.description
 			origin: new fields.StringField({required: true}, {validate: Modification.validateUuid}),
-			specialDuration: new fields.StringField({required: true, blank:true, choices:[{id:'scene','label':'SKYFALL.ITEM.DURATION.SCENE'}], initial: '', label:"SKYFALL.ITEM.SPECIALDURATION"}),
+			specialDuration: new fields.StringField({
+				required: true,
+				blank:true,
+				choices:[{id:'scene','label':'SKYFALL.ITEM.DURATION.SCENE'}],
+				initial: '',
+				label:"SKYFALL.ITEM.SPECIALDURATION"
+			}),
 			apply: new fields.SchemaField({
 				always: new fields.BooleanField({required: true, initial:false, label: "SKYFALL.MODIFICATION.APPLYALWAYS"}),
 				itemName: new fields.StringField({required:true, blank: true, label: "SKYFALL.MODIFICATION.ITEMNAME"}),
 				itemType: new fields.ArrayField(new fields.StringField({required:true, blank: true}), {label: "SKYFALL.MODIFICATION.ITEMTYPE"}),
 				descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false, }), {initial: () => ([]), label: "SKYFALL.MODIFICATION.DESCRIPTOR"}),
+				type: new fields.ArrayField(new fields.StringField({
+						required: true,
+						choices: {
+							add: {id: 'add', value: 'add', label: 'SKYFALL2.MODIFICATION.TYPE.Add'},
+							modify: {id: 'modify', value: 'modify', label: 'SKYFALL2.MODIFICATION.TYPE.Modify'},
+							remove: {id: 'remove', value: 'remove', label: 'SKYFALL2.MODIFICATION.TYPE.Remove'},
+							amplify: {id: 'amplify', value: 'amplify', label: 'SKYFALL2.MODIFICATION.TYPE.Amplify'},
+						}
+					}), {
+				}),
+				amplifyThreshold: new fields.NumberField({
+					required: true,
+					integer: true,
+					initial: 15,
+					label: "SKYFALL2.MODIFICATION.TYPE.Amplify"
+				}),
 			}),
 			cost: new fields.SchemaField({
 				value: new fields.NumberField({required: true, integer: true, initial:0, label: "SKYFALL.ITEM.ABILITY.COST"}),

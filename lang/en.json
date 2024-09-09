@@ -2,9 +2,9 @@
   "TYPES": {
     "Actor": {
       "character": "Personagem",
-      "characterPL": "Personagens",
+      "characterPl": "Personagens",
       "npc": "NPC",
-      "npcPL": "NPCS",
+      "npcPl": "NPCS",
       "partner": "Comparsa",
       "partnerPl": "Comparsas",
       "creation": "Criação",
@@ -14,35 +14,35 @@
     },
     "Item": {
       "legacy": "Legado",
-      "legacyPL": "Legados",
+      "legacyPl": "Legados",
       "curse": "Maldição",
-      "cursePL": "Maldições",
+      "cursePl": "Maldições",
       "background": "Antecedente",
-      "backgroundPL": "Antecedentes",
+      "backgroundPl": "Antecedentes",
       "class": "Classe",
-      "classPL": "Classes",
+      "classPl": "Classes",
       "path": "Trilha",
-      "pathPL": "Trilhas",
+      "pathPl": "Trilhas",
       "feature": "Característica",
-      "featurePL": "Características",
+      "featurePl": "Características",
       "feat": "Talento",
-      "featPL": "Talentos",
+      "featPl": "Talentos",
       "ability": "Habilidade",
-      "abilityPL": "Habilidades",
+      "abilityPl": "Habilidades",
       "spell": "Magia",
-      "spellPL": "Magias",
+      "spellPl": "Magias",
       "weapon": "Arma",
-      "weaponPL": "Armas",
+      "weaponPl": "Armas",
       "armor": "Armadura",
-      "armorPL": "Armaduras",
+      "armorPl": "Armaduras",
       "clothing": "Vestimenta",
-      "clothingPL": "Vestimentas",
+      "clothingPl": "Vestimentas",
       "equipment": "Equipamento",
-      "equipmentPL": "Equipamentos",
+      "equipmentPl": "Equipamentos",
       "consumable": "Consumível",
-      "consumablePL": "Consumíveis",
+      "consumablePl": "Consumíveis",
       "loot": "Tesouro",
-      "lootPL": "Tesouros",
+      "lootPl": "Tesouros",
       "sigil": "Sigilo",
       "sigilPl": "Sigilos",
       "seal": "Selo",
@@ -56,9 +56,9 @@
     },
     "ActiveEffect": {
       "base": "Efeito",
-      "basePL": "Efeitos",
+      "basePl": "Efeitos",
       "modification": "Modificação",
-      "modificationPL": "Modificações"
+      "modificationPl": "Modificações"
     }
   },
   "DOCUMENT": {
@@ -1014,6 +1014,7 @@
     "DURATION": {
       "Concentration": "Concentração"
     },
+    "Reload": "Recarga",
     "Attack": "Ataque",
     "ATTACK": {
       "Hit": "Acerto",
@@ -1080,6 +1081,14 @@
       "Vulnerability": "Vulnerabilidade",
       "VulnerabilityPl": "Vulnerabilidades",
       "Vulnerable": "Vulnerável"
+    },
+    "MODIFICATION": {
+      "TYPE": {
+        "Add": "Adiciona",
+        "Modify": "Muda",
+        "Amplify": "Amplifica",
+        "Remove": "Remove"
+      }
     },
     "PATH": {
       "Specialized": "Trilha de Especialista",

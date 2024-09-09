@@ -1,5 +1,8 @@
 import Partner from "./partner.mjs";
 
+/**
+ * Data schema, attributes, and methods specific to Creation type Actors.
+ */
 export default class Creation extends Partner {
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */

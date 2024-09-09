@@ -1,6 +1,6 @@
 import Creature from "./creature.mjs";
 /**
- * Data schema, attributes, and methods specific to Ancestry type Items.
+ * Data schema, attributes, and methods specific to NPC type Actors.
  */
 
 export default class NPC extends Creature {
@@ -22,8 +22,18 @@ export default class NPC extends Creature {
 					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 5, min: 0, max: 5, label: "SKYFALL2.RESOURCE.Shadow"}),
 				}),
 			}),
-			hierarchy: new fields.StringField({required:true, choices: SYSTEM.hierarchy, initial:'complex', blank:true, label:"SKYFALL.DM.HIERARCHY"}),
-			archetype: new fields.SetField(new fields.StringField({required:true, choices: SYSTEM.archetype, initial:'brute'}),{label:"SKYFALL.DM.ARCHETYPE"}),
+			hierarchy: new fields.StringField({
+				required: true,
+				choices: SYSTEM.hierarchy,
+				initial: 'complex',
+				blank: true,
+				label: "SKYFALL.DM.HIERARCHY"
+			}),
+			archetype: new fields.SetField(new fields.StringField({
+				required:true,
+				choices: SYSTEM.archetype,
+				initial:'brute'
+			}), {label:"SKYFALL.DM.ARCHETYPE"}),
 		});
 	}
 	

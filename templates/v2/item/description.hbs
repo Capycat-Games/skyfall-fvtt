@@ -1,99 +1,99 @@
 <section class="tab item-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	{{#if (isDefined system.quantity)}}
-	<aside class="flexcol">
-		{{formGroup schema.quantity value=system.quantity classes="slim" localize=true}}
-		{{formGroup schema.price value=system.price classes="slim" localize=true}}
-		{{formGroup schema.capacity value=system.capacity classes="slim" localize=true}}
-		{{#if (and (isDefined system.equipped) document.isEmbedded)}}
-		{{formGroup schema.equipped value=system.equipped localize=true}}
-		{{formGroup schema.attuned value=system.attuned localize=true}}
-		{{/if}}
-		{{#if user.isGM }}
-		{{formGroup schema.unidentified.value value=system.unidentified.value localize=true}}
-		{{/if}}
-	</aside>
+		<aside class="flexcol">
+			{{formGroup schema.quantity value=system.quantity classes="slim" localize=true}}
+			{{formGroup schema.price value=system.price classes="slim" localize=true}}
+			{{formGroup schema.capacity value=system.capacity classes="slim" localize=true}}
+			{{#if (and (isDefined system.equipped) document.isEmbedded)}}
+				{{formGroup schema.equipped value=system.equipped localize=true}}
+				{{formGroup schema.attuned value=system.attuned localize=true}}
+			{{/if}}
+			{{#if user.isGM }}
+				{{formGroup schema.unidentified.value value=system.unidentified.value localize=true}}
+			{{/if}}
+		</aside>
 	{{/if}}
 	<div class="flexcol flex3">
 		{{#if (isDefined system.descriptors)}}
-		<dropdown-tags name="system.descriptors" class="descriptors">
-			{{#each _selOpts.descriptors as | group id |}}
-			<optgroup label="{{localize (concat "SKYFALL.DESCRIPTORS.LABELS." id)}}">
-				{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
-			</optgroup>
-			{{/each}}
-		</dropdown-tags>
+			<dropdown-tags name="system.descriptors" class="descriptors" data-document="{{document.uuid}}">
+				{{#each _selOpts.descriptors as | group id |}}
+					<optgroup label="{{localize (concat " SKYFALL.DESCRIPTORS.LABELS." id)}}">
+						{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
+					</optgroup>
+				{{/each}}
+			</dropdown-tags>
 		{{/if}}
 
 		{{#if (and (eq document.type 'path') (isDefined system.type))}}
-		{{formGroup schema.type value=system.type localize=true}}
+			{{formGroup schema.type value=system.type localize=true}}
 		{{/if}}
 
 		{{#if (eq document.type 'facility')}}
-		<div class="form-group">
-			<label>{{localize schema.level.label}}</label>
-			<div class="form-fields">
-				<input type="number" name="system.level" value={{system.level}}>
+			<div class="form-group">
+				<label>{{localize schema.level.label}}</label>
+				<div class="form-fields">
+					<input type="number" name="system.level" value={{system.level}}>
+				</div>
 			</div>
-		</div>
 		{{/if}}
 
 		{{formGroup schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=170 localize=true}}
-		
+
 		{{#if (isDefined system.traits.melancholy)}}
-		<h3>{{localize "SKYFALL2.Melancholy"}}</h3>
-		{{formGroup schema.traits.melancholy value=system.traits.melancholy enriched=enriched.melancholy documentUUID=document.uuid toggled=true height=200 localize=true}}
+			<h3>{{localize "SKYFALL2.Melancholy"}}</h3>
+			{{formGroup schema.traits.melancholy value=system.traits.melancholy enriched=enriched.melancholy documentUUID=document.uuid toggled=true height=200 localize=true}}
 		{{/if}}
 
 		{{!-- {{formGroup schema.description.value value=description.value enriched=description.enriched localize=true toggled=true height=300 documentUUID=description.uuid}} --}}
 
 		{{!-- {{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}} --}}
 		{{#if (isDefined system.origin)}}
-		{{formGroup schema.origin value=system.origin localize=true disabled=true}}
+			{{formGroup schema.origin value=system.origin localize=true}}
 		{{/if}}
 
 		{{#if (isDefined system.requisites)}}
-		{{formGroup schema.requisites value=system.requisites localize=true disabled=true}}
+			{{formGroup schema.requisites value=system.requisites localize=true}}
 		{{/if}}
-		
-		{{#if (and features (includes document.type 'background'))}}
-		<label>{{localize "SKYFALL.ITEM.FEATURES"}}</label>
-		<ol class="plain drop-item" data-field-path="system.features" data-item-type="feature">
-			{{#each features as | item id | }}
-			<li class="item feature entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
-				<div class="item-icon" style="background-image:url({{item.img}})"></div>
-				<div class="item-name flex3">{{item.name}}</div>
-				<div class="item-controls">
-					<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
-				</div>
-			</li>
-			{{/each}}
-			{{#if (eq features.length 0) }}
-			<li>
-				{{localize "SKYFALL.SHEET.DROPITEM"}}
-			</li>
-			{{/if}}
-		</ol>
-		{{#if (eq features.length 0)}}
 
-		{{/if}}
+		{{#if (and features (includes document.type 'background'))}}
+			<label>{{localize "SKYFALL.ITEM.FEATURES"}}</label>
+			<ol class="plain drop-item" data-field-path="system.features" data-item-type="feature">
+				{{#each features as | item id | }}
+					<li class="item feature entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
+						<div class="item-icon" style="background-image:url({{item.img}})"></div>
+						<div class="item-name flex3">{{item.name}}</div>
+						<div class="item-controls">
+							<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+						</div>
+					</li>
+				{{/each}}
+				{{#if (eq features.length 0) }}
+					<li>
+						{{localize "SKYFALL.SHEET.DROPITEM"}}
+					</li>
+				{{/if}}
+			</ol>
+			{{#if (eq features.length 0)}}
+
+			{{/if}}
 		{{/if}}
 		{{#if (isDefined system.abilities)}}
-		<ol class="plain drop-item">
-		{{#each abilities as | item id | }}
-		<li class="item {{type}} entry flexrow" data-entry-id="{{item.uuid}}">
-			<div class="item-icon" style="background-image:url({{item.img}})"></div>
-			<div class="item-name flex3">{{item.name}}</div>
-			<div class="item-controls">
-				<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
-			</div>
-		</li>
-		{{/each}}
-		{{#unless (isDefined system.abilities) }}
-		<li>
-			{{localize "SKYFALL.SHEET.DROPITEM"}}
-		</li>
-		{{/unless}}
-		</ol>
+			<ol class="plain drop-item">
+				{{#each abilities as | item id | }}
+					<li class="item {{type}} entry flexrow" data-entry-id="{{item.uuid}}">
+						<div class="item-icon" style="background-image:url({{item.img}})"></div>
+						<div class="item-name flex3">{{item.name}}</div>
+						<div class="item-controls">
+							<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
+						</div>
+					</li>
+				{{/each}}
+				{{#unless (isDefined system.abilities) }}
+					<li>
+						{{localize "SKYFALL.SHEET.DROPITEM"}}
+					</li>
+				{{/unless}}
+			</ol>
 		{{/if}}
 	</div>
 </section>

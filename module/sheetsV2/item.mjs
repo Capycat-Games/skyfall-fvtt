@@ -12,6 +12,10 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		window: {
 			resizable: true,
 		},
+		form: {
+			handler: this.#onSubmitDocumentForm,
+			submitOnChange: true,
+		},
 		actions: {
 			heritageTab: ItemSheetSkyfall.#heritageTab,
 			infuse: ItemSheetSkyfall.#infuse,
@@ -39,7 +43,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
 		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
 		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
-		abilities: {id: "abilities", group: "primary", label: "SKYFALL2.AbilityPl"},
+		abilities: {id: "abilities", group: "primary", label: "TYPES.Item.abilityPl"},
 		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
 		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"}
 	};
@@ -127,24 +131,49 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	async _onDrop(event) {
 		event.preventDefault();
 		const target = event.target;
+		const fieldPath = target.closest("ol").dataset.fieldPath;
+		const itemType = target.closest("ol").dataset.itemType;
+		const items = [];
 		const {type, uuid} = TextEditor.getDragEventData(event);
 		if (!this.isEditable) return;
-		if ( type == "Item" ){
+		if ( type == "Folder" ){
+			const folder = await fromUuid(uuid);
+			if ( !folder.contents.every( i => i.type == itemType) ) {
+				return ui.notifications.error("SKYFALL2.NOTIFICATION.FolderItemsSameType", {localize: true});
+			}
+			for ( const item of folder.contents ) {
+				// const item = await fromUuid(i.uuid);
+				// if ( !item ) continue;
+				items.push(item);
+			}
+		} else if ( type == "Item" ){
 			const item = await fromUuid(uuid);
-			const fieldPath = target.closest("ol").dataset.fieldPath;
-			const itemType = target.closest("ol").dataset.itemType;
-			if ( !foundry.utils.hasProperty(this.document, fieldPath) || itemType != item.type ) return;
-			if ( itemType == 'sigil' ) this._onDropSigils(item, fieldPath, itemType);
-			else this._onDropGranted(item, fieldPath, itemType);
-		} else if ( type == "ActiveEffect" ) return super._onDrop(event);
+			items.push(item);
+		} else if ( type == "ActiveEffect" ) {
+			return super._onDrop(event);
+		}
+		
+		if ( !foundry.utils.hasProperty(this.document, fieldPath) ) return;
+		if ( items.length == 0 ) return;
+		
+		if ( itemType == 'sigil' ) {
+			this._onDropSigils(items, fieldPath, itemType);
+		} else { 
+			await this._onDropGranted(items, fieldPath, itemType);
+		}
 	}
 
-	async _onDropSigils(item, fieldPath, itemType){
+	async _onDropSigils(items, fieldPath, itemType){
+		const item = items.pop();
 		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
-		if ( type != item.system.equipment ) return ui.notifications.error("SKYFALL2.NOTIFICATION.InvalidItemSigil",{localize: true});
+		if ( type != item.system.equipment ) {
+			return ui.notifications.error("SKYFALL2.NOTIFICATION.InvalidItemSigil",{localize: true});
+		}
 		const updateData = {};
 		updateData[fieldPath] = foundry.utils.getProperty(this.document, fieldPath);
-		if ( updateData[fieldPath].find(i => i.uuid == item.uuid) ) return ui.notifications.error("SKYFALL2.NOTIFICATION.DuplicatedItemSigil",{localize: true});
+		if ( updateData[fieldPath].find(i => i.uuid == item.uuid) ) {
+			return ui.notifications.error("SKYFALL2.NOTIFICATION.DuplicatedItemSigil",{localize: true});
+		}
 		updateData[fieldPath].push({
 			uuid: item.uuid,
 			parentUuid: '',
@@ -167,11 +196,12 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		}
 	}
 
-	async _onDropGranted(item, fieldPath, itemType){
+	async _onDropGranted(items, fieldPath, itemType){
 		
+		const uuids = items.map( i => i.uuid );
 		const updateData = {};
-		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), item.uuid ];
-		return this.document.update(updateData);
+		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), ...uuids ];
+		this.document.update(updateData);
 	}
 
 	/* ---------------------------------------- */
@@ -393,6 +423,16 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/* ---------------------------------------- */
 	/*              EVENT HANDLERS              */
 	/* ---------------------------------------- */
+
+	/** @overwrite */
+	static async #onSubmitDocumentForm(event, form, formData) {
+		
+		if ( formData.object["system.reload.actions"] ) {
+			formData.object["system.reload.actions"] = formData.object["system.reload.actions"].filter(Boolean);
+		}
+		const submitData = this._prepareSubmitData(event, form, formData);
+		await this.document.update(submitData);
+	}
 
 	/**
 	 * Handle click events to remove a particular damage formula.

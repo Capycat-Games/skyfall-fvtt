@@ -1,3 +1,4 @@
+import { SYSTEM } from "../../config/system.mjs";
 
 const { HTMLStringTagsElement } = foundry.applications.elements;
 /**
@@ -9,8 +10,10 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 	constructor() {
 		super();
 		this._value = new Set();
+		this._initializeDocument();
 		this._initializeOptions();
 		this._initializeDDTags();
+		
 	}
 
 	/** @override */
@@ -68,6 +71,16 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 	/* -------------------------------------------- */
 
 	/**
+	 * Load document
+	 * @protected
+	 */
+	_initializeDocument(){
+		if (this.dataset.document) {
+			this.object = fromUuidSync(this.dataset.document);
+		}
+	}
+
+	/**
 	 * Preserve existing <option> and <optgroup> elements which are defined in the original HTML.
 	 * @protected
 	 */
@@ -113,7 +126,10 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 	 * @throws {Error}          An error if the candidate tag is not allowed
 	 * @protected
 	 */
-	_validateTag(tag) {}
+	_validateTag(tag) {
+		if ( typeof tag === "string" && tag ) return true;
+		else return false;
+	}
 
 	/* -------------------------------------------- */
 	
@@ -188,9 +204,23 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 
 	/** @override */
 	_refresh() {
+		const reload = foundry.utils.getProperty(this.object, 'system.reload');
+		const damage = foundry.utils.getProperty(this.object, 'system.damage');
 		const tags = this.value.map((tag) => {
-			const label = this.querySelector(`input[value=${tag}]`)?.closest('label')?.innerText ?? tag;
-			return this.constructor.renderTag(tag, label, this.editable)
+			const label = this.querySelector(`input[value="${tag}"]`)?.closest('label')?.innerText ?? tag;
+			let labelData = '';
+			if (tag == 'reload' && reload) {
+				// labelData.qty = reload.quantity;
+				// labelData.actions = reload.actions;
+				const qty = reload.quantity;
+				const icon = {action: 'A', bonus: 'B', free: 'L'};
+				const icons = reload.actions.map( i => icon[i]).join(' + ');
+				labelData = ` (${qty} ${icons})`;
+			}
+			if (tag == 'versatile' && damage) {
+				labelData = ` (${damage.versatile.toLowerCase()})`;
+			}
+			return this.constructor.renderTag(tag, label, labelData, this.editable)
 		});
 		this.#tags.replaceChildren(...tags);
 	}
@@ -204,12 +234,23 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 	 * @param {boolean} [editable=true]  Is the tag editable?
 	 * @returns {HTMLDivElement}  A rendered HTML element for the tag
 	 */
-	static renderTag(tag, label, editable=true) {
+	static renderTag(tag, label, labelData, editable=true) {
 		const div = document.createElement("div");
 		div.className = "tag";
 		div.dataset.key = tag;
 		const span = document.createElement("span");
 		span.textContent = label ?? tag;
+		if (tag == 'reload') {
+			const data = document.createElement("span");
+			data.className = "skyfall-icon";
+			data.textContent = labelData;
+			span.append(data);
+		}
+		if (tag == 'versatile') {
+			const data = document.createElement("span");
+			data.textContent = labelData;
+			span.append(data);
+		}
 		div.append(span);
 		if ( editable ) {
 			const t = game.i18n.localize(this.labels.remove);
@@ -291,7 +332,7 @@ export default class HTMLDropDownTagsElement extends HTMLStringTagsElement {
 	 * Add a new tag to the set upon user input.
 	 */
 	#addTag(value = null) {
-		const tag = value ?? this.#input.value;
+		const tag = ( typeof value === "string" && value ? value : this.#input.value);
 		
 		// Validate the proposed code
 		try {

@@ -1,6 +1,6 @@
 import Creature from "./creature.mjs";
 /**
- * Data schema, attributes, and methods specific to Personagem type Items.
+ * Data schema, attributes, and methods specific to Character type Actors.
  */
 
 export default class Character extends Creature {
@@ -375,6 +375,17 @@ export default class Character extends Creature {
 	
 	
 	async _applyConsumption() {}
-	async _rollInitiative() {}
+	
+	async _rollInitiative({initiativeOptions={}}) {
+		const roll = await new RollConfig({
+			type: 'initiative',
+			ability: 'dex',
+			// skill: null,
+			actor: this,
+			createMessage: true,
+			skipConfig: initiativeOptions.skipConfig ?? false,
+			advantageConfig: initiativeOptions.advantageConfig ?? 0,
+		}).render( !(initiativeOptions.skipConfig ?? false) );
+	}
 
 }

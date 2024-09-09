@@ -1,5 +1,5 @@
 /**
- * Data schema, attributes, and methods specific to Ancestry type Items.
+ * Data schema, attributes, and methods shared by Creature type Actors.
  */
 
 export default class Creature extends foundry.abstract.TypeDataModel {

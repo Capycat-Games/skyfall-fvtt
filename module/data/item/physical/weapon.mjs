@@ -22,6 +22,17 @@ export default class Weapon extends PhysicalItemData {
 			attack: this.attackSchema(),
 			damage: this.damageSchema(),
 			range: new fields.NumberField({required: true, min: 0, label:"SKYFALL2.Range"}),
+			reload: new fields.SchemaField({
+				quantity: new fields.NumberField({required: true, min: 0, label:"SKYFALL2.Quantity"}),
+				actions: new fields.ArrayField(new fields.StringField({
+					required: true,
+					choices: [
+						'action',
+						'bonus',
+						'free',
+					],
+				}), {label: "SKYFALL2.ActionPl"})
+			}, {label: "SKYFALL2.Reload"}),
 			sigils: new fields.ArrayField(new fields.SchemaField({
 				uuid: new fields.StringField({required: true}, {validate: Weapon.validateUuid}),
 				parentUuid: new fields.StringField({required: true}, {validate: Weapon.validateUuid}),

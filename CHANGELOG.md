@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.9.505 - BETA
+
+- Ficha de Habilidades - Corrigido. Descritores personalizados quebravam o campo.
+- Ficha de Modificação - Adicionado. Campos tipo de modificação (Adiciona, Muda)
+- Ficha de Armas - Adicionado. Campos de Ações de Recarga.
+- Ficha de Armas - Adicionado. Descritores `Recarregável` e `Versatil` puxam as informações dos campos de configuração.
+
 ## 0.9.504 - BETA
 
 - Ficha de Guilda - Adicionado.

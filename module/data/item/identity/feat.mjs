@@ -12,9 +12,15 @@ export default class Feat extends Identity {
 	static defineSchema() {
 		const fields = foundry.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			origin: new fields.StringField({required: true}, {validate: Identity.validateUuid}),
-			requisites: new fields.StringField({required:true, blank: true})
-			// requisitos: new fields.ArrayField(new fields.StringField({required:true, blank: true})),
+			origin: new fields.StringField({
+				required: true,
+				label: "SKYFALL.ITEM.ORIGIN"
+			}, {validate: Identity.validateUuid}),
+			requisites: new fields.StringField({
+				required:true,
+				blank: true,
+				label: "SKYFALL.ITEM.REQUISITES"
+			})
 		});
 	}
 }

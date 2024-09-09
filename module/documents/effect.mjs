@@ -60,12 +60,14 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	get modTypes(){
 		if ( this.type != 'modification' ) return null;
-		return {label: `[${this.name}]`};
-		const types = {value: ['add'], label: ``};
-		types.label = types.value.map( t => game.i18n.localize(`SKYFALL.MODIFICATION.TYPES.${t.toUpperCase()}`)).join(' ');
-		types.label = `[${types.label}]`;
-		types.label = types.label.toUpperCase();
-		return types;
+		const { type, amplifyThreshold } = this.system.apply;
+		let labels = [];
+		for (const t of type) {
+			const label = game.i18n.localize(`SKYFALL2.MODIFICATION.TYPE.${t.titleCase()}`);
+			if ( t == 'amplify' ) labels.push( `${label} ${amplifyThreshold}+` );
+			else labels.push(label);
+		}
+		return {label: `[${labels.join(' & ')}] (${this.name})`.toUpperCase()};
 	}
 
 	/* -------------------------------------------- */

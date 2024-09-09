@@ -31,6 +31,6 @@ export function registerHandlebarsHelpers() {
 	});
 
 	Handlebars.registerHelper("includes", function (v, choices=[]) {
-		return choices.includes(v);
+		return choices.includes(v) === true;
 	});
 }

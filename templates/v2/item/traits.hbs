@@ -9,6 +9,27 @@
 		</div>
 		{{formGroup schema.wield value=system.wield localize=true}}
 		{{formGroup schema.range value=system.range localize=true}}
+
+		<div class="form-group">
+			<label for="">{{localize "SKYFALL2.Reload"}}</label>
+			<div class="form-fields">
+				{{formInput schema.reload.quantity value=system.reload.quantity localize=true}}
+				{{!-- {{formInput schema.reload.actions value=system.reload.actions localize=true}} --}}
+				<label class="flexrow nowrap"> {{{SYSTEM.icons.sfaction}}}
+					<input type="checkbox" name="system.reload.actions" value="action" {{checked (includes 'action'
+						system.reload.actions )}}>
+				</label>
+				<label class="flexrow nowrap"> {{{SYSTEM.icons.sfbonus}}}
+					<input type="checkbox" name="system.reload.actions" value="bonus" {{checked (includes 'bonus'
+						system.reload.actions )}}>
+				</label>
+				<label class="flexrow nowrap"> {{{SYSTEM.icons.sffree}}}
+					<input type="checkbox" name="system.reload.actions" value="free" {{checked (includes 'free'
+						system.reload.actions )}}>
+				</label>
+			</div>
+		</div>
+
 		<fieldset class="">
 			<legend>{{localize "SKYFALL2.Attack"}}</legend>
 			{{formGroup schema.attack.ability value=system.attack.ability localize=true}}

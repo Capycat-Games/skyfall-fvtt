@@ -1,6 +1,6 @@
 
 /**
- * Data schema, attributes, and methods specific to Personagem type Items.
+ * Data schema, attributes, and methods specific to Guild type Actors.
  */
 export default class Guild extends foundry.abstract.TypeDataModel {
 

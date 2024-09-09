@@ -38,6 +38,9 @@
 .flexrow.flex-start {
   align-self: flex-start;
 }
+.flexrow.nowrap {
+  flex-wrap: nowrap;
+}
 .flexrow .flex0 {
   display: flex;
 }
@@ -151,11 +154,15 @@
   column-count: 3;
 }
 .SF-status-effects .status-list .item {
-  background-color: var(--actor-color);
+  background-color: var(--actor-color-faint);
+  border: 2px solid var(--actor-color);
   padding: 4px 8px 6px 8px;
 }
 .SF-status-effects .status-list .item * {
   color: white;
+}
+.SF-status-effects .status-list .item * {
+  color: var(--actor-color);
 }
 .SF-status-effects .status-list .item img {
   vertical-align: sub;
@@ -509,11 +516,15 @@ dropdown-tags .tags-dropdown fieldset legend {
   column-count: 3;
 }
 .skyfall.sheet.actor .actor-effects .status-effects .status-list .item {
-  background-color: var(--actor-color);
+  background-color: var(--actor-color-faint);
+  border: 2px solid var(--actor-color);
   padding: 4px 8px 6px 8px;
 }
 .skyfall.sheet.actor .actor-effects .status-effects .status-list .item * {
   color: white;
+}
+.skyfall.sheet.actor .actor-effects .status-effects .status-list .item * {
+  color: var(--actor-color);
 }
 .skyfall.sheet.actor .actor-effects .status-effects .status-list .item img {
   vertical-align: sub;
@@ -1132,11 +1143,15 @@ dropdown-tags .tags-dropdown fieldset legend {
   column-count: 3;
 }
 .skyfall.sheet.actor.character .window-content .actor-effects .status-effects .status-list .item {
-  background-color: var(--actor-color);
+  background-color: var(--actor-color-faint);
+  border: 2px solid var(--actor-color);
   padding: 4px 8px 6px 8px;
 }
 .skyfall.sheet.actor.character .window-content .actor-effects .status-effects .status-list .item * {
   color: white;
+}
+.skyfall.sheet.actor.character .window-content .actor-effects .status-effects .status-list .item * {
+  color: var(--actor-color);
 }
 .skyfall.sheet.actor.character .window-content .actor-effects .status-effects .status-list .item img {
   vertical-align: sub;
@@ -1407,11 +1422,15 @@ dropdown-tags .tags-dropdown fieldset legend {
   column-count: 3;
 }
 .skyfall.sheet.actor.npc .window-content .actor-effects .status-list .item {
-  background-color: var(--actor-color);
+  background-color: var(--actor-color-faint);
+  border: 2px solid var(--actor-color);
   padding: 4px 8px 6px 8px;
 }
 .skyfall.sheet.actor.npc .window-content .actor-effects .status-list .item * {
   color: white;
+}
+.skyfall.sheet.actor.npc .window-content .actor-effects .status-list .item * {
+  color: var(--actor-color);
 }
 .skyfall.sheet.actor.npc .window-content .actor-effects .status-list .item img {
   vertical-align: sub;

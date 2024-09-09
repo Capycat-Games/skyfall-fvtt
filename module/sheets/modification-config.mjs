@@ -117,6 +117,9 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 		if ( formData['system.apply.itemType'] ) {
 			formData['system.apply.itemType'] = formData['system.apply.itemType'].filter(Boolean);
 		}
+		if ( formData['system.apply.type'] ) {
+			formData['system.apply.type'] = formData['system.apply.type'].filter(Boolean);
+		}
 		if ( formData['system.apply.descriptors'] ) formData['system.apply.descriptors'] = formData['system.apply.descriptors'].filter(Boolean);
 		if ( formData['_descriptor'] ) {
 			formData['system.apply.descriptors'] = [formData['_descriptor'], ...formData['system.apply.descriptors']];

@@ -2,9 +2,9 @@
   "TYPES": {
     "Actor": {
       "character": "Personagem",
-      "characterPL": "Personagens",
+      "characterPl": "Personagens",
       "npc": "NPC",
-      "npcPL": "NPCS",
+      "npcPl": "NPCS",
       "partner": "Comparsa",
       "partnerPl": "Comparsas",
       "creation": "Criação",
@@ -14,35 +14,35 @@
     },
     "Item": {
       "legacy": "Legado",
-      "legacyPL": "Legados",
+      "legacyPl": "Legados",
       "curse": "Maldição",
-      "cursePL": "Maldições",
+      "cursePl": "Maldições",
       "background": "Antecedente",
-      "backgroundPL": "Antecedentes",
+      "backgroundPl": "Antecedentes",
       "class": "Classe",
-      "classPL": "Classes",
+      "classPl": "Classes",
       "path": "Trilha",
-      "pathPL": "Trilhas",
+      "pathPl": "Trilhas",
       "feature": "Característica",
-      "featurePL": "Características",
+      "featurePl": "Características",
       "feat": "Talento",
-      "featPL": "Talentos",
+      "featPl": "Talentos",
       "ability": "Habilidade",
-      "abilityPL": "Habilidades",
+      "abilityPl": "Habilidades",
       "spell": "Magia",
-      "spellPL": "Magias",
+      "spellPl": "Magias",
       "weapon": "Arma",
-      "weaponPL": "Armas",
+      "weaponPl": "Armas",
       "armor": "Armadura",
-      "armorPL": "Armaduras",
+      "armorPl": "Armaduras",
       "clothing": "Vestimenta",
-      "clothingPL": "Vestimentas",
+      "clothingPl": "Vestimentas",
       "equipment": "Equipamento",
-      "equipmentPL": "Equipamentos",
+      "equipmentPl": "Equipamentos",
       "consumable": "Consumível",
-      "consumablePL": "Consumíveis",
+      "consumablePl": "Consumíveis",
       "loot": "Tesouro",
-      "lootPL": "Tesouros",
+      "lootPl": "Tesouros",
       "sigil": "Sigilo",
       "sigilPl": "Sigilos",
       "seal": "Selo",
@@ -56,9 +56,9 @@
     },
     "ActiveEffect": {
       "base": "Efeito",
-      "basePL": "Efeitos",
+      "basePl": "Efeitos",
       "modification": "Modificação",
-      "modificationPL": "Modificações"
+      "modificationPl": "Modificações"
     }
   },
   "DOCUMENT": {
@@ -527,7 +527,7 @@
         "ESPALHAFATOSA": "Espalhafatosa",
         "ESPALHAFATOSAHINT": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
         "GARISH": "Espalhafatosa",
-        "GARISHHINT": "Essa arma faz com que seus ataques afetem até duas criaturas adjacentes ao alvo original do ATAQUE.",
+        "GARISHHINT": "Ataques realizados com essa arma afetam uma criatura adjacente e até outras 3 atrás dela.",
         "BLUDGEONING": "Contundente",
         "BLUDGEONINGHINT": "Uma arma, magia ou talento com esse descritor causa dano contundente.",
         "SLASHING": "Cortante",
@@ -732,6 +732,8 @@
       "PRONEHINT": "PRONEHINT",
       "RESTRAINED": "Contido",
       "RESTRAINEDHINT": "RESTRAINEDHINT",
+      "CONCENTRATING": "Concentrando",
+      "CONCENTRATINGHINT": "Com a mente ocupada mantendo uma magia ativa.",
       "UNPROTECTED": "Desprotegido",
       "UNPROTECTEDPHY": "Desprotegido (Físico)",
       "UNPROTECTEDMEN": "Desprotegido (Mental)",
@@ -832,7 +834,7 @@
       "INVENTORY": "Inventário",
       "STATBLOCK": "Ficha",
       "GUILD": "Guilda",
-      "EFFECTS": "Efeitos"
+      "EFFECTS": "Modificações e Efeitos"
     }
   },
   "SKYFALL2": {
@@ -842,9 +844,11 @@
     "Description": "Descrição",
     "Descriptor": "Descritor",
     "DescriptorPl": "Descritores",
+    "Create": "Criar",
     "Type": "Tipo",
     "Value": "Valor",
     "Bonus": "Bônus",
+    "Category": "Categoria",
     "Total": "Total",
     "TotalPl": "Totais",
     "Current": "Atual",
@@ -1007,6 +1011,10 @@
       "WidthAbbr": "Larg."
     },
     "Duration": "Duração",
+    "DURATION": {
+      "Concentration": "Concentração"
+    },
+    "Reload": "Recarga",
     "Attack": "Ataque",
     "ATTACK": {
       "Hit": "Acerto",
@@ -1025,6 +1033,11 @@
     "Use": "Uso",
     "UsePl": "Usos",
     "Damage": "Dano",
+    "DAMAGE": {
+      "Die": "Dado de Dano",
+      "Versatile": "Versátil",
+      "": ""
+    },
     "Trigger": "Gatilho",
     "Effect": "Efeito",
     "Special": "Especial",
