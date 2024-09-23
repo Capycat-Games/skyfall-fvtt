@@ -24,6 +24,8 @@ import TokenSkyfall from "./module/token.mjs";
 import * as functions from "./module/helpers/functions.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
 import { CombatTrackerSkyfall } from "./module/combat.mjs";
+import {SkyfallHooks} from "./module/hooks/hooks.mjs";
+
 
 globalThis.skyfall = {
 	CONST: SYSTEM,
@@ -174,7 +176,8 @@ Hooks.once('init', function () {
 	// Enrichers
 	registerCustomEnrichers();
 	// TODO Sockets
-	
+	// Hooks
+	// SkyfallHooks();
 });
 
 /* -------------------------------------------- */

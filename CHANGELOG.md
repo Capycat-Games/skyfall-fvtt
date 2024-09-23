@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.9.506 - BETA
+
+- Ficha de Modificação - Adicionado. Tipo de modificação de camadas.
+- Ficha de Habilidade - Adicionado. Campo até evento.
+- Ficha de Habilidade - Adicionado. Descrição de propriedades automáticas.
+
 ## 0.9.505 - BETA
 
 - Ficha de Habilidades - Corrigido. Descritores personalizados quebravam o campo.

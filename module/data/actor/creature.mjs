@@ -42,23 +42,64 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				initialKeys: SYSTEM.skills, 
 				initialKeysOnly: false, label: "SKYFALL.DM.SKILLPL"
 			}),
-			proficiency: new fields.NumberField({required: true, nullable: false, integer: true, initial: 2, label: "SKYFALL2.Proficiency"}),
-			proficiencies: new fields.ArrayField(new fields.StringField({choices: SYSTEM.proficiencies}), {label: "SKYFALL2.ProficiencyPl"}),
-			languages: new fields.ArrayField(new fields.StringField({choices: SYSTEM.languages}), {label: "SKYFALL2.LanguagePl"}),
-			dr: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.DamageReductionAbbr"}),
+			proficiency: new fields.NumberField({
+				required: true,
+				nullable: false,
+				integer: true,
+				initial: 2,
+				label: "SKYFALL2.Proficiency"
+			}),
+			proficiencies: new fields.ArrayField(
+				new fields.StringField({
+					choices: SYSTEM.proficiencies
+				}),
+				{label: "SKYFALL2.ProficiencyPl"}
+			),
+			languages: new fields.ArrayField(
+				new fields.StringField({
+					choices: SYSTEM.languages
+				}),
+				{label: "SKYFALL2.LanguagePl"}
+			),
+			dr: new fields.NumberField({
+				required: true,
+				nullable: false,
+				integer: true,
+				initial: 0,
+				min: 0,
+				label: "SKYFALL2.DamageReductionAbbr"
+			}),
 			modifiers: new fields.SchemaField({
 				damage: new fields.SchemaField({
 					taken: this.schemaDamage(),
 					dealt: this.schemaDamage(),
 				}),
 				condition: new fields.SchemaField({
-					imune: new fields.SetField(new fields.StringField({required:true, choices: SYSTEM.conditions}),{label:"SKYFALL2.MODIFIER.Conditions"}),
+					imune: new fields.SetField(
+						new fields.StringField({
+							required:true,
+							choices: SYSTEM.conditions
+						}),
+						{label:"SKYFALL2.MODIFIER.Conditions"}
+					),
 					//new fields.SetField(new fields.StringField({required: true, blank:false, choices: SYSTEM.conditions}), {label: "SKYFALL2.MODIFIER.Conditions"}),
-					protected: new fields.SetField(new fields.StringField({choices: SYSTEM.conditions})),
+					protected: new fields.SetField(
+						new fields.StringField({
+							choices: SYSTEM.conditions
+						})
+					),
 				}),
 				descriptor: new fields.SchemaField({
-					imune: new fields.ArrayField(new fields.StringField({choices: SYSTEM.DESCRIPTORS})),
-					protected: new fields.ArrayField(new fields.StringField({choices: SYSTEM.STATUSEFFECTS})),
+					imune: new fields.ArrayField(
+						new fields.StringField({
+							choices: SYSTEM.DESCRIPTORS
+						})
+					),
+					protected: new fields.ArrayField(
+						new fields.StringField({
+							choices: SYSTEM.STATUSEFFECTS
+						})
+					),
 				}),
 				rest: new fields.SchemaField({
 					hitDieBonus: new fields.ArrayField(new fields.StringField({})),
@@ -70,47 +111,184 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 					bonusCatharsis: new fields.ArrayField(new fields.StringField({})),
 				}),
 				hp: new fields.SchemaField({
-					abilities: new fields.ArrayField(new fields.StringField({}), {
-						initial:['con'], label:"SKYFALL2.AbilityPl"
-					}),
-					levelRoll: new fields.ArrayField(new fields.NumberField({}), {
-						min:12, max:12, initial: Array.fromRange(12, 1).fill(0), label:"SKYFALL2.RESOURCE.LevelRoll"
-					}),
-					levelExtra: new fields.ArrayField(new fields.StringField({}),{label:"SKYFALL2.RESOURCE.LevelBonus"}),
-					totalExtra: new fields.ArrayField(new fields.StringField({}),{label:"SKYFALL2.RESOURCE.TotalBonus"}),
+					abilities: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							initial:['con'],
+							label:"SKYFALL2.AbilityPl"
+						}
+					),
+					levelRoll: new fields.ArrayField(
+						new fields.NumberField({}),
+						{
+							min:12,
+							max:12,
+							initial: Array.fromRange(12, 1).fill(0),
+							label:"SKYFALL2.RESOURCE.LevelRoll"
+						}
+					),
+					levelExtra: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							label:"SKYFALL2.RESOURCE.LevelBonus"
+						}
+					),
+					totalExtra: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							label:"SKYFALL2.RESOURCE.TotalBonus"
+						}
+					),
 				}),
 				ep: new fields.SchemaField({
-					abilities: new fields.ArrayField(new fields.StringField({}), {
-						initial:['con'], label:"SKYFALL2.AbilityPl"
-					}),
-					levelExtra: new fields.ArrayField(new fields.StringField({}),{label:"SKYFALL2.RESOURCE.LevelBonus"}),
-					totalExtra: new fields.ArrayField(new fields.StringField({}),{label:"SKYFALL2.RESOURCE.TotalBonus"}),
+					abilities: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							initial: ['con'],
+							label: "SKYFALL2.AbilityPl"
+						}
+					),
+					levelExtra: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							label:"SKYFALL2.RESOURCE.LevelBonus"
+						}
+					),
+					totalExtra: new fields.ArrayField(
+						new fields.StringField({}),
+						{
+							label:"SKYFALL2.RESOURCE.TotalBonus"
+						}
+					),
 				}),
 			}),
-			level:  new fields.SchemaField({
-				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL2.Level"}),
-				xp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 0, label: "SKYFALL2.Experience"}),
+			level: new fields.SchemaField({
+				value: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 1,
+					min: 1,
+					label: "SKYFALL2.Level"
+				}),
+				xp: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 1,
+					min: 0,
+					label: "SKYFALL2.Experience"
+				}),
 			}),
 			movement: new fields.SchemaField({
-				walk: new fields.NumberField({required: true, nullable: false, initial: 9, min: 0, label: "SKYFALL.DM.MOVEMENT.WALK"}),
-				swim: new fields.NumberField({required: true, nullable: false, initial: 0, min: 0, label: "SKYFALL.DM.MOVEMENT.SWIM"}),
-				burrow: new fields.NumberField({required: true, nullable: false, initial: 0, min: 0, label: "SKYFALL.DM.MOVEMENT.BURROW"}),
-				flight: new fields.NumberField({required: true, nullable: false, initial: 0, min: 0, label: "SKYFALL.DM.MOVEMENT.FLIGHT"}),
-				str: new fields.NumberField({required: true, nullable: false, initial: 0, min: 0, label: "SKYFALL.DM.MOVEMENT.STR"}),
-				dex: new fields.NumberField({required: true, nullable: false, initial: 0, min: 0, label: "SKYFALL.DM.MOVEMENT.DEX"}),
+				walk: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 9,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.WALK"
+				}),
+				swim: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.SWIM"
+				}),
+				burrow: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.BURROW"
+				}),
+				flight: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.FLIGHT"
+				}),
+				str: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.STR"
+				}),
+				dex: new fields.NumberField({
+					required: true,
+					nullable: false,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL.DM.MOVEMENT.DEX"
+				}),
 			}),
-			size: new fields.StringField({choices: SYSTEM.actorSizes, initial:"med", label: "SKYFALL2.Size"}),
+			size: new fields.StringField({
+				choices: SYSTEM.actorSizes,
+				initial:"med",
+				label: "SKYFALL2.Size"
+			}),
 			currency: new fields.SchemaField({
-				t: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.CURRENCY.T"}),
-				p: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.CURRENCY.P"}),
-				k: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.CURRENCY.K"}),
+				t: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL2.CURRENCY.T"
+				}),
+				p: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL2.CURRENCY.P"
+				}),
+				k: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL2.CURRENCY.K"
+				}),
 			}),
 			capacity: new fields.SchemaField({
-				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.Current"}),
-				max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL2.Total"}),
+				value: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL2.Current"
+				}),
+				max: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 1,
+					min: 1,
+					label: "SKYFALL2.Total"
+				}),
 			}),
-			spellcasting: new fields.StringField({choices: OPTIONS.abilities, initial:"int", label: "SKYFALL2.ABILITY.Spellcasting"}),
-			creatureType: new fields.StringField({choices: SYSTEM.creatureTypes, blank:true, initial: "humanoid", label: "SKYFALL2.Type"}),
+			spellcasting: new fields.StringField({
+				choices: OPTIONS.abilities,
+				initial:"int",
+				label: "SKYFALL2.ABILITY.Spellcasting"
+			}),
+			creatureType: new fields.StringField({
+				choices: SYSTEM.creatureTypes,
+				blank:true,
+				initial: "humanoid",
+				label: "SKYFALL2.Type"
+			}),
+			roll: new fields.SchemaField({
+				modifiers: new _fields.RollModifiersField(
+					this.schemaRollModifier(),
+				)
+			}),
 		}
 	}
 
@@ -140,6 +318,179 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 			initiative:  new fields.BooleanField({initial: false}),
 		});
 	}
+
+	static schemaRollModifier(){
+		const fields = foundry.data.fields;
+		return new fields.SchemaField({
+			type: new fields.ArrayField(
+				new fields.StringField({
+					choices: [
+						{
+							value: "check",
+							label: "check"
+						},
+						{
+							value: "ability",
+							label: "ability"
+						},
+						{
+							value: "initiative",
+							label: "initiative"
+						},
+						{
+							value: "skill",
+							label: "skill"
+						},
+						{
+							value: "attack",
+							label: "attack"
+						},
+						{
+							value: "damage",
+							label: "damage"
+						},
+						{
+							value: "deathsave",
+							label: "deathsave"
+						},
+						{
+							value: "catharsis",
+							label: "catharsis"
+						},
+						{
+							value: "rest",
+							label: "rest"
+						},
+					],
+				}),
+			),
+			options: new fields.ArrayField(
+				new fields.StringField({
+					choices: [
+						{value:"unique", label: "unique"},
+						{value:"choices", label: "choices"},
+						{value:"range", label: "range"},
+					],
+				}),
+			),
+			method: new fields.StringField({
+				required: true,
+				initial: 'add',
+				label: "METODO",
+				choices: [
+					{
+						value: "add",
+						label: "add",
+					},
+					{
+						value: "multiply",
+						label: "multiply",
+					},
+					{
+						value: "upgrade",
+						label: "upgrade",
+					},
+					{
+						value: "downgrade",
+						label: "downgrade",
+					},
+					{
+						value: "override",
+						label: "override",
+					},
+					{
+						value: "damage-type",
+						label: "damage-type",
+					},
+					{
+						value: "die-number",
+						label: "die-number",
+					},
+					{
+						value: "die-faces",
+						label: "die-faces",
+					},
+					{
+						value: "per-die",
+						label: "per-die",
+					},
+					{
+						value: "modifier",
+						label: "modifier",
+					},
+					{
+						value: "minimum",
+						label: "minimum",
+					},
+					{
+						value: "maximum",
+						label: "maximum",
+					},
+					{
+						value: "advantage",
+						label: "advantage",
+					},
+					{
+						value: "advantage-extra",
+						label: "advantage-extra",
+					},
+					{
+						value: "disadvantage",
+						label: "disadvantage",
+					},
+					{
+						value: "disadvantage-extra",
+						label: "disadvantage-extra",
+					},
+				]
+			}),
+			value: new fields.StringField({
+				required: true,
+				blank: true,
+				label: "VALOR"
+			}),
+			choices: new fields.ArrayField(
+				new fields.SchemaField({
+					value: new fields.StringField({
+						required: true,
+						blank: true,
+					}),
+					label: new fields.StringField({
+						required: true,
+						blank: true,
+					}),
+				}),
+			),
+			source: new fields.StringField({
+				required: true,
+				blank: true,
+				label: "FONTE"
+			}),
+			conditional: new fields.SchemaField({
+				source: new fields.StringField({
+					required: true,
+					blank: true,
+					label: "FONTE"
+				}),
+				flavor: new fields.StringField({
+					required: true,
+					blank: true,
+					label: "DANO"
+				}),
+				descriptor: new fields.StringField({
+					required: true,
+					blank: true,
+					label: "DESCRITOR"
+				}),
+				target: new fields.StringField({
+					required: true,
+					blank: true,
+					label: "ALVO"
+				}),
+			})
+		});
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */

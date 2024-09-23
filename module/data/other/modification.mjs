@@ -40,6 +40,8 @@ export default class Modification extends foundry.abstract.TypeDataModel {
 				type: new fields.ArrayField(new fields.StringField({
 						required: true,
 						choices: {
+							shallow: {id: 'shallow', value: 'shallow', label: "SKYFALL2.SPELL.LAYER.Shallow"},
+							deep: {id: 'deep', value: 'deep', label: "SKYFALL2.SPELL.LAYER.Deep"},
 							add: {id: 'add', value: 'add', label: 'SKYFALL2.MODIFICATION.TYPE.Add'},
 							modify: {id: 'modify', value: 'modify', label: 'SKYFALL2.MODIFICATION.TYPE.Modify'},
 							remove: {id: 'remove', value: 'remove', label: 'SKYFALL2.MODIFICATION.TYPE.Remove'},

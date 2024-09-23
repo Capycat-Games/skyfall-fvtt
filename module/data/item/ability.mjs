@@ -34,13 +34,36 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				// TODO - SHOULD HAVE AUTOMATION?
 			}, {label: "SKYFALL2.Trigger"}),
 			duration: new fields.SchemaField({
-				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
-				value: new fields.NumberField({required: true, integer: true, min: 0, label: "SKYFALL2.Value"}),
-				units: new fields.StringField({required: true, blank: true, choices: SYSTEM.durations, initial: "", label: "SKYFALL2.UnitPl"}),
+				descriptive: new fields.StringField({
+					required: true,
+					blank: true,
+					label: "SKYFALL2.Description"
+				}),
+				value: new fields.NumberField({
+					required: true,
+					integer: true,
+					min: 0,
+					label: "SKYFALL2.Value"
+				}),
+				units: new fields.StringField({
+					required: true,
+					blank: true,
+					choices: SYSTEM.durations,
+					initial: "",
+					label: "SKYFALL2.UnitPl"
+				}),
+				event: new fields.StringField({
+					required: true,
+					blank: true,
+					choices: SYSTEM.events,
+					initial: "",
+					label: "SKYFALL2.Event"
+				}),
 				concentration: new fields.BooleanField({
 					required: true,
 					initial: false,
-					label: "SKYFALL2.DURATION.Concentration"}),
+					label: "SKYFALL2.DURATION.Concentration"
+				}),
 			}, {label: "SKYFALL2.Duration"}),
 			target: new fields.SchemaField({
 				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
@@ -192,14 +215,92 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		// Properties
 		const props = ['range','target', 'duration', 'attack', 'trigger'];
 		for (const prop of props) {
-			if ( !this[prop]?.descriptive ) continue;
 			labels.properties ??= {};
-			labels.properties[prop] = {
-				label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
-				descriptive: this[prop].descriptive,
-			};
-			if ( prop == "attack" ) {
-				// labels.properties[prop].roll = `[[/rr type=attack ability=${this[prop].type.replace("@","")}]]{${this[prop].descriptive}}`;
+			if ( this[prop]?.descriptive ) {
+				labels.properties[prop] = {
+					label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+					descriptive: this[prop].descriptive,
+				};
+			} else if ( prop == 'range' ) {
+				const {units, value} = this[prop];
+				if ( !units ) continue;
+				if ( ['m','km','ft','mi'].includes(units) ) {
+					labels.properties[prop] = {
+						label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+						descriptive: game.i18n.format('{value} {units}', {
+							value: value,
+							units: SYSTEM.ranges[units]?.label ?? ''
+						})
+					};
+				} else {
+					labels.properties[prop] = {
+						label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+						descriptive: SYSTEM.ranges[units]?.label ?? '',
+					};
+				}
+			} else if ( prop == 'target' ) {
+				const { type, quantity, shape, length, width, units } = this[prop];
+				if ( !type ) continue;
+				const squares = length / game.system.grid.distance;
+				const details = {
+					general: game.i18n.localize('SKYFALL2.TARGET.Length'),
+					circle: game.i18n.localize('SKYFALL2.TARGET.CircleLength'),
+				}
+				if ( shape ) {
+					const descriptive = game.i18n.format('SKYFALL2.TARGET.DescritptiveWithArea', {
+						quantity: quantity || '',
+						type: SYSTEM.individualTargets[type].label,
+						shape: SYSTEM.areaTargets[shape].label,
+						length: `${length}${units}`,
+						squares: `${squares}q`,
+						details: ['radius','cylinder'].includes(shape) ? details.circle : details.general
+					});
+					labels.properties[prop] = {
+						label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+						descriptive: descriptive
+					};
+				} else {
+					const descriptive = game.i18n.format('SKYFALL2.TARGET.Descritptive', {
+						quantity: quantity || '',
+						type: SYSTEM.individualTargets[type].label
+					});
+					labels.properties[prop] = {
+						label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+						descriptive: descriptive
+					};
+					
+				}
+			} else if ( prop == 'duration' ) {
+				const {value, units, concentration, event} = this[prop];
+				if ( !units ) continue;
+				const con = game.i18n.localize('SYSTEM2.DURATION.Concentration');
+				const format = units == 'until' ? SYSTEM.events[event].prop : '{value} {units} {until} {concentration}';
+				labels.properties[prop] = {
+					label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+					descriptive: game.i18n.format(format, {
+						value: value || '',
+						units: SYSTEM.durations[units].label,
+						concentration: concentration ? `(${con})` : '',
+					})
+				};
+			} else if ( prop == 'attack' ) {
+				const {ability, protection} = this[prop];
+				if ( !ability || !protection ) continue;
+				const AttackAbilities = {
+					...SYSTEM.abilities,
+					magic: {
+						id: 'magic',
+						label: game.i18n.localize('SKYFALL2.ABILITY.Spellcasting'),
+						abbr: game.i18n.localize('SKYFALL2.ABILITY.SpellcastingAbbr')
+					},
+				}
+				labels.properties[prop] = {
+					label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
+					descriptive: game.i18n.format('{ability} vs {protection}', {
+						ability: AttackAbilities[ability].abbr ?? '-',
+						protection: AttackAbilities[protection].abbr ?? '-',
+					})
+				};
 			}
 		}
 

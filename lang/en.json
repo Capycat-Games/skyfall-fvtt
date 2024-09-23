@@ -384,7 +384,7 @@
         "SPEC": "Especial"
       },
       "TARGETS": {
-        "RADIUS": "Raio",
+        "RADIUS": "Círculo",
         "SPHERE": "Esfera",
         "CYLINDER": "Cilindro",
         "CONE": "Cone",
@@ -904,6 +904,7 @@
       "ChaAbbr": "Car",
       "Protection": "Proteção",
       "Spellcasting": "Atributo Mágico",
+      "SpellcastingAbbr": "Mágico",
       "Mental": "Atributo Mental",
       "MentalPl": "Atributos Mentais",
       "Physical": "Atributo Físico",
@@ -1007,12 +1008,28 @@
       "Shape": "Área",
       "Length": "Comprimento",
       "LengthAbbr": "Comp.",
+      "CircleLength": "Raio",
+      "CircleLengthAbbr": "R.",
       "Width": "Largura",
-      "WidthAbbr": "Larg."
+      "WidthAbbr": "Larg.",
+      "Descritptive": "{quantity} {type}",
+      "DescritptiveWithArea": "{quantity} {type} dentro de {shape} {length} ({squares}) de {details}"
     },
     "Duration": "Duração",
     "DURATION": {
-      "Concentration": "Concentração"
+      "Concentration": "Concentração",
+      "UntilEvent": "Até {article} {until}",
+      "UntilDischarge": "Até ser descarregada",
+      "UntilTurnStart": "Até o início do próximo turno",
+      "UntilTurnEnd": "Até o fim do próximo turno",
+      "UntilRoundStart": "Até o início da rodada",
+      "UntilRoundEnd": "Até o fim da rodada",
+      "UntilShortRestStart": "Até o início do próximo descanço curto",
+      "UntilShortRestEnd": "Até o fim do próximo descanço curto",
+      "UntilRestStart": "Até o início do próximo descanço",
+      "UntilRestEnd": "Até o fim do próximo descanço",
+      "UntilLongRestStart": "Até o início do próximo descanço longo",
+      "UntilLongRestEnd": "Até o fim do próximo descanço longo"
     },
     "Reload": "Recarga",
     "Attack": "Ataque",
@@ -1069,6 +1086,28 @@
     "Modifier": "Modificador",
     "ModifierPl": "Modificadores",
     "ModifierAbbr": "Mod.",
+    "SPELL": {
+      "LAYER": {
+        "Cantrip": "Truque",
+        "Shallow": "Rasa",
+        "Superficial": "Superficial",
+        "Deep": "Profunda"
+      }
+    },
+    "Event": "Evento",
+    "EVENT": {
+      "Discharge": "Descarregar",
+      "TurnStart": "Início do próximo turno",
+      "TurnEnd": "Fim do próximo turno",
+      "RoundStart": "Início da rodada",
+      "RoundEnd": "Fim da rodada",
+      "ShortRestStart": "Início do próximo descanço curto",
+      "ShortRestEnd": "Fim do próximo descanço curto",
+      "RestStart": "Início do próximo descanço",
+      "RestEnd": "Fim do próximo descanço",
+      "LongRestStart": "Início do próximo descanço longo",
+      "LongRestEnd": "Fim do próximo descanço long"
+    },
     "MODIFIER": {
       "DamageTaken": "Dano Recebido",
       "Conditions": "Imunidade a Condições",
@@ -1087,7 +1126,11 @@
         "Add": "Adiciona",
         "Modify": "Muda",
         "Amplify": "Amplifica",
-        "Remove": "Remove"
+        "Remove": "Remove",
+        "Cantrip": "Truque",
+        "Shallow": "Rasa",
+        "Superficial": "Superficial",
+        "Deep": "Profunda"
       }
     },
     "PATH": {

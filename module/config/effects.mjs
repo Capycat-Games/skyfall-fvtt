@@ -21,7 +21,22 @@ export const durations = _durations.reduce((obj, key) => {
 	return obj;
 }, {});
 
-let events = ["turnStart","turnEnd","roundStart","roundEnd","shortRestStart","shortRestEnd","restStart","restEnd"];
+let _events = [
+	"discharge",
+	"turnStart", "turnEnd",
+	"roundStart", "roundEnd",
+	"restStart", "restEnd", 
+	"shortRestStart", "shortRestEnd",
+	"longRestStart", "longRestEnd"
+];
+export const events = _events.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		label: `SKYFALL2.EVENT.${key.capitalize()}`,
+		prop: `SKYFALL2.DURATION.Until${key.capitalize()}`,
+	}
+	return obj;
+}, {});
 
 export const movementUnits = {
   m: "SKYFALL.ITEM.RANGES.M",

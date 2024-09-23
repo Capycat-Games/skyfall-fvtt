@@ -262,6 +262,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				{type: "button", action:"roll", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
 			]
 		}
+		// console.log(context);
 		return context;
 	}
 

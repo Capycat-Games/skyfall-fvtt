@@ -67,7 +67,7 @@ export default class SkyfallEffect extends ActiveEffect {
 			if ( t == 'amplify' ) labels.push( `${label} ${amplifyThreshold}+` );
 			else labels.push(label);
 		}
-		return {label: `[${labels.join(' & ')}] (${this.name})`.toUpperCase()};
+		return {label: `${this.name} [${labels.join(' & ')}]`.toUpperCase()};
 	}
 
 	/* -------------------------------------------- */

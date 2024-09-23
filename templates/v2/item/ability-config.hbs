@@ -81,8 +81,14 @@
 		<div class="form-group">
 			<label>{{localize "SKYFALL2.Value"}} / {{localize "SKYFALL2.Type"}}</label>
 			<div class="form-fields slim">
-				{{formInput schema.duration.value value=system.duration.value localize=true}}
-				{{formInput schema.duration.units value=system.duration.units localize=true}}
+				{{#if (eq system.duration.units 'until') }}
+					<input type="hidden" name="system.duration.value" value="">
+					{{formInput schema.duration.units value=system.duration.units localize=true}}
+					{{formInput schema.duration.event value=system.duration.event localize=true}}
+				{{else}}
+					{{formInput schema.duration.value value=system.duration.value localize=true}}
+					{{formInput schema.duration.units value=system.duration.units localize=true}}
+				{{/if}}
 			</div>
 		</div>
 		{{formGroup schema.duration.concentration value=system.duration.concentration localize=true}}
