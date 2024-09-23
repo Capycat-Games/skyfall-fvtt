@@ -274,7 +274,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				const {value, units, concentration, event} = this[prop];
 				if ( !units ) continue;
 				const con = game.i18n.localize('SYSTEM2.DURATION.Concentration');
-				const format = units == 'until' ? SYSTEM.events[event].prop : '{value} {units} {until} {concentration}';
+				const format = units == 'until' && event ? SYSTEM.events[event].prop : '{value} {units} {until} {concentration}';
 				labels.properties[prop] = {
 					label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
 					descriptive: game.i18n.format(format, {
