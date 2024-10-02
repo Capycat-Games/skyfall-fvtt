@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.9.507 - BETA
+
+- Ficha de Personagem/Ameaça - Removido. Limites de PV/EP.
+- Ficha de Personagem - Corrigido. Cálculo de Volume e volume dos itens.
+- Ficha de Personagem - Corrigido. Botão Criar Magia.
+- Ficha de Habilidade - Adicionado. campo Recarga para habilidades de Ameaça.
+- Ameaças. Corrigido. Atributos nas Variáveis de Rolagem.
+- Token - Corrigido. Recursos para as barras.
+- Aba Atores/Items. Adicionado. Informações extras.
+- Geral. Corrigido. Localização e Textos.
+
 ## 0.9.506 - BETA
 
 - Ficha de Modificação - Adicionado. Tipo de modificação de camadas.

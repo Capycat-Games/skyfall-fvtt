@@ -221,7 +221,7 @@ export default class Character extends Creature {
 		const str = this.abilities.str.value;
 		this.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
 		const items = this.parent.items.filter( i => 'capacity' in i.system )
-		this.capacity.value = items.reduce((acc, i) => acc += i.system.capacity, 0);
+		this.capacity.value = items.reduce((acc, i) => acc += i.system.capacity * i.system.quantity, 0);
 	}
 
 	prepareFragmentsLimit() {

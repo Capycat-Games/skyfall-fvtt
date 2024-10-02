@@ -20,40 +20,40 @@
 				</div>
 			</div>
 			{{#if (or (eq @root.item.type 'weapon') (eq @root.item.type 'armor') (eq @root.item.type 'clothing')) }}
-			<div class="form-group">
-				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.EQUIPPED" }}
-					<input type="checkbox" name="system.equipped" {{checked @root.system.equipped}}>
-				</label>
-			</div>
-			<div class="form-group">
-				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.ATTUNED" }}
-					<input type="checkbox" name="system.attuned" {{checked @root.system.attuned}}>
-				</label>
-			</div>
-			{{#if @root.user.isGM}}
-			<div class="form-group">
-				<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.UNIDENTIFIED" }}
-					<input type="checkbox" name="system.unidentified.value" {{checked @root.system.unidentified.value}}>
-				</label>
-			</div>
-			{{/if}}
+				<div class="form-group">
+					<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.EQUIPPED" }}
+						<input type="checkbox" name="system.equipped" {{checked @root.system.equipped}}>
+					</label>
+				</div>
+				<div class="form-group">
+					<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.ATTUNED" }}
+						<input type="checkbox" name="system.attuned" {{checked @root.system.attuned}}>
+					</label>
+				</div>
+				{{#if @root.user.isGM}}
+					<div class="form-group">
+						<label class="checkbox">{{localize "SKYFALL.ITEM.EQUIPMENT.UNIDENTIFIED" }}
+							<input type="checkbox" name="system.unidentified.value" {{checked @root.system.unidentified.value}}>
+						</label>
+					</div>
+				{{/if}}
 			{{/if}}
 		</div>
 		<div class="flexcol flex3">
 			{{#if (or (eq @root.item.type 'weapon') (eq @root.item.type 'armor')) }}
-			<div class="form-group flex0">
-				<label for="">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</label>
-				{{!-- {{> "systems/skyfall/templates/shared/descriptor-field.hbs" fieldPath='system.descriptors' descriptors=descriptors }} --}}
-				{{#unless (eq @root.descriptors undefined) }}
-				<dropdown-tags name="system.descriptors" class="descriptors">
-					{{#each @root._selOpts.descriptors as | group id |}}
-					<optgroup label="{{localize (concat "SKYFALL.DESCRIPTORS.LABELS." id)}}">
-						{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.descriptors}}
-					</optgroup>
-					{{/each}}
-				</dropdown-tags>
-				{{/unless}}
-			</div>
+				<div class="form-group flex0">
+					<label for="">{{localize "SKYFALL.ITEM.DESCRIPTORS"}}</label>
+					{{!-- {{> "systems/skyfall/templates/shared/descriptor-field.hbs" fieldPath='system.descriptors' descriptors=descriptors }} --}}
+					{{#unless (eq @root.descriptors undefined) }}
+						<dropdown-tags name="system.descriptors" class="descriptors">
+							{{#each @root._selOpts.descriptors as | group id |}}
+								<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
+									{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.descriptors}}
+								</optgroup>
+							{{/each}}
+						</dropdown-tags>
+					{{/unless}}
+				</div>
 			{{/if}}
 			{{#if @root.system.unidentified.value }}
 				{{editor @root.enriched.description target="system.unidentified.description" button=true editable=@root.editable engine="prosemirror" collaborate=false}}

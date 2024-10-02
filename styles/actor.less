@@ -547,6 +547,7 @@
 			.abilities {
 				ol, ul {
 					padding: 10px;
+					max-height: fit-content;
 					.ability:nth-child(n+2){
 						border-top: 1px solid var(--actor-color);
 					}
@@ -555,6 +556,10 @@
 					.ability-properties :not(:first-child) {
 						border-left: 3px solid var(--actor-color);
 						padding-left: 3px;
+					}
+					a[data-action="use"] {
+						font-style: italic;
+						font-weight: bold;
 					}
 				}
 			}

@@ -72,12 +72,14 @@ export default class NPC extends Creature {
 
 	getRollData() {
 		const data = super.getRollData();
-		for (const [key, abl] of Object.entries(SYSTEM.abilities)) {
+		console.log(data);
+		for (const [key, abl] of Object.entries(data.abilities)) {
 			data[key] = abl.value;
 			if ( abl.spellcasting ) {
 				data.magic = Math.max(data.magic, abl.value);
 			}
 		}
+		console.log(data);
 		return data;
 	}
 

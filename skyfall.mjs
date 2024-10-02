@@ -289,6 +289,22 @@ Hooks.on("targetToken", (user, token, target) => {
 	}
 });
 
+Hooks.on("renderActorDirectory", (app, html, data) => {
+	console.log('renderActorDirectory');
+	console.log(app, html, data);
+	const documentList = html.find('li.directory-item.document');
+	const collection = app.constructor.collection;
+	for (const li of documentList) {
+		const id = li.dataset.documentId;
+		const doc = collection.get(id);
+
+		const div = document.createElement('div');
+		// $('<div class="document-dado">DADO</div>');
+		div.innerText = 'dado';
+		console.log(li);
+		li.append(div);
+	}
+});
 // Hooks.on("renderFormApplication", (app, html, data) => {
 // 	console.log(app, html, data);
 // 	if ( html ) html.addEventListener('.content-embed');

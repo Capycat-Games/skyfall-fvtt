@@ -1,0 +1,31 @@
+<section data-tab="{{tab.id}}" data-group="{{tab.group}}"
+	class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow">
+	{{log this}}
+	{{log progression}}
+	<div class="flewcol">
+		{{#each progression as | prog p |}}
+			<div class="form-group">
+				<label>{{localize p}}</label>
+				<div class="form-fields">
+					{{#if prog }}
+						<input type="text" value="{{prog.name}}" disabled>
+					{{else}}
+						<input type="text" disabled>
+					{{/if}}
+				</div>
+			</div>
+			{{#each prog.features as | feature f |}}
+				<div class="form-group" style="padding-left: 1em;">
+					<label>{{localize f}}</label>
+					<div class="form-fields">
+						{{#if feature }}
+							<input type="text" value="{{feature.name}}" disabled>
+						{{else}}
+							<input type="text" disabled>
+						{{/if}}
+					</div>
+				</div>
+			{{/each}}
+		{{/each}}
+	</div>
+</section>

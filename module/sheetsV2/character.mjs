@@ -36,6 +36,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				"systems/skyfall/templates/v2/actor/features-progression.hbs",
 			]
 		},
+		progression: {
+			template: "systems/skyfall/templates/v2/actor/progression.hbs",
+		},
 		abilities: {
 			template: "systems/skyfall/templates/v2/actor/abilities.hbs",
 			templates: [
@@ -62,6 +65,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	static TABS = {
 		actions: {id: "actions", group: "actor", label: "SKYFALL.TAB.ACTIONS", cssClass: 'active'},
 		features: {id: "features", group: "actor", label: "SKYFALL.TAB.FEATURES" },
+		// progression: {id: "progression", group: "actor", label: "SKYFALL.TAB.FEATURES" },
 		abilities: {id: "abilities", group: "actor", label: "SKYFALL.TAB.ABILITIES" },
 		spells: {id: "spells", group: "actor", label: "SKYFALL.TAB.SPELLS" },
 		inventory: {id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
@@ -283,6 +287,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			acc.push(ef);
 			return acc;
 		}, []);
+		this._prepareProgression(context)
 		console.log(context);
 		return context;
 	}
@@ -380,6 +385,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const classPaths = ['class','path'];
 		for (const item of this.document.items ) {
 			if ( inventory.includes(item.type) ) {
+				item.system.volume = item.system.capacity * item.system.quantity;
 				if ( this.inventory == 'category' ) {
 					items.inventory[item.type] ??= [];
 					items.inventory[item.type].push(item);
@@ -510,27 +516,39 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	_prepareProgression(context){
 		/* LIST ENTRIES AND FEATURES */
 		/* MAPPING FIELD? */
-		const prog = {
-			legacy: {uuid: "", choices: [{key:"data.path",value:""}], features: [{uuid:""}]},
-			curse: {uuid: "", choices: [], features: []},
-			feat0: {uuid: "", choices: [], features: []},
-			background: {uuid: "", choices: [], features: []},
-			level1: {},
-			level2: {uuid: "", choices: [], features: []},
-			basicpath: {uuid: "", choices: [], features: []},
-			level3: {uuid: "", choices: [], features: []},
-			level4: {uuid: "", choices: [], features: []},
-			level5: {uuid: "", choices: [], features: []},
-			level6: {uuid: "", choices: [], features: []},
-			level7: {uuid: "", choices: [], features: []},
-			advancedpath: {uuid: "", choices: [], features: []},
-			level8: {uuid: "", choices: [], features: []},
-			level9: {uuid: "", choices: [], features: []},
-			level10: {uuid: "", choices: [], features: []},
-			level11: {uuid: "", choices: [], features: []},
-			level12: {uuid: "", choices: [], features: []},
-		}
+		console.log(this.document);
+		const progressionSteps = [
+			"legacy", "curse", "background", "feat-0",
+			...Array.fromRange(12,1).map(i=> 'class-'+i)
+		];
+		const progression = {};
+		for (const step of progressionSteps) {
+			const [type, index] = step.split('-');
+			
+			const item = this.document.items.find( (i) => {
+				if ( i.type != type ) return false;
+				// if ( index && i.system?.progression?.steps.includes(step) ) return false;
+				return true;
+			});
+			const features = this.document.items.filter( i => i.type == 'feature');
+			const abilities = this.document.items.filter( i => i.type == 'ability');
+			const feats = this.document.items.filter( i => i.type == 'feat');
+			const spells = this.document.items.filter( i => i.type == 'spell');
+			if ( item ) {
 
+			}
+			progression[step] = {
+				name: item?.name,
+				features: features.filter( i => i.system?.progression?.steps.some(s=> s.startsWith(`${step}`)) ).reduce((acc, i) => {
+					const _step = i.system?.progression?.steps.find(s => s.startsWith(`${step}`));
+					acc[_step] = {
+						name: i.name
+					}
+					return acc
+				},{})
+			};
+		}
+		context.progression = progression;
 	}
 
 	/* ---------------------------------------- */

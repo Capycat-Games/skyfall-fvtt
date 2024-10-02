@@ -26,6 +26,8 @@ export default class Spell extends Ability {
 	}
 
 	get layerLabel() {
-		return game.i18n.localize(`SKYFALL.SPELLLAYERS.${this.spellLayer.toUpperCase()}`);
+		if ( this.spellLayer ) {
+			return game.i18n.localize(`SKYFALL.SPELLLAYERS.${this.spellLayer.toUpperCase()}`);
+		} return '';
 	}
 }

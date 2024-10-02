@@ -1390,6 +1390,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ol,
 .skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ul {
   padding: 10px;
+  max-height: fit-content;
 }
 .skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ol .ability:nth-child(n+2),
 .skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ul .ability:nth-child(n+2) {
@@ -1407,6 +1408,11 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ul .ability-properties :not(:first-child) {
   border-left: 3px solid var(--actor-color);
   padding-left: 3px;
+}
+.skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ol a[data-action="use"],
+.skyfall.sheet.actor.npc .window-content .npc-statblock .abilities ul a[data-action="use"] {
+  font-style: italic;
+  font-weight: bold;
 }
 .skyfall.sheet.actor.npc .window-content .npc-statblock .irv.skills {
   padding: 0 0 0 10px;

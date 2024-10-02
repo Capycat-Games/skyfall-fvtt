@@ -33,16 +33,16 @@
 		</i>
 		<div class="flex100" style="margin-bottom: 10px;"></div>
 		{{!-- HP / DR / MOVEMENT --}}
-		<div class="resource hp flexrow" data-tooltip="SKYFALL.HP">
+		<div class="resource hp flexrow text-center" data-tooltip="SKYFALL2.RESOURCE.HP">
 			{{{SYSTEM.icons.sfheart}}}
 			{{formInput schema.resources.hp.value value=system.resources.hp.value}}/
 			{{formInput schema.resources.hp.max value=system.resources.hp.max}}
 		</div>
-		<div class="dr flexrow" data-tooltip="SKYFALL.DR">
+		<div class="dr flexrow text-center" data-tooltip="SKYFALL2.DamageReduction">
 			{{{SYSTEM.icons.sfdr}}}
 			{{formInput schema.dr value=system.dr}}
 		</div>
-		<div class="movement flexrow" data-tooltip="{{localize " SKYFALL.ACTOR.MOVEMENT"}}">
+		<div class="movement flexrow text-center" data-tooltip="{{localize 'SKYFALL2.APP.Movement'}}">
 			<a data-action="manage" data-manage="movement">{{{SYSTEM.icons.walk}}}</a>
 			<div class="values">
 				{{#each movement as | move | }}
@@ -57,11 +57,11 @@
 	{{!-- ABILTY-SCORES --}}
 	<div class="ability-scores flexrow text-center">
 		<div class="flexcol ability">
-			<div class="score" data-tooltip="{{localize " SKYFALL.ACTOR.ABILTIY"}}">
+			<div class="score" data-tooltip="{{localize 'SKYFALL2.Ability'}}">
 				{{{SYSTEM.icons.sfactive}}}
 			</div>
 			<div class="label">&nbsp;</div>
-			<div class="protection" data-tooltip="{{localize " SKYFALL.ACTOR.PROTECTION"}}">
+			<div class="protection" data-tooltip="{{localize 'SKYFALL2.ABILITY.Protection'}}">
 				{{{SYSTEM.icons.sfdefense}}}
 			</div>
 		</div>
@@ -117,7 +117,7 @@
 					<b>{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:</b>
 				</a>
 				{{#each irv.vul as | entry |}}
-					<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+					<span class="{{entry.type}}-reference">{{entry.label}}</span>
 				{{/each }}
 			</div>
 		{{/if}}
@@ -127,7 +127,7 @@
 					<b>{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:</b>
 				</a>
 				{{#each irv.res as | entry |}}
-					<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+					<span class="{{entry.type}}-reference">{{entry.label}}</span>
 				{{/each }}
 			</div>
 		{{/if}}
@@ -137,7 +137,7 @@
 					<b>{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:</b>
 				</a>
 				{{#each irv.imu as | entry |}}
-					<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+					<span class="{{entry.type}}-reference">{{entry.label}}</span>
 				{{/each }}
 			</div>
 		{{/if}}

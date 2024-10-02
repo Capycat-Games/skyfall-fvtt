@@ -68,17 +68,17 @@ export default class SkyfallModificationConfig extends ActiveEffectConfig {
 		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
 			if ( types.length && !types.includes(category) ) continue;
 			for (const [id, desc] of Object.entries(descriptors)) {
-				context._selOpts['descriptors'][category] ??= {};
-				context._selOpts['descriptors'][category][desc.id] = {
+				context._selOpts['descriptors'][category.titleCase()] ??= {};
+				context._selOpts['descriptors'][category.titleCase()][desc.id] = {
 					...desc, 
 					value: (context.system.apply.descriptors.includes(desc.id))
 				}
 			}
-			foundry.utils.mergeObject(context.descriptors, context._selOpts['descriptors'][category]);
+			foundry.utils.mergeObject(context.descriptors, context._selOpts['descriptors'][category.titleCase()]);
 		}
 		for (const desc of context.system.apply.descriptors) {
 			if ( desc in context.descriptors ) continue;
-			context._selOpts['descriptors']["ORIGIN"][desc] = {
+			context._selOpts['descriptors']["Origin"][desc] = {
 				id: desc, hint: "", type: ["origin"], label: desc.toUpperCase(), value: true
 			}
 		}

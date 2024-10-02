@@ -118,11 +118,8 @@
 		{{#each items.features as | item |}}
 			<li class="item entry flexrow" data-entry-id="{{item._id}}">
 				<div class="item-name">{{item.name}}</div>
-				{{!-- <div class="item-xxx"></div> --}}
 				<div class="item-controls">
-					{{!-- <a class="control" data-action="toggle" data-field-path="system.favorite">
-					{{{../SYSTEM.icons.star}}}
-				</a> --}}
+					<a class="control" data-action="itemToChat" data-target="item">{{{../SYSTEM.icons.chat}}}</a>
 					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
 					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
 				</div>

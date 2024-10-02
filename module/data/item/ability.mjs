@@ -25,9 +25,22 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false, label: "SKYFALL.DESCRIPTORS"})),
 
 			activation: new fields.SchemaField({
-				type: new fields.StringField({required: true, choices:SYSTEM.activations, initial: 'action', label: "SKYFALL2.ACTIVATION.Type"}),
-				cost: new fields.NumberField({required: true, label: "SKYFALL2.Cost"}),
-				repeatable: new fields.BooleanField({label: "SKYFALL2.ACTIVATION.Repeatable"}),
+				type: new fields.StringField({
+					required: true,
+					choices:SYSTEM.activations,
+					initial: 'action',
+					label: "SKYFALL2.ACTIVATION.Type"
+				}),
+				cost: new fields.NumberField({
+					required: true,
+					label: "SKYFALL2.Cost"
+				}),
+				repeatable: new fields.BooleanField({
+					label: "SKYFALL2.ACTIVATION.Repeatable"
+				}),
+				recharge: new fields.BooleanField({
+					label: "SKYFALL2.ACTIVATION.Recharge"
+				}),
 			}, {label: "SKYFALL2.Activation"}),
 			trigger: new fields.SchemaField({
 				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
@@ -181,6 +194,14 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	}
 
 	get labels() {
+		const addLabel = function (dom, label) {
+			const div = document.createElement('div');
+			div.innerHTML = dom;
+			const labelDOM = document.createElement('label');
+			labelDOM.innerText = `${label}: `;
+			div.querySelector('p').prepend(labelDOM);
+			return div.innerHTML;
+		}
 		const labels = {};
 		// ACTIVATION
 		const actions = new Set(['action','bonus','reaction','free','passive']);
@@ -253,7 +274,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 						shape: SYSTEM.areaTargets[shape].label,
 						length: `${length}${units}`,
 						squares: `${squares}q`,
-						details: ['radius','cylinder'].includes(shape) ? details.circle : details.general
+						details: ['radius','cylinder','sphere'].includes(shape) ? details.circle : details.general
 					});
 					labels.properties[prop] = {
 						label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
@@ -273,8 +294,8 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			} else if ( prop == 'duration' ) {
 				const {value, units, concentration, event} = this[prop];
 				if ( !units ) continue;
-				const con = game.i18n.localize('SYSTEM2.DURATION.Concentration');
-				const format = units == 'until' && event ? SYSTEM.events[event].prop : '{value} {units} {until} {concentration}';
+				const con = game.i18n.localize('SKYFALL2.DURATION.Concentration');
+				const format = units == 'until' && event ? SYSTEM.events[event].prop : '{value} {units} {concentration}';
 				labels.properties[prop] = {
 					label: `SKYFALL.ITEM.ABILITY.${prop.toUpperCase()}`,
 					descriptive: game.i18n.format(format, {
@@ -337,10 +358,16 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 
 		// , 'effect', 'special'
 		if ( this.effect.descriptive ) {
+			let descriptive = addLabel(
+				this.effect.descriptive,
+				game.i18n.localize('SKYFALL.ITEM.ABILITY.EFFECT')
+			);
+			
 			labels.effect = {
 				label: `SKYFALL.ITEM.ABILITY.EFFECT`,
 				descriptive: this.effect.descriptive,
 			};
+
 			TextEditor.enrichHTML(this.effect.descriptive, {}).then(
 				(data) => labels.effect.descriptive = data
 			);

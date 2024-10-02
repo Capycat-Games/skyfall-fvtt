@@ -1,17 +1,5 @@
 export default class SkyfallToken extends TokenDocument {
-
-  /** @override */
-  static getTrackedAttributes(data, _path=[]) {
-    return {
-      bar: [
-        ["resource", "hp"],
-        ["resource", "ep"],
-        ["resource", "shadow"],
-      ],
-      value: []
-    }
-  }
-
+  
   /**
    * An indicator for whether this Token is currently involved in the active combat encounter.
    * @type {boolean}

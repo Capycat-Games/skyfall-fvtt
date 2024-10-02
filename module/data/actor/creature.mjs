@@ -289,6 +289,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 					this.schemaRollModifier(),
 				)
 			}),
+			biography: new fields.HTMLField({required: true, blank: true}),
 		}
 	}
 
@@ -310,8 +311,10 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		return new fields.SchemaField({
 			value: new fields.NumberField({
-				required: true, nullable: false, integer: true,
-				initial: 0, min: -3, max: 5
+				required: true,
+				nullable: false,
+				integer: true,
+				initial: 0,
 			}),
 			protection: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
 			proficient: new fields.BooleanField({initial: false}),

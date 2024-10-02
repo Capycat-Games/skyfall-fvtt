@@ -301,14 +301,14 @@ export default class SkyfallMessage extends ChatMessage {
 
 		if ( item.system.effect?.damage ) {
 			if ( this._item ) rollData.weapon = rollData.item.weapon;
-			let roll = new SkyfallRoll(`${item.system.attack.damage}`,
+			let roll = new SkyfallRoll(`${item.system.effect.damage}`,
 				rollData, {
 				types:['damage'],
 				flavor:'Dano Efeito',
 				title:'Dano Efeito',
 				type: "damage",
 				damageType: damageType,
-				formula: item.system.attack.damage,
+				formula: item.system.effect.damage,
 			});
 			this.system.rolls.push(roll);
 		}

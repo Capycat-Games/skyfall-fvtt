@@ -129,6 +129,20 @@ export default class SkyfallItem extends Item {
 		let allowed = super._preCreate(data, options, user);
 		if ( allowed && this.parent ) allowed = this._precreateValidateParent();
 		if ( allowed && this.parent ) allowed = await this._preCreateUniqueItem(data, options, user);
+		const progressionTypes = ['legacy', 'curse', 'background', 'class'];
+		if ( this.parent && progressionTypes.includes(this.type)) {
+			// && this.system.progression 
+			let level = '';
+			if ( this.type == 'class' ) {
+				let quantity = this.parent.items.filter( i=> i.type == 'class').length;
+				level = '-' + Math.max(1, quantity);
+			}
+			// TODO class level
+			// if ( this.parent.item.find(  ) )
+			// this.parent.item.find
+			this.updateSource({'system.progression.steps': [`${this.type}${level}`]});
+			// this.system.progression.steps.push(`${this.type}${level}`);
+		}
 		return allowed;
 	}
 
@@ -309,17 +323,22 @@ export default class SkyfallItem extends Item {
 			content: div.outerHTML,
 			ok: {
 				callback: (event, button, dialog) => {
-					const item_create = button.form.elements.item_create;
+					const item_create = button.form.elements.item_create ?? [];
 					let to_create = item_create.length ? [ ...item_create ] : [ item_create ];
 					to_create = to_create.map(i => i.checked ? i.value : null )
 					return to_create.filter(Boolean);
 				}
 			}
 		});
-		for ( const uuid of granted ) {
+		
+		const parentStep = this.system.progression.steps.pop();
+		for ( const [i, uuid] of granted.entries() ) {
 			const item = await fromUuid( uuid );
 			if ( !item ) continue;
-			createItems.push( item.toObject(true) );
+			const itemData = item.toObject(true);
+			itemData._stats.compendiumSource = uuid;
+			itemData.system.progression.steps.push(`${parentStep}-${item.type}-${i}`);
+			createItems.push( itemData );
 		}
 	}
 	

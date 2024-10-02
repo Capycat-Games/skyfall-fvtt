@@ -14,7 +14,7 @@
 			<label>{{localize "SKYFALL2.DescriptorPl"}}</label>
 			<dropdown-tags name="system.descriptors" class="descriptors">
 				{{#each _selOpts.descriptors as | group id |}}
-					<optgroup label="{{localize (concat " SKYFALL.DESCRIPTORS.LABELS." id)}}">
+					<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
 						{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
 					</optgroup>
 				{{/each}}
@@ -30,6 +30,7 @@
 			<div class="form-fields">
 				{{formInput schema.activation.cost value=system.activation.cost localize=true}}
 				{{formGroup schema.activation.repeatable value=system.activation.repeatable localize=true classes="slim"}}
+				{{formGroup schema.activation.recharge value=system.activation.recharge localize=true classes="slim"}}
 			</div>
 		</div>
 		{{#if (eq item.type "spell") }}

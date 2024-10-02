@@ -364,7 +364,7 @@
         "KM": "Kilômetros",
         "SELF": "Pessoal",
         "TOUCH": "Toque",
-        "VOICE": "Vóz",
+        "VOICE": "Voz",
         "VISION": "Visão",
         "SPEC": "Especial",
         "ANY": "Ilimitado"
@@ -400,7 +400,7 @@
         "SPACE": "Espaço",
         "CREATUREOROBJECT": "Criatura ou Objeto",
         "ANY": "Qualquer",
-        "WILLING": "Criatura vonluntária"
+        "WILLING": "Criatura voluntária"
       },
       "WEAPONTYPES": {
         "SIMPLE": "Arma Simples",
@@ -617,7 +617,7 @@
 
         "SUPPORT": "Suporte",
         "SUPPORTHINT": "habilidades ou magias que afetam outras criaturas e concedem benefícios (geralmente mágicos). Características e habilidades podem referenciar esse descritor, aumentando duração ou concedendo benefícios adicionais.",
-        "VOICE": "Vóz",
+        "VOICE": "Voz",
         "VOICEHINT": "habilidades ou magias diretamente relacionadas com sua potência vocal. Você não pode usar essa habilidade ou magia caso esteja impossibilitado de falar. Criaturas que não falam podem utilizar esse descritor através de outros mecanismos, mas devem determinar também como ficam impossibilitados de utilizá-lo."
       },
       "SIGIL": {
@@ -832,6 +832,7 @@
       "ABILITIES": "Habilidades",
       "SPELLS": "Magias",
       "INVENTORY": "Inventário",
+      "BIOGRAPHY": "Biografia",
       "STATBLOCK": "Ficha",
       "GUILD": "Guilda",
       "EFFECTS": "Modificações e Efeitos"
@@ -844,8 +845,28 @@
     "Description": "Descrição",
     "Descriptor": "Descritor",
     "DescriptorPl": "Descritores",
+    "DESCRIPTOR": {
+      "LABEL": {
+        "Damage": "Dano",
+        "Equipment": "Equipamento",
+        "Category": "Categoria",
+        "Diverse": "Diverso",
+        "Origin": "Origem",
+        "Spell": "Magia",
+        "Rank": "Grau",
+        "Gear": "Equipamentos",
+        "Clothing": "Vestimentas"
+      },
+      "DAMAGE": {},
+      "EQUIPMENT": {},
+      "CATEGORY": {},
+      "DIVERSE": {},
+      "SIGIL": {},
+      "GUILD": {}
+    },
     "Create": "Criar",
     "Type": "Tipo",
+    "Size": "Tamanho",
     "Value": "Valor",
     "Bonus": "Bônus",
     "Category": "Categoria",
@@ -958,7 +979,7 @@
       "Type": "Açao",
       "Cost": "Custo",
       "Repeatable": "Repetível",
-
+      "Recharge": "Recarga",
       "ACTION": "Ação",
       "BONUS": "Ação Bônus",
       "FREE": "Ação Livre",
@@ -1125,7 +1146,7 @@
       "TYPE": {
         "Add": "Adiciona",
         "Modify": "Muda",
-        "Amplify": "Amplifica",
+        "Amplify": "Ampliar",
         "Remove": "Remove",
         "Cantrip": "Truque",
         "Shallow": "Rasa",

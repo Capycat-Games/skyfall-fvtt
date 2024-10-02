@@ -29,6 +29,9 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			template: "systems/skyfall/templates/v2/actor/inventory.hbs",
 			scrollable: [".actor-inventory"]
 		},
+		biography: {
+			template: "systems/skyfall/templates/v2/actor/biography.hbs",
+		},
 		effects: {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
 			// scrollable: [".actor-effects"]
@@ -39,6 +42,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	static TABS = {
 		statblock: {id: "statblock", group: "actor", label: "SKYFALL.TAB.STATBLOCK", cssClass: 'active'},
 		inventory: {id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
+		biography: {id: "biography", group: "actor", label: "SKYFALL.TAB.BIOGRAPHY" },
 		effects: {id: "effects", group: "actor", label: "SKYFALL.TAB.EFFECTS" },
 	};
 
@@ -72,7 +76,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		options.parts = ["tabs", "statblock", "inventory", "effects"];
+		options.parts = ["tabs", "statblock", "inventory", "biography", "effects"];
 	}
 	
 	/** @override */
@@ -115,7 +119,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
-				// description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
+				biography: await TextEditor.enrichHTML(doc.system.biography, enrichmentOptions),
 				
 			},
 			embeds: {},
