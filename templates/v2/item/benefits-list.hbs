@@ -1,0 +1,24 @@
+{{#each list as | item id | }}
+	<li class="item {{type}} entry" data-entry-id="{{item._index}}">
+		<fieldset class="flexrow">
+			<div class="item-icon" style="background-image:url({{item.item.img}})"></div>
+			<div class="item-name flex3" data-entry-id="{{item.item.uuid}}">
+				<a data-action="edit">{{item.item.name}}</a>
+			</div>
+			<div class="item-controls">
+				<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+			</div>
+			<input type="hidden" name="system.benefits.{{item._index}}.type" value="{{item.type}}">
+			<input type="hidden" name="system.benefits.{{item._index}}.uuid" value="{{item.uuid}}">
+			<input type="hidden" name="system.benefits.{{item._index}}.level" value="{{item.level}}">
+			<input type="hidden" name="system.benefits.{{item._index}}._id" value="{{item._id}}">
+		</fieldset>
+	</li>
+{{/each}}
+{{#if (eq list.length 0) }}
+	<li>
+		<fieldset class="flexrow">
+			{{localize "SKYFALL.SHEET.DROPITEM"}}
+		</fieldset>
+	</li>
+{{/if}}

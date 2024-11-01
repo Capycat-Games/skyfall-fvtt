@@ -12,6 +12,10 @@
 .skyfall-font {
   font-family: NORTHWEST;
 }
+@font-face {
+  font-family: Garamond;
+  src: url('fonts/GARAMOND-Regular.otf');
+}
 /* ----------------------------------------- */
 /*  Fonts Height                             */
 /* ----------------------------------------- */
@@ -22,6 +26,21 @@
 * {
   scrollbar-color: #182657 transparent;
   scrollbar-width: thin;
+}
+.skyfall {
+  --actor-color: #652657;
+  --actor-color-faint: #d1becd;
+}
+.skyfall.character,
+.skyfall.creation,
+.skyfall.guild {
+  --actor-color: #182657;
+  --actor-color-faint: #babecd;
+}
+.skyfall.npc,
+.skyfall.partner {
+  --actor-color: #750703;
+  --actor-color-faint: #75070322;
 }
 /* ----------------------------------------- */
 /*  Flexbox                                  */
@@ -47,6 +66,12 @@
 .flexrow .flex100 {
   flex: 0 0 100%;
 }
+.flexrow .flex-right {
+  margin-left: auto;
+}
+.flexrow .flex-left {
+  margin-right: auto;
+}
 .flexcol.flex-start {
   align-self: flex-start;
 }
@@ -55,6 +80,12 @@
 }
 .flexcol .flex100 {
   flex: 0 0 100%;
+}
+.flexcol .flex-top {
+  margin-bottom: auto;
+}
+.flexcol .flex-bottom {
+  margin-top: auto;
 }
 .SF-item-list ol *,
 .SF-item-list ul * {
@@ -426,6 +457,25 @@ dropdown-tags .tags-dropdown fieldset legend {
   font-size: 12px;
   text-align: center;
 }
+.skyfall.dialog.benefits li.item-header h4 {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+/* ----------------------------------------- */
+/*  Sidebar Styles                           */
+/* ----------------------------------------- */
+#sidebar .actors-sidebar .directory-item.document h4,
+#sidebar .items-sidebar .directory-item.document h4 {
+  line-height: normal;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#sidebar .actors-sidebar .directory-item.document h4 .document-info,
+#sidebar .items-sidebar .directory-item.document h4 .document-info {
+  white-space: break-spaces;
+  font-size: x-small;
+  color: var(--color-text-light-primary);
+}
 /* ----------------------------------------- */
 /*  Actor Styles                             */
 /* ----------------------------------------- */
@@ -453,6 +503,10 @@ dropdown-tags .tags-dropdown fieldset legend {
   position: relative;
   float: right;
   width: 100%;
+  gap: initial;
+}
+.skyfall.sheet.actor nav.tabs a {
+  padding: 5px;
 }
 .skyfall.sheet.actor nav.tabs i[class=""] {
   display: none;
@@ -676,6 +730,16 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor .actor-inventory .inventory-sigils .ability-card .space {
   display: none;
 }
+.skyfall.sheet.actor .actor-biography {
+  flex: 1;
+}
+.skyfall.sheet.actor .actor-biography .biography {
+  width: 100%;
+  flex: 1;
+}
+.skyfall.sheet.actor .actor-biography .biography prose-mirror {
+  flex: 1;
+}
 /* ----------------------------------------- */
 /*  Character Styles                         */
 /* ----------------------------------------- */
@@ -796,6 +860,9 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet.actor.character .window-content aside.sheet-header .resource.ep .bar.temp {
   background-color: cyan;
+}
+.skyfall.sheet.actor.character .window-content aside.sheet-header .resource.ep .bar {
+  background-color: limegreen;
 }
 .skyfall.sheet.actor.character .window-content aside.sheet-header .resource .container {
   position: relative;
@@ -975,8 +1042,64 @@ dropdown-tags .tags-dropdown fieldset legend {
   padding: 0 5px;
   margin: 0;
 }
+.skyfall.sheet.actor.character .window-content .actor-features .actor-traits {
+  width: 100%;
+  align-items: flex-start;
+}
 .skyfall.sheet.actor.character .window-content .actor-features .character-progression .form-group .item-controls {
   float: right;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression {
+  width: 100%;
+  column-fill: balance;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression.columns-2 > li {
+  break-inside: avoid;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression .item-image {
+  flex: 0 0 28px;
+  height: 28px;
+  border: 1px solid black;
+  margin-right: 5px;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression .item-image:hover {
+  cursor: pointer;
+  background-image: url("../../icons/svg/d20-grey.svg") !important;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression .type-guild .item-image,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression .type-bonus .item-image,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression .empty .item-image {
+  flex: 0;
+  border: none;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li div.item-name {
+  height: 28px;
+  font-size: 13px;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-legacy,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-curse,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-background,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-class,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-path,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-guild,
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.type-bonus {
+  background-color: #c9d1db;
+  line-height: 28px;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression li .entry.empty {
+  border: 1px dashed var(--actor-color);
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression ol {
+  padding-left: 28px;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression ol li {
+  position: relative;
+}
+.skyfall.sheet.actor.character .window-content .actor-features .actor-progression ol li:before {
+  position: absolute;
+  left: -1em;
+  top: 0;
+  content: '\2BA1';
 }
 .skyfall.sheet.actor.character .window-content .actor-abilities,
 .skyfall.sheet.actor.character .window-content .actor-spells {
@@ -1063,6 +1186,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .actor-spells .ability-card {
   padding: 0;
   flex: 0 0 49%;
+  --scroll-margin: 0;
 }
 .skyfall.sheet.actor.character .window-content .actor-abilities .ability-card .ability-header *,
 .skyfall.sheet.actor.character .window-content .actor-spells .ability-card .ability-header * {
@@ -1664,6 +1788,13 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet aside {
   align-self: flex-start;
 }
+.skyfall.sheet .window-content .tab.item-description {
+  min-height: 400px;
+  align-content: flex-start;
+}
+.skyfall.sheet .window-content header.sheet-header {
+  align-items: flex-start;
+}
 .skyfall.sheet .window-content :has(> .ability) {
   overflow-y: hidden;
 }
@@ -1756,7 +1887,7 @@ dropdown-tags .tags-dropdown fieldset legend {
   flex: 0 0 100px;
 }
 .skyfall.sheet .window-content .heritage-list,
-.skyfall.sheet .window-content .heritage {
+.skyfall.sheet .window-content .item-heritage .heritage {
   min-height: 200px;
 }
 .skyfall.sheet .window-content .heritage-list {
@@ -1785,8 +1916,21 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.ability .ability-card,
 .skyfall.sheet.sigil .ability-card,
 .skyfall.sheet.guild-ability .ability-card {
+  --scroll-margin: 0.05rem;
   min-width: 400px;
   max-width: 400px;
+  max-height: 80vh;
+}
+.skyfall.sheet .benefits {
+  height: 400px;
+  --scroll-margin: 0.5rem;
+}
+.skyfall.sheet .benefits header {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0 1em;
+}
+.skyfall.sheet .benefits .entry fieldset {
+  padding: 0;
 }
 .skyfall.sheet.ability .window-content {
   padding: 0;
@@ -1863,7 +2007,7 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet.ability .window-content .ability-configuration section.tab,
 .skyfall.sheet.ability .window-content .ability-configuration div.tab {
-  flex: 0 0 550px;
+  max-height: calc(80vh - 40px);
 }
 .skyfall.sheet.ability .window-content .ability-configuration .ability-config.scrollable {
   --scroll-margin: 0;
@@ -1894,8 +2038,41 @@ dropdown-tags .tags-dropdown fieldset legend {
 /* ----------------------------------------- */
 /*  ChatMessage Styles                       */
 /* ----------------------------------------- */
-.chat-message:has( .skyfall ) {
+.chat-message:has( .skyfall ),
+.chat-message.skyfall {
   background: url(assets/sheet/background.webp) repeat white;
+}
+.chat-message:has( .skyfall ).character,
+.chat-message.skyfall.character,
+.chat-message:has( .skyfall ).guild,
+.chat-message.skyfall.guild,
+.chat-message:has( .skyfall ).creation,
+.chat-message.skyfall.creation {
+  color: #182657;
+}
+.chat-message:has( .skyfall ).npc,
+.chat-message.skyfall.npc,
+.chat-message:has( .skyfall ).partner,
+.chat-message.skyfall.partner {
+  color: #750703;
+}
+.chat-message.skyfall .dsn-hide {
+  display: flex !important;
+}
+.chat-message.skyfall.catharsis .message-header {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+.chat-message.skyfall.catharsis .message-header::before {
+  content: "";
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  left: -5px;
+  top: -5px;
+  background: #222b54;
+  position: absolute;
+  z-index: -1;
 }
 .chat-message:has( .usage-card ) {
   position: relative;
@@ -2057,6 +2234,190 @@ dropdown-tags .tags-dropdown fieldset legend {
 /* ----------------------------------------- */
 /*  Journal Styles                           */
 /* ----------------------------------------- */
+.journal-sheet.skyfall-core.theme-purple {
+  --actor-color: #652657;
+  --theme-color: #652657;
+  --theme-color-faint: #d1becd;
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-2.png');
+  --box-a-title: url(assets/sheet/box-title-purple.svg);
+}
+.journal-sheet.skyfall-core.theme-darkblue {
+  --actor-color: #182657;
+  --theme-color: #182657;
+  --theme-color-faint: #babecd;
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-3.png');
+  --box-a-title: url(assets/sheet/box-title-blue.svg);
+}
+.journal-sheet.skyfall-core.theme-darkred {
+  --actor-color: #750703;
+  --theme-color: #750703;
+  --theme-color-faint: #75070322;
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-4.png');
+  --box-a-title: url(assets/sheet/box-title-red.svg);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-entry-content {
+  font-family: "Garamond";
+  font-size: 20px;
+  background: url(assets/sheet/background.webp) repeat white;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-header,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-header,
+.journal-sheet.skyfall-core .journal-sheet-container h1,
+.journal-sheet.skyfall-core .journal-sheet-container h2,
+.journal-sheet.skyfall-core .journal-sheet-container h3,
+.journal-sheet.skyfall-core .journal-sheet-container h4 {
+  font-family: "NORTHWEST";
+  font-weight: bold;
+  color: var(--theme-color);
+  border: none;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-header > *,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-header > *,
+.journal-sheet.skyfall-core .journal-sheet-container h1 > *,
+.journal-sheet.skyfall-core .journal-sheet-container h2 > *,
+.journal-sheet.skyfall-core .journal-sheet-container h3 > *,
+.journal-sheet.skyfall-core .journal-sheet-container h4 > * {
+  color: var(--theme-color);
+  font-weight: bold;
+}
+.journal-sheet.skyfall-core .journal-sheet-container h5 {
+  font-family: "Garamond";
+  font-size: 22px;
+  margin: 0;
+  color: var(--theme-color);
+  border-bottom: 2px solid var(--theme-color);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-header {
+  text-align: center;
+  border-image-source: var(--border-image-a);
+  border-image-slice: 30 0;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content h2 {
+  border-bottom: 4px double var(--theme-color);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 20px;
+  background-color: var(--theme-color);
+  border-image-source: url('assets/sheet/skyfall-border-1.png');
+  border-image-slice: 30;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+  padding: 1em;
+  color: white;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a h1,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a h2,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a h3,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a h4 {
+  color: var(--theme-color);
+  background-image: var(--box-a-title);
+  background: var(--box-a-title) 0% 0 space, var(--box-a-title) center no-repeat;
+  margin-right: 10%;
+  position: relative;
+  left: -30px;
+  padding-left: 50px;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-a > * {
+  color: white;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-b {
+  border-image-source: var(--border-image-a);
+  border-image-slice: 0 30;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+  background-color: var(--theme-color-faint);
+  padding: 0 16px;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .box-c {
+  border-image-source: var(--border-image-a);
+  border-image-slice: 30 0;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+  padding: 0 16px;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table {
+  color: var(--theme-color);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table thead {
+  background-color: var(--theme-color);
+  color: #FFF;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table p {
+  margin: 0;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table td,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table th {
+  padding: 5px;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.striped {
+  background-color: unset;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.striped tr:nth-child(even) {
+  background-color: var(--theme-color-faint);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.celled {
+  background-color: var(--theme-color-faint);
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.celled tr {
+  background-color: unset;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.celled td,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.celled th {
+  border: 1px solid #FFF;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.header-row tr:nth-child(1),
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.header-row th {
+  background-color: var(--theme-color);
+  color: #FFF;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.header-col td:nth-child(1) {
+  background-color: var(--theme-color);
+  color: #FFF;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.bold-row tr:nth-child(1) {
+  font-weight: bold;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.bold-col td:nth-child(1) {
+  font-weight: bold;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content table.text-center p {
+  text-align: center;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content ol,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content ul {
+  list-style-image: url('assets/sheet/bullet.svg');
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .columns-2 {
+  columns: 2;
+}
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .columns-2 .box-a h1,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .columns-2 .box-a h2,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .columns-2 .box-a h3,
+.journal-sheet.skyfall-core .journal-sheet-container .journal-page-content .columns-2 .box-a h4 {
+  background: var(--box-a-title) no-repeat;
+  background-size: 100% auto;
+  margin-right: 0%;
+  position: relative;
+  left: -30px;
+  padding-left: 40px;
+  padding-right: 20px;
+  font-size: 18px;
+  line-height: 20px;
+  width: calc(100% + 30px);
+  min-height: 46px;
+  align-content: center;
+}
 /* ----------------------------------------- */
 /*  Skyfall Styles                           */
 /* ----------------------------------------- */
@@ -2203,18 +2564,6 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall .list-items .item-controls {
   text-align: center;
 }
-.skyfall .condition-reference {
-  text-decoration: underline;
-  font-style: italic;
-  font-weight: bold;
-}
-.skyfall .descriptor-reference {
-  font-weight: bold;
-  background-color: var(--actor-color);
-  padding: 1px 5px;
-  text-transform: uppercase;
-  color: white!important;
-}
 .skyfall .sf-icon {
   display: inline-flex;
   align-self: center;
@@ -2223,6 +2572,28 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall .sf-icon svg image {
   width: 1em;
   height: 1em;
+}
+.skyfall ol.columns-2,
+.skyfall ul.columns-2 {
+  columns: 2;
+}
+.skyfall ol.columns-2 li,
+.skyfall ul.columns-2 li {
+  break-after: auto;
+}
+.skyfall .condition-reference,
+.skyfall-core .condition-reference {
+  text-decoration: underline;
+  font-style: italic;
+  font-weight: bold;
+}
+.skyfall .descriptor-reference,
+.skyfall-core .descriptor-reference {
+  font-weight: bold;
+  background-color: var(--actor-color);
+  padding: 1px 5px;
+  text-transform: uppercase;
+  color: white!important;
 }
 #logo .cls-1 {
   fill: #182657;
@@ -2241,20 +2612,28 @@ dropdown-tags .tags-dropdown fieldset legend {
 #players .give-catharsis i {
   margin: 0;
 }
+aside[role=tooltip]:has(.status-effect),
 #tooltip:has(.status-effect) {
   background-color: #652657;
   padding: 1em;
 }
+aside[role=tooltip] section.status-effect,
 #tooltip section.status-effect {
   color: white;
   text-align: left;
   position: relative;
 }
+aside[role=tooltip] section.status-effect h1,
 #tooltip section.status-effect h1,
+aside[role=tooltip] section.status-effect h2,
 #tooltip section.status-effect h2,
+aside[role=tooltip] section.status-effect h3,
 #tooltip section.status-effect h3,
+aside[role=tooltip] section.status-effect h4,
 #tooltip section.status-effect h4,
+aside[role=tooltip] section.status-effect h5,
 #tooltip section.status-effect h5,
+aside[role=tooltip] section.status-effect h6,
 #tooltip section.status-effect h6 {
   position: relative;
   border-bottom: none;
@@ -2264,10 +2643,44 @@ dropdown-tags .tags-dropdown fieldset legend {
   padding-left: 1.5em;
   color: #652657;
 }
+aside[role=tooltip] section.status-effect ol,
 #tooltip section.status-effect ol,
+aside[role=tooltip] section.status-effect ul,
 #tooltip section.status-effect ul {
   list-style: none;
   padding: 0;
+}
+aside[role=tooltip] .property-summary ul,
+#tooltip .property-summary ul,
+aside[role=tooltip] .property-summary ol,
+#tooltip .property-summary ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+aside[role=tooltip] .property-summary ul.ability-tooltip,
+#tooltip .property-summary ul.ability-tooltip,
+aside[role=tooltip] .property-summary ol.ability-tooltip,
+#tooltip .property-summary ol.ability-tooltip {
+  min-width: 130px;
+}
+aside[role=tooltip] .property-summary ul.ability-tooltip li .name,
+#tooltip .property-summary ul.ability-tooltip li .name,
+aside[role=tooltip] .property-summary ol.ability-tooltip li .name,
+#tooltip .property-summary ol.ability-tooltip li .name {
+  text-align: left;
+}
+aside[role=tooltip] .property-summary ul.ability-tooltip li .value,
+#tooltip .property-summary ul.ability-tooltip li .value,
+aside[role=tooltip] .property-summary ol.ability-tooltip li .value,
+#tooltip .property-summary ol.ability-tooltip li .value {
+  max-width: 30%;
+}
+aside[role=tooltip] .property-summary ul.ability-tooltip li:last-child,
+#tooltip .property-summary ul.ability-tooltip li:last-child,
+aside[role=tooltip] .property-summary ol.ability-tooltip li:last-child,
+#tooltip .property-summary ol.ability-tooltip li:last-child {
+  border-top: 1px solid white;
 }
 .skyfall.sheet #context-menu {
   background-color: white;
@@ -2312,28 +2725,6 @@ dropdown-tags .tags-dropdown fieldset legend {
 }
 .skyfall.sheet .plain li .item-name img {
   margin-right: 5px;
-}
-#tooltip .property-summary ul,
-#tooltip .property-summary ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#tooltip .property-summary ul.ability-tooltip,
-#tooltip .property-summary ol.ability-tooltip {
-  min-width: 130px;
-}
-#tooltip .property-summary ul.ability-tooltip li .name,
-#tooltip .property-summary ol.ability-tooltip li .name {
-  text-align: left;
-}
-#tooltip .property-summary ul.ability-tooltip li .value,
-#tooltip .property-summary ol.ability-tooltip li .value {
-  max-width: 30%;
-}
-#tooltip .property-summary ul.ability-tooltip li:last-child,
-#tooltip .property-summary ol.ability-tooltip li:last-child {
-  border-top: 1px solid white;
 }
 .inline-roll-request {
   background: #DDD;

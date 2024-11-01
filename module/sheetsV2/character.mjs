@@ -1,4 +1,3 @@
-import { abilities } from "../config/creature.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
@@ -15,29 +14,35 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		actions: {
 			inventoryDisplay: CharacterSheetSkyfall.#inventoryDisplay,
 			itemToChat: CharacterSheetSkyfall.#itemToChat,
+			promptBenefitsDialog: CharacterSheetSkyfall.#promptBenefitsDialog,
 		}
 	};
 
 	/** @override */
 	static PARTS = {
-		aside: {template: "systems/skyfall/templates/v2/actor/aside.hbs" },
-		tabs: {template: "templates/generic/tab-navigation.hbs"},
+		aside: {
+			template: "systems/skyfall/templates/v2/actor/aside.hbs"
+		},
+		tabs: {
+			template: "templates/generic/tab-navigation.hbs"
+		},
 		actions: {
 			template: "systems/skyfall/templates/v2/actor/actions.hbs",
 			templates: [
 				"systems/skyfall/templates/v2/actor/actions-ability-scores.hbs",
 				"systems/skyfall/templates/v2/actor/actions-abilities.hbs",
 				"systems/skyfall/templates/v2/actor/actions-skills.hbs",
-			]
+			],
+			scrollable: [""]
 		},
 		features: {
 			template: "systems/skyfall/templates/v2/actor/features.hbs",
 			templates: [
 				"systems/skyfall/templates/v2/actor/features-progression.hbs",
-			]
-		},
-		progression: {
-			template: "systems/skyfall/templates/v2/actor/progression.hbs",
+				"systems/skyfall/templates/v2/actor/progression-list.hbs",
+				"systems/skyfall/templates/v2/actor/widgets/xp.hbs",
+			],
+			scrollable: [""]
 		},
 		abilities: {
 			template: "systems/skyfall/templates/v2/actor/abilities.hbs",
@@ -45,19 +50,23 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				"systems/skyfall/templates/v2/item/ability-card.hbs",
 				"systems/skyfall/templates/v2/item/sigil-card.hbs",
 			],
-			scrollable: [".actor-abilities"]
+			scrollable: [""]
 		},
 		spells: {
 			template: "systems/skyfall/templates/v2/actor/spells.hbs",
-			scrollable: [".actor-spells"]
+			scrollable: [""]
 		},
 		inventory: {
 			template: "systems/skyfall/templates/v2/actor/inventory.hbs",
-			scrollable: [".actor-inventory"]
+			scrollable: [""]
+		},
+		biography: {
+			template: "systems/skyfall/templates/v2/actor/biography.hbs",
+			scrollable: [""]
 		},
 		effects: {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
-			// scrollable: [".actor-effects"]
+			scrollable: [""]
 		},
 	}
 
@@ -65,10 +74,10 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	static TABS = {
 		actions: {id: "actions", group: "actor", label: "SKYFALL.TAB.ACTIONS", cssClass: 'active'},
 		features: {id: "features", group: "actor", label: "SKYFALL.TAB.FEATURES" },
-		// progression: {id: "progression", group: "actor", label: "SKYFALL.TAB.FEATURES" },
 		abilities: {id: "abilities", group: "actor", label: "SKYFALL.TAB.ABILITIES" },
 		spells: {id: "spells", group: "actor", label: "SKYFALL.TAB.SPELLS" },
 		inventory: {id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
+		biography: {id: "biography", group: "actor", label: "SKYFALL.TAB.BIOGRAPHY" },
 		effects: {id: "effects", group: "actor", label: "SKYFALL.TAB.EFFECTS" },
 	};
 
@@ -199,11 +208,23 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	};
 	inventory = 'default';
 
+	/* ---------------------------------------- */
+	/* DRAG AND DROP HANDLERS                   */
+	/* ---------------------------------------- */
+
+	async _onDrop(event) {
+		return super._onDrop(event);
+	}
+
+	/* ---------------------------------------- */
+	/* RENDER                                   */
+	/* ---------------------------------------- */
+
 	/** @override */
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		options.parts = ["aside", "tabs", "actions", "features", "abilities", "spells", "inventory", "effects"];
+		options.parts = ["aside", "tabs", "actions", "features", "abilities", "spells", "inventory", "biography", "effects"];
 	}
 	
 	/** @override */
@@ -247,14 +268,14 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			system: doc.system,
 			source: src.system,
 			schema: this._getDataFields(),
+			progression: await doc.system._progression(),
 			filters: this.filters,
 			items: {},
 			SYSTEM: SYSTEM,
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
-				// description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
-				
+				biography: await TextEditor.enrichHTML(doc.system.biography, enrichmentOptions),
 			},
 			embeds: {},
 			tabs: this._getTabs(),
@@ -264,6 +285,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			isEditing: this.isEditing,
 			rolling: this.rolling,
 			inventory: this.inventory,
+			
 			_selOpts: {},
 			_selectOptions: {},
 			_app: {
@@ -287,7 +309,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			acc.push(ef);
 			return acc;
 		}, []);
-		this._prepareProgression(context)
+		
 		console.log(context);
 		return context;
 	}
@@ -483,74 +505,10 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				if ( tags.has('utility') && valid(filters, 'utility') ) show = false;
 
 				item.filtered = show ? '' : 'hidden';
-				continue;
-				if ( item.system?.isRanged  && !filters.ranged?.active ) show = false;
-				if ( item.system?.isMelee  && !filters.melee?.active ) show = false;
-				if ( item.system?.action && !filters[item.system.action]?.active ) show = false;
-				if ( item.type=='sigil' && !filters[item.type]?.active ) show = false;
-				
-				if ( descriptors.has('control') && !filters.control?.active ) show = false;
-				if ( descriptors.has('ofensive') && !filters.ofensive?.active ) show = false;
-				if ( descriptors.has('utility') && !filters.utility?.active ) show = false;
-
-				// if ( !filters.cantrip?.active && descriptors.has('cantrip') ) show = false;
-				// if ( !filters.superficial?.active && descriptors.has('superficial') ) show = false;
-				// if ( !filters.shallow?.active && descriptors.has('shallow') ) show = false;
-				// if ( !filters.deep?.active && descriptors.has('deep') ) show = false;
-				item.filtered = show ? '' : 'hidden';
 			}
-		}
-		return;
-		const actions = this.filters.actions;
-		for (const item of Object.values(context.items.actions)) {
-			let show = true;
-			if ( item.system?.isRanged  && !actions.ranged.active ) show = false;
-			if ( item.system?.isMelee  && !actions.melee.active ) show = false;
-			if ( item.system?.action && !actions[item.system.action]?.active ) show = false;
-			if ( item.type=='sigil' && !actions[item.type]?.active ) show = false;
-			item.filtered = show ? '' : 'hidden';
 		}
 	}
 	
-
-	_prepareProgression(context){
-		/* LIST ENTRIES AND FEATURES */
-		/* MAPPING FIELD? */
-		console.log(this.document);
-		const progressionSteps = [
-			"legacy", "curse", "background", "feat-0",
-			...Array.fromRange(12,1).map(i=> 'class-'+i)
-		];
-		const progression = {};
-		for (const step of progressionSteps) {
-			const [type, index] = step.split('-');
-			
-			const item = this.document.items.find( (i) => {
-				if ( i.type != type ) return false;
-				// if ( index && i.system?.progression?.steps.includes(step) ) return false;
-				return true;
-			});
-			const features = this.document.items.filter( i => i.type == 'feature');
-			const abilities = this.document.items.filter( i => i.type == 'ability');
-			const feats = this.document.items.filter( i => i.type == 'feat');
-			const spells = this.document.items.filter( i => i.type == 'spell');
-			if ( item ) {
-
-			}
-			progression[step] = {
-				name: item?.name,
-				features: features.filter( i => i.system?.progression?.steps.some(s=> s.startsWith(`${step}`)) ).reduce((acc, i) => {
-					const _step = i.system?.progression?.steps.find(s => s.startsWith(`${step}`));
-					acc[_step] = {
-						name: i.name
-					}
-					return acc
-				},{})
-			};
-		}
-		context.progression = progression;
-	}
-
 	/* ---------------------------------------- */
 	/*              EVENT HANDLERS              */
 	/* ---------------------------------------- */
@@ -570,5 +528,29 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const item = this.document.items.get(itemId);
 		if ( !item ) return;
 		item.toMessage();
+	}
+
+	static async #promptBenefitsDialog(event, target) {
+		const document = this.document;
+		const { originId } = target.dataset;
+		const { entryId } = target.closest('li').dataset;
+		if ( entryId ) {
+			// PROMPT THE DIALOG FOR EXISTING ITEM
+			const item = document.items.find( i => i.id == entryId );
+			if ( !item ) return;
+			let level = 0;
+			if ( 'level' in item.system ) {
+				level = (item.system.origin.indexOf(originId) ?? 0) + 1;
+			}
+			let {BenefitsDialog} = skyfall.applications;
+			BenefitsDialog.prompt({item: item, grant: originId, level: level});
+		} else {
+			// ITEM DOES NOT EXIST
+			const item = document.items.find( i => 'benefits' in i.system && i.system.benefits.some( b => b._id == originId ));
+			if ( !item ) return;
+			
+			let {BenefitsDialog} = skyfall.applications;
+			BenefitsDialog.prompt({item: item, grant: originId});
+		}
 	}
 }

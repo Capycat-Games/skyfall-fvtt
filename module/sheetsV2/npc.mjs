@@ -12,7 +12,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		classes: ["skyfall", "actor", "npc"],
 		position: { width: 500, height: 660},
 		actions: {
-			someAction: NPCSheetSkyfall.#someAction,
+			
 		}
 	};
 
@@ -23,18 +23,20 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			template: "systems/skyfall/templates/v2/actor/statblock-npc.hbs",
 			templates: [
 				"systems/skyfall/templates/v2/actor/statblock-abilities.hbs",
-			]
+			],
+			scrollable: [""]
 		},
 		inventory: {
 			template: "systems/skyfall/templates/v2/actor/inventory.hbs",
-			scrollable: [".actor-inventory"]
+			scrollable: [""]
 		},
 		biography: {
 			template: "systems/skyfall/templates/v2/actor/biography.hbs",
+			scrollable: [""]
 		},
 		effects: {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
-			// scrollable: [".actor-effects"]
+			scrollable: [""]
 		},
 	}
 
@@ -114,7 +116,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			system: doc.system,
 			source: src.system,
 			schema: this._getDataFields(),
-			items: {},
+			items: doc.system._prepareItems(), //{},
 			SYSTEM: SYSTEM,
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
@@ -140,7 +142,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		// Prepare data
 		this._prepareSystemData(context);
 		// // 
-		this._prepareItems(context);
+		// this._prepareItems(context);
 		this._prepareAbilities(context);
 		
 		// if ( context.items.abilities ) {
@@ -243,7 +245,24 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			if ( progression.includes(item.type) ) items[item.type] = item;
 			if ( classPaths.includes(item.type) ) items[item.type].push(item);
 		}
-		
+		const spellLayer = {
+			'cantrip': 0,
+			'superficial': 1,
+			'shallow': 2,
+			'deep': 3,
+		}
+		items.spells.sort( (a, b) => {
+			const layerA = spellLayer[a.system.spellLayer];
+			const layerB = spellLayer[b.system.spellLayer];
+			return layerA > layerB ? 1 : layerA < layerB ? -1 : 0;
+		});
+		let layer = '';
+		for (const spell of items.spells) {
+			if ( layer != spell.system.layerLabel ) {
+				spell.layerLabel = spell.system.layerLabel;
+			}
+			layer = spell.system.layerLabel;
+		}
 		context.items = items;
 	}
 
@@ -260,7 +279,4 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		}, context.abilities);
 	}
 	
-	static #someAction(){
-
-	}
 }

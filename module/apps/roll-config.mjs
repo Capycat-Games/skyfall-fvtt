@@ -54,7 +54,8 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		if ( ['damage','catharsis'].includes(this.config.type) ) {
 			this.config.formula = this.config.formula.replace('-','+-');
 			this.config.formula.split('+').reduce((acc, term) => {
-				let t = new RollSF(term).terms[0];
+				let t = new RollSF(term, this.rollData).terms[0];
+				console.log(term, t);
 				acc.push({
 					expression: t.options.data ? `@${t.options.data}` : t.expression,
 					label:`Base`,
@@ -367,37 +368,16 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				if ( !partner ) roll.toMessage({}, {rollMode: this.system.rollMode});
 				let combat = game.combats.active;
 				if (!combat) return;
-				const boss = ( this.actor.type == 'npc' && this.actor.system.hierarchy == 'boss' );
+				const boss = ( this.actor.type == 'npc' && this.actor.system.isBoss );
 				
 				let combatant = combat.combatants.find(
-					(c) => ( (boss && c.initiative == null && c.actor.id === this.actor.id ) || (!boss && c.actor.id === this.actor.id ) )
+					(c) => ( c.initiative == null && ((boss && c.initiative == null && c.actor.id === this.actor.id ) || (!boss && c.actor.id === this.actor.id )) )
 				);
-				// SE EXISTE & !ROLOU ATUALIZA
-				// SE NÃO EXISTE CRIA
-				// SE EXISTE & ROLOU
-				
-				// if ( boss && !combatant ) {
-				// 	// TODO CREATE
-				// } else if ( boss && combatant && combatant.initiative == null){
-				// 	// BOSS WITHOUT INITIATIVE
-				// } else if ( boss && combatant ){
-					
-				// } else if ( combatant && combatant.initiative == null){
-				// 	combat.setInitiative(combatant.id, roll.total);
-				// } else if ( !combatant ) {
-					
-				// }
-				
+				console.log(combatant);
 				if ( !combatant || combatant.initiative != null ) return;
 				combat.setInitiative(combatant.id, (partner ? 0 : roll.total ));
 				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
-				return;
-				if ( options.createCombatants ) {
-					// toCreate.push({tokenId: t.id, sceneId: t.scene.id, actorId: this.id, hidden: t.document.hidden});
-					await combat.createEmbeddedDocuments("Combatant", [
-						{tokenId: t.id, sceneId: t.scene.id, actorId: this.id, hidden: t.document.hidden}
-					]);
-				}
+				
 			} catch (error) {
 				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
 			}

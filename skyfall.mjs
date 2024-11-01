@@ -82,6 +82,7 @@ Hooks.once('init', function () {
 	
 	
 	CONFIG.Item.dataModels["legacy"] = models.item.Legacy;
+	CONFIG.Item.dataModels["heritage"] = models.item.Heritage;
 	CONFIG.Item.dataModels["curse"] = models.item.Curse;
 	CONFIG.Item.dataModels["background"] = models.item.Background;
 	CONFIG.Item.dataModels["class"] = models.item.Class;
@@ -97,6 +98,8 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["equipment"] = models.item.Equipment;
 	CONFIG.Item.dataModels["consumable"] = models.item.Consumable;
 	CONFIG.Item.dataModels["loot"] = models.item.Loot;
+	CONFIG.Item.dataModels["hierarchy"] = models.item.Hierarchy;
+	CONFIG.Item.dataModels["archetype"] = models.item.Archetype;
 
 	CONFIG.Item.dataModels["seal"] = models.item.Seal;
 	CONFIG.Item.dataModels["facility"] = models.item.Facility;
@@ -136,7 +139,12 @@ Hooks.once('init', function () {
 	
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
-		types: ['legacy','background','class','path','feature','curse','feat','weapon','armor','clothing','equipment','consumable','loot','facility','seal'],
+		types: [
+			'legacy','heritage','curse','background','class','path','hierarchy','archetype',
+			'feature','feat',
+			'weapon','armor','clothing','equipment','consumable','loot',
+			'facility','seal'
+		],
 		makeDefault: true,
 	});
 
@@ -219,7 +227,19 @@ function registerFonts() {
 			{urls: [`${path}NORTHWEST-BoldRust.otf`], weight:'700'}
 		]
 	}
+	
+	CONFIG.fontDefinitions['Garamond'] = {
+		editor: true,
+		fonts: [
+			{urls: [`${path}GARAMOND-Regular.otf`], weight:'400'},
+			// {urls: [`${path}GARAMOND-Italic.otf`], italic: true},
+			{urls: [`${path}GARAMOND-Bold.otf`], weight:'700'},
+		]
+	}
 }
+
+
+
 
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
@@ -273,8 +293,9 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 });
 
 Hooks.on("controlToken", (token, controlled) => {
-	if ( controlled ) new EffectsMenu({document: token.actor}).render(true);
-	else {
+	if ( controlled && token?.actor) {
+		new EffectsMenu({document: token.actor}).render(true);
+	} else {
 		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
 });
@@ -290,27 +311,102 @@ Hooks.on("targetToken", (user, token, target) => {
 });
 
 Hooks.on("renderActorDirectory", (app, html, data) => {
-	console.log('renderActorDirectory');
-	console.log(app, html, data);
 	const documentList = html.find('li.directory-item.document');
 	const collection = app.constructor.collection;
 	for (const li of documentList) {
 		const id = li.dataset.documentId;
 		const doc = collection.get(id);
-
-		const div = document.createElement('div');
-		// $('<div class="document-dado">DADO</div>');
-		div.innerText = 'dado';
-		console.log(li);
-		li.append(div);
+		const dirData = doc.system.directoryData;
+		if ( !dirData ) continue;
+		const name = li.querySelector('.document-name');
+		const span = document.createElement('span');
+		span.classList.add('document-info');
+		span.innerText = dirData;
+		name.append(span);
 	}
 });
-// Hooks.on("renderFormApplication", (app, html, data) => {
-// 	console.log(app, html, data);
-// 	if ( html ) html.addEventListener('.content-embed');
-// });
 
- 
+Hooks.on("renderDialog", (app, jquery, data) => {
+	let html = jquery[0];
+	if (html.querySelector("#document-create")) {
+		if( !app.data.title.match('Item') ) return;
+		const select = html.querySelector("select[name=type]");
+		if (select) {
+			select.innerHTML = '';
+			const documentTypes = {
+				character: [
+					'legacy','heritage','curse','background','class','path',
+					'feature','feat','ability','spell'
+				],
+				equipment: [
+					'armor','weapon','clothing','sigil','equipment','consumable','loot'
+				],
+				guild: [
+					'seal','facility','guild-ability'
+				],
+				npc: [
+					'hierarchy','archetype',
+				],
+			}
+			for (const [key, arr] of Object.entries(documentTypes)) {
+				const optgroup = document.createElement('optgroup');
+				if ( key == 'equipment' ) {
+					optgroup.label = game.i18n.localize("SKYFALL2.Inventory");
+				} else optgroup.label = game.i18n.localize(`TYPES.Actor.${key}`);
+				arr.map(
+					i => ({type: i, label: game.i18n.localize(CONFIG.Item.typeLabels[i])})
+				).sort(
+					(a,b) => (a.label > b.label ? 1 : (a.label < b.label ? -1 : 0))
+				).map( i => {
+					const opt = document.createElement('option');
+					opt.value = i.type;
+					opt.text = i.label;
+					optgroup.append(opt);
+				} );
+				select.append(optgroup);
+			}
+		}
+	}
+});
+
+Hooks.on("createCombatant", (combatant, options, userId) => {
+	if ( game.userId != userId ) return;
+	if ( combatant.actor?.type == 'npc' && combatant.parent)  {
+		const actor = combatant.actor;
+		if ( !actor.system.isBoss ) return;
+		const combat = combatant.parent;
+		const bosses = combat.combatants.filter(i => i.actorId == combatant.actorId );
+		if ( bosses.length >= 3 ) return;
+		if ( actor.items.find(i => i.system.identifier ) ) {
+			combatant.clone({name: `${combatant.name}`}, {save: true, addSource: true});
+		}
+	}
+});
+
+
+Hooks.on("renderChatMessage", (message, jquery, messageData) => {
+	if ( !message.system.catharsis ) return;
+	const html = jquery[0];
+	console.log('renderChatMessage', message, html, messageData);
+	html.classList.add('skyfall');
+	html.classList.add('character');
+	html.classList.add('catharsis');
+	if ( game.user.isGM ) {
+		const button = document.createElement('button');
+		button.innerText = game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
+		button.addEventListener('click', (event) => {
+			const actorId = message.speaker.actor;
+			const actor = game.actors.get(actorId);
+			if ( actor && actor.type == 'character' ) {
+				const catharsis = actor.system.resources.catharsis.value;
+				actor.update({"system.resources.catharsis.value": catharsis + 1});
+				ChatMessage.create({content: `${actor.name} recebeu 1 Ponto de Catarse`});
+			}
+		 });
+		html.querySelector('.message-content').append(button);
+	}
+});
+
 /* -------------------------------------------- */
 /*  Helpers                                     */
 /* -------------------------------------------- */

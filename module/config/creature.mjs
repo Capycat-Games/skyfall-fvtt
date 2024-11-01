@@ -168,24 +168,3 @@ export const archetype = npcArchetype.reduce((obj, key) => {
 	}
 	return obj;
 }, {});
-
-const characterProgression = {
-	"legacy": {},
-	"curse": {},
-	"feat0": {},
-	"background": {},
-	"level1": {},
-	"level2": {},
-	"basicpath": {},
-	"level3": {},
-	"level4": {},
-	"level5": {},
-	"level6": {},
-	"level7": {},
-	"advancedpath": {},
-	"level8": {},
-	"level9": {},
-	"level10": {},
-	"level11": {},
-	"level12": {},
-}

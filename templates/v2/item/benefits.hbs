@@ -1,0 +1,58 @@
+<section class="tab scrollable item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}"
+	data-group="{{tab.group}}">
+	{{formGroup schema.identifier value=system.identifier localize=true}}
+	{{log tab}}
+	{{!-- system._benefits --}}
+	<div class="benefits scrollable2">
+		{{#each benefits as | data type | }}
+			{{#if (gt type 0)}}
+				<div class="drop-item" data-field-path="system.benefits" data-level="{{type}}">
+					<header class="flexrow">
+						<h3>{{localize "SKYFALL2.Level"}} {{type}}</h3>
+						<div class="item-controls">
+							<a data-action="create" data-create="benefits" data-field-path="system.benefits" data-level="{{type}}">
+								<input type="checkbox" {{checked (lte type @root.system.level)}} disabled>
+								{{{@root.SYSTEM.icons.create}}} {{localize "SKYFALL2.Grant"}}
+							</a>
+						</div>
+					</header>
+					{{#each data as | level type | }}
+						{{#if (eq type 'grant')}}
+							{{> "systems/skyfall/templates/v2/item/benefits/grant.hbs" list=level grantschema=@root.schema._benefits fieldPath=@root.schema.benefits.fieldPath}}
+						{{else}}
+							<ol class="plain" data-item-type="{{type}}">
+								{{> "systems/skyfall/templates/v2/item/benefits-list.hbs" list=level type=type}}
+							</ol>
+						{{/if}}
+					{{/each}}
+				</div>
+			{{else if (eq type 'grant')}}
+				<div class="drop-item" data-field-path="system.benefits" data-level="{{type}}">
+					<header class="flexrow">
+						<h3>{{localize "SKYFALL2.GrantPl"}}</h3>
+						<div class="item-controls">
+							<a data-action="create" data-create="benefits" data-field-path="system.benefits" data-level="0">
+								{{{@root.SYSTEM.icons.create}}} {{localize "SKYFALL2.Grant"}}
+							</a>
+						</div>
+					</header>
+					{{> "systems/skyfall/templates/v2/item/benefits/grant.hbs" list=data grantschema=@root.schema._benefits fieldPath=@root.schema.benefits.fieldPath}}
+				</div>
+			{{else}}
+				<div class="drop-item" data-field-path="system.benefits" data-level="0">
+					<header class="flexrow">
+						<h3>{{localize (concat "TYPES.Item." type "Pl")}}</h3>
+						<h3></h3>
+						<div class="item-controls"></div>
+					</header>
+					<ol class="plain drop-item" data-field-path="system.benefits" data-item-type="{{type}}">
+						{{> "systems/skyfall/templates/v2/item/benefits-list.hbs" list=data type=type}}
+					</ol>
+				</div>
+			{{/if}}
+		{{/each}}
+	</div>
+
+	{{> "systems/skyfall/templates/v2/item/deprecated.hbs"}}
+
+</section>

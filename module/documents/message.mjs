@@ -184,7 +184,7 @@ export default class SkyfallMessage extends ChatMessage {
 		console.groupCollapsed('applyModifications');
 		const ability = this.system.item.system.activation;
 		// if ( act.resource )
-		if ( ability.cost ) this.system.costs['ep'] += ability.cost;
+		if ( ability.cost ) this.system.costs['ep'] = ability.cost;
 		
 		for ( const mod of Object.values(this.system.modifications) ) {
 			const effect = this._actor?.allModifications.find( ef => ef.id == mod.id);
@@ -269,7 +269,7 @@ export default class SkyfallMessage extends ChatMessage {
 				(wDamage.die ? `${wDamage.die}`: '' ),
 				(wDamage.ability ? `@${wDamage.ability}`: '' ),
 				(wDamage.bonus ? `${wDamage.bonus}`: '' ),
-			].filter(Boolean).join('+');
+			].filter(Boolean).join(' + ');
 			let roll = new SkyfallRoll(`${formula}`,
 				rollData, {
 				types:['damage'],
@@ -464,30 +464,21 @@ export default class SkyfallMessage extends ChatMessage {
 
 	/* -------------------------------------------- */
 
-	/** @inheritdoc */
-	async _preUpdate(data, options, userId) {
-		if ( this.type == 'usage' ){
+	// /** @inheritdoc */
+	// async _preUpdate(data, options, userId) {
+	// 	if ( this.type == 'usage' ){
 			
-		}
-		return await super._preUpdate(data, options, userId);
-		// Prevent Update of commited message;
-		if ( data.type == 'usage' ) {
-			const html = await this.usageRenderTemplate();
-			data.content = html;
-		}
-		if ( data.type == 'usage' && this.system.status.phase == 4 && !game.user.isGM ) {
-			return ui.notifications.warn('SKYFALL.CHATMESSAGE.USAGE.UPDATECOMMITED');
-		}
-		return await super._preUpdate(data, options, userId);
-	}
+	// 	}
+	// 	return await super._preUpdate(data, options, userId);
+	// }
 
 	/* -------------------------------------------- */
 
-	/** @inheritdoc */
-	_onUpdate(data, options, userId) {
-		super._onUpdate(data, options, userId);
-		return;
-	}
+	// /** @inheritdoc */
+	// _onUpdate(data, options, userId) {
+	// 	super._onUpdate(data, options, userId);
+	// 	return;
+	// }
 
 	/* -------------------------------------------- */
 	/*  Event Handling                              */
@@ -716,6 +707,7 @@ export default class SkyfallMessage extends ChatMessage {
 	 */
 	async #onClickControl(event) {
 		event.preventDefault();
+		await this.getDocuments();
 		const button = event.currentTarget;
 		button.event = event; //Pass the trigger mouse click event
 		switch ( button.dataset.action ) {
@@ -788,6 +780,14 @@ export default class SkyfallMessage extends ChatMessage {
 			updateData['items'].push({
 				"_id": sigil.id,
 				"system.charges.value": sigil.system.charges.value - 1
+			});
+		}
+		const recharge = this._ability.type == "ability" ? this._ability : null;
+		if ( recharge && this._actor.type == 'npc' ) {
+			updateData['items'] ??= [];
+			updateData['items'].push({
+				"_id": recharge.id,
+				"system.activation.recharge": 0,
 			});
 		}
 		this._actor.update(updateData);

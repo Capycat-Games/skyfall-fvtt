@@ -18,10 +18,6 @@ export function registerHandlebarsHelpers() {
 		return ( value !== undefined );
 	});
 
-	Handlebars.registerHelper("ift", function (v, rtrue, rfalse) {
-		return (v ? rtrue : rfalse);
-	});
-
 	Handlebars.registerHelper("ifnull", function (rtrue, rnull) {
 		return rtrue ?? rnull;
 	});
@@ -30,7 +26,11 @@ export function registerHandlebarsHelpers() {
 		return rtrue || rfalse;
 	});
 
-	Handlebars.registerHelper("includes", function (v, choices=[]) {
-		return choices.includes(v) === true;
+	//Handlebars.registerHelper("includes", function (v, choices=[]) {
+	Handlebars.registerHelper("includes", function (...values) {
+		const options = values.pop();
+		let search = values.pop();
+		values = values.flat();
+		return values.includes(search) === true;
 	});
 }

@@ -21,7 +21,10 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 	_sheetMode = 1;
 	/** @override */
 	static PARTS = {
-		ability: {template: "systems/skyfall/templates/v2/item/guild-ability-card.hbs"},
+		ability: {
+			template: "systems/skyfall/templates/v2/item/guild-ability-card.hbs",
+			scrollable: [""],
+		},
 		configuration: {
 			template: "systems/skyfall/templates/v2/item/ability.hbs",
 			templates: [
@@ -30,7 +33,8 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/item/guild-ability-config.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs"
-			]
+			],
+			scrollable: [".scrollable"],
 		},
 	};
 

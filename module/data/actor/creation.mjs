@@ -55,14 +55,13 @@ export default class Creation extends Partner {
 	async _preCreate(data, options, user) {
 		// PROMPT CREATOR
 	}
-
 	
 	/* -------------------------------------------- */
 	/* System Methods                               */
 	/* -------------------------------------------- */
 	
 	// async _applyDamage() {}
-	async _applyConsuption() {}
-	async _rollInitiative() {}
+	// async _applyConsuption() {}
+	// async _rollInitiative() {}
 
 }

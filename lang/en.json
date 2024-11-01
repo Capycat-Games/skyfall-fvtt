@@ -15,6 +15,8 @@
     "Item": {
       "legacy": "Legado",
       "legacyPl": "Legados",
+      "heritage": "Herança",
+      "heritagePl": "Heranças",
       "curse": "Maldição",
       "cursePl": "Maldições",
       "background": "Antecedente",
@@ -52,7 +54,11 @@
       "facility": "Instalação",
       "facilityPl": "Instalações",
       "guild-feature": "Benefício de Guilda",
-      "guild-featurePl": "Benefícios de Guilda"
+      "guild-featurePl": "Benefícios de Guilda",
+      "hierarchy": "Hierarquia",
+      "hierarchyPl": "Hierarquias",
+      "archetype": "Arquétipo",
+      "archetypePl": "Arquétipos"
     },
     "ActiveEffect": {
       "base": "Efeito",
@@ -234,8 +240,8 @@
         "LARGEABBR": "Grn.",
         "HUGE": "Enorme",
         "HUGEABBR": "Enr.",
-        "GARGANTUAN": "Colossal",
-        "GARGANTUANABBR": "Col."
+        "GARGANTUAN": "Imenso",
+        "GARGANTUANABBR": "Ime."
       },
       "TYPES": {
         "ABERRATION": "Aberration",
@@ -282,7 +288,7 @@
       "PATH": {
         "INITFEATURES": "Características Iniciais",
         "ADVFEATURES": "Características Avançadas",
-        "TYPESPEC": "Trilha Especialista",
+        "TYPESPEC": "Trilha de Especialidade",
         "TYPEWAR": "Trilha de Guerra",
         "TYPEMYSTIC": "Trilha Mística"
       },
@@ -864,6 +870,14 @@
       "SIGIL": {},
       "GUILD": {}
     },
+    "Identifier": "Identificador",
+    "Origin": "Origem",
+    "Benefit": "Benefício",
+    "BenefitPl": "Benefícios",
+    "Grant": "Escolha",
+    "GrantPl": "Escolhas",
+    "Granting": "Concedendo",
+    "Search": "Busca",
     "Create": "Criar",
     "Type": "Tipo",
     "Size": "Tamanho",
@@ -881,6 +895,7 @@
     "Initiative": "Iniciativa",
     "Death": "Morte",
     "Cost": "Custo",
+    "Catharsis": "Catarse",
     "Capacity": "Volume",
     "Fragment": "Fragmento Arcano",
     "FragmentPl": "Fragmentos Arcanos",
@@ -897,6 +912,8 @@
     "UNIT": {},
     "CATEGORY": "Categoria",
     "Level": "Nível",
+    "CR": "ND",
+    "Inventory": "Inventário",
     "Experience": "Experiencia",
     "ExperienceAbbr": "XP",
     "HitDie": "Dado de Vida",
@@ -953,7 +970,8 @@
       "ShadowAbbr": "PS",
       "LevelRoll": "Rolagem de Dado de Vida",
       "LevelBonus": "Bônus Por Nível",
-      "TotalBonus": "Bônus Total"
+      "TotalBonus": "Bônus Total",
+      "GiveCatharsis": "Conceder Catarse"
     },
     "Language": "Idioma",
     "LanguagePl": "Idiomas",
@@ -1038,6 +1056,8 @@
     },
     "Duration": "Duração",
     "DURATION": {
+      "Special": "Duração especial",
+      "Scene": "Cena",
       "Concentration": "Concentração",
       "UntilEvent": "Até {article} {until}",
       "UntilDischarge": "Até ser descarregada",
@@ -1094,6 +1114,23 @@
       "Monstrosity": "Monstro",
       "Undead": "Morto-vivo",
       "Plant": "Planta"
+    },
+    "Archetype": "Arquétipo",
+    "ARCHETYPE": {
+      "Ranged": "Atirador",
+      "Brute": "Bruto",
+      "Group": "Coletivo",
+      "Mount": "Cavalaria",
+      "Defender": "Defensor",
+      "Flanker": "Flanqueador",
+      "Leader": "Líder",
+      "Sentinel": "Sentinela"
+    },
+    "Hierarchy": "Hierarquia",
+    "HIERARCHY": {
+      "Simple": "Simples",
+      "Complex": "Complexo",
+      "Boss": "Chefão"
     },
     "Currency": "Dinheiro",
     "CURRENCY": {
@@ -1155,7 +1192,7 @@
       }
     },
     "PATH": {
-      "Specialized": "Trilha de Especialista",
+      "Specialized": "Trilha de Especialidade",
       "War": "Trilha de Guerra",
       "Mystic": "Trilha Mística"
     },
@@ -1194,9 +1231,22 @@
       "PointsSummary": "Pontos de Atributo Gerados:",
       "ActionSummary": "Ações disponiveis:",
       "PointsStored": "Pontos de Atributo Guardados:",
+      "Benefit": "Benefício de Guilda",
+      "Novice": "Novato",
+      "Veteran": "Veterano",
+      "Legend": "Lendário",
       "": ""
     },
     "APP": {
+      "Rest": "Descanso",
+      "ShortRest": "Descanso Curto",
+      "LongRest": "Descanso Longo",
+      "REST": {
+        "Quality": "Qualidade",
+        "Bad": "Ruim",
+        "Default": "Padrão",
+        "Good": "Bom"
+      },
       "IRVConfig": "Resistências",
       "DamageDealt": "Dano Causado",
       "Languages": "Idiomas",
@@ -1229,6 +1279,5 @@
     "InvalidItemSigil": "Este Sígilo não é compatível com este item.",
     "DuplicatedItemSigil": "O item já possuí o Sígilo",
     "PathsLimitReached": "Limite de Trilhas alcançado"
-  },
-  "Teste": "BBBB"
+  }
 }

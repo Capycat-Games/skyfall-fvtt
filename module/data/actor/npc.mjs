@@ -41,6 +41,35 @@ export default class NPC extends Creature {
 	/*  Schema Factory                              */
 	/* -------------------------------------------- */
 
+
+	/* -------------------------------------------- */
+	/*  Getters & Setter                            */
+	/* -------------------------------------------- */
+
+	get directoryData() {
+		const dirData = {
+			level: game.i18n.localize('SKYFALL2.CR') + ' ' + this.level.value,
+			hierarchy: this.parent.items.find(i => i.type == 'hierarchy'),
+			archetype: this.parent.items.filter(i => i.type == 'archetype'),
+			type: game.i18n.localize(`SKYFALL2.CREATURE.${this.creatureType.titleCase()}`),
+		}
+		const hierarchy = dirData.hierarchy?.name ?? "—";
+		const archetype = dirData.archetype.map(i => i.name).join(', ') ?? "—";
+		
+		//game.i18n.localize(`SKYFALL2.HIERARCHY.${this.hierarchy.titleCase()}`)
+		//this.archetype.toObject().map(i => game.i18n.localize(`SKYFALL2.ARCHETYPE.${i.titleCase()}`)).join(', ');
+		
+		const type = game.i18n.localize(`SKYFALL2.CREATURE.${this.creatureType.titleCase()}`);
+		return `${dirData.level}, ${hierarchy} (${archetype}), ${dirData.type}`;
+	}
+
+	get isBoss() {
+		const actor = this.parent;
+		const hierarchy = actor.items.find( i => i.type == 'hierarchy' );
+		if ( !hierarchy ) return false;
+		return (hierarchy.system.identifier == 'boss');
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
@@ -72,27 +101,52 @@ export default class NPC extends Creature {
 
 	getRollData() {
 		const data = super.getRollData();
-		console.log(data);
 		for (const [key, abl] of Object.entries(data.abilities)) {
 			data[key] = abl.value;
 			if ( abl.spellcasting ) {
 				data.magic = Math.max(data.magic, abl.value);
 			}
 		}
-		console.log(data);
 		return data;
 	}
 
 	
-  /* -------------------------------------------- */
-  /*  Database Operations                         */
-  /* -------------------------------------------- */
+	/* -------------------------------------------- */
+	/*  Database Operations                         */
+	/* -------------------------------------------- */
+	
 
-	
 	/* -------------------------------------------- */
-	/* System Methods                               */
+	/* Type Methods                                 */
 	/* -------------------------------------------- */
 	
+	async _progression(){
+		const context = {};
+		const actor = this.parent.toObject(true);
+		const items = actor.items;
+		context.hierarchy = items.find( i => i.type == 'hierarchy' );
+		context.archetype = items.filter( i => i.type == 'archetype' );
+		context.abilities = {};
+		items.map( i => {
+			if ( i.type == 'hierarchy' ) {
+				context.hierarchy = i;
+			} else if ( i.type == 'archetype' ) {
+				context.archetype ??= [];
+				context.archetype.push(i);
+			} else if ( i.type == 'ability' ) {
+				const execution = i.system.activation.type ?? 'free';
+				context.abilities[execution] ??= [];
+				context.abilities[execution].push(i);
+			} else if ( i.type == 'spell' ) {
+				context.spells ??= [];
+				context.spells.push(i);
+			} else {
+				
+			}
+			return true;
+		})
+		return context;
+	}
 	// async _applyDamage() {}
 	async _applyConsuption() {}
 	async _rollInitiative() {}

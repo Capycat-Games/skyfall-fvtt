@@ -1,0 +1,44 @@
+<svg class="progress" viewBox="0 0 776 628">
+	<style>
+		.bar {
+			fill: rgba(0, 0, 0, 0);
+			stroke-width: 50;
+			/* transform: translate(290px, 800px)rotate(-120deg); */
+		}
+		.bar.background {
+			stroke: rgb(56, 71, 83);
+		}
+		.bar.xp {
+			stroke: rgb(156, 223, 152);
+			stroke-linecap: round;
+			stroke-dasharray: 2160;
+			stroke-dashoffset: 2160;
+			
+		}
+		.bar.xp {
+			dashoffset: 1534;
+		}
+	</style>
+	<path class="bar background" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z"></path>
+	<path class="bar xp" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z" style="stroke-dashoffset:500"></path>
+</svg>
+
+<svg class="progress" viewBox="0 0 628 776">
+	<style>
+		.bar {
+			fill: rgba(0, 0, 0, 0);
+			stroke-width: 50;
+		}
+		.bar.background {
+			stroke: rgb(56, 71, 83);
+		}
+		.bar.xp {
+			stroke: rgb(156, 223, 152);
+			stroke-linecap: round;
+			stroke-dasharray: 2160;
+			stroke-dashoffset: 2160;
+		}
+	</style>
+	<path  class="bar background" d="M314,25 L603,194 L603,582 L314,751 L25,582 L25,194 L314,25 Z"></path>
+	<path  class="bar xp" d="M314,25 L603,194 L603,582 L314,751 L25,582 L25,194 L314,25 Z" style="stroke-dashoffset:2050"></path>
+</svg>

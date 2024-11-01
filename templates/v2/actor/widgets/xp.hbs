@@ -1,0 +1,24 @@
+<svg class="progress" viewBox="0 0 628 776">
+	<style>
+		.bar {
+			fill: rgba(0, 0, 0, 0);
+			stroke-width: 100;
+		}
+
+		.bar.background {
+			stroke: rgb(200, 200, 200);
+		}
+
+		.bar.xp {
+			stroke: rgb(24, 38, 87);
+			stroke-linecap: round;
+			stroke-dasharray: 2160;
+			stroke-dashoffset: 2160;
+		}
+	</style>
+	{{!-- M314,25 L603,194 L603,582 L314,751 L25,582 L25,194 L314,25 --}}
+	<path class="bar background" d="M314,50 L575,194 L575,582 L314,726 L50,582 L50,194 L314,50 Z"></path>
+	<path class="bar xp" d="M314,50 L575,194 L575,582 L314,726 L50,582 L50,194 L314,50 Z"
+		style="stroke-dashoffset:{{pct}};">
+	</path>
+</svg>

@@ -12,10 +12,12 @@
 			<li class="ability entry" data-entry-id="{{ability.id}}">
 				<h4>
 					<a data-action="use" data-target="ability">
-						{{log ability}}
-						{{#if ability.system.activation.recharge}}
+						{{#unless (eq ability.system.activation.recharge null)}}
+							{{#if (eq ability.system.activation.recharge 0)}}
+								<i class="fa-solid fa-hourglass"></i>
+							{{/if}}
 							[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
-						{{/if}}
+						{{/unless}}
 						{{ability.name}}
 					</a>
 					<span class="item-controls {{ifThen @root.isPlayMode 'hidden' ''}}">

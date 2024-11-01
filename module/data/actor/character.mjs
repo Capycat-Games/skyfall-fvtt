@@ -54,6 +54,7 @@ export default class Character extends Creature {
 	static migrateData(source) {
 		return super.migrateData(source);
 	}
+	
 
 	/* -------------------------------------------- */
 	/*  Schema Factory                              */
@@ -82,6 +83,21 @@ export default class Character extends Creature {
 		return this.parent.items.filter(it => it.type == 'path');
 	}
 
+	get directoryData() {
+		const level = game.i18n.localize('SKYFALL2.Level') + ' ' + this.level.value;
+		const classes = this.parent.items?.filter( i => i.type == 'class').reduce((acc, i)=> {
+			acc.push(`${i.name} ${i.system.level}`);
+			return acc;
+		}, []).join(', ') ?? '—';
+		const paths = this.parent.items?.filter( i => i.type == 'path').reduce((acc, i)=> {
+			if(!acc.includes(i.name)) {
+				acc.push(`${i.name}`);
+			}
+			return acc;
+		}, []).join(', ') ?? '—';
+		return `${level} - ${classes} - ${paths}`;
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
@@ -102,7 +118,7 @@ export default class Character extends Creature {
 		
 		this.prepareHitPoints();
 		this.prepareEmphasysPoints();
-
+		this.prepareNextLevelXP();
 		this.prepareDamageReduction();
 		this.prepareCapacity();
 		this.prepareFragmentsLimit();
@@ -212,9 +228,64 @@ export default class Character extends Creature {
 		this.resources.ep.tpct = Math.round( ep.temp * 100 / ep.max );
 	}
 
+	prepareNextLevelXP(){
+		const level = this.level.value;
+		const xp = this.level.xp;
+		const xpTable = [];
+		xpTable[0] = 0;
+		xpTable[1] = 0;
+		xpTable[2] = 300;
+		xpTable[3] = 900;
+		xpTable[4] = 2700;
+		xpTable[5] = 6500;
+		xpTable[6] = 14000;
+		xpTable[7] = 23000;
+		xpTable[8] = 34000;
+		xpTable[9] = 48000;
+		xpTable[10] = 64000;
+		xpTable[11] = 85000;
+		xpTable[12] = 100000;
+		xpTable[13] = 100000;
+		const obj = {next: 0, pct: 0, hexbar: 0};
+		obj.next = xpTable[level + 1];
+		obj.pct = Math.round(( xp * 100 ) / obj.next);
+		obj.hexbar = Math.round(((100 - obj.pct) / 100) * 2160);
+		foundry.utils.mergeObject( this.level, obj );
+	}
+
 	prepareDamageReduction(){
+		const rollData = this.parent.getRollData();
+		const modifiers = Object.entries(this.modifiers.dr).reduce((acc, v) => {
+			let key = v[0];
+			let arr = v[1];
+			if ( arr.length == 0 ) {
+				acc[key] = 0;
+				return acc;
+			}
+			const roll = new Roll(arr.join(' + '), rollData);
+			if ( roll.isDeterministic ) {
+				roll.evaluateSync();
+				acc[key] = Number(roll.total) ? roll.total : 0;
+			} else {
+				acc[key] = 0;
+			}
+			return acc;
+		}, {});
 		const items = this.parent.items.filter( i => 'dr' in i.system && i.system.equipped );
-		this.dr += items.reduce((acc, i) => acc += i.system.dr, 0);
+
+		let unarmored = true;
+		this.dr += items.reduce((acc, i) => {
+			acc += i.system.dr
+			if ( i.system.type == 'shield' ) acc += modifiers.shield;
+			else if ( i.system.type ) {
+				acc += modifiers.armor;
+				unarmored = false;
+			}
+
+			return acc;
+		}, 0);
+		this.dr += modifiers.bonus;
+		if ( unarmored ) this.dr += modifiers.unarmored;
 	}
 
 	prepareCapacity() {
@@ -241,28 +312,113 @@ export default class Character extends Creature {
 	}
 
 	
-  /* -------------------------------------------- */
-  /*  Database Operations                         */
-  /* -------------------------------------------- */
+	/* -------------------------------------------- */
+	/*  Database Operations                         */
+	/* -------------------------------------------- */
+	
+	/* -------------------------------------------- */
+	/* Type Methods                                 */
+	/* -------------------------------------------- */
+	
+	async _progression(){
+		// console.groupCollapsed("PROGRESSION");
+		const actor = this.parent;
+		const characterLevel = this.level.value;
+		const progression = {};
+		const rootItems = ['legacy','curse','background','guild','bonus'];
+		for ( let level = 1; level <= 12; level++) {
+			const lvl = String(level).padStart(2, 0);
+			const bonus = rootItems.indexOf('guild');
+			rootItems.splice( bonus, 0, `class-${lvl}`);
+		}
+		const itemOrigin = actor.items.reduce((acc, item, i) => {
+			if ( !('origin' in item.system) ) return acc;
+			for (let origin of item.system.origin) {
+				if ( origin == '' ) origin = `bonus-${i}`;
+				acc.push({item: item, id: origin});
+			}
+			return acc;
+		}, []);
+		
+		const prepareObj = function(bnft) {
+			let item = itemOrigin.findSplice( j => j.id == bnft._id )?.item ?? null;
+			
+			if ( bnft._id == 'bonus' ) {
+				item = {name: game.i18n.localize("SKYFALL2.Bonus")}
+			} else if ( bnft._id == 'guild' ) {
+				const guildId = ['guild-01'];
+				let rank = game.i18n.localize("SKYFALL2.GUILD.Novice");
+				if ( characterLevel > 4 ) {
+					guildId.push('guild-02');
+					rank = game.i18n.localize("SKYFALL2.GUILD.Veteran");
+				}
+				if ( characterLevel > 8 ) {
+					guildId.push('guild-03');
+					rank = game.i18n.localize("SKYFALL2.GUILD.Legend");
+				}
+				item = {
+					name: game.i18n.localize("SKYFALL2.GUILD.Benefit"),
+					system: {
+						benefits: guildId.map(g => ({_id: g, type: 'feature'}))
+					}
+				}
+			}
+			const isLevelItem = ['class','path'].includes(bnft.type);
+			const obj = {
+				id: bnft._id, 
+				type: bnft.type, // item ? item.type : type,
+				item: item,
+				level: Number(bnft.level),
+				classLevel: isLevelItem && item ? item.system.origin.indexOf(bnft._id) + 1 : 0,
+				granting: bnft.granting,
+				query: bnft.query,
+				empty: false,
+				children: {feature:{}}
+			}
 
-	
-	/* -------------------------------------------- */
-	/* System Methods                               */
-	/* -------------------------------------------- */
-	
+			const benefits = item ? (item.system?.benefits ?? []) : [];
+			if ( benefits.length == 0 ) obj.empty = true;
+			for (const benefit of benefits) {
+				if ( isLevelItem && benefit.level != obj.classLevel ) continue;
+				if ( benefit.type == 'heritage' ) {
+					if ( !foundry.utils.isEmpty(obj.children[benefit.type]) ) continue;
+				}
+				obj.children[benefit.type] ??= {};
+				obj.children[benefit.type][benefit._id] = prepareObj(benefit);
+			}
+			if ( foundry.utils.isEmpty(obj.children) ) obj.empty = true;
+			return obj;
+		}
+		let debugBreak = 0;
+		for (const root of rootItems) {
+			if( debugBreak >= 100 ) break;
+			else debugBreak++;
+
+			const [type, level] = root.split('-');
+			if ( Number(level) > (characterLevel + 1) ) continue;
+			const obj = prepareObj({
+				_id: root,
+				type: type,
+				level: level,
+			});
+			progression[root] = obj;
+			const index = rootItems.indexOf(root);
+			const multiclass = type == 'class' && obj.item ? obj.item.system.initial : false;
+			if ( root == 'class-02' ) rootItems.splice(index + 1, 0, 'path-01');
+			else if ( multiclass && obj.classLevel == 2 ) rootItems.splice(index + 1, 0, 'feat-mc');
+			else if ( obj.classLevel == 7 ) rootItems.splice(index + 1, 0, 'path-02');
+		}
+		itemOrigin.reduce((acc, v) => {
+			acc[v.id] = {
+				_id: v.id, item: v.item, empty: true,
+			};
+			return acc;
+		}, progression.bonus.children.feature);
+		
+		// console.groupEnd();
+		return progression;
+	}
 	
 	async _applyConsumption() {}
 	
-	async _rollInitiative({initiativeOptions={}}) {
-		const roll = await new RollConfig({
-			type: 'initiative',
-			ability: 'dex',
-			// skill: null,
-			actor: this,
-			createMessage: true,
-			skipConfig: initiativeOptions.skipConfig ?? false,
-			advantageConfig: initiativeOptions.advantageConfig ?? 0,
-		}).render( !(initiativeOptions.skipConfig ?? false) );
-	}
-
 }

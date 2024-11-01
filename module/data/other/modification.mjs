@@ -28,9 +28,18 @@ export default class Modification extends foundry.abstract.TypeDataModel {
 			specialDuration: new fields.StringField({
 				required: true,
 				blank:true,
-				choices:[{id:'scene','label':'SKYFALL.ITEM.DURATION.SCENE'}],
+				choices:{
+					scene: {
+						id:'scene', value:'scene',
+						label: 'SKYFALL2.DURATION.Scene'
+					},
+					concentration: {
+						id:'concentration', value:'concentration',
+						label: 'SKYFALL2.DURATION.Concentration'
+					}
+				},
 				initial: '',
-				label:"SKYFALL.ITEM.SPECIALDURATION"
+				label:"SKYFALL2.DURATION.Special"
 			}),
 			apply: new fields.SchemaField({
 				always: new fields.BooleanField({required: true, initial:false, label: "SKYFALL.MODIFICATION.APPLYALWAYS"}),

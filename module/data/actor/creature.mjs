@@ -161,6 +161,12 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 						}
 					),
 				}),
+				dr: new fields.SchemaField({
+					bonus: new fields.ArrayField(new fields.StringField(),{}),
+					armor: new fields.ArrayField(new fields.StringField(),{}),
+					unarmored: new fields.ArrayField(new fields.StringField(),{}),
+					shield: new fields.ArrayField(new fields.StringField(),{}),
+				}),
 			}),
 			level: new fields.SchemaField({
 				value: new fields.NumberField({
@@ -301,6 +307,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		const dmgResLevels = Object.keys(SYSTEM.damageModifiers);
 		const dmgTypes = Object.values(SYSTEM.DESCRIPTOR.DAMAGE);
+		dmgTypes.unshift('all');
 		return new fields.SchemaField( dmgTypes.reduce((obj, dmg) => {
 			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "nor"});
 			return obj;
@@ -495,6 +502,14 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	}
 
 	/* -------------------------------------------- */
+	/*  Getters & Setter                            */
+	/* -------------------------------------------- */
+
+	get directoryData() {
+		return game.i18n.localize(`TYPES.Actor.${this.parent.type}`);
+	}
+	
+	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
 
@@ -563,8 +578,9 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				return acc;
 		}, {});
 
-		let damage, typeDamage;
-		
+		let damage;
+		let typeDamage = {};
+		console.log(roll);
 		if( roll ){
 			let defaultDamage = 'slashing';
 			typeDamage = roll.terms.reduce( (acc, t, idx) =>{
@@ -581,11 +597,13 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		if ( applyDR ) damage = 0 - dr;
 		else damage = 0;
 		// Apply Damage Reduction for each type of damage
+		console.log(typeDamage);
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
 			const typeMod = drTypes[type] ?? 1;
 			dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
 			damage += dmg;
 		}
+		console.log(damage);
 		// Deduct value from temp resource first
 		let updHPT = hp.temp;
 		if ( damage > 0 ) {
@@ -607,6 +625,62 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		console.groupEnd();
 	}
 
+	_prepareItems(){
+		const items = {
+			actions: [],
+			abilities: [],
+			spells: [],
+			inventory: {},
+			identity: {},
+			sigils: [],
+			features: [],
+			class: [], //deprecate
+			path: [], //deprecate
+			progression: SYSTEM.characterProgression, //deprecate
+		}
+		const inventory = ['weapon','armor','equipment','clothing','loot','consumable'];
+		const identity = ['legacy','heritage','curse','background','class','path','hierarchy','archetype'];
+		const progression = ['legacy','curse','background'];  //deprecate
+		const classPaths = ['class','path'];  //deprecate
+		for (const item of this.parent.items ) {
+			if ( inventory.includes(item.type) ) {
+				item.system.volume = item.system.capacity * item.system.quantity;
+				items.inventory[item.type] ??= [];
+				items.inventory[item.type].push(item);
+				items.inventory.category ??= [];
+				items.inventory.category.push(item);
+			}
+			if ( identity.includes(item.type) ) {
+				items.identity[item.type] ??= [];
+				items.identity[item.type].push(item);
+			}
+			if ( ['feature','feat'].includes(item.type) ) items.features.push(item);
+			if ( item.type == 'ability' ) items.abilities.push(item);
+			if ( item.type == 'spell' ) items.spells.push(item);
+			if ( item.type == 'sigil' ) items.sigils.push(item);
+			if ( progression.includes(item.type) ) items[item.type] = item;
+			if ( classPaths.includes(item.type) ) items[item.type].push(item);
+		}
+		const spellLayer = {
+			'cantrip': 0,
+			'superficial': 1,
+			'shallow': 2,
+			'deep': 3,
+		}
+		items.spells.sort( (a, b) => {
+			const layerA = spellLayer[a.system.spellLayer];
+			const layerB = spellLayer[b.system.spellLayer];
+			return layerA > layerB ? 1 : layerA < layerB ? -1 : 0;
+		});
+		let layer = '';
+		for (const spell of items.spells) {
+			if ( layer != spell.system.layerLabel ) {
+				spell.layerLabel = spell.system.layerLabel;
+			}
+			layer = spell.system.layerLabel;
+		}
+		return items;
+	}
 
 	async _applyConsuption() {}
 	async _rollInitiative() {}

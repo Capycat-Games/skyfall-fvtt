@@ -1,0 +1,21 @@
+<div class="skyfall chat-card usage-card">
+	<div class="attack-roll">
+		{{#if rollTemplates.attack }}
+			{{{rollTemplates.attack}}}
+		{{else}}
+			ROLL ATTACK
+		{{/if}}
+	</div>
+	<div class="damage-roll">
+		{{#if rollTemplates.damage }}
+			{{{rollTemplates.damage}}}
+		{{else}}
+			ROLL DAMAGE
+		{{/if}}
+	</div>
+	{{!-- {{#each rolls as |r id|}}
+		<div class="roll-entry evaluated-roll {{r.class}}" data-roll-title="{{r.options.flavor}}">
+			{{{r.options.template}}}
+		</div>
+	{{/each}} --}}
+</div>

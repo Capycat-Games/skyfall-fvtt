@@ -1,25 +1,26 @@
 <form>
 	<div class="form-group">
-		<label>{{localize "SKYFALL.QUALITY"}}</label>
+		<label>{{localize "SKYFALL2.APP.REST.Quality"}}</label>
 		<select name="quality" class="quality">
 			{{selectOptions _quality selected=quality localize=true}}
 		</select>
 	</div>
 	<div class="form-group">
-		<label>{{localize "SKYFALL.HITDIES"}}</label>
+		<label>{{localize "SKYFALL2.HitDiePl"}}</label>
 		<span>{{consumed.value}} / {{consumed.max}}</span>
 	</div>
 	<ul class="item-list flexcol">
-	{{#each hitDies as | hd |}}
-		<li class="item entry hitDie flexrow" data-entry-id="{{hd.id}}" data-formula="{{hd.formula}}">
-			<h3 class="name flex2">{{hd.name}}</h3>
-			<div class="value">{{hd.value}}/{{hd.max}}</div>
-			<div class="die">{{hd.die}}</div>
-			<div class="formula flex2" data-tooltip="{{hd._formula}}">{{hd.formula}}</div>
-			<div class="actions">
-				<a data-action="roll" data-entry-id="{{hd.id}}" data-formula="{{hd.formula}}" {{#if (or (eq hd.value 0) (eq @root.consumed.value @root.consumed.max))}}disabled{{/if}} ><i class="fa-solid fa-dice-d6"></i></a>
-			</div>
-		</li>
-	{{/each}}
+		{{#each hitDies as | hd |}}
+			<li class="item entry hitDie flexrow" data-entry-id="{{hd.id}}" data-formula="{{hd.formula}}">
+				<h3 class="name flex100">{{hd.name}}</h3>
+				<div class="value">{{hd.value}}/{{hd.max}}</div>
+				<div class="die">{{hd.die}}</div>
+				<div class="formula flex2" data-tooltip="{{hd._formula}}">{{hd.formula}}</div>
+				<div class="actions">
+					<a data-action="roll" data-entry-id="{{hd.id}}" data-formula="{{hd.formula}}" {{#if (or (eq hd.value 0) (eq
+						@root.consumed.value @root.consumed.max))}}disabled{{/if}}><i class="fa-solid fa-dice-d6"></i></a>
+				</div>
+			</li>
+		{{/each}}
 	</ul>
 </form>

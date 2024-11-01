@@ -1,6 +1,10 @@
 <section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}"
 	data-group="{{tab.group}}">
-	<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="160"
-		width="160" />
-	{{formGroup schema.biography value=system.biography enriched=enriched.biography documentUUID=document.uuid toggled=true height=400 localize=true}}
+	{{#unless (eq actor.type 'character')}}
+		<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="160"
+			width="160" />
+	{{/unless}}
+	<div class="flexcol biography">
+		{{formInput schema.biography value=system.biography enriched=enriched.biography documentUUID=document.uuid toggled=true localize=true}}
+	</div>
 </section>

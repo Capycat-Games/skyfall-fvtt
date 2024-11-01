@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.9.508 - BETA
+
+- Items - Adicionado. Herança, Hierarquia e Arquétipo.
+- Ficha de Item - Alterado. Itens concedidos são listados na aba Benefícios.
+- Ficha de Característica - Adicionado. Checkbox Catarse, para características que podem conceder catarse, como Melancolia, Evento Marcante, etc. Ao ser enviada para o chat gera uma mensage customizada com um botão para conceder catarse.
+- Ficha de Habilidade - Alterado. Recarga é um valor numérico. 1 indica que a habilidade está carregada, 0 indica que a habilidade foi usada. Vazio o item não possui recarga.
+- Ficha de Personagem - Alterado. A listagem de itens de "identidade" - Legado, Herança, Maldição, Antecedente, Classe, Características e Talentos. O processo de receber os benefícios também foi alterado.
+- Ficha de Personagem - Adicionado. Campo de Experiência.
+- Ficha de Personagem - Adicionado. Aba biografia.
+- Ficha de Ameaça - Adicionado. Magias.
+- Rolagem de Iniciativa - Corrigido. Rolagem de Chefão.
+- Aba de Personagens - Adicionado. Informações relevantes sobre aquele tipo de Ator (Nível, Legado, Classes / ND, Hierarquia, Arquétipo)
+- Mensagem de Habilidade - "Corrigido". Bug causado pelo Dice So Nice, onde a rolagem não aparecia.
+
 ## 0.9.507 - BETA
 
 - Ficha de Personagem/Ameaça - Removido. Limites de PV/EP.

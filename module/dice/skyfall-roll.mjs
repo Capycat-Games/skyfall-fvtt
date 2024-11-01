@@ -143,10 +143,12 @@ export default class SkyfallRoll extends Roll {
 	static replaceFormulaData(formula, data, {missing, warn=false}={}) {
 		let dataRgx = new RegExp(/@([a-z.0-9_-]+)(\[(.*?)\])?/gi);
 		formula = formula.replace(dataRgx, (match, term)=>{
-			if ( !match.endsWith(']') ) {
-					return match + `[%${term}]`
+			if ( !data[term] ) {
+				return match;
+			} else if ( !match.endsWith(']') ) {
+				return match + `[%${term}]`
 			} else {
-					return match.replace(']', `%${term}]`)
+				return match.replace(']', `%${term}]`)
 			}
 		});
 		return super.replaceFormulaData(formula, data, {missing, warn})

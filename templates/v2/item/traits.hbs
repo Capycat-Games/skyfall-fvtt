@@ -16,16 +16,16 @@
 				{{formInput schema.reload.quantity value=system.reload.quantity localize=true}}
 				{{!-- {{formInput schema.reload.actions value=system.reload.actions localize=true}} --}}
 				<label class="flexrow nowrap"> {{{SYSTEM.icons.sfaction}}}
-					<input type="checkbox" name="system.reload.actions" value="action" {{checked (includes 'action'
-						system.reload.actions )}}>
+					<input type="checkbox" name="system.reload.actions" value="action" {{checked (includes
+						system.reload.actions 'action' )}}>
 				</label>
 				<label class="flexrow nowrap"> {{{SYSTEM.icons.sfbonus}}}
-					<input type="checkbox" name="system.reload.actions" value="bonus" {{checked (includes 'bonus'
-						system.reload.actions )}}>
+					<input type="checkbox" name="system.reload.actions" value="bonus" {{checked (includes
+						system.reload.actions 'bonus' )}}>
 				</label>
 				<label class="flexrow nowrap"> {{{SYSTEM.icons.sffree}}}
-					<input type="checkbox" name="system.reload.actions" value="free" {{checked (includes 'free'
-						system.reload.actions )}}>
+					<input type="checkbox" name="system.reload.actions" value="free" {{checked (includes
+						system.reload.actions 'free' )}}>
 				</label>
 			</div>
 		</div>

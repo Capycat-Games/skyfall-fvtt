@@ -16,20 +16,38 @@
 		{{/if}}
 		<div class="flex100"></div>
 		{{!-- CREATURES TYPES --}}
-		{{#if isEditMode }}
-			{{formGroup schema.creatureType value=system.creatureType localize=true stacked=true}}
-			{{formGroup schema.size value=system.size localize=true stacked=true}}
-			<div class="flex100"></div>
-			{{formGroup schema.hierarchy value=system.hierarchy localize=true stacked=true}}
-			{{formGroup schema.archetype value=system.archetype input=_app.elements.HTMLMultiSelectElement localize=true stacked=true}}
-		{{else}}
-			<i>{{lookup (lookup SYSTEM.creatureTypes system.creatureType) "label"}},
-				{{lookup (lookup SYSTEM.actorSizes system.size) "label"}}</i>
-			<div class="flex100"></div>
-			<i>{{lookup (lookup SYSTEM.hierarchy system.hierarchy) "label"}}
-				({{#each system.archetype as | archetype i |}}{{ifThen (gt i 0) ", " "" }}{{lookup (lookup
-				@root.SYSTEM.archetype archetype) "label"}}{{/each}})
-		{{/if}}
+		<i>
+			{{log items.identity}}
+			{{#each items.identity.hierarchy as | item |}}
+				<span data-entry-id="{{item.id}}">
+					<a data-action="edit">
+						{{item.name}}
+					</a>
+					{{#if @root.isEditMode }}
+						<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
+					{{/if}}
+				</span>
+			{{/each}}
+			(
+			{{#each items.identity.archetype as | item |}}
+				<span data-entry-id="{{item.id}}">
+					<a data-action="edit">
+						{{item.name}}
+					</a>
+					{{#if @root.isEditMode }}
+						<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
+					{{/if}}
+				</span>{{ifThen @last "" "," }}
+			{{/each}}
+			)
+			{{#if isEditMode }}
+				<div class="flex100"></div>
+				{{formGroup schema.creatureType value=system.creatureType localize=true stacked=true}}
+				{{formGroup schema.size value=system.size localize=true stacked=true}}
+			{{else}}
+				{{lookup (lookup SYSTEM.creatureTypes system.creatureType) "label"}},
+				{{lookup (lookup SYSTEM.actorSizes system.size) "label"}}
+			{{/if}}
 		</i>
 		<div class="flex100" style="margin-bottom: 10px;"></div>
 		{{!-- HP / DR / MOVEMENT --}}
@@ -142,6 +160,24 @@
 			</div>
 		{{/if}}
 	</div>
+	{{#if isEditMode}}
+		<div class="features">
+			<div class="header flexrow">
+				<h3>{{localize "TYPES.Item.featurePl"}}</h3>
+			</div>
+			<ol style="columns: 2;">
+				{{#each items.features as | feature | }}
+					<li class="flexrow" data-entry-id="{{feature.id}}">
+						<div class="item-name" data-action="edit">
+							<a>{{feature.name}}</a>
+						</div>
+						<div class="item-controls">
+							<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+						</div>
+					</li>
+				{{/each}}
+			</ol>
+	{{/if}}
 	{{!-- ABILITIES --}}
 	{{#if (or isEditMode abilities.passive.list.length )}}
 		{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.passive}}
@@ -161,5 +197,29 @@
 	{{#if (or isEditMode abilities.maction.list.length )}}
 		{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.maction}}
 	{{/if}}
-
+	{{#if items.spells.length}}
+		<div class="spells">
+			<div class="header flexrow">
+				<h3>{{localize "TYPES.Item.spellPl"}}</h3>
+			</div>
+			<ul>
+				<li>
+					{{#each items.spells as | spell | }}
+						{{#if spell.layerLabel }}
+							<label><b>{{spell.layerLabel}}</b></label>
+						{{/if}}
+						<span class="entry" data-action="use" data-entry-id="{{spell.id}}">
+							<a class="item-name" data-action="use">
+								{{spell.name}}{{ifThen @last '' ','}}
+							</a>
+							{{#if @root.isEditMode}}
+								<a class="control" data-action="edit" data-delete="Item">{{{@root.SYSTEM.icons.edit}}}</a>
+								<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
+							{{/if}}
+						</span>
+					{{/each }}
+				</li>
+			</ul>
+		</div>
+	{{/if}}
 </section>

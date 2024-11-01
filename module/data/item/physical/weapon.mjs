@@ -137,7 +137,8 @@ export default class Weapon extends PhysicalItemData {
 
 	automateDescriptors( changes, options, user ){
 		if ( user.id !== game.userId ) return false;
-		if ( !changes.system.descriptors ) return true;
+		if ( !foundry.utils.hasProperty(changes, 'system.descriptors') ) return true;
+		if ( !changes.system.descriptors.length ) return true;
 		const descriptors = changes.system.descriptors;
 		const current = this.descriptors;
 		const actor = this.parent.actor;

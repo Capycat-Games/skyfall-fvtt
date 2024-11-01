@@ -1,4 +1,4 @@
-<section class="tab scrollable ability-config {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}"
+<section class="tab ability-config scrollable {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}"
 	data-group="{{tab.group}}">
 	{{!-- ITEM --}}
 	<div class="ability-image-and-description flexrow">
@@ -30,7 +30,14 @@
 			<div class="form-fields">
 				{{formInput schema.activation.cost value=system.activation.cost localize=true}}
 				{{formGroup schema.activation.repeatable value=system.activation.repeatable localize=true classes="slim"}}
-				{{formGroup schema.activation.recharge value=system.activation.recharge localize=true classes="slim"}}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>{{localize schema.activation.recharge.label}}</label>
+			{{log schema.activation.recharge}}
+			{{log system.activation.recharge}}
+			<div class="form-fields">
+				{{formInput schema.activation.recharge value=system.activation.recharge localize=true classes="slim"}}
 			</div>
 		</div>
 		{{#if (eq item.type "spell") }}
@@ -39,8 +46,8 @@
 				<div class="form-fields">
 					{{#each SYSTEM.spellComponents as | comp key | }}
 						<label for=""> {{localize comp.label}}
-							<input type="checkbox" name="system.components" value="{{key}}" {{checked (includes key
-								@root.system.components)}}>
+							<input type="checkbox" name="system.components" value="{{key}}" {{checked (includes
+								@root.system.components key)}}>
 						</label>
 					{{/each}}
 				</div>

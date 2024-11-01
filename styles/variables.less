@@ -20,6 +20,11 @@
 @fontSkyfall: NORTHWEST;
 @iconsSKyfall: SkyfallIcons;
 
+@font-face {
+  font-family: Garamond;
+  src: url('./fonts/GARAMOND-Regular.otf');
+}
+
 /* ----------------------------------------- */
 /*  Fonts Height                             */
 /* ----------------------------------------- */
@@ -62,6 +67,18 @@
 	scrollbar-width: thin;
 }
 
+.skyfall {
+  --actor-color: #652657;
+  --actor-color-faint: #d1becd;
+  &.character, &.creation, &.guild {
+    --actor-color: #182657;
+    --actor-color-faint: #babecd;
+  }
+  &.npc, &.partner {
+    --actor-color: #750703;
+    --actor-color-faint: #75070322;
+  }
+}
 
 /* ----------------------------------------- */
 /*  Flexbox                                  */
@@ -79,6 +96,12 @@
   .flex100{
     flex: 0 0 100%;
   }
+  .flex-right {
+    margin-left: auto;
+  }
+  .flex-left {
+    margin-right: auto;
+  }
 }
 .flexcol{
   &.flex-start { align-self: flex-start; }
@@ -87,6 +110,12 @@
   }
   .flex100{
     flex: 0 0 100%;
+  }
+  .flex-top {
+    margin-bottom: auto;
+  }
+  .flex-bottom {
+    margin-top: auto;
   }
 }
 //   .flex4 { flex: 4; }

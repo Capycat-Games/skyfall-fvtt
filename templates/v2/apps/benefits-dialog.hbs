@@ -1,0 +1,33 @@
+<form>
+	<input type="hidden" name="create">
+	{{#each steps as | step s | }}
+		<fieldset>
+			<legend>{{localize step.title}}</legend>
+			<ol class="plain {{ifThen (and (gte step.list.length 120) (not step.list.0.groupLabel)) 'columns-2' ''}}">
+				{{log step.list}}
+				{{#each step.list as | grant |}}
+					{{#if (and grant.groupLabel (not @first)) }}
+						</li>
+			</ol>
+			{{/if}}
+			{{#if grant.groupLabel }}
+				<li class="item-header">
+					<h4>{{grant.groupLabel}}</h4>
+					<ol class="plain columns-2">
+			{{/if}}
+			<li class="item {{type}} entry flexrow" data-entry-id="{{grant.item.uuid}}">
+				<div class="item-icon" style="background-image:url({{grant.item.img}})"></div>
+				<div class="item-name flex3" data-action="edit" style="cursor: pointer;">
+					{{grant.item.name}}
+				</div>
+				<div class="item-controls">
+					<input type="{{step.mode}}" name="create" value="{{ifnull step.originId grant.id}}|{{grant.item.uuid}}"
+						{{checked
+						step.checkAll}}>
+				</div>
+			</li>
+	{{/each}}
+	</ol>
+	</fieldset>
+	{{/each}}
+</form>

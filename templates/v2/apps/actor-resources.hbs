@@ -5,12 +5,13 @@
 			<label>{{localize schema.modifiers.hp.abilities.label}}</label>
 			<div class="form-fields">
 				{{#each SYSTEM.abilities as | ability abl | }}
-				{{#unless (or (eq abl 'mental') (eq abl 'physical'))}}
-					<label>
-						{{ability.abbr}}
-						<input type="checkbox" name="hp.abilities" value="{{abl}}" {{checked (includes @root.system.modifiers.hp.abilities abl)}}>
-					</label>
-				{{/unless}}
+					{{#unless (or (eq abl 'mental') (eq abl 'physical'))}}
+						<label>
+							{{ability.abbr}}
+							<input type="checkbox" name="hp.abilities" value="{{abl}}" {{checked (includes abl
+								@root.system.modifiers.hp.abilities) }}>
+						</label>
+					{{/unless}}
 				{{/each}}
 			</div>
 		</div>
@@ -30,17 +31,17 @@
 		<div class="form-group flexcol">
 			<label>{{localize schema.modifiers.hp.levelRoll.label}}</label>
 			<ol class="plain " style="columns: 3;font-size:14px;text-align:center;">
-			{{#each system.modifiers.hp.levelRoll as | value index | }}
-				<li class="form-fields flexrow">
-				<label>{{localize "SKYFALL2.Level"}}&nbsp;{{index}}</label>
-				{{#if @first}}
-				<input type="hidden" name="hp.levelRoll" value="{{value}}">
-				<input type="text" value="MAX" disabled>
-				{{else}}
-				<input type="number" name="hp.levelRoll" value="{{value}}">
-				{{/if}}
-				</li>
-			{{/each}}
+				{{#each system.modifiers.hp.levelRoll as | value index | }}
+					<li class="form-fields flexrow">
+						<label>{{localize "SKYFALL2.Level"}}&nbsp;{{index}}</label>
+						{{#if @first}}
+							<input type="hidden" name="hp.levelRoll" value="{{value}}">
+							<input type="text" value="MAX" disabled>
+						{{else}}
+							<input type="number" name="hp.levelRoll" value="{{value}}">
+						{{/if}}
+					</li>
+				{{/each}}
 			</ol>
 		</div>
 	</fieldset>

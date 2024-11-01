@@ -204,7 +204,7 @@ export default class SkyfallActor extends Actor {
 		
 	}
 
-	async rollCheck({type='ability',id='str',abl='str'}, options){
+	async rollCheck({type='ability', id='str', abl='str'}, options){
 		const roll = await new RollConfig({
 			type: type,
 			ability: abl,
@@ -217,9 +217,9 @@ export default class SkyfallActor extends Actor {
 		
 		if ( type='initiative' && roll ) {
 			try {
-				let combat = game.combats.active;
+				const combat = game.combats.active;
 				if (!combat) return;
-				let combatant = combat.combatants.find(
+				const combatant = combat.combatants.filter(
 					(c) => c.actor.id === this.id
 				);
 				if ( !combatant || combatant.initiative != null ) return;
@@ -229,52 +229,6 @@ export default class SkyfallActor extends Actor {
 				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
 			}
 		}
-		return;
-		
-		const terms = [ {term: '1d20', options: {flavor: '', name: 'd20', source: ''}}, ];
-		const rollData = this.getRollData();
-		terms.push( {term: `@${abl}`, options: {flavor: '', name: 'ability', source: ''}} );
-
-		if ( type == 'skill' ) {
-			terms.push( {term: `@prof`, options: {flavor: '', name: 'proficiency', source: ''}} );
-			rollData['prof'] = this.system.skills[id].roll.pro;
-		}
-		let rollConfig = {
-			advantage: 0, disadvantage: 0,
-			rollData: rollData,
-			terms: terms,
-		}
-		if ( false ) {
-			/** TODO - USAGE EFFECTS DIALOG
-			 * Prepare available UsageEffects Apply to to
-			 * config = UsageEffectsConfig(this, rollConfig);
-			 * config.apply(target);
-			 */
-		} else {
-			const roll = D20Roll.fromConfig( rollConfig );
-			await roll.configureDialog({title:"SKYFALL.ROLL.CONFIG", type:type, ability: abl});
-			await roll.toMessage({
-				flavor: game.i18n.format( `SKYFALL.ROLL.${type.toUpperCase()}`, {
-					skill: id ? game.i18n.localize(`SKYFALL.ACTOR.SKILLS.${id.toUpperCase()}`) : '',
-					abl: game.i18n.localize(`SKYFALL.ACTOR.ABILITIES.${abl.toUpperCase()}`),
-				})
-			});
-			if ( type='initiative' && roll ) {
-				try {
-					let combat = game.combats.active;
-					if (!combat) return;
-					let combatant = combat.combatants.find(
-						(c) => c.actor.id === this.id
-					);
-					if ( !combatant || combatant.initiative != null ) return;
-					combat.setInitiative(combatant.id, roll.total);
-					console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
-				} catch (error) {
-					console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
-				}
-			}
-		}
-
 	}
 
 	/** @inheritdoc */
@@ -289,9 +243,6 @@ export default class SkyfallActor extends Actor {
 			skipConfig: initiativeOptions.skipConfig ?? false,
 			advantageConfig: initiativeOptions.advantageConfig ?? 0,
 		}).render( !(initiativeOptions.skipConfig ?? false) );
-		
-		return;
-		return super.rollInitiative({createCombatants, rerollInitiative, initiativeOptions});
 	}
 
 	async shortRest(message){
@@ -303,24 +254,41 @@ export default class SkyfallActor extends Actor {
 	async longRest(){
 		const systemData = this.system;
 		const updateData = {};
-		const quality = await Dialog.prompt({
-			title: game.i18n.localize("SKYFALL.SHEET.NEWSKILL"),
-			content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL.QUALITY")}</label><select type="text" name="quality"><option value="bad">Ruim</option><option value="default" selected>Padrão</option><option value="good">Bom</option></select></div></form>`,
-			callback: html => {
-				return html[0].querySelector('select').value
+		const select = document.createElement('select');
+		select.name = 'quality';
+		for (const quality of ['bad','default','good']) {
+			const opt = document.createElement('option');
+			opt.value = quality;
+			opt.innerText = game.i18n.localize(`SKYFALL2.APP.REST.${quality.titleCase()}`);
+			if ( quality == 'default' ) opt.toggleAttribute('selected');
+			select.append(opt);
+		}
+		
+		const quality = await foundry.applications.api.DialogV2.prompt({
+			content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL2.APP.REST.Quality")}</label>${select.outerHTML}</div></form>`,
+			classes: ['skyfall', 'short-rest'],
+			window: {
+				title: game.i18n.localize("SKYFALL2.APP.LongRest"),
 			},
-			options: {width: 260}
+			position: {
+				width: 300,
+			},
+			ok: {
+				label: "Submit",
+				callback: (event, button, dialog) => button.form.elements.quality.value
+			},
 		});
-
+		
 		updateData['system.resources.hp.value'] = systemData.resources.hp.max;
 		updateData['system.resources.ep.value'] = systemData.resources.ep.max;
 		updateData['items'] = [];
 		const classes = this.classes;
 		for (const cls of classes) {
-			let hd = (quality == "bad" ? Math.floor(cls.system.hitDie.max/2) : cls.system.hitDie.max);
+			const current = cls.system.hitDie.value;
+			let hd = (quality == "bad" ? current + Math.floor(cls.system.hitDie.max/2) : cls.system.hitDie.max);
 			updateData['items'].push({
 				_id: cls.id,
-				"system.hitDie.value": cls.system.hitDie.max,
+				"system.hitDie.value": hd,
 			});
 		}
 		// TODO UPDATE ITEMS USES

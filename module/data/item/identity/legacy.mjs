@@ -4,6 +4,25 @@ import Identity from "./identity.mjs";
  * Data schema, attributes, and methods specific to Legacy type Items.
  */
 export default class Legacy extends Identity {
+	
+	/* -------------------------------------------- */
+	/*  Type Options                                */
+	/* -------------------------------------------- */
+
+	#typeOptions() {
+		return {
+			...super._typeOptions,
+			type: 'legacy',
+			unique: true,
+			parentTypes: ['character'],
+			benefitTypes: {feature: [], heritage: [], grant: []},
+		}
+	}
+	
+	get _typeOptions () {
+		return this.#typeOptions();
+	}
+
 	/* -------------------------------------------- */
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */
@@ -18,7 +37,7 @@ export default class Legacy extends Identity {
 				age: new fields.HTMLField({required: true, blank: true}),
 				movement: new fields.HTMLField({required: true, blank: true}),
 				size: new fields.HTMLField({required: true, blank: true}),
-				melancholy: new fields.HTMLField({required: true, blank: true}),
+				melancholy: new fields.HTMLField({required: true, blank: true}), // DEPRECATE
 			}),
 			heritages: new _fields.MappingField(new fields.SchemaField({
 				name: new fields.StringField({required: true, blank: false}),
@@ -28,13 +47,38 @@ export default class Legacy extends Identity {
 			})),
 		});
 	}
-	/* ------------------------------ */
 	
-	get heritage(){
+	/* -------------------------------------------- */
+	/*  Schema Factory                              */
+	/* -------------------------------------------- */
+	
+	
+	/* -------------------------------------------- */
+	
+	/* -------------------------------------------- */
+	/*  Getters & Setters                           */
+	/* -------------------------------------------- */
+	
+	get heritage(){ // DEPRECATE
 		return Object.values(this.heritages).find( h => h.chosen )?.name ?? ' NA '
 	}
 	
-	someFunction(data){
-		if ( this.parent ) return this.parent;
+	/* -------------------------------------------- */
+	/*  Type Methods                                */
+	/* -------------------------------------------- */
+	
+	/* -------------------------------------------- */
+	/*  Database Operations                         */
+	/* -------------------------------------------- */
+	
+	async _preCreate(data, options, user) {
+		let allowed = super._preCreate(data, options, user);
+		return allowed;
+	}
+
+	async identityOrigin() {
+		if ( !this.parent.isEmbedded ) return true;
+		this.parent.updateSource({'system.origin': ['legacy']})
+		return true;
 	}
 }

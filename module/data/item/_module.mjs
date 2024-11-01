@@ -1,11 +1,14 @@
-
 export {default as Legacy} from "./identity/legacy.mjs";
+export {default as Heritage} from "./identity/heritage.mjs";
 export {default as Curse} from "./identity/curse.mjs";
 export {default as Background} from "./identity/background.mjs";
 export {default as Class} from "./identity/class.mjs";
 export {default as Path} from "./identity/path.mjs";
 export {default as Feature} from "./identity/feature.mjs";
 export {default as Feat} from "./identity/feat.mjs";
+export {default as Hierarchy} from "./identity/hierarchy.mjs";
+export {default as Archetype} from "./identity/archetype.mjs";
+
 export {default as Weapon} from "./physical/weapon.mjs";
 export {default as Armor} from "./physical/armor.mjs";
 export {default as Clothing} from "./physical/clothing.mjs";

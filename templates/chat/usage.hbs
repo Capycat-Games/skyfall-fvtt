@@ -1,8 +1,8 @@
-<div class="skyfall chat-card usage-card ability-card" data-actor-id="{{actor.id}}" data-item-id="{ {itemId} }">
+<div class="skyfall chat-card usage-card ability-card" data-actor-id="{{actor.id}}" data-item-id="{{itemId}}">
 	{{!-- usage == message.system --}}
 	<header class="card-header flexrow">
 		{{!-- Ability Image | Ability Name | Item Image --}}
-		<h3 class="icon" >{{{item.system.labels.action.icon}}} </h3>
+		<h3 class="icon">{{{item.system.labels.action.icon}}} </h3>
 		<h3 class="item-name">{{item.name}}</h3>
 	</header>
 	<aside class="card-aside flexcol">
@@ -13,104 +13,108 @@
 		{{/if}}
 		<h4>
 			{{#each usage.costs as | cost id | }}
-			{{#if (eq id 'ep')}}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>
-			{{else if (gt cost 0) }}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>{{/if}}
+				{{#if (eq id 'ep')}}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>
+				{{else if (gt cost 0) }}{{cost}} {{localize (lookup (lookup @root.SYSTEM.resources id) 'abbr')}}<br>{{/if}}
 			{{/each}}
 		</h4>
 	</aside>
-	
+
 	<div class="ability-descriptors">
 		<label>&nbsp;</label>
 		{{#each item.system.labels.descriptors as | tag i | }}
-		&REFERENCE[{{i}}]
-		{{!-- <label class="descriptor active" >{{tag.label}}</label> --}}
+			&REFERENCE[{{i}}]
+			{{!-- <label class="descriptor active" >{{tag.label}}</label> --}}
 		{{/each}}
 	</div>
-	
+
 	{{#if (gte usage.status.phase 0)}}
-	<em class="ability-flavor">
-		{{item.system.flavor}}
-	</em>
+		<em class="ability-flavor">
+			{{item.system.flavor}}
+		</em>
 	{{/if}}
 
 	<div class="ability-properties">
+		{{#unless (eq item.system.activation.recharge null) }}
+			<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
+		{{/unless}}
 		{{#each item.system.labels.properties as | prop | }}
-		<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
+			<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 		{{/each}}
 	</div>
 
 	{{#with item.system.labels.attack.hit }}
-	<div class="ability-properties rich">
-		<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-	</div>
+		<div class="ability-properties rich">
+			<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+		</div>
 	{{/with}}
 
 	{{#with item.system.labels.attack.miss }}
-	<div class="ability-properties rich">
-		<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-	</div>
+		<div class="ability-properties rich">
+			<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+		</div>
 	{{/with}}
 
 	{{#with item.system.labels.effect }}
-	<div class="ability-properties rich">
-		<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-	</div>
+		<div class="ability-properties rich">
+			<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+		</div>
 	{{/with}}
 	{{#with item.system.labels.special }}
-	<div class="ability-properties rich">
-		<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-	</div>
+		<div class="ability-properties rich">
+			<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+		</div>
 	{{/with}}
 
 	<ul class="list-items modifications">
 		{{#each modifications as | mod | }}
-		{{{mod.embed}}}
-		<li>
-			<b>{{mod.cost}}{{localize (lookup (lookup @root.SYSTEM.resources mod.resource) 'abbr')}}{{#if (gt mod.apply 1)}} ({{mod.apply}}x){{/if}}</b> {{{mod.name}}}
-		</li>
+			{{{mod.embed}}}
+			<li>
+				<b>{{mod.cost}}{{localize (lookup (lookup @root.SYSTEM.resources mod.resource) 'abbr')}}{{#if (gt mod.apply 1)}}
+						({{mod.apply}}x){{/if}}</b> {{{mod.name}}}
+			</li>
 		{{/each}}
 	</ul>
 	{{#each rolls as |r id|}}
-	{{#if r.evaluated }} 
-	<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}" data-roll-index="{{id}}">
-		{{{r.template}}}
-	</div>
-	{{else }}
-	<div class="roll-entry non-evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}">
-		<div class="dice-roll">
-			<div class="dice-flavor">{{r.options.flavor}}</div>
-			<div class="dice-result">
-				<div class="dice-formula">{{r.formula}}</div>
+		{{#if r.evaluated }}
+			<div class="roll-entry evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}" data-roll-index="{{id}}">
+				{{{r.template}}}
 			</div>
-		</div>
-	</div>
-	{{/if}}
+		{{else }}
+			<div class="roll-entry non-evaluated {{r.class}}" data-roll-title="{{r.options.flavor}}">
+				<div class="dice-roll">
+					<div class="dice-flavor">{{r.options.flavor}}</div>
+					<div class="dice-result">
+						<div class="dice-formula">{{r.formula}}</div>
+					</div>
+				</div>
+			</div>
+		{{/if}}
 	{{/each}}
-	
+
 	<hr>
 	<div class="chat-actions flexcol">
 		{{!-- PHASE 1 BUTTONS | configure - aid --}}
 		{{!-- PHASE 2 BUTTONS | NONE --}}
 		{{!-- PHASE 3 BUTTONS | catharsis (ON ROLL) - placeTemplate - applyCost --}}
 		{{!-- PHASE 4 BUTTONS | applyDamage (ON ROLL) - applyEffect --}}
-		
+
 		{{#each usage.measuredTemplate as | temp i | }}
-		<button class="chat-action" data-place-template data-action="placeTemplate">
-			<i class="fa-solid fa-ruler-combined"></i>
-			{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
-		</button>
+			<button class="chat-action" data-place-template data-action="placeTemplate">
+				<i class="fa-solid fa-ruler-combined"></i>
+				{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
+			</button>
 		{{/each}}
 
 		{{#each buttons as | button | }}
-		<button class="chat-action" data-action="{{button.action}}">
-			{{button.icon}} {{localize button.label}}
-		</button>
+			<button class="chat-action" data-action="{{button.action}}">
+				{{button.icon}} {{localize button.label}}
+			</button>
 		{{/each}}
-		
+
 		{{#each effects as | ef i | }}
-		<button class="chat-action effect" data-action="applyEffect" data-effect-id="{{ef._id}}">
-			<img src="{{ef.img}}" width="32" height="32">{{{ef.name}}}
-		</button>
+			<button class="chat-action effect" data-action="applyEffect" data-effect-id="{{ef._id}}">
+				<img src="{{ef.img}}" width="32" height="32">{{{ef.name}}}
+			</button>
 		{{/each}}
 	</div>
 </div>

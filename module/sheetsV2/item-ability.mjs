@@ -18,7 +18,10 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	_sheetMode = 1;
 	/** @override */
 	static PARTS = {
-		ability: {template: "systems/skyfall/templates/v2/item/ability-card.hbs"},
+		ability: {
+			template: "systems/skyfall/templates/v2/item/ability-card.hbs",
+			scrollable: [""],
+		},
 		sigil: {template: "systems/skyfall/templates/v2/item/sigil-card.hbs"},
 		configuration: {
 			template: "systems/skyfall/templates/v2/item/ability.hbs",
@@ -27,7 +30,8 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
-			]
+			],
+			scrollable: [".scrollable"],
 		},
 	};
 

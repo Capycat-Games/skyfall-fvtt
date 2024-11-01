@@ -95,6 +95,16 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 
 	/* -------------------------------------------- */
+	/*  Getters & Setter                            */
+	/* -------------------------------------------- */
+
+	get directoryData() {
+		const type = game.i18n.localize(`TYPES.Actor.${this.parent.type}`);
+		const level = game.i18n.localize('SKYFALL2.Level') + ' ' + this.level;
+		return `${type}: ${level}`;
+	}
+
+	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
 

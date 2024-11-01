@@ -3,6 +3,7 @@ import ActorTraits from "../apps/actor-traits.mjs";
 import ActorTraitsV2 from "../apps/actor-traitsV2.mjs";
 
 import ShortRestV2 from "../apps/restV2.mjs";
+import RestConfig from "../apps/rest-config.mjs";
 import ShortRest from "../apps/short-rest.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { weapons } from "../config/types.mjs";
@@ -55,6 +56,7 @@ export const SkyfallSheetMixin = Base => {
 				collapseAll: BaseSheetSkyfall.#onCollapseAll,
 				expandAll: BaseSheetSkyfall.#onExpandAll,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
+
 			}
 		};
 
@@ -216,7 +218,6 @@ export const SkyfallSheetMixin = Base => {
 			
 			dataFields['name'] = doc.schema.getField('name');
 			dataFields['img'] = doc.schema.getField('img');
-			
 			for (const fieldPath of Object.keys(dataFields)) {
 				dataFields[fieldPath] = schema.getField(fieldPath);
 			}
@@ -268,6 +269,37 @@ export const SkyfallSheetMixin = Base => {
 						condition: () => item.isOwner,
 						callback: li => this.document.deleteEmbeddedDocuments( "Item", [item.id] )
 					}];
+				}
+			});
+
+			new ContextMenu(this.element, '.window-content .class-level', [], {
+				onOpen: entry => {
+					const originId = entry.dataset.level;
+					const classes = this.document.items.filter(i => i.type == 'class');
+					if ( !classes || !originId ) return;
+					ui.context.menuItems = classes.map(i => ({
+						name: i.name, icon: '',
+						condition: () => this.document.isOwner,
+						callback: () => i.system.levelUp(originId), //updateLevel(i, level),
+					}));
+					ui.context.menuItems.push({
+						name: "SKYFALL2.Delete", icon: '',
+						condition: () => this.document.isOwner,
+						callback: () => {
+							const updateData = {};
+							updateData['items'] = [];
+							for (const cls of classes) {
+								const origin = cls.system.origin;
+								const lvl = String(originId).padStart(2, 0);
+								origin.findSplice( o => o == `class-${lvl}`);
+								updateData['items'].push({
+									_id: cls.id,
+									'system.origin': origin,
+								});
+							}
+							this.document.update(updateData);
+						}
+					})
 				}
 			});
 		}
@@ -338,12 +370,18 @@ export const SkyfallSheetMixin = Base => {
 			if (!this.isEditable) return;
 			const item = await fromUuid(uuid);
 			const itemData = item.toObject();
-
+			if ( item.pack ){
+				itemData._stats.compendiumSource = item.uuid;
+			}
 			// Disallow dropping invalid document types.
 			if (!Object.keys(this.document.constructor.metadata.embedded).includes(type)) return;
-
 			// If dropped onto self, perform sorting.
-			if (item.parent === this.document) return this._onSortItem(item, target);
+			if (item.parent === this.document) {
+				if( target.closest('.actor-progression') ) {
+					return this._onSetOrigin(item, target);
+				}
+				return this._onSortItem(item, target);
+			}
 
 			const modification = {
 				"-=_id": null,
@@ -399,6 +437,22 @@ export const SkyfallSheetMixin = Base => {
 			this.document.updateEmbeddedDocuments("Item", updates);
 		}
 
+		async _onSetOrigin(item, target) {
+			const li = target.closest('li');
+			const sourceId = li.dataset.sourceId;
+			const rootItems = ['legacy','curse','background','class','path'];
+			if ( rootItems.includes(item.type) && !sourceId.startsWith(item.type) ) {
+				return;
+			}
+			if ( !li.classList.contains('empty') ) {
+				// foundry.applications.api.DialogV2.prompt({content: 'SURE?'});
+				return;
+			}
+			const updateData = {}
+			console.warn('system.origin', [sourceId]);
+			updateData['system.origin'] = [sourceId];
+			item.update(updateData);
+		}
 		/* ---------------------------------------- */
 		/*              EVENT HANDLERS              */
 		/* ---------------------------------------- */
@@ -464,10 +518,18 @@ export const SkyfallSheetMixin = Base => {
 				} else if ( key in this.actor.system.skills ) return ui.notifications.warn("SKYFALL.ALERTS.DUPLICATESKILL");
 				
 				await this.actor.update(updateData);
-			} if ( create == "heritage" ) {
+			} if ( create == "heritage" ) { // DEPRECATE
 				const updateData = {}
 				const key = Object.keys(this.document.system.heritages).length;
 				updateData[`system.heritages.her${key}`] = {name: game.i18n.localize("SKYFALL.ITEM.LEGACY.HERITAGE")};
+				this.document.update( updateData );
+			} else if ( create == "benefits" ) {
+				const {fieldPath, level} = target.dataset;
+				const updateData = {}
+				const current = foundry.utils.getProperty(this.document.toObject(), fieldPath);
+				if ( !current ) return;
+				current.push({type:'grant', granting:'feat', level: level});
+				updateData[fieldPath] = current;
 				this.document.update( updateData );
 			} else if ( create == "ActiveEffect" ) {
 				let type = target.closest('section')?.dataset?.type ?? 'base';
@@ -514,23 +576,31 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static #onDelete(event, target) {
 			const type = target.dataset.delete;
-			const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
-			const fieldPath = target.closest("[data-field-path]")?.dataset.fieldPath;
-			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId);
-			if ( type == 'id' ) {
+			const {entryId} = target.closest("[data-entry-id]")?.dataset ?? {};
+			const {fieldPath} = target.closest("[data-field-path]")?.dataset ?? {};
+			const document = this.document.items?.get(entryId) ?? this.document.effects?.get(entryId);
+			if ( type == 'id' || type == 'index' ) {
 				const list = foundry.utils.getProperty(this.document, fieldPath);
+				
 				if ( !list ) return;
-				list.delete(itemId);
+				if ( list instanceof Set ) {
+					list.find((v, i) => {
+						if ( i == entryId || v.id == entryId || v.uuid == entryId ) {
+							return list.delete(v);
+						} return false;
+					});
+					//list.delete(entryId) || list.forEach(i=>i.uuid==entryId ? list.delete(i) : i);
+				}
+				else if (list instanceof Array) list.splice(entryId, 1);
 				const updateData = {};
 				updateData[fieldPath] = [...list];
 				return this.document.update(updateData);
-			}
-			if ( fieldPath ) {
+			} else if ( fieldPath ) {
 				const updateData = {};
-				updateData[`${fieldPath}-=${itemId}`] = null;
+				updateData[`${fieldPath}-=${entryId}`] = null;
 				this.document.update(updateData);
 			} else if ( document ) {
-				this.document.deleteEmbeddedDocuments( document.documentName, [itemId] );
+				this.document.deleteEmbeddedDocuments( document.documentName, [entryId] );
 			}
 		}
 
@@ -693,7 +763,14 @@ export const SkyfallSheetMixin = Base => {
 			else if ( rollType == 'deathSave' ) { return; }
 			else if ( rollType == 'initiative' ) {
 				this.rolling = null;
-				return this.actor.rollInitiative();
+				const combat = game.combats.active;
+				const combatants = combat.combatants.filter(
+					(c) => c.actorId === this.actor.id && this.initiative == null
+				);
+				for (const combatant of combatants) {
+					this.actor.rollInitiative();
+				}
+				return;
 			}
 
 			if ( !this.rolling ) {
@@ -746,8 +823,10 @@ export const SkyfallSheetMixin = Base => {
 					// return new TraitSelector(this.actor, options).render(true);
 					return;
 				case "short-rest":
+					
+					return RestConfig.prompt({actor: this.actor});
 					// return new ShortRestV2({actor: this.actor}).render(true);
-					return new ShortRest(this.actor, {actor: this.actor}).render(true);
+					// return new ShortRest(this.actor, {actor: this.actor}).render(true);
 				case "long-rest":
 					return this.actor.longRest();
 				case "skills":

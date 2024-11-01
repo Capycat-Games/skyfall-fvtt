@@ -68,8 +68,8 @@
 				{{#each systemFields.apply.type.element.choices as | choice | }}
 					<label>
 						{{localize choice.label}}
-						<input type="checkbox" name="system.apply.type" value="{{choice.value}}" {{checked (includes choice.value
-							@root.system.apply.type )}}>
+						<input type="checkbox" name="system.apply.type" value="{{choice.value}}" {{checked (includes
+							@root.system.apply.type choice.value)}}>
 					</label>
 				{{/each}}
 				<label> &nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -165,14 +165,7 @@
 			</div>
 		</div>
 
-		<div class="form-group">
-			<label>{{ localize "SKYFALL.EFFECTS.SPECIALDURATION" }}</label>
-			<div class="form-fields">
-				<select name="system.specialDuration">
-					{{!-- { {selectOptions specialDurations selected=system.specialDuration} } --}}
-				</select>
-			</div>
-		</div>
+		{{formGroup systemFields.specialDuration value=system.specialDuration localize=true}}
 	</section>
 
 	<!-- Effects Tab -->

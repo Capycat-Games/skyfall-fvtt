@@ -2,9 +2,40 @@
 /*  ChatMessage Styles                       */
 /* ----------------------------------------- */
 
-.chat-message:has( .skyfall ) {
+.chat-message:has( .skyfall ),
+.chat-message.skyfall {
 	background: url(./assets/sheet/background.webp) repeat white;
+	&.character, &.guild, &.creation {
+		color: @colorSFPlayer;
+	}
+	&.npc, &.partner {
+		color: @colorSFFoe;
+	}
 }
+
+.chat-message.skyfall {
+	.dsn-hide {
+		display: flex !important;
+	}
+	&.catharsis {
+		.message-header {
+			position: relative;
+			z-index: 2;
+			color: white;
+			&::before {
+				content: "";
+				width: calc(100% + 10px);
+				height: calc(100% + 10px);
+				left: -5px;
+				top: -5px;
+				background: #222b54;
+				position: absolute;
+				z-index: -1;
+			}
+		}
+	}
+}
+
 
 .chat-message:has( .usage-card ) {
 	position: relative;

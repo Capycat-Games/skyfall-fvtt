@@ -11,6 +11,14 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		position: {width: 520, height: "auto"},
 		window: {
 			resizable: true,
+			controls: [
+				{
+					action: "promptBenefitsDialog",
+					icon: "fa-solid fa-box-open",
+					label: "SKYFALL2.BenefitPl",
+					ownership: "OWNER"
+				},
+			]
 		},
 		form: {
 			handler: this.#onSubmitDocumentForm,
@@ -20,6 +28,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			heritageTab: ItemSheetSkyfall.#heritageTab,
 			infuse: ItemSheetSkyfall.#infuse,
 			deleteSigil: ItemSheetSkyfall.#deleteSigil,
+			promptBenefitsDialog: ItemSheetSkyfall.#promptBenefitsDialog,
 		}
 	};
 	
@@ -27,14 +36,43 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	static PARTS = {
 		header: {template: "systems/skyfall/templates/v2/item/header.hbs"},
 		tabs: {template: "templates/generic/tab-navigation.hbs"},
-		description: {template: "systems/skyfall/templates/v2/item/description.hbs", scrollable: [""]},
-		traits: {template: "systems/skyfall/templates/v2/item/traits.hbs"},
-		heritage: {template: "systems/skyfall/templates/v2/item/heritage.hbs"},
-		abilities: {template: "systems/skyfall/templates/v2/item/abilities.hbs"},
-		features: {template: "systems/skyfall/templates/v2/item/features.hbs"},
-		feats: {template: "systems/skyfall/templates/v2/item/feats.hbs"},
-		// debug: {template: "systems/skyfall/templates/v2/shared/debug.hbs"},
-		effects: {template: "systems/skyfall/templates/v2/shared/effects.hbs",scrollable: [""]}
+		description: {
+			template: "systems/skyfall/templates/v2/item/description.hbs",
+			scrollable: [""]
+		},
+		traits: {
+			template: "systems/skyfall/templates/v2/item/traits.hbs",
+			scrollable: [""]
+		},
+		heritage: {
+			template: "systems/skyfall/templates/v2/item/heritage.hbs",
+			deprecate: true,
+		},
+		abilities: {
+			template: "systems/skyfall/templates/v2/item/abilities.hbs",
+			deprecate: true,
+		},
+		features: {
+			template: "systems/skyfall/templates/v2/item/features.hbs",
+			deprecate: true,
+		},
+		feats: {
+			template: "systems/skyfall/templates/v2/item/feats.hbs",
+			scrollable: [""]
+		},
+		benefits: {
+			template: "systems/skyfall/templates/v2/item/benefits.hbs",
+			templates: [
+				"systems/skyfall/templates/v2/item/benefits-list.hbs",
+				"systems/skyfall/templates/v2/item/benefits/grant.hbs",
+				"systems/skyfall/templates/v2/item/deprecated.hbs",
+			],
+			scrollable: ["", ".scrollable"]
+		},
+		effects: {
+			template: "systems/skyfall/templates/v2/shared/effects.hbs",
+			scrollable: [""]
+		}
 	};
 
 	/** @override */
@@ -43,6 +81,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
 		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
 		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
+		benefits: {id: "benefits", group: "primary", label: "SKYFALL2.BenefitPl"},
 		abilities: {id: "abilities", group: "primary", label: "TYPES.Item.abilityPl"},
 		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
 		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"}
@@ -61,6 +100,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	#getTabs() {
 		return Object.values(this.constructor.TABS).reduce((acc, v) => {
 			if ( !this.tabs.includes(v.id) ) return acc;
+			console.log(this.tabGroups, v);
 			const isActive = this.tabGroups[v.group] === v.id;
 			acc[v.id] = {
 				...v,
@@ -76,6 +116,16 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
+		if ( this.document.system._typeOptions ) {
+			const { sheet } = this.document.system._typeOptions;
+			
+			options.parts = sheet.parts;
+			this.tabs = sheet.tabs;
+			if ( this.document.type == 'class' && this.tabGroups.primary == 'description' ) {
+				this.tabGroups.primary = 'traits';
+			}
+			return;
+		}
 		switch (this.document.type) {
 			case 'loot':
 			case 'weapon':
@@ -86,39 +136,37 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				options.parts = ["header","tabs","description","traits","effects"];
 				this.tabs = ["description","traits","effects"];
 				break;
-			case 'legacy':
 				// options.parts = ["header","tabs","traits","features","heritage","feats","effects"];
-				options.parts = ["header","tabs","description","features","heritage","feats","effects"];
-				this.tabs = ["description","features","heritage","feats","effects"];
+				options.parts = ["header","tabs","description","features","heritage","feats","benefits","effects"];
+				this.tabs = ["description","benefits","features","heritage","feats","effects"];
+				break;
+			case 'heritage':
+				options.parts = ["header","tabs","description","benefits","effects"];
+				this.tabs = ["description","benefits","effects"];
 				break;
 			case 'background':
-				options.parts = ["header","tabs","description","effects"];
-				this.tabs = ["description","effects"];
+				options.parts = ["header","tabs","description","benefits","effects"];
+				this.tabs = ["description","benefits","effects"];
 				break;
 			case 'class':
-				options.parts = ["header","tabs","traits","features","feats","effects"];
-				this.tabs = ["traits","features","feats","effects"];
-				this.tabGroups.primary = 'traits';
+				options.parts = ["header","tabs","traits","features","feats","benefits","effects"];
+				this.tabs = ["traits","features","feats","benefits","effects"];
+				this.tabGroups.primary = 'benefits';
 				break;
 			case 'curse':
 			case 'path':
-				options.parts = ["header","tabs","description","features","feats","effects"];
-				this.tabs = ["description","features","feats","effects"];
+				options.parts = ["header","tabs","description","features","benefits","feats","effects"];
+				this.tabs = ["description","features","feats","benefits","effects"];
 				break;
 			case 'feature':
 			case 'feat':
-				options.parts = ["header","tabs","description","abilities","effects"];
-				this.tabs = ["description","abilities","effects"];
+				options.parts = ["header","tabs","description","benefits","feats","effects"];
+				this.tabs = ["description","feats","benefits","effects"];
 				break;
 			case 'facility':
 			case 'seal':
 				options.parts = ["header","tabs","description","effects"];
 				this.tabs = ["description","effects"];
-				break
-			case 'ability':
-			case 'spell':
-			case 'sigil':
-				// HAS ITS OWN SHEET
 				break;
 		}
 	}
@@ -127,46 +175,57 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/* ---------------------------------------- */
 	/* DRAG AND DROP HANDLERS                   */
 	/* ---------------------------------------- */
+	
+	_parseDropFolder(uuid, itemType) {
+		const folder = fromUuidSync(uuid);
+		if ( !folder.contents.every( i => i.type == itemType) ) {
+			ui.notifications.error("SKYFALL2.NOTIFICATION.FolderItemsSameType", {localize: true});
+			return [];
+		}
+		return folder.contents.map( i => i.uuid);
+	}
+
+	_isDropBenefits(fieldPath) {
+		const benefits = [
+			'system.benefits',
+			'system.feats',
+			'system.features', // DEPRECATE
+			'system.abilities',  // DEPRECATE
+		];
+		return benefits.includes(fieldPath);
+	}
 
 	async _onDrop(event) {
 		event.preventDefault();
-		const target = event.target;
-		const fieldPath = target.closest("ol").dataset.fieldPath;
-		const itemType = target.closest("ol").dataset.itemType;
-		const items = [];
-		const {type, uuid} = TextEditor.getDragEventData(event);
 		if (!this.isEditable) return;
+		const target = event.target;
+		const {fieldPath} = target.closest("[data-field-path]")?.dataset ?? {};
+		const {itemType} = target.closest("[data-item-type]")?.dataset ?? {};
+		
+		if ( fieldPath && !foundry.utils.hasProperty(this.document, fieldPath) ) return;
+		const items = [];
+		const {type, uuid} = TextEditor.getDragEventData(event);;
 		if ( type == "Folder" ){
-			const folder = await fromUuid(uuid);
-			if ( !folder.contents.every( i => i.type == itemType) ) {
-				return ui.notifications.error("SKYFALL2.NOTIFICATION.FolderItemsSameType", {localize: true});
-			}
-			for ( const item of folder.contents ) {
-				// const item = await fromUuid(i.uuid);
-				// if ( !item ) continue;
-				items.push(item);
-			}
+			items.push( ...this._parseDropFolder(uuid, itemType) );
 		} else if ( type == "Item" ){
-			const item = await fromUuid(uuid);
-			items.push(item);
+			items.push(uuid);
 		} else if ( type == "ActiveEffect" ) {
 			return super._onDrop(event);
 		}
-		
-		if ( !foundry.utils.hasProperty(this.document, fieldPath) ) return;
 		if ( items.length == 0 ) return;
 		
-		if ( itemType == 'sigil' ) {
+		if ( this._isDropBenefits(fieldPath) ) {
+			const {level} = target.closest("[data-level]")?.dataset ?? {};
+			await this._onDropGranted(items, fieldPath, itemType, level);
+		} else if ( itemType == 'sigil' ) {
 			this._onDropSigils(items, fieldPath, itemType);
-		} else { 
-			await this._onDropGranted(items, fieldPath, itemType);
 		}
 	}
 
 	async _onDropSigils(items, fieldPath, itemType){
-		const item = items.pop();
 		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
-		if ( type != item.system.equipment ) {
+		const item = await fromUuid(items.pop());
+		if ( !item || type != item.system.equipment ) {
 			return ui.notifications.error("SKYFALL2.NOTIFICATION.InvalidItemSigil",{localize: true});
 		}
 		const updateData = {};
@@ -196,11 +255,19 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		}
 	}
 
-	async _onDropGranted(items, fieldPath, itemType){
-		
-		const uuids = items.map( i => i.uuid );
+	async _onDropGranted(items, fieldPath, itemType, level){
+		let uuids = [];
+		if ( fieldPath == 'system.feats' ) {
+			uuids = items;
+		} else {
+			uuids = items.map( uuid => ({uuid: uuid, type: itemType, level: (level || 0)}) );
+		}
+		// return;
 		const updateData = {};
-		updateData[fieldPath] = [ ...foundry.utils.getProperty(this.document, fieldPath), ...uuids ];
+		updateData[fieldPath] = [
+			...foundry.utils.getProperty(this.document, fieldPath),
+			...uuids
+		];
 		this.document.update(updateData);
 	}
 
@@ -245,6 +312,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			user: game.user,
 			system: doc.system,
 			source: src.system,
+			benefits: doc.system._benefits,
 			SYSTEM: SYSTEM,
 			effects: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
@@ -269,20 +337,31 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		return context;
 	}
 	
+	async itemsFromUUIDS(list){
+		list = list.features ?? list;
+		const acc = [];
+		for (const uuid of list ) {
+			const item = fromUuidSync(uuid);
+			if ( !item ) continue;
+			acc.push(item);
+		}
+		return acc;
+	}
+
 	async _typeContext(context) {
 		// Prepare Descriptors
-		if ( 'descriptors' in context.system )
+		if ( 'descriptors' in context.system ){
 			await this.getDescriptors(context);
-		// Prepare Item Reference
-		if ( 'features' in context.system ){
+		}
+		if ( 'features' in context.system ){ // DEPRECATE
 			context.features = [];
-			for (const uuid of this.document.system.features ) {
-				const item = fromUuidSync(uuid);
+			for (const feature of this.document.system.features ) {
+				const item = fromUuidSync(feature.uuid);
 				if ( !item ) continue;
 				context.features.push(item);
 			}
 		}
-		if ( 'featuresAdv' in context.system ){
+		if ( 'featuresAdv' in context.system ){ // DEPRECATE
 			context.featuresAdv = [];
 			for (const uuid of this.document.system.featuresAdv ) {
 				const item = fromUuidSync(uuid);
@@ -298,7 +377,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				context.feats.push(item);
 			}
 		}
-		if ( 'abilities' in context.system ){
+		if ( 'abilities' in context.system ){  // DEPRECATE
 			context.abilities = [];
 			for (const uuid of this.document.system.abilities ) {
 				const item = fromUuidSync(uuid);
@@ -362,7 +441,13 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		
 		for (const fieldPath of Object.keys(dataFields)) {
 			dataFields[fieldPath] = schema.getField(fieldPath);
-			if ( dataFields[fieldPath] instanceof foundry.data.fields.HTMLField ) {
+			if ( dataFields[fieldPath] instanceof foundry.data.fields.ArrayField ) {
+				const {name, element} = dataFields[fieldPath];
+				if( element instanceof foundry.data.fields.SchemaField ) {
+					dataFields[`_${name}`] = element.fields;
+				}
+				
+			} else if ( dataFields[fieldPath] instanceof foundry.data.fields.HTMLField ) {
 				const key = fieldPath.split('.').pop();
 				const html = foundry.utils.getProperty(doc.system, fieldPath);
 				context.enriched[key] ??= await TextEditor.enrichHTML(html, {
@@ -491,5 +576,11 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		if ( this.document.actor ) {
 			this.document.actor.deleteEmbeddedDocuments("Item", deleteDocuments);
 		}
+	}
+
+	static async #promptBenefitsDialog(event, target) {
+		const document = this.document;
+		let {BenefitsDialog} = skyfall.applications;
+		BenefitsDialog.prompt({item: document})
 	}
 }

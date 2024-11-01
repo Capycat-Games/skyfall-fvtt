@@ -9,10 +9,10 @@
 			<label>{{ability.name}}</label>
 		</div>
 		{{#if item.name }}
-		<div class="item flexrow">
-			<img src="{{item.img}}" width="32" height="32">
-			<label>{{item.name}}</label>
-		</div>
+			<div class="item flexrow">
+				<img src="{{item.img}}" width="32" height="32">
+				<label>{{item.name}}</label>
+			</div>
 		{{/if}}
 	</div>
 
@@ -24,43 +24,43 @@
 			<div class="description">{{localize "SKYFALL.DESCRIPTION"}}</div>
 		</div>
 		{{#each modifications as | mod | }}
-		<div class="modification flexrow">
-			{{!-- ACTION - COST - TYPE  --}}
-			{{!-- DESCRIPTION  --}}
-			<div class="controls flexrow">
-				{{#if mod.system.cost.multiple }}
-				<button type="button" data-action="apply-sub"><i class="fa-solid fa-minus"></i></button>
-				<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{mod.apply}}">
-				{{!-- {{ift (lookup (lookup @root.system.modifications mod.id)  'apply')
-					(ift mod.system.apply.always 1 0) }} --}}
-				<button type="button" data-action="apply-add"><i class="fa-solid fa-plus"></i></button>
-				{{else if (xablau) }}
-				<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{ift (lookup (lookup @root.system.modifications mod.id)  'apply')
-					(ift mod.system.apply.always 1 0) }}">
-				{{else }}
-				<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked mod.apply}}>
-				{{!-- (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply')) --}}
-				{{/if}}
+			<div class="modification flexrow">
+				{{!-- ACTION - COST - TYPE  --}}
+				{{!-- DESCRIPTION  --}}
+				<div class="controls flexrow">
+					{{#if mod.system.cost.multiple }}
+						<button type="button" data-action="apply-sub"><i class="fa-solid fa-minus"></i></button>
+						<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{mod.apply}}">
+						{{!-- {{ifThen (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ifThen mod.system.apply.always 1 0) }} --}}
+						<button type="button" data-action="apply-add"><i class="fa-solid fa-plus"></i></button>
+					{{else if (xablau) }}
+						<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{ifThen (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ifThen mod.system.apply.always 1 0) }}">
+					{{else }}
+						<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked mod.apply}}>
+						{{!-- (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply')) --}}
+					{{/if}}
+				</div>
+				<div class="cost">
+					{{mod.cost}} {{mod.resource}}
+				</div>
+				<div class="name">
+					{{{mod.name}}}
+				</div>
+				<div class="description">
+					{{{mod.description}}}
+				</div>
 			</div>
-			<div class="cost">
-				{{mod.cost}} {{mod.resource}}
-			</div>
-			<div class="name">
-				{{{mod.name}}}
-			</div>
-			<div class="description">
-				{{{mod.description}}}
-			</div>
-		</div>
 		{{/each}}
 	</div>
 
 	<div class="rolls">
 		{{#each system.rolls as | roll i | }}
-		<div class="form-group">
-			<label for="">{{roll.options.flavor}} </label>
-			<input type="text" name="_rolls.{{i}}.formula" value="{{roll.formula}}" disabled>
-		</div>
+			<div class="form-group">
+				<label for="">{{roll.options.flavor}} </label>
+				<input type="text" name="_rolls.{{i}}.formula" value="{{roll.formula}}" disabled>
+			</div>
 		{{/each}}
 	</div>
 

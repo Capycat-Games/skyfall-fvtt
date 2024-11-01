@@ -59,6 +59,7 @@ Object.entries(_SVGICONS).reduce((acc, ent) => {
 
 const SHEETICONS = {
   search: '<i class="fa-solid fa-magnifying-glass"></i>',
+  box: '<i class="fa-solid fa-box-open"></i>',
   edit: '<i class="fa-solid fa-pen-to-square"></i>',
   delete: '<i class="fa-solid fa-trash"></i>',
   create: '<i class="fa-solid fa-plus"></i>',

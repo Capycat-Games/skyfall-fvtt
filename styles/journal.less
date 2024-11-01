@@ -1,3 +1,193 @@
 /* ----------------------------------------- */
 /*  Journal Styles                           */
 /* ----------------------------------------- */
+
+.journal-sheet.skyfall-core.theme-purple {
+	--actor-color: @colorSFOther;
+	--theme-color: @colorSFOther;
+	--theme-color-faint: @colorSFOtherFaint;
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-2.png');
+	--box-a-title: url(assets/sheet/box-title-purple.svg);
+}
+.journal-sheet.skyfall-core.theme-darkblue {
+	--actor-color: @colorSFPlayer;
+	--theme-color: @colorSFPlayer;
+	--theme-color-faint: @colorSFPlayerFaint;
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-3.png');
+	--box-a-title: url(assets/sheet/box-title-blue.svg)
+}
+.journal-sheet.skyfall-core.theme-darkred {
+	--actor-color: @colorSFFoe;
+	--theme-color: @colorSFFoe;
+	--theme-color-faint: @colorSFFoeFaint;
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-4.png');
+	--box-a-title: url(assets/sheet/box-title-red.svg)
+}
+
+.journal-sheet.skyfall-core .journal-sheet-container {
+	
+	.journal-entry-content {
+		font-family: "Garamond";
+		font-size: 20px;
+		background: url(./assets/sheet/background.webp) repeat white;
+	}
+	.journal-header, .journal-page-header,
+	h1, h2, h3, h4 {
+		font-family: "NORTHWEST";
+		font-weight: bold;
+		color: var(--theme-color);
+		> * { color: var(--theme-color); font-weight: bold; }
+		border: none;
+	}
+	h5 {
+		font-family: "Garamond";
+		font-size: 22px;
+		margin: 0;
+		color: var(--theme-color);
+		border-bottom: 2px solid var(--theme-color);
+	}
+	.journal-page-header {
+		text-align: center;
+		border-image-source: var(--border-image-a);
+		border-image-slice: 30 0;
+		border-image-width: 10px;
+		border-image-outset: 0;
+		border-image-repeat: round;
+	}
+
+	.journal-page-content {
+		
+		h2 {
+			
+			border-bottom: 4px double var(--theme-color);
+		}
+
+		.box-a {
+			position: relative;
+			width: calc(100% - 20px);
+			margin-left: 20px;
+			h1, h2, h3, h4 {
+				color: var(--theme-color);
+				background-image: var(--box-a-title);
+				background: var(--box-a-title) 0% 0 space, var(--box-a-title) center no-repeat;
+				margin-right: 10%;
+				position: relative;
+				left: -30px;
+				padding-left: 50px;
+			}
+			// background-image: var(--box-background);
+			// background-size: cover;
+			background-color: var(--theme-color);
+			border-image-source: url('assets/sheet/skyfall-border-1.png');
+			border-image-slice: 30;
+			border-image-width: 10px;
+			border-image-outset: 0;
+			border-image-repeat: round;
+			// border-radius: 25px 0;
+
+			padding: 1em;
+			color: white;
+			> * { color: white; }
+		}
+		.box-b {
+			border-image-source: var(--border-image-a);
+			border-image-slice: 0 30;
+			border-image-width: 10px;
+			border-image-outset: 0;
+			border-image-repeat: round;
+			background-color: var(--theme-color-faint);
+			padding: 0 16px;
+		}
+
+		.box-c {
+			border-image-source: var(--border-image-a);
+			border-image-slice: 30 0;
+			border-image-width: 10px;
+			border-image-outset: 0;
+			border-image-repeat: round;
+			padding: 0 16px;
+		}
+
+		table {
+			color: var(--theme-color);
+			thead {
+				background-color: var(--theme-color);
+				color: #FFF;
+			}
+			p {
+				margin: 0;
+			}
+			td, th {
+				padding: 5px;
+			}
+			&.striped {
+				background-color: unset;
+				tr:nth-child(even) {
+					background-color: var(--theme-color-faint);
+				}
+			}
+			&.celled {
+				background-color: var(--theme-color-faint);
+				tr {
+					background-color: unset;
+				}
+				td, th {
+					border: 1px solid #FFF;
+				}
+			}
+			&.header-row {
+				tr:nth-child(1), th {
+					background-color: var(--theme-color);
+					color: #FFF;
+				}
+			}
+			&.header-col {
+				td:nth-child(1) {
+					background-color: var(--theme-color);
+					color: #FFF;
+				}
+			}
+			&.bold-row {
+				tr:nth-child(1) {
+					font-weight: bold;
+				}
+			}
+			&.bold-col {
+				td:nth-child(1) {
+					font-weight: bold;
+				}
+			}
+			&.text-center {
+				p {
+					text-align: center;
+				}
+			}
+		}
+		ol, ul {
+			list-style-image: url('assets/sheet/bullet.svg');
+		}
+		.columns-2 {
+			columns: 2;
+			.box-a {
+				h1, h2, h3, h4 {
+					background: var(--box-a-title) no-repeat;
+					background-size: 100% auto;
+					margin-right: 0%;
+					position: relative;
+					left: -30px;
+					padding-left: 40px;
+					padding-right: 20px;
+					font-size: 18px;
+					line-height: 20px;
+					width: calc(100% + 30px);
+					min-height: 46px;
+					align-content: center;
+				}
+			}
+		}
+	}
+	
+}

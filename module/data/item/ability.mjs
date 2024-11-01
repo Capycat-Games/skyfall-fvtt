@@ -20,8 +20,13 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			description: new fields.SchemaField({
 				value: new fields.HTMLField({required: true, blank: true}),
 			}),
-			origin: new fields.StringField({required: true}, {validate: Ability.validateUuid}),
-			modification: new fields.SetField(new fields.StringField({required: true}, {validate: Ability.validateUuid})),
+			origin: new fields.ArrayField(
+				new fields.StringField({
+					required: true,
+					initial: '',
+				}), {
+					label: "SKYFALL2.Origin",
+			}),
 			descriptors: new fields.ArrayField(new fields.StringField({required:true, blank: false, label: "SKYFALL.DESCRIPTORS"})),
 
 			activation: new fields.SchemaField({
@@ -38,7 +43,10 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				repeatable: new fields.BooleanField({
 					label: "SKYFALL2.ACTIVATION.Repeatable"
 				}),
-				recharge: new fields.BooleanField({
+				recharge: new fields.NumberField({
+					nullable: true,
+					max: 1,
+					initial: null,
 					label: "SKYFALL2.ACTIVATION.Recharge"
 				}),
 			}, {label: "SKYFALL2.Activation"}),
@@ -155,6 +163,18 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 
 	static migrateData(source) {
+		// console.warn('migrateData', source);
+		
+		if ( foundry.utils.hasProperty(source, 'activation.recharge') ) {
+			// console.warn('activation.recharge', source.activation.recharge);
+			if ( foundry.utils.getType(source.activation.recharge) == 'boolean' ) {
+				console.warn( source.activation.recharge );
+				source.activation.recharge = source.activation.recharge ? 1 : null;
+			}
+		}
+		if ( 'origin' in source && source.origin instanceof String ) {
+			source.origin = [source.origin];
+		}
 		if ( source.attack ) {
 			let { type, ability } = source.attack;
 
@@ -176,6 +196,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				source.attack.ability = ability.replace('@','');
 			}
 		}
+		
 		return super.migrateData(source);
 	}
 
@@ -383,7 +404,8 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		}
 		
 		// Modifications
-		const modifications = this.parent?.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
+		const effects = this.parent?.effects.filter(e=> e.type== 'modification');
+		const modifications = effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		if ( modifications ) {
 			Promise.all([
 				TextEditor.enrichHTML(modifications,{})
@@ -416,24 +438,6 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 
 	// async _preUpdate(changes, options, user) {
 	// 	if ( user.id != game.user.id ) return false;
-	// 	console.groupCollapsed("DataModel: Ability._preUpdate");
-	// 	console.log( changes );
-	// 	console.log( this );
-	// 	// console.log( this.parent );
-
-	// 	console.log( "changes.system.attack.type", changes.system.attack.type );
-	// 	console.log( "system.attack.type", this.attack.type );
-	// 	console.log( "_source.attack.type", this._source.attack.type );
-	// 	console.log( "changes.system.attack.ability", changes.system.attack.ability );
-	// 	console.log( "system.attack.ability", this.attack.ability );
-	// 	console.log( "_source.attack.ability", this._source.attack.ability );
-		
-	// 	console.groupEnd();
-	// 	// if ( 'type' in this.attack ) {
-	// 	// 	this.updateSource({
-	// 	// 		"attack.-=type": null
-	// 	// 	});
-	// 	// }
 	// }
 
 	/** @override */

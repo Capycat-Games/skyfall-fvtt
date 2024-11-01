@@ -1,3 +1,5 @@
+import SkyfallRoll from "../dice/skyfall-roll.mjs";
+
 export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 {
 	constructor(options={}) {
 		super(options);
@@ -106,7 +108,7 @@ export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 
 				hitDieMods: modifiers?.rest?.hitDieMod?.join('') ?? '',
 				hitDieBonus: ["+@con"].concat(modifiers?.rest?.hitDieBonus ?? []).join('+'),
 			}
-			hdData.formula = new RollSF(hdData._formula, rollData).formula;
+			hdData.formula = new SkyfallRoll(hdData._formula, rollData).formula;
 			
 			hitDies.push(hdData);
 		}

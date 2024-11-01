@@ -1,65 +1,14 @@
-<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow" data-tab="{{tab.id}}"
+<section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}"
 	data-group="{{tab.group}}">
-	<div class="character-progression">
-		{{!-- LEGACY --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.legacy type='legacy' label="TYPES.Item.legacy" }}
 
-		{{!-- CURSE --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.curse type='curse' label="TYPES.Item.curse" }}
-
-		{{!-- BACKGROUND --}}
-		{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.background type='background' label="TYPES.Item.background" }}
-
-		{{!-- Classes --}}
-		<div class="form-group stacked">
-			<label>
-				{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}
-				<span class="item-controls">
-					<a class="control" data-action="create" data-create="Item" data-type="class">
-						{{{@root.SYSTEM.icons.create}}}
-					</a>
-				</span>
-			</label>
-			{{#unless items.class }}
-				<div class="form-fields entry class" data-entry-id="{{path.id}}">
-					<input type="text" disabled>
-				</div>
-			{{/unless}}
-			{{#each items.class as | cls | }}
-				<div class="form-fields entry class flexrow" data-context-menu data-entry-id="{{cls.id}}">
-					<input type="number" class="slim flex0" data-action="update" data-fieldPath="system.level"
-						value="{{cls.system.level}}">
-					<input type="text" value="{{cls.name}}" disabled>
-				</div>
-			{{/each}}
+	<div class="flexrow actor-traits" style="width: 100%;">
+		<div class="">
+			{{formField schema.creatureType value=system.creatureType localize=true stacked=true}}
+			{{formField schema.size value=system.size localize=true stacked=true}}
+			{{formField schema.spellcasting value=system.spellcasting localize=true stacked=true}}
+			{{formField schema.details.pronouns value=system.details.pronouns localize=true stacked=true}}
 		</div>
-
-		{{!-- Paths --}}
-		<div class="form-group stacked">
-			<label>{{localize "TYPES.Item.path"}}
-				<span class="item-controls">
-					<a class="control" data-action="create" data-create="Item" data-type="path">
-						{{{@root.SYSTEM.icons.create}}}
-					</a>
-				</span>
-			</label>
-			{{#unless items.path }}
-				<div class="form-fields entry path" data-entry-id="{{path.id}}">
-					<input type="text" disabled>
-				</div>
-			{{/unless}}
-			{{#each items.path as | path | }}
-				<div class="form-fields entry path" data-context-menu data-entry-id="{{path.id}}">
-					<input type="text" value="{{path.name}}" disabled>
-				</div>
-			{{/each}}
-		</div>
-
-		{{formField schema.size value=system.size localize=true }}
-		{{formField schema.spellcasting value=system.spellcasting localize=true }}
-		{{formField schema.details.pronouns value=system.details.pronouns localize=true }}
-
-		<div class="background-box flexcol">
+		<div class="">
 			<div class="languages">
 				<h4><a data-action="manage" data-manage="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
 				{{#each languages as | language |}}
@@ -103,27 +52,97 @@
 					{{/each }}
 				</div>
 			{{/if}}
+
+			<div class="background-box flexcol hidden">
+			</div>
 		</div>
 	</div>
+	{{> "systems/skyfall/templates/v2/actor/progression-list.hbs" content=progression cssClass='actor-progression columns-2'}}
+	{{!-- <div class="flex100"></div> --}}
+	<hr>
+	{{!-- <div class="flex100"><br></div> --}}
+	<div class="flexrow" style="align-items: flex-start; gap: 5px;">
+		<div class="flex100 text-center">
+			<span class="notification warning" style="filter: none; color:white; padding: 0.25em 1em">
+				Está seção será removida até a versão 1.0
+			</span>
+		</div>
+		<div class="character-progression">
+			{{!-- LEGACY --}}
+			{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.legacy type='legacy' label="TYPES.Item.legacy" }}
 
-	<ul class="plain features flex-start flexcol">
-		<li class="item flexrow">
-			<div class="item-name">{{localize 'TYPES.Item.featurePl'}}</div>
-			<div class="item-controls">
-				<a class="control" data-action="create" data-create="Item" data-type="feature">
-					{{{@root.SYSTEM.icons.create}}}
-				</a>
+			{{!-- CURSE --}}
+			{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.curse type='curse' label="TYPES.Item.curse" }}
+
+			{{!-- BACKGROUND --}}
+			{{> "systems/skyfall/templates/v2/actor/features-progression.hbs" item=items.background type='background' label="TYPES.Item.background" }}
+
+			{{!-- Classes --}}
+			<div class="form-group stacked">
+				<label>
+					{{localize "SKYFALL.ACTOR.LEVEL"}} / {{localize "TYPES.Item.class"}}
+					<span class="item-controls">
+						<a class="control" data-action="create" data-create="Item" data-type="class">
+							{{{@root.SYSTEM.icons.create}}}
+						</a>
+					</span>
+				</label>
+				{{#unless items.class }}
+					<div class="form-fields entry class" data-entry-id="{{path.id}}">
+						<input type="text" disabled>
+					</div>
+				{{/unless}}
+				{{#each items.class as | cls | }}
+					<div class="form-fields entry class flexrow" data-context-menu data-entry-id="{{cls.id}}">
+						<input type="number" class="slim flex0" data-action="update" data-fieldPath="system.level"
+							value="{{cls.system.level}}">
+						<input type="text" value="{{cls.name}}" disabled>
+					</div>
+				{{/each}}
 			</div>
-		</li>
-		{{#each items.features as | item |}}
-			<li class="item entry flexrow" data-entry-id="{{item._id}}">
-				<div class="item-name">{{item.name}}</div>
+
+			{{!-- Paths --}}
+			<div class="form-group stacked">
+				<label>{{localize "TYPES.Item.path"}}
+					<span class="item-controls">
+						<a class="control" data-action="create" data-create="Item" data-type="path">
+							{{{@root.SYSTEM.icons.create}}}
+						</a>
+					</span>
+				</label>
+				{{#unless items.path }}
+					<div class="form-fields entry path" data-entry-id="{{path.id}}">
+						<input type="text" disabled>
+					</div>
+				{{/unless}}
+				{{#each items.path as | path | }}
+					<div class="form-fields entry path" data-context-menu data-entry-id="{{path.id}}">
+						<input type="text" value="{{path.name}}" disabled>
+					</div>
+				{{/each}}
+			</div>
+
+		</div>
+
+		<ul class="plain features flex-start flexcol">
+			<li class="item flexrow">
+				<div class="item-name">{{localize 'TYPES.Item.featurePl'}}</div>
 				<div class="item-controls">
-					<a class="control" data-action="itemToChat" data-target="item">{{{../SYSTEM.icons.chat}}}</a>
-					<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
-					<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+					<a class="control" data-action="create" data-create="Item" data-type="feature">
+						{{{@root.SYSTEM.icons.create}}}
+					</a>
 				</div>
 			</li>
-		{{/each}}
-	</ul>
+			{{#each items.features as | item |}}
+				<li class="item entry flexrow" data-entry-id="{{item._id}}">
+					<div class="item-name">{{item.name}}</div>
+					<div class="item-controls">
+						<a class="control" data-action="itemToChat" data-target="item">{{{../SYSTEM.icons.chat}}}</a>
+						<a class="control" data-action="edit" data-target="item">{{{../SYSTEM.icons.edit}}}</a>
+						<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
+					</div>
+				</li>
+			{{/each}}
+		</ul>
+	</div>
 </section>

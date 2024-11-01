@@ -7,6 +7,17 @@
 		align-self: flex-start;
 	}
 	.window-content {
+		.tab {
+			// &.item-benefits,
+			&.item-description {
+				min-height: 400px;
+				align-content: flex-start;
+			}
+		}
+		header.sheet-header {
+			align-items: flex-start;
+		}
+
 		:has(> .ability) {
 			overflow-y: hidden;
 		}
@@ -51,7 +62,7 @@
 		.heritage-tabs {
 			flex: 0 0 100px;
 		}
-		.heritage-list, .heritage {
+		.heritage-list, .item-heritage .heritage {
 			min-height: 200px;
 		}
 		.heritage-list {
@@ -83,8 +94,22 @@
 .skyfall.sheet {
 	&.ability, &.sigil, &.guild-ability {
 		.ability-card {
+			--scroll-margin: 0.05rem;
 			min-width: 400px;
 			max-width: 400px;
+			max-height: 80vh;
+		}
+	}
+
+	.benefits {
+		height: 400px;
+		--scroll-margin: 0.50rem;
+		header {
+			background-color: rgba(0,0,0,.2);
+			padding: 0 1em;
+		}
+		.entry fieldset {
+			padding: 0;
 		}
 	}
 }
@@ -95,7 +120,6 @@
 		flex-direction: row;
 		// max-height: 600px;
 		max-width: 850px;
-		
 		.ability-card {
 			color: @colorSFPlayer;
 			max-width: 400px;
@@ -110,7 +134,8 @@
 			// input, select { color: white;}
 
 			section.tab, div.tab {
-				flex: 0 0 550px;
+				// flex: 0 0 550px;
+				max-height: calc(80vh - 40px);
 			}
 			.ability-config.scrollable {
 				--scroll-margin: 0;

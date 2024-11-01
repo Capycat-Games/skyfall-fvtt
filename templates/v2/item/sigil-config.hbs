@@ -3,7 +3,12 @@
 	{{!-- SIGIL --}}
 	<fieldset>
 		<legend>{{localize "TYPES.Item.sigil"}}</legend>
-		{{formGroup schema.type value=system.type localize=true}}
+		<div class="ability-image-and-description flexrow">
+			<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56"
+				height="56" />
+			<div class="flex1"></div>
+			{{formGroup schema.type value=system.type localize=true}}
+		</div>
 		<div class="form-group stacked">
 			<label>{{localize "SKYFALL2.DescriptorPl"}}</label>
 			<dropdown-tags name="system.descriptors" class="descriptors">

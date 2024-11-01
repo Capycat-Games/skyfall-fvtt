@@ -1,18 +1,23 @@
-{{!-- Description Tab --}}
+{{!-- APPV1 Description Tab --}}
 <div class="tab flexcol" data-group="primary" data-tab="description">
 	{{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}}
 
-	{{#unless (eq @root.system.origem undefined) }}
-	<div class="form-fields">
-		<label for="">{{localize "SKYFALL.ITEM.ORIGIN"}}</label>
-		<input type="text" name="system.origin" value="{{@root.system.origin}}">
-	</div>
+	{{#unless (eq @root.system.origin undefined) }}
+		{{#if (eq @root.document.type 'class') }}
+		{{~else if (includes 'legacy' 'curse' 'background' @root.document.type) }}
+
+		{{else}}
+			<div class="form-fields">
+				<label for="">{{localize "SKYFALL2.Origin"}}</label>
+				<input type="text" name="system.origin" value="{{@root.system.origin}}">
+			</div>
+		{{/if}}
 	{{/unless}}
 
 	{{#unless (eq @root.system.requisites undefined) }}
-	<div class="form-fields">
-		<label for="">{{localize "SKYFALL.ITEM.REQUISITES"}}</label>
-		<input type="text" name="system.requisites" value="{{@root.system.requisites}}">
-	</div>
+		<div class="form-fields">
+			<label for="">{{localize "SKYFALL.ITEM.REQUISITES"}}</label>
+			<input type="text" name="system.requisites" value="{{@root.system.requisites}}">
+		</div>
 	{{/unless}}
 </div>

@@ -37,63 +37,19 @@
 			</div>
 		{{/if}}
 
-		{{formGroup schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=170 localize=true}}
-
-		{{#if (isDefined system.traits.melancholy)}}
-			<h3>{{localize "SKYFALL2.Melancholy"}}</h3>
-			{{formGroup schema.traits.melancholy value=system.traits.melancholy enriched=enriched.melancholy documentUUID=document.uuid toggled=true height=200 localize=true}}
-		{{/if}}
-
-		{{!-- {{formGroup schema.description.value value=description.value enriched=description.enriched localize=true toggled=true height=300 documentUUID=description.uuid}} --}}
+		{{formInput schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=400 localize=true}}
 
 		{{!-- {{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}} --}}
 		{{#if (isDefined system.origin)}}
-			{{formGroup schema.origin value=system.origin localize=true}}
+			{{#if (eq document.type 'class') }}
+			{{~else if (includes 'legacy' 'curse' 'background' @root.document.type) }}
+			{{else}}
+				{{!-- {{formGroup schema.origin value=system.origin localize=true}} --}}
+			{{/if}}
 		{{/if}}
 
 		{{#if (isDefined system.requisites)}}
 			{{formGroup schema.requisites value=system.requisites localize=true}}
-		{{/if}}
-
-		{{#if (and features (includes document.type 'background'))}}
-			<label>{{localize "SKYFALL.ITEM.FEATURES"}}</label>
-			<ol class="plain drop-item" data-field-path="system.features" data-item-type="feature">
-				{{#each features as | item id | }}
-					<li class="item feature entry draggable2 flexrow" data-entry-id="{{item.uuid}}">
-						<div class="item-icon" style="background-image:url({{item.img}})"></div>
-						<div class="item-name flex3">{{item.name}}</div>
-						<div class="item-controls">
-							<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
-						</div>
-					</li>
-				{{/each}}
-				{{#if (eq features.length 0) }}
-					<li>
-						{{localize "SKYFALL.SHEET.DROPITEM"}}
-					</li>
-				{{/if}}
-			</ol>
-			{{#if (eq features.length 0)}}
-
-			{{/if}}
-		{{/if}}
-		{{#if (isDefined system.abilities)}}
-			<ol class="plain drop-item">
-				{{#each abilities as | item id | }}
-					<li class="item {{type}} entry flexrow" data-entry-id="{{item.uuid}}">
-						<div class="item-icon" style="background-image:url({{item.img}})"></div>
-						<div class="item-name flex3">{{item.name}}</div>
-						<div class="item-controls">
-							<a data-action="delete" data-delete="id" target="{{../target}}">{{{@root.SYSTEM.icons.delete}}}</a>
-						</div>
-					</li>
-				{{/each}}
-				{{#unless (isDefined system.abilities) }}
-					<li>
-						{{localize "SKYFALL.SHEET.DROPITEM"}}
-					</li>
-				{{/unless}}
-			</ol>
 		{{/if}}
 	</div>
 </section>

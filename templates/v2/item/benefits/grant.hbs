@@ -1,0 +1,30 @@
+<ol class="plain scrollable" data-field-path="{{fieldPath}}">
+
+	{{#each list as | grant | }}
+		{{!-- type: feat|spell|ability-score --}}
+		{{!-- query: fighting-style | deep |  --}}
+		{{!-- quantity: 1 | 2 | 3 --}}
+		{{!-- chosen: [uuid] | | [str] --}}
+		<li class="grant entry" data-entry-id="{{grant._index}}">
+			<fieldset class="flexrow">
+				<div class="flexrow">
+					{{formGroup ../grantschema.granting value=grant.granting localize=true name=(concat ../fieldPath '.' grant._index '.granting') stacked=true classes="flex1"}}
+					{{#if (eq grant.granting 'path')}}
+						{{!-- <input type="hidden" name="{{concat ../fieldPath '.' grant._index '.quantity'}}" value="{{grant.quantity}}"> --}}
+						<input type="hidden" name="{{concat ../fieldPath '.' grant._index '.query'}}" value="{{grant.query}}">
+					{{else}}
+						{{!-- {{formGroup ../grantschema.quantity value=grant.quantity localize=true name=(concat ../fieldPath '.' grant._index '.quantity')  stacked=true classes="flex1"}} --}}
+						{{!-- <div class="flex100"></div> --}}
+						{{formGroup ../grantschema.query value=grant.query localize=true name=(concat ../fieldPath '.' grant._index '.query') stacked=true classes="flex2"}}
+					{{/if}}
+					<input type="hidden" name="{{concat ../fieldPath '.' grant._index '.level'}}" value="{{grant.level}}">
+					<input type="hidden" name="{{concat ../fieldPath '.' grant._index '.type'}}" value="{{grant.type}}">
+				</div>
+				<div class="item-controls">
+					<a data-action="delete" data-delete="id">{{{@root.SYSTEM.icons.delete}}}</a>
+				</div>
+
+			</fieldset>
+		</li>
+	{{/each}}
+</ol>

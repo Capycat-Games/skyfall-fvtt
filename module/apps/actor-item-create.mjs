@@ -3,7 +3,7 @@
  * A simple form to set actor movement speeds
  * @extends {DocumentSheet}
  */
-export default class ActorItemCreate extends FormApplication {
+export default class ActorItemCreate extends FormApplication { // DEPRECATE
 	constructor(actor, item, options) {
 		super(actor, options);
 		this.actor = actor;

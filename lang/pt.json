@@ -15,6 +15,8 @@
     "Item": {
       "legacy": "Legado",
       "legacyPl": "Legados",
+      "heritage": "Herança",
+      "heritagePl": "Heranças",
       "curse": "Maldição",
       "cursePl": "Maldições",
       "background": "Antecedente",
@@ -234,8 +236,8 @@
         "LARGEABBR": "Grn.",
         "HUGE": "Enorme",
         "HUGEABBR": "Enr.",
-        "GARGANTUAN": "Colossal",
-        "GARGANTUANABBR": "Col."
+        "GARGANTUAN": "Imenso",
+        "GARGANTUANABBR": "Ime."
       },
       "TYPES": {
         "ABERRATION": "Aberration",
@@ -282,7 +284,7 @@
       "PATH": {
         "INITFEATURES": "Características Iniciais",
         "ADVFEATURES": "Características Avançadas",
-        "TYPESPEC": "Trilha Especialista",
+        "TYPESPEC": "Trilha de Especialidade",
         "TYPEWAR": "Trilha de Guerra",
         "TYPEMYSTIC": "Trilha Mística"
       },
@@ -864,6 +866,12 @@
       "SIGIL": {},
       "GUILD": {}
     },
+    "Identifier": "Identificador",
+    "Origin": "Origem",
+    "Benefit": "Benefício",
+    "BenefitPl": "Benefícios",
+    "Grant": "Escolha",
+    "GrantPl": "Escolhas",
     "Create": "Criar",
     "Type": "Tipo",
     "Size": "Tamanho",
@@ -897,6 +905,8 @@
     "UNIT": {},
     "CATEGORY": "Categoria",
     "Level": "Nível",
+    "CR": "ND",
+    "Inventory": "Inventário",
     "Experience": "Experiencia",
     "ExperienceAbbr": "XP",
     "HitDie": "Dado de Vida",
@@ -1095,6 +1105,23 @@
       "Undead": "Morto-vivo",
       "Plant": "Planta"
     },
+    "Archetype": "Arquétipo",
+    "ARCHETYPE": {
+      "Ranged": "Atirador",
+      "Brute": "Bruto",
+      "Group": "Coletivo",
+      "Mount": "Cavalaria",
+      "Defender": "Defensor",
+      "Flanker": "Flanqueador",
+      "Leader": "Líder",
+      "Sentinel": "Sentinela"
+    },
+    "Hierarchy": "Hierarquia",
+    "HIERARCHY": {
+      "Simple": "Simples",
+      "Complex": "Complexo",
+      "Boss": "Chefão"
+    },
     "Currency": "Dinheiro",
     "CURRENCY": {
       "T": "Trocado",
@@ -1155,7 +1182,7 @@
       }
     },
     "PATH": {
-      "Specialized": "Trilha de Especialista",
+      "Specialized": "Trilha de Especialidade",
       "War": "Trilha de Guerra",
       "Mystic": "Trilha Mística"
     },

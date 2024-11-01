@@ -91,22 +91,6 @@ export default class SkyfallItem extends Item {
 	/* -------------------------------------------- */
 
 	/**
-	 * Provide an array of detail tags which are shown in each item description
-	 * @param {string} [scope="full"]       The scope of tags being retrieved, "full" or "short"
-	 * @returns {Object<string, string>}    The tags which describe this Item
-	 */
-	getTags(scope="full") {
-		switch ( this.type ) {
-			case "armor":
-			case "feat":
-			case "weapon":
-				return this.system.getTags(scope);
-			default:
-				return {};
-		}
-	}
-
-	/**
 	 * Override getRollData() that's supplied to rolls.
 	 */
 	getRollData(item = null) {
@@ -127,36 +111,23 @@ export default class SkyfallItem extends Item {
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
 		let allowed = super._preCreate(data, options, user);
-		if ( allowed && this.parent ) allowed = this._precreateValidateParent();
-		if ( allowed && this.parent ) allowed = await this._preCreateUniqueItem(data, options, user);
-		const progressionTypes = ['legacy', 'curse', 'background', 'class'];
-		if ( this.parent && progressionTypes.includes(this.type)) {
-			// && this.system.progression 
-			let level = '';
-			if ( this.type == 'class' ) {
-				let quantity = this.parent.items.filter( i=> i.type == 'class').length;
-				level = '-' + Math.max(1, quantity);
-			}
-			// TODO class level
-			// if ( this.parent.item.find(  ) )
-			// this.parent.item.find
-			this.updateSource({'system.progression.steps': [`${this.type}${level}`]});
-			// this.system.progression.steps.push(`${this.type}${level}`);
-		}
+		// if ( allowed && this.parent ) allowed = this._precreateValidateParent();
+		// if ( allowed && this.parent ) allowed = await this._preCreateUniqueItem(data, options, user);
 		return allowed;
 	}
 
 	/* -------------------------------------------- */
+	/* DEPRECATE */
 	_precreateValidateParent(){
 		const actorTypes = {
 			character: [
-				"legacy", "curse", "background", "class", "path", "feature", "feat", "ability", "spell", "weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
+				"legacy", 'heritage', "curse", "background", "class", "path", "feature", "feat", "ability", "spell", "weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
 			],
 			creation: [
 				"feature",
 			],
 			npc: [
-				"feature", "ability",
+				"feature", "ability", "spell",
 				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
 			],
 			partner: [
@@ -176,33 +147,65 @@ export default class SkyfallItem extends Item {
 			return false;
 		}
 	}
-	
+	/* DEPRECATE */
 	async _preCreateUniqueItem( data, options, user ){
 		const { DialogV2 }  = foundry.applications.api;
 
-		const uniques = ["legacy", "curse", "background", "class", "path"];
+		const uniques = ["legacy", "heritage", "curse", "background", "class", "path"];
 		// ALLOW DUPLICATE OF [ "feature", "feat", "ability", "spell" ] ?;
 		if ( !uniques.includes(data.type) ) return true;
 		if ( !user.isSelf ) return false;
 		const items = this.parent.items.filter( i => i.type == data.type );
 		let allowed = true;
 		if ( items.length == 0 ) return allowed;
+		
 		if ( data.type == 'class' ) {
 			// WHEN EXISTING CLASS UPDATE LEVEL
 			const item = items.find( i => i.name == data.name );
 			if ( item ) {
 				await item.update({"system.level": item.system.level + 1 });
+				if ( Object.values(item.system._benefits[level]).some(i => i.length) ) {
+					const { BenefitsDialog } = skyfall.applications;
+					BenefitsDialog.prompt({item: item});
+				}
 				this.parent.sheet.render();
 				allowed = false;
 			}
-		} else if ( data.type == 'path' && items.length == 1 ) {
+		} else if ( data.type == 'path' ) {
+			if ( items.length == 1  ) {
+				const item = items.find( i => i.name == data.name );
+				// WHEN EXISTING CLASS UPDATE LEVEL
+				if ( item ) {
+					const current = item.system.origin;
+					const level = item.system.level + 1;
+					const lvl = String(level).padStart(2,0);
+					current.push(`path-${lvl}`);
+					console.warn('system.origin', current);
+					await item.update({"system.origin": current });
+					if ( Object.values(item.system._benefits[level]).some(i => i.length) ) {
+						const { BenefitsDialog } = skyfall.applications
+						BenefitsDialog.prompt({item: item});
+					}
+					this.parent.sheet.render();
+					allowed = false;
+				} else {
+					// console.warn(this);
+					console.warn('system.origin', ['path-02']);
+					this.updateSource({"system.origin": ['path-02'] });
+					allowed = true;
+				}
 
-		} else if ( data.type == 'path' && items.length > 1 ) {
-			// WHEN EXISTING PATH UPDATE LEVEL
-			ui.notifications.warn(
-				game.i18n.localize("SKYFALL2.NOTIFICATION.PathsLimitReached")
-			);
-			allowed = false;
+			} else if ( items.length > 1 ) {
+				// WHEN EXISTING PATH UPDATE LEVEL
+				ui.notifications.warn(
+					game.i18n.localize("SKYFALL2.NOTIFICATION.PathsLimitReached")
+				);
+				allowed = false;
+			} else {
+				console.warn('system.origin', ['path-01']);
+				this.updateSource({"system.origin": ['path-01'] });
+				allowed = true;
+			}
 		} else {
 			allowed = await DialogV2.confirm({
 				content: game.i18n.format("SKYFALL2.DIALOG.OverwriteExistingItem", {
@@ -229,37 +232,11 @@ export default class SkyfallItem extends Item {
 		if ( foundry.utils.hasProperty(this, "system.sigils") ) {
 			return this._createSigils(data, options, userId);
 		}
-		
-		// Create Granted Items
-		let {features, abilities, heritages, feats} = data.system;
-		if ( features?.length || abilities?.length || heritages || feats?.length ) {
-			const createItems = [];
-			const updateData = {};
-			if ( features?.length ) {
-				await this._promptGrantedItems( features, createItems, userId );
-			}
-
-			if ( heritages ) {
-				await this._promptLegacyHeritage( heritages, createItems, updateData, userId );
-			}
-
-			if ( abilities?.length ) {
-				await this._promptGrantedItems( abilities, createItems, userId );
-			}
-			
-			if ( createItems.length ) {
-				this.parent.createEmbeddedDocuments("Item", createItems);
-			}
-			if ( updateData ) {
-				this.update( updateData );
-			}
-
-			// return new ActorItemCreate(options.parent, data).render(true);
-		}
+		return;
 	}
 
 	/* -------------------------------------------- */
-	
+	/* DEPRECATE */
 	async _promptLegacyHeritage( heritages, createItems, updateData, userId){
 		if ( game.user.id != userId ) return;
 		const { DialogV2 }  = foundry.applications.api;
@@ -293,6 +270,7 @@ export default class SkyfallItem extends Item {
 		return;
 	}
 
+	/* DEPRECATE */
 	async _promptGrantedItems(grantedList, createItems, userId){
 		if ( game.user.id != userId ) return;
 		const { DialogV2 }  = foundry.applications.api;
@@ -331,13 +309,11 @@ export default class SkyfallItem extends Item {
 			}
 		});
 		
-		const parentStep = this.system.progression.steps.pop();
 		for ( const [i, uuid] of granted.entries() ) {
 			const item = await fromUuid( uuid );
 			if ( !item ) continue;
 			const itemData = item.toObject(true);
 			itemData._stats.compendiumSource = uuid;
-			itemData.system.progression.steps.push(`${parentStep}-${item.type}-${i}`);
 			createItems.push( itemData );
 		}
 	}
@@ -406,13 +382,16 @@ export default class SkyfallItem extends Item {
 
 	async _deleteSigils(options, userId){
 		if ( game.user.id != userId ) return;
+		if ( !this.isEmbedded ) return;
 		const sigils = foundry.utils.getProperty(this, "system.sigils");
 		const deleteDocuments = [];
 		for (const sigil of sigils) {
 			const uuid = parseUuid(sigil.parentUuid);
 			deleteDocuments.push(uuid.id);
 		}
-		this.actor.deleteEmbeddedDocuments("Item", deleteDocuments);
+		if ( deleteDocuments.length ) {
+			this.actor.deleteEmbeddedDocuments("Item", deleteDocuments);
+		}
 	}
 
 	/* -------------------------------------------- */
@@ -422,21 +401,18 @@ export default class SkyfallItem extends Item {
 	 * @public
 	 */
 	async toMessage() {
+		const catharsis = this.type == 'feature' && this.system.catharsis;
+		const regex = new RegExp(/\(|\)|Melancolia|Evento Marcante|Lema de Guilda|Maldição/gi);
+		const name = catharsis ? this.name.replaceAll(regex, '') : this.name;
+		const description = this.system.description.value;
 		ChatMessage.create({
-			content: `<h3>${this.name}</h3>${this.system.description.value}`,
+			content: catharsis ? description : `<h3>${name}</h3>${description}`,
+			flavor: catharsis ? `<h1>${name}</h1>` : '',
+			speaker: ChatMessage.getSpeaker(),
+			system: {
+				catharsis: catharsis,
+			}
 		});
-	}
-
-	
-	/** @inheritDoc */
-	async _buildEmbedHTML2(config, options={}) {
-		config.caption = false;
-		config.cite = false;
-		const embed = await super._buildEmbedHTML(config, options);
-		if ( !embed ) {
-			if ( this.system._embed instanceof Function ) return this.system._embed(config, options);
-		}
-		return embed;
 	}
 }
 
