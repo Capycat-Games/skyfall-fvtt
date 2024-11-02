@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.509 - BETA
+
+- Ficha de Item - Corrigido. Lista de Benefícios e Configuração Antiga se sobrepondo.
+- Embed de Modificação - Adicionado. Enrich da descrição.
+
 ## 0.9.508 - BETA
 
 - Items - Adicionado. Herança, Hierarquia e Arquétipo.

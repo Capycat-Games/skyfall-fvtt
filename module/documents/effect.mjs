@@ -254,13 +254,15 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	async _embedModification(config, options={}) {
 		const container = document.createElement("div");
-		
+		const description = await TextEditor.enrichHTML(this.description, {
+			async: true, relativeTo: this
+		});
 		container.innerHTML = `
 			<div class="modification-header">
 				<span style="font-family: SkyfallIcons">M</span> ${this.cost.label} ${this.modTypes.label}
 			</div>
 			<div class="modification-description">
-				${this.description}
+				${description}
 			</div>
 		`;
 		return container.children;

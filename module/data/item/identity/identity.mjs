@@ -162,40 +162,6 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 		return benefits;
 	}
 
-	get _benefits2 () {
-		let benefits = {};
-		const content = this.benefits.reduce((acc, v, i) => {
-			v._index = i;
-			v.item = fromUuidSync(v.uuid);
-			if ( ['class','path'].includes(this.parent.type) ){
-				acc[v.level] ??= {feature: [], grant: []};
-				acc[v.level][v.type] ??= [];
-				acc[v.level][v.type].push(v);
-			} else {
-				acc[v.type] ??= [];
-				acc[v.type].push(v);
-			}
-			return acc;
-		}, {});
-		let benefitTypes = this._typeOptions.benefitTypes; // {};
-		if ( ['class','path'].includes(this.parent.type) ){
-			const maxLevel = this.parent.type == 'class' ? 12 : 2;
-			for (let level = 1; level <= maxLevel; level++) {
-				// const benefitTypes = {feature: [], grant: []};
-				benefits[level] = foundry.utils.mergeObject(benefitTypes, content[level]);
-			}
-			return benefits;
-		} else if (['legacy'].includes(this.parent.type)) {
-			// benefitTypes = {feature: [], heritage: [], grant: []};
-		} else if (['heritage','curse','background'].includes(this.parent.type)) {
-			// benefitTypes = {feature: [], grant: []};
-		} else if (['feature','feat'].includes(this.parent.type)) {
-			// benefitTypes = {ability: [], grant: []};
-		}
-		benefits = foundry.utils.mergeObject(benefitTypes, content);
-		return benefits;
-	}
-
 	/* -------------------------------------------- */
 	/*  Database Operations                         */
 	/* -------------------------------------------- */
