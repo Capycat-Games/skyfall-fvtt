@@ -6,7 +6,7 @@ let _protectedGroup = ["all", "physical", "mental", "str", "dex", "con", "int", 
 export const protectedGroup = _protectedGroup.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.CONDITIONS.PROTECTEDGROUP.${key.toUpperCase()}`,
+		label: `SKYFALL2.CONDITIONS.PROTECTEDGROUP.${key.titleCase()}`,
 	}
 	return obj;
 }, {});
@@ -16,7 +16,7 @@ let _durations = ["turn", "round", "scene", "minute", "hour", "day", "month", "y
 export const durations = _durations.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ITEM.DURATIONS.${key.toUpperCase()}`,
+		label: `SKYFALL2.DURATION.${key.toUpperCase()}`,
 	}
 	return obj;
 }, {});
@@ -32,8 +32,8 @@ let _events = [
 export const events = _events.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL2.EVENT.${key.capitalize()}`,
-		prop: `SKYFALL2.DURATION.Until${key.capitalize()}`,
+		label: `SKYFALL2.EVENT.${key.titleCase()}`,
+		prop: `SKYFALL2.DURATION.Until${key.titleCase()}`,
 	}
 	return obj;
 }, {});

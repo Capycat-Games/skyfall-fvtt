@@ -307,7 +307,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		const dmgResLevels = Object.keys(SYSTEM.damageModifiers);
 		const dmgTypes = Object.values(SYSTEM.DESCRIPTOR.DAMAGE);
-		dmgTypes.unshift('all');
+		dmgTypes.unshift({id: 'all', label: 'all' });
 		return new fields.SchemaField( dmgTypes.reduce((obj, dmg) => {
 			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "nor"});
 			return obj;
@@ -559,9 +559,61 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		}
 		return data;
 	}
+	
+	/* -------------------------------------------- */
+	/*  Database Operations                         */
+	/* -------------------------------------------- */
+	
+	_onUpdate(changed, options, userId) {
+		this._automateStatuses(userId);
+	}
+		
+	async _automateStatuses(userId){
+		if( game.userId != userId ) return;
+		const hp = foundry.utils.getProperty(this, 'resources.hp');
+		if ( hp ) {
+			const hurt = this.parent.statuses.has('hurt');
+			const { value, max } = hp;
+			if ( (hurt ? (value * 2 > max) : (value * 2 < max)) ) {
+				this.parent.toggleStatusEffect('hurt');
+			}
+		}
+		const capacity = foundry.utils.getProperty(this, 'capacity');
+		if ( capacity ) {
+			const encumbered = this.parent.statuses.has('encumbered');
+			const { value, max } = capacity;
+			if ( (encumbered ? (value < max) : (value > max)) ) {
+				this.parent.toggleStatusEffect('encumbered');
+			}
+		}
+		const fragments = foundry.utils.getProperty(this, 'fragments');
+		if ( fragments ) {
+			const overload = this.parent.statuses.has('arcaneoverload');
+			const { value, max } = fragments;
+			if ( !overload && value > max ) {
+				const overload = await this.parent.toggleStatusEffect('arcaneoverload');
+				
+				const roll = new Roll(`${value}d6[energy]`);
+				await roll.evaluate();
+				ChatMessage.create({
+					rolls: [roll],
+					system: {
+						effects: [overload.toObject()]
+					}
+				});
+				const changes = [
+					{key: "system.modifiers.hp.totalExtra", mode: 2, value: roll.total * -1},
+				]
+				overload.update({"changes": changes});
+				
+			} else if ( overload && value < max ) {
+				this.parent.toggleStatusEffect('arcaneoverload');
+			}
+		}
+	}
 
 	/* -------------------------------------------- */
-	/* System Methods                               */
+	/* Type Methods                                 */
 	/* -------------------------------------------- */
 	
 	async _applyDamage(roll, multiplier = 1, applyDR = false) {
@@ -580,7 +632,6 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 
 		let damage;
 		let typeDamage = {};
-		console.log(roll);
 		if( roll ){
 			let defaultDamage = 'slashing';
 			typeDamage = roll.terms.reduce( (acc, t, idx) =>{
@@ -597,13 +648,11 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		if ( applyDR ) damage = 0 - dr;
 		else damage = 0;
 		// Apply Damage Reduction for each type of damage
-		console.log(typeDamage);
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
 			const typeMod = drTypes[type] ?? 1;
 			dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
 			damage += dmg;
 		}
-		console.log(damage);
 		// Deduct value from temp resource first
 		let updHPT = hp.temp;
 		if ( damage > 0 ) {
@@ -644,7 +693,11 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const classPaths = ['class','path'];  //deprecate
 		for (const item of this.parent.items ) {
 			if ( inventory.includes(item.type) ) {
-				item.system.volume = item.system.capacity * item.system.quantity;
+				if ( item.system.packCapacity ) {
+					item.system.volume = Math.floor(item.system.capacity / item.system.packCapacity) * item.system.quantity;
+				} else {
+					item.system.volume = item.system.capacity * item.system.quantity;
+				}
 				items.inventory[item.type] ??= [];
 				items.inventory[item.type].push(item);
 				items.inventory.category ??= [];
@@ -684,5 +737,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 
 	async _applyConsuption() {}
 	async _rollInitiative() {}
+
+
 
 }

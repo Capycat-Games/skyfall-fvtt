@@ -104,4 +104,43 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 			throw new Error(`"${uuid}" is not a valid UUID string`);
 		}
 	}
+
+	/* -------------------------------------------- */
+	/*  Data Schema                                 */
+	/* -------------------------------------------- */
+	get fragments () {
+		if ( !this.parent.isEmbedded ) return 0;
+		const fragments = this.sigils.map( i => fromUuidSync(i.parentUuid)).reduce((acc, i) => acc + i.system.fragments.amount, 0);
+		return fragments;
+	}
+
+	/** @inheritDoc */
+	async _preUpdate(changes, options, user) {
+		if ( 'equipped' in this ) {
+			let allow = await this._arcaneOverloadAlert(changes, options, user);
+			if ( allow === false ) return false;
+		}
+
+	}
+	
+	async _arcaneOverloadAlert(changes, options, user){
+		if ( user.id != game.userId ) return;
+		
+		if ( !('equipped' in this) ) return;
+		if ( !this.attuned ) return;
+		if ( !changes.system?.equipped ) return;
+		const actor = this.parent.parent;
+		if ( !actor ) return;
+		const { DialogV2 } = foundry.applications.api;
+		const fragments = this.fragments;
+		const { value, max } = actor.system.fragments;
+		if ( (fragments + value) > max ) {
+			let arcaneoverload = await DialogV2.confirm({
+				content: game.i18n.format("SKYFALL2.DIALOG.AlertArcaneOverload", {
+					damage: `${fragments}d6`,
+				})
+			});
+			if ( !arcaneoverload ) return false;
+		}
+	}
 }

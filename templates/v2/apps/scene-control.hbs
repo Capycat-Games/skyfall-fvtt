@@ -1,0 +1,13 @@
+<div class="{{cssClasses}}" style="height: 100%;">
+	{{#if scene.started }}
+		<div class="table-catharsis flexrow">
+			{{#each catharsis as | c |}}
+				<span class="die">
+					{{{@root.SYSTEM.icons.sfcatharsisblue}}}
+				</span>
+			{{/each}}
+		</div>
+	{{else}}
+		<h3 class="text-center">{{localize "SKYFALL2.APP.SCENE.NotStarted"}}</h3>
+	{{/if}}
+</div>

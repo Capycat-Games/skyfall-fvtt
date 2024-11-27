@@ -12,13 +12,13 @@
 			<div class="languages">
 				<h4><a data-action="manage" data-manage="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
 				{{#each languages as | language |}}
-					<span class="language">{{localize language}}</span>
+					<span class="language">{{localize language}}{{ifThen @last "" "," }}</span>
 				{{/each}}
 			</div>
 			<div class="proficiencies">
 				<h4><a data-action="manage" data-manage="proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
 				{{#each proficiencies as | proficiency |}}
-					<span class="proficiency">{{localize proficiency}}</span>
+					<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
 				{{/each}}
 			</div>
 			{{!-- RESISTANCES --}}

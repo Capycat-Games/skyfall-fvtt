@@ -41,6 +41,7 @@ export default class SkyfallRoll extends Roll {
 
 	static TEMPLATE = "systems/skyfall/templates/apps/roll-config.hbs";
 
+
 	async applyCatharsis({operator = '+'}){
 		if ( this.evaluated ) return; //TODO NOTICE
 		const catharsis = new RollSF(`1d6[catharsis${operator}]`);
@@ -105,6 +106,16 @@ export default class SkyfallRoll extends Roll {
 		let html = await super.render(arguments)
 		html = html.replace('class="dice-roll"',`class="dice-roll ${this.type}"`);
 		return html;
+		// if ( !this._evaluated ) await this.evaluate({allowInteractive: !isPrivate});
+		const chatData = {
+			roll: this,
+			formula: isPrivate ? "???" : this._formula,
+			flavor: isPrivate ? null : flavor ?? this.options.flavor,
+			user: game.user.id,
+			tooltip: isPrivate ? "" : await this.getTooltip(),
+			total: isPrivate ? "?" : Math.round(this.total * 100) / 100
+		};
+		return renderTemplate(template, chatData);
 	}
 	/** @overwrite */
 	async toMessage(messageData={}, {rollMode, create=true}={}) {

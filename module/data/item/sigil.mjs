@@ -25,7 +25,6 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 				value: new fields.NumberField({
 					required:true,
 					integer: true,
-					positive: true,
 					min: 0,
 					initial: 1,
 					label: "SKYFALL2.Charge",
@@ -33,7 +32,6 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 				max: new fields.NumberField({
 					required:true,
 					integer: true,
-					positive: true,
 					min: 1,
 					initial: 1,
 				}),
@@ -52,7 +50,6 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 				amount: new fields.NumberField({
 					required:true,
 					integer: true,
-					positive: true,
 					initial: 1,
 					label: "SKYFALL2.Quantity"
 				}),

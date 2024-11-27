@@ -135,6 +135,27 @@ export default class SkyfallMessage extends ChatMessage {
 		/* DESCRIPTOR CHANGES */
 		
 		/* /DESCRIPTOR CHANGES */
+		
+		/* CONSUME */
+		if ( item.system.consume.target ) {
+			const consumedItem = actor.items.find(i => i.id == item.system.consume.target);
+			if ( consumedItem && item.system.reload ) {
+				this.system.costs.quantity.push({
+					id: item.id,
+					path: 'system.reload.value',
+					value: item.system.reload.value - 1
+				});
+			}
+			if ( consumedItem ) {
+				this.system.costs.quantity.push({
+					id: consumedItem.id,
+					path: 'system.quantity',
+					value: consumedItem.system.quantity - 1
+				});
+			}
+		}
+		/* /CONSUME */
+
 		this.updateData ??= {};
 		this.updateData.system ??= {};
 		this.updateData.system.item = this.system.item;
@@ -143,15 +164,6 @@ export default class SkyfallMessage extends ChatMessage {
 		this.updateData.system.itemId = this.system.itemId;
 		
 		return;
-		switch (item.type) {
-			case 'weapon':
-			case 'equipment':
-				break;
-			case 'other':
-				break;
-			default:
-				break;
-		}
 	}
 
 	#prepareModifications(){
@@ -464,11 +476,8 @@ export default class SkyfallMessage extends ChatMessage {
 
 	/* -------------------------------------------- */
 
-	// /** @inheritdoc */
+	/** @inheritdoc */
 	// async _preUpdate(data, options, userId) {
-	// 	if ( this.type == 'usage' ){
-			
-	// 	}
 	// 	return await super._preUpdate(data, options, userId);
 	// }
 
@@ -564,7 +573,7 @@ export default class SkyfallMessage extends ChatMessage {
 		let btnCreate = function({ text = '', title = '', dataset = [] }){
 			let b = document.createElement("button");
 			b.innerHTML = text;
-			b.title = title;
+			b.classList.add('roll-button');
 			for (const d of dataset) {
 				if ( Array.isArray(d) && d[0] && d[1] ){
 					b.dataset[d[0]] = d[1];
@@ -576,38 +585,31 @@ export default class SkyfallMessage extends ChatMessage {
 		const buttons = {
 			damage: {
 				text: '<i class="fa-solid fa-minus"></i>',
-				title: "SKYFALL.MESSAGE.APPLYDAMAGE",
-				dataset: [['applyDamage',1]]
+				dataset: [['applyDamage',1], ['tooltip', "SKYFALL2.MESSAGE.ApplyDamage"]]
 			},
 			double: {
 				text: '2x',
-				title: "SKYFALL.MESSAGE.APPLYDOUBLEDAMAGE",
-				dataset: [['applyDamage',2]]
+				dataset: [['applyDamage',2], ['tooltip', "SKYFALL2.MESSAGE.ApplyDoubleDamage"]]
 			},
 			half: {
 				text: '½',
-				title: "SKYFALL.MESSAGE.APPLYHALFDAMAGE",
-				dataset: [['applyDamage',0.5]]
+				dataset: [['applyDamage',0.5], ['tooltip', "SKYFALL2.MESSAGE.ApplyHalfDamage"]]
 			},
 			heal: {
 				text: '<i class="fa-solid fa-plus"></i>',
-				title: "SKYFALL.MESSAGE.APPLYHEAL",
-				dataset: [['applyDamage',-1]]
+				dataset: [['applyDamage',-1], ['tooltip', "SKYFALL2.MESSAGE.ApplyHeal"]]
 			},
 			catharsis: {
-				text: '<i class="fa-solid fa-bahai"></i>',
-				title: "SKYFALL.MESSAGE.CATHARSIS",
-				dataset: [['applyCatharsis','+']]
+				text: SYSTEM.icons.sfcatharsis,
+				dataset: [['applyCatharsis','+'], ['tooltip', "SKYFALL2.MESSAGE.AddCatharsis"]]
 			},
 			catharsisminus: {
-				text: '<i class="fa-solid fa-bahai"></i>',
-				title: "SKYFALL.MESSAGE.CATHARSIS",
-				dataset: [['applyCatharsis','-']]
+				text: SYSTEM.icons.sfcatharsis,
+				dataset: [['applyCatharsis','-'], ['tooltip', "SKYFALL2.MESSAGE.SubtractCatharsis"]]
 			},
 			evaluate: {
 				text: '<i class="fa-solid fa-dice"></i>',
-				title: "SKYFALL.MESSAGE.ROLL",
-				dataset: [['evaluateRoll','1']]
+				dataset: [['evaluateRoll','1'], ['tooltip', "SKYFALL2.MESSAGE.Roll"]]
 			}
 		}
 
@@ -621,11 +623,13 @@ export default class SkyfallMessage extends ChatMessage {
 			// Button Apply Damage
 			button = btnCreate( buttons.damage );
 			btncontainer.append(button);
+			damageRoll.querySelector('.dice-result .dice-total').append(button);
 			// Button Apply Damage Double
 			button = btnCreate( buttons.double );
 			btncontainer.append(button);
+			damageRoll.querySelector('.dice-result .dice-total').append(button);
 			// Append to Roll Template
-			damageRoll.append(btncontainer);
+			// damageRoll.append(btncontainer);
 			
 			// Right Buttons
 			btncontainer = document.createElement("span");
@@ -633,11 +637,13 @@ export default class SkyfallMessage extends ChatMessage {
 			// Button Apply Damage Half
 			button = btnCreate( buttons.half );
 			btncontainer.append(button);
+			damageRoll.querySelector('.dice-result .dice-total').append(button);
 			// Button Apply Damage as Heal
 			button = btnCreate( buttons.heal );
 			btncontainer.append(button);
+			damageRoll.querySelector('.dice-result .dice-total').append(button);
 			// Append to Roll Template
-			damageRoll.append(btncontainer);
+			// damageRoll.append(btncontainer);
 		}
 
 		// Get Element To Append Catharsis to;
@@ -650,16 +656,18 @@ export default class SkyfallMessage extends ChatMessage {
 			// Button Apply Damage
 			button = btnCreate( buttons.catharsisminus );
 			btncontainer.append(button);
+			diceRoll.querySelector('.dice-result .dice-formula').append(button);
 			// Append to Roll Template
-			diceRoll.append(btncontainer);
+			// diceRoll.append(btncontainer);
 			// Left Buttons
 			btncontainer = document.createElement("span");
 			btncontainer.classList.add('roll-btns', 'right', 'top');
 			// Button Apply Damage Double
 			button = btnCreate( buttons.catharsis );
 			btncontainer.append(button);
+			diceRoll.querySelector('.dice-result .dice-formula').append(button);
 			// Append to Roll Template
-			diceRoll.append(btncontainer);
+			// diceRoll.append(btncontainer);
 		}
 
 		diceRolls = chatHTML.querySelectorAll('.roll-entry:not(.evaluated)');
@@ -670,7 +678,8 @@ export default class SkyfallMessage extends ChatMessage {
 			// Button Apply Damage
 			button = btnCreate( buttons.evaluate );
 			btncontainer.append(button);
-			diceRoll.append(btncontainer);
+			diceRoll.querySelector('.dice-result .dice-formula').append(button);
+			// diceRoll.append(btncontainer);
 		}
 	}
 
@@ -764,18 +773,32 @@ export default class SkyfallMessage extends ChatMessage {
 			const shadow = foundry.utils.getProperty(this._actor, 'system.resources.shadow');
 			updateData['system.resources.shadow.value'] = shadow.value - costs.shadow;
 		}
-		// TODO - Consume Ammo, Potions, Extras
+		// TODO - Potions, Extras
 		// Consumable with uses
 		if ( costs.uses ) {
 			// updateData['items'] ??= [];
 		}
 		// Consumable
 		if ( costs.quantity ) {
-			// updateData['items'] ??= [];
+			for (const consumeItem of costs.quantity) {
+				updateData['items'] ??= [];
+				updateData['items'].push({
+					_id: consumeItem.id,
+					[consumeItem.path]: consumeItem.value
+				});
+			}
 		}
 		// SIGIL
 		const sigil = this._ability.type == "sigil" ? this._ability : null;
 		if ( sigil ) { //sigil
+			if ( sigil.system.charges.value == 0 ) {
+				return ui.notifications.error(
+					game.i18n.format("NOTIFICATION.NotEnougthResource", {
+						resource: game.i18n.localize("SKYFALL2.RESOURCE.ChargePl"),
+					})
+				)
+			}
+
 			updateData['items'] ??= [];
 			updateData['items'].push({
 				"_id": sigil.id,
@@ -789,6 +812,7 @@ export default class SkyfallMessage extends ChatMessage {
 				"_id": recharge.id,
 				"system.activation.recharge": 0,
 			});
+			skyfall.ui.sceneConfig.scene.addCatharsis();
 		}
 		this._actor.update(updateData);
 	}
@@ -796,6 +820,7 @@ export default class SkyfallMessage extends ChatMessage {
 	/* -------------------------------------------- */
 	async #evaluateRoll(event){
 		event.preventDefault();
+		event.stopPropagation();
 		const button = event.currentTarget;
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
 		const message = game.messages.get(chatCardId);
@@ -813,6 +838,7 @@ export default class SkyfallMessage extends ChatMessage {
 
 	#applyDamage(event) {
 		event.preventDefault();
+		event.stopPropagation();
 		const button = event.currentTarget;
 		button.event = event.type; //Pass the trigger mouse click event
 		const modifier = Number(button.dataset.applyDamage);
@@ -832,8 +858,10 @@ export default class SkyfallMessage extends ChatMessage {
 
 	async #applyCatharsis(event) {
 		event.preventDefault();
+		event.stopPropagation();
+		let actor;
 		if ( !game.user.isGM && canvas.tokens.controlled) {
-			const actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
+			actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
 			if ( !actor ) ui.notifications.warn("Nenhum personagem selecionado");
 			const current = actor.system.resources.catharsis.value;
 			if ( current == 0 ) return ui.notifications.info("Catarse Insuficiente");
@@ -846,27 +874,47 @@ export default class SkyfallMessage extends ChatMessage {
 		const message = game.messages.get(chatCardId);
 		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
 		const rollIndex = button.closest(".roll-entry").dataset.rollIndex;
-		// const rollIndex = message.rolls.findIndex( r => r.options.flavor == rollTitle );
-		if ( !game.user.isGM && game.userId != this.author.id ) {
-			console.warn('WIP. Usuário sem permissão para modifcar a mensagem rola a catarse fora.\nFuturamente adicionaremos na mesma e mostraremos já concedeu catarse na rolagem.');
-			let r = new Roll('1d6', {}, {flavor: `${rollTitle}: Catarse${operator}`});
-			r.toMessage();
-		} else {
-			
-			await roll.applyCatharsis({operator});
-			message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
-			
-			message.updateData = {};
-			message.updateData.system = {};
-			message.updateData.rolls = message.rolls;
-			message.updateData.system.rolls = message.system.rolls;
-	
-			
-			await message.#prepareUsageHTML();
-			if ( !foundry.utils.isEmpty(message.updateData) ) {
+		const roll = message.rolls[rollIndex];
+		await roll.applyCatharsis({operator});
+		message.system.rolls[rollIndex].template = await roll.render({flavor: roll.options.flavor});
+		
+		message.updateData = {};
+		message.updateData.system = {};
+		message.updateData.rolls = message.rolls;
+		message.updateData.system.rolls = message.system.rolls;
+
+		
+		await message.#prepareUsageHTML();
+		if ( !foundry.utils.isEmpty(message.updateData) ) {
+			if ( !game.user.isGM && game.userId != this.author.id ) {
+				await skyfall.socketHandler.emit("RollCatharsis", {
+					id: message.id,
+					updateData: message.updateData,
+				});
+				ChatMessage.create({
+					content: game.i18n.format("SKYFALL2.MESSAGE.ActorHasGivenCatharsis",{
+						actor: actor?.name,
+						target: message.alias,
+						roll: roll.options.flavor,
+						operation: game.i18n.localize(`SKYFALL2.MESSAGE.${operator == '+' ? 'Add' : 'Subtract'}`),
+					}),
+					speaker: ChatMessage.getSpeaker()
+				})
+			} else {
 				await message.update(message.updateData);
-				message.updateData = null;
 			}
+			message.updateData = null;
+
+		}
+	}
+
+	async manageCatharsisUpdate() {
+		// messageId, updateData
+		if ( !game.user.isGM ) return;
+		await this.#prepareUsageHTML();
+		if ( !foundry.utils.isEmpty(this.updateData) ) {
+			await this.update(this.updateData);
+			this.updateData = null;
 		}
 	}
 

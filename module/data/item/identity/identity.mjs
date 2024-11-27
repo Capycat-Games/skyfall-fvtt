@@ -272,4 +272,40 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 		}
 	}
 
+	async toEmbed(config, options={}) {
+		let content = await this._buildEmbedHTML(config, options);
+		if ( !content ) return null;
+		// if ( content.match(this.parent._id) !== null ) return '<span>ERROR</span>';
+		let embed;
+		if ( config.inline ) embed = await this._createInlineEmbed(content, config, options);
+		else embed = await this._createInlineEmbed(content, config, options);
+		if ( embed ) {
+			embed.classList.add("content-embed");
+			embed.dataset.uuid = this.uuid;
+			embed.dataset.contentEmbed = "";
+			if ( config.classes ) embed.classList.add(...config.classes.split(" "));
+		}
+		return embed;
+	}
+
+	async _buildEmbedHTML(config, options={}) {
+		return this.description.value;
+	}
+
+	async _createInlineEmbed( content, config, options ) {
+		const html = document.createElement('div');
+		html.innerHTML = await TextEditor.enrichHTML(content, {
+			...options, //async: true, 
+			relativeTo: this.parent
+		});
+		const anchor = this.parent.toAnchor();
+		if ( this.parent.type == 'heritage' ) {
+			const title = document.createElement('h3');
+			title.innerHTML = anchor;
+			html.querySelector('div').prepend(title);
+		} else {
+			html.querySelector('p').prepend(anchor, ': ');
+		}
+		return html;
+	}
 }

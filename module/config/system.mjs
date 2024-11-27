@@ -31,6 +31,10 @@ const _SVGICONS = {
   sfcrafting: "systems/skyfall/assets/sheet/sfcrafting.svg",
   sfknowledge: "systems/skyfall/assets/sheet/sfknowledge.svg",
   sfreputation: "systems/skyfall/assets/sheet/sfreputation.svg",
+
+  sfcatharsis: "systems/skyfall/assets/sheet/sfcatharsis.svg",
+  sfcatharsisblue: "systems/skyfall/assets/sheet/sfcatharsis-blue.svg",
+  sfcatharsiswhite: "systems/skyfall/assets/sheet/sfcatharsis-white.svg",
 }
 
 const _FONTICONS = {
@@ -90,6 +94,7 @@ const SHEETICONS = {
   swim: '<i class="fa-solid fa-person-swimming"></i>',
   climb: '<i class="fa-solid fa-person-falling"></i>',
   dig: '<i class="fa-solid fa-person-digging"></i>',
+  reload: '<i class="fa-solid fa-rotate-left"></i>',
   // TODO
   ...SVGICONS,
   ..._FONTICONS,
@@ -105,8 +110,6 @@ const SHEETICONS = {
 //   return acc;
 // }, conditions);
 
-
-
 const _SYSTEM = {
   id: SYSTEM_ID,
   ...CREATURES,
@@ -115,7 +118,7 @@ const _SYSTEM = {
   actions: ACTIONS.actions,
   rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
-  icons: SHEETICONS
+  icons: SHEETICONS,
 };
 
 Object.defineProperty( _SYSTEM, 'conditions', {

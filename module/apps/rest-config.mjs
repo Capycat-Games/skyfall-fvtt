@@ -81,7 +81,6 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 		_context.buttons = this.options.buttons;
 		const form = await super._renderHTML(_context, _options);
 		// form.addEventListener("submit", event => this._onSubmit(event.submitter, event));
-		console.log(form.rest);
 		const quality = form.rest.querySelector('.quality');
 		quality.addEventListener("change", event => {
 			this.quality = event.currentTarget.value;
@@ -198,7 +197,6 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 
 	async changeQuality(ev, event){
 		event.preventDefault();
-		console.log()
 	}
 
 	/** @inheritDoc */

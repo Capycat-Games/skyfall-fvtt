@@ -31,27 +31,27 @@
 							<span><label>{{localize prop.label}}:</label> {{prop.descriptive}}</span>
 						{{/each}}
 					</div>
-					<div class="attack">
-						{{#each ability.system.labels.attack as | prop | }}
-							<label>{{localize prop.label}}:</label> {{{prop.descriptive}}}</span>
-						{{/each}}
-					</div>
+					{{#each ability.system.labels.attack as | prop | }}
+						<div class="rich">
+							<label>{{localize prop.label}}:</label> {{{prop.descriptive}}}
+						</div>
+					{{/each}}
 					{{#if ability.system.labels.effect }}
-						<div class="attack">
+						<div class="rich">
 							<label>{{localize ability.system.labels.effect.label}}:</label>
-							{{{ability.system.labels.effect.descriptive}}}</span>
+							{{{ability.system.labels.effect.descriptive}}}
 						</div>
 					{{/if}}
 					{{#if ability.system.labels.trigger }}
-						<div class="attack">
+						<div class="rich">
 							<label>{{localize ability.system.labels.trigger.label}}:</label>
-							{{{ability.system.labels.trigger.descriptive}}}</span>
+							{{{ability.system.labels.trigger.descriptive}}}
 						</div>
 					{{/if}}
 					{{#if ability.system.labels.special }}
-						<div class="attack">
+						<div class="rich">
 							<label>{{localize ability.system.labels.special.label}}:</label>
-							{{{ability.system.labels.special.descriptive}}}</span>
+							{{{ability.system.labels.special.descriptive}}}
 						</div>
 					{{/if}}
 			</li>

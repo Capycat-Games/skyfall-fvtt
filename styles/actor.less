@@ -45,6 +45,15 @@
 	}
 	
 	.actor-inventory {
+		.item-name {
+			flex-wrap: nowrap;
+		}
+		.item-quantity, .item-capacity {
+			max-width: 50px;
+		}
+		.item-controls {
+			min-width: 86px;
+		}
 		.inventory-header {
 			width: 100%;
 			.capacity, .fragments {
@@ -207,7 +216,7 @@
 					background-color: blueviolet;
 					&.temp { background-color: cyan; }
 				}
-				&.ep .bar {
+				&.xp .bar {
 					background-color: limegreen;
 				}
 				.container {
@@ -610,7 +619,7 @@
 		.npc-statblock {
 			* { color: var(--actor-color); }
 			font-size: 16px;
-			input, select {
+			input, select, select > * {
 				background-color: black;
 				color: white;
 			}
@@ -643,7 +652,12 @@
 						border-top: 1px solid var(--actor-color);
 					}
 					* { font-size: 18px; }
+					h4 { font-family: var(--font-primary); }
 					label { font-weight: bold; }
+					.rich * { display: inline; }
+					.ability-properties {
+						margin-bottom: 5px;
+					}
 					.ability-properties :not(:first-child) {
 						border-left: 3px solid var(--actor-color);
 						padding-left: 3px;

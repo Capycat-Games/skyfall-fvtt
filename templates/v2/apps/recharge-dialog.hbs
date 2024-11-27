@@ -1,0 +1,22 @@
+<form>
+	<input type="hidden" name="recharge">
+	{{#each actors as | actor | }}
+		<fieldset>
+			<legend>{{actor.actor.name}}</legend>
+			<ol class="plain">
+				{{#each actor.items as | item | }}
+					<li class="item entry flexrow" data-entry-id="{{item.uuid}}">
+						<div class="item-icon" style="background-image:url({{item.img}})">
+						</div>
+						<div class="item-name flex3" data-action="edit" style="cursor: pointer;">
+							{{item.name}}
+						</div>
+						<div class="item-controls">
+							<input type="radio" name="recharge" value="{{item.uuid}}">
+						</div>
+					</li>
+				{{/each}}
+			</ol>
+		</fieldset>
+	{{/each}}
+</form>

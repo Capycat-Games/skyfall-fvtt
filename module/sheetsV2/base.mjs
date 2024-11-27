@@ -7,6 +7,7 @@ import RestConfig from "../apps/rest-config.mjs";
 import ShortRest from "../apps/short-rest.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { weapons } from "../config/types.mjs";
+import AbilityDescriptorsConfig from "../apps/descriptors-config.mjs";
 const {HandlebarsApplicationMixin} = foundry.applications.api;
 const {ItemSheetV2} = foundry.applications.sheets;
 
@@ -49,6 +50,7 @@ export const SkyfallSheetMixin = Base => {
 				vary: {handler: BaseSheetSkyfall.#onVary, buttons: [0, 2]},
 				use: {handler: BaseSheetSkyfall.#onUse, buttons: [0, 2]},
 				abilityUse: {handler: BaseSheetSkyfall.#onAbilityUse, buttons: [0, 2]},
+				itemRecharge: {handler: BaseSheetSkyfall.#onItemRecharge, buttons: [0]},
 				roll: {handler: BaseSheetSkyfall.#onRoll, buttons: [0, 2]},
 				manage: BaseSheetSkyfall.#onManage,
 				filter: {handler: BaseSheetSkyfall.#onFilter, buttons: [0, 2]},
@@ -56,7 +58,7 @@ export const SkyfallSheetMixin = Base => {
 				collapseAll: BaseSheetSkyfall.#onCollapseAll,
 				expandAll: BaseSheetSkyfall.#onExpandAll,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
-
+				convertItem: BaseSheetSkyfall.#convertItem,
 			}
 		};
 
@@ -157,6 +159,8 @@ export const SkyfallSheetMixin = Base => {
 			const logLabel = game.i18n.localize("CONSOLE.LOG");
 			const logBtn = `<button type="button" class="header-control fa-solid fa-terminal" data-action="logToConsole" data-tooltip="${logLabel}" aria-label="${logLabel}"></button>`;
 			this.window.close.insertAdjacentHTML("beforebegin", logBtn);
+			// const convertBtn = `<button type="button" class="header-control fa-solid fa-recycle" data-action="convertItem" data-tooltip="CONVERT" aria-label="CONVERT"></button>`;
+			// this.window.close.insertAdjacentHTML("beforebegin", convertBtn);
 			
 			return frame;
 		}
@@ -740,6 +744,34 @@ export const SkyfallSheetMixin = Base => {
 			}
 		}
 
+		static async #onItemRecharge(event, target) {
+			let itemId = target.dataset.entryId;
+			const item = this.document.items.get(itemId);
+			if ( item.system.reload ) {
+				const ammo = this.document.items.get(item.system.consume.target);
+				if ( !ammo ) {
+					return ui.notifications.error("NOTIFICATIONS.ConsumableNotFound", {
+						localize: true
+					});
+				}
+				const realoaded = Math.min(item.system.reload.quantity, ammo.system.quantity);
+				item.update({'system.reload.value': realoaded});
+				const message = game.i18n.format("Recarregou {item} {actions}", {
+					item: item.name,
+					actions: "(" + item.system.reload.actions.reduce((acc, i) => {
+						if ( acc ) acc += ' + ';
+						acc += SYSTEM.icons[`sf${i}`];
+						return acc;
+					}, '') + ")",
+				});
+				ChatMessage.create({
+					content: message,
+				})
+				return;
+			}
+			
+		}
+
 		/**
 		 * Handle creating new Embbeded Document or Property to the document.
 		 * @param {Event} event             The initiating click event.
@@ -807,30 +839,37 @@ export const SkyfallSheetMixin = Base => {
 		static #onManage(event, target) {
 			let manage = target.dataset.manage;
 			switch (manage) {
+				case "descriptors":
+					if ( !game.user.getFlag('skyfall', 'developer') ) return;
+					return skyfall.applications.AbilityDescriptorsConfig.prompt({
+						document: this.document,
+						fieldPath: target.dataset.fieldPath,
+					});
 				case "modifiers-damage.dealt":
 					return;
 				case "modifiers-damage.taken":
 				case "modifiers-condition.imune":
 				case "irv":
-					return new ActorTraitsV2({document: this.actor, manage: "irv"}).render(true);
+					return new skyfall.applications.ActorTraitsV2({
+						document: this.actor,
+						manage: "irv"
+					}).render(true);
 				case "resources":
-					return new ActorResources({document: this.actor}).render(true);
-					// manage = manage.split('-')[1];
-					// return new ActorTraits(this.actor, manage).render(true);
-					// manage = manage.split('-')[1];
-					// return new ActorTraits(this.actor, manage).render(true);
+					return new skyfall.applications.ActorResources({
+						document: this.actor
+					}).render(true);
 				case "other":
 					// return new TraitSelector(this.actor, options).render(true);
 					return;
 				case "short-rest":
-					
-					return RestConfig.prompt({actor: this.actor});
-					// return new ShortRestV2({actor: this.actor}).render(true);
-					// return new ShortRest(this.actor, {actor: this.actor}).render(true);
+					return skyfall.applications.RestConfig.prompt({actor: this.actor});
 				case "long-rest":
 					return this.actor.longRest();
 				case "skills":
-					return new ActorTraitsV2({document: this.actor, manage: manage}).render(true);
+					return new skyfall.applications.ActorTraitsV2({
+						document: this.actor,
+						manage: manage
+					}).render(true);
 				case "movement":
 				case "languages":
 				case "proficiencies":
@@ -891,6 +930,18 @@ export const SkyfallSheetMixin = Base => {
 			console.groupEnd()
 		}
 
+		static async #convertItem(){
+			const doc = this.document;
+			const operation = {
+				pack: doc.pack
+			}
+			const itemData = doc.toObject();
+			itemData.type = 'consumable';
+			
+			await doc.delete();
+
+			Item.create(itemData, operation);
+		}
 		/* ---------------------------------------- */
 		/*              EVENT HANDLERS              */
 		/* ---------------------------------------- */

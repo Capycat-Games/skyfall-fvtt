@@ -190,7 +190,8 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			if ( v == "nor" ) return;
 			context.irv[v].push({
 				id: k,
-				label: SYSTEM.DESCRIPTOR.DAMAGE[k].label,
+				label: SYSTEM.DESCRIPTORS[k]?.label,
+				hint: SYSTEM.DESCRIPTOR.DAMAGE[k].hint,
 				type: 'descriptor',
 			});
 		});

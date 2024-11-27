@@ -107,6 +107,7 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 		await this.getEnrichedFields(context);
 		await this.getModificationsEmbeds(context);
 		console.log(context);
+		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
 

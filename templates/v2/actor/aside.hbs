@@ -17,6 +17,7 @@
 		</div>
 		<input type="number" name="system.resources.catharsis.value" value="{{system.resources.catharsis.value}}"
 			data-tooltip="CATARSE">
+		{{{SYSTEM.icons.sfcatharsiswhite}}}
 	</div>
 
 	<div class="damage-reduction attribute flexcol">
@@ -124,24 +125,26 @@
 			</a>
 		</h4>
 	</div>
-	<div class="flex-bottom resource ep flexrow">
-		<h4 class="flex100">
-			{{localize "SKYFALL2.Level"}} {{system.level.value}} |
-			{{localize schema.level.xp.label}}:
-		</h4>
-		{{!-- {{> "systems/skyfall/templates/v2/actor/widgets/xp.hbs" pct=1750}} --}}
-		{{!-- {{formField schema.level.xp value=system.level.xp localize=true}} --}}
-		{{!-- {{system.level.next}} --}}
-		{{!-- {{system.level.pct}} --}}
-		{{!-- {{system.level.hexbar}} --}}
-		<div class="container">
-			<div class="bar" style="width:{{system.level.pct}}%;">
-			</div>
-			<div class="fields flexrow">
-				<span data-tooltip="SKYFALL2.Total">{{system.level.next}}</span>
-				/
-				{{formInput schema.level.xp value=system.level.xp localize=true}}
+	{{#unless flags.disableExperience}}
+		<div class="flex-bottom resource xp flexrow">
+			<h4 class="flex100">
+				{{localize "SKYFALL2.Level"}} {{system.level.value}} |
+				{{localize schema.level.xp.label}}:
+			</h4>
+			{{!-- {{> "systems/skyfall/templates/v2/actor/widgets/xp.hbs" pct=1750}} --}}
+			{{!-- {{formField schema.level.xp value=system.level.xp localize=true}} --}}
+			{{!-- {{system.level.next}} --}}
+			{{!-- {{system.level.pct}} --}}
+			{{!-- {{system.level.hexbar}} --}}
+			<div class="container">
+				<div class="bar" style="width:{{system.level.pct}}%;">
+				</div>
+				<div class="fields flexrow">
+					<span data-tooltip="SKYFALL2.Total">{{system.level.next}}</span>
+					/
+					{{formInput schema.level.xp value=system.level.xp localize=true}}
+				</div>
 			</div>
 		</div>
-	</div>
+	{{/unless}}
 </aside>

@@ -262,16 +262,20 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		}
 
 		const context = {
+			SYSTEM: SYSTEM,
+			flags: {
+				disableExperience: game.settings.get('skyfall','disableExperience'),
+			},
 			document: doc,
 			actor: doc,
 			user: game.user,
 			system: doc.system,
 			source: src.system,
+
 			schema: this._getDataFields(),
 			progression: await doc.system._progression(),
 			filters: this.filters,
 			items: {},
-			SYSTEM: SYSTEM,
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
@@ -382,6 +386,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			context.irv[v].push({
 				id: k,
 				label: SYSTEM.DESCRIPTOR.DAMAGE[k].label,
+				hint: SYSTEM.DESCRIPTOR.DAMAGE[k].hint,
 				type: 'descriptor',
 			});
 		});
@@ -407,7 +412,11 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const classPaths = ['class','path'];
 		for (const item of this.document.items ) {
 			if ( inventory.includes(item.type) ) {
-				item.system.volume = item.system.capacity * item.system.quantity;
+				if ( item.system.packCapacity ) {
+					item.system.volume = Math.floor(item.system.capacity / item.system.packCapacity) * item.system.quantity;
+				} else {
+					item.system.volume = item.system.capacity * item.system.quantity;
+				}
 				if ( this.inventory == 'category' ) {
 					items.inventory[item.type] ??= [];
 					items.inventory[item.type].push(item);
@@ -488,24 +497,27 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			return filters[key] && !filters[key].active;
 		}
 		for (const [key, filters] of Object.entries(this.filters)) {
+			console.groupCollapsed(`${key} Filter`);
 			const list = context.items[key];
 			for (const item of Object.values(list)) {
+				console.groupCollapsed(`Filter: ${item.name}`);
 				let show = true;
-				const action = item.system?.action;
+				const action = item.type == 'weapon' ? 'action' : item.system?.action;
 				const sigil = item.type == 'sigil';
 				const tags = new Set(item.system.descriptors);
 				if ( item.system?.isRanged && valid(filters, 'ranged') ) show = false;
 				if ( item.system?.isMelee && valid(filters, 'melee') ) show = false;
 				if ( action && valid(filters, action) ) show = false;
 				if ( sigil && valid(filters, 'sigil') ) show = false;
-				
-
 				if ( tags.has('control') && valid(filters, 'control') ) show = false;
 				if ( tags.has('ofensive') && valid(filters, 'ofensive') ) show = false;
 				if ( tags.has('utility') && valid(filters, 'utility') ) show = false;
 
-				item.filtered = show ? '' : 'hidden';
+				item.filters ??= {};
+				item.filters[key] = show ? '' : 'hidden';
+				console.groupEnd();
 			}
+			console.groupEnd();
 		}
 	}
 	

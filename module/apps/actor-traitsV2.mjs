@@ -124,11 +124,13 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 	IRVContext(context){
 		const damageTaken = this.document.system.modifiers.damage.taken;
 		context.damageTaken = {};
-		for ( let [key, damage] of Object.entries(SYSTEM.DESCRIPTOR.DAMAGE) ) {
+		
+		for ( let [key, damage] of Object.entries(damageTaken) ) {
+			let label = SYSTEM.DESCRIPTORS[key]?.label;
+			if ( key == 'all' ) label = 'Geral';
 			context.damageTaken[key] = {
-				rank: damageTaken[key],
-				label: damage.label,
-				abbr: damage.abbr,
+				rank: damage,
+				label: label,
 			}
 		}
 		context.conditionImunity = this.document.system.modifiers.condition.imune;
@@ -139,7 +141,13 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 	}
 
 	languagesContext(context){
-
+		context.languages = {};
+		for ( let [key, idioma] of Object.entries(SYSTEM.languages) ) {
+			context.languages[key] = {
+				value: this.document.system.languages.includes(key),
+				label: idioma.label 
+			}
+		}
 	}
 
 	movementContext(context){

@@ -1,0 +1,49 @@
+{{#if 1 }}
+{{~else if (data.item)}}
+	<li class="flexrow type-{{data.type}}" data-entry-id="{{data.item.id}}">
+		<div class="item-name flexrow">
+			<img class="flex0 {{ifThen (eq data.type 'bonus') 'hidden' ''}}" style="display: inline;" width="28px"
+				height="28px" src="{{data.item.img}}" data-action="itemToChat" data-target="item">
+			{{#if (eq data.type 'bonus')}}
+				{{data.item.name}}
+			{{~else if (eq data.type 'class')}}
+				{{localize "SKYFALL2.Level"}} {{data.level}} —
+				<a data-action="edit" class="class-level" data-level="{{data.level}}">{{data.item.name}}</a>
+			{{else}}
+				<a data-action="edit">{{data.item.name}}</a>
+			{{/if}}
+		</div>
+		<div class="item-controls {{ifThen (eq data.type 'bonus') 'hidden' ''}}">
+			{{!-- <a class="control" data-action="itemToChat" data-target="item">{{{@root.SYSTEM.icons.chat}}}</a> --}}
+			<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+		<div class="flex100"></div>
+		{{#each data.children as | childArr key | }}
+			{{> "systems/skyfall/templates/v2/actor/progression-list.hbs" content=childArr cssClass='nested-itens'}}
+			<div class="flex100"></div>
+		{{/each}}
+		{{#if data.grant.length }}
+			<ol class="plain ">
+				{{#each data.grant as | child | }}
+					<li>GRANT {{child.type}}</li>
+				{{/each}}
+			</ol>
+		{{/if}}
+	</li>
+{{else}}
+	<li class="flexrow type-{{data.type}} empty">
+		<div class="item-name flexrow">
+			{{#if (eq data.type 'class')}}
+				{{localize "SKYFALL2.Level"}} {{data.level}} —
+				<a class="class-level" data-level="{{data.level}}">{{localize (concat "TYPES.Item." data.type)}}</a>
+			{{else}}
+				{{localize (concat "TYPES.Item." data.type)}}
+			{{/if}}
+		</div>
+		<div class="item-controls {{ifThen (eq data.type 'bonus') 'hidden' ''}}">
+			{{!-- <a class="control" data-action="itemToChat" data-target="item">{{{@root.SYSTEM.icons.chat}}}</a> --}}
+			<a class="control" data-action="create" data-create="Item"
+				data-type="{{data.type}}">{{{@root.SYSTEM.icons.create}}}</a>
+		</div>
+	</li>
+{{/if}}

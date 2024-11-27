@@ -20,6 +20,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	static PARTS = {
 		ability: {
 			template: "systems/skyfall/templates/v2/item/ability-card.hbs",
+			classes: ["scrollable"],
 			scrollable: [""],
 		},
 		sigil: {template: "systems/skyfall/templates/v2/item/sigil-card.hbs"},
@@ -105,6 +106,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 		await this.getEnrichedFields(context);
 		await this.getModificationsEmbeds(context);
 		console.log(context);
+		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
 

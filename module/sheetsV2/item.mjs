@@ -100,7 +100,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	#getTabs() {
 		return Object.values(this.constructor.TABS).reduce((acc, v) => {
 			if ( !this.tabs.includes(v.id) ) return acc;
-			console.log(this.tabGroups, v);
 			const isActive = this.tabGroups[v.group] === v.id;
 			acc[v.id] = {
 				...v,
@@ -334,6 +333,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		await this._getDataFields(context),
 		await this._typeContext(context);
 		console.log(context);
+		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
 	
@@ -394,6 +394,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'equipment':
 				break;
 			case 'weapon':
+				await this._getConsume(context);
 			case 'armor':
 			case 'clothing':
 				await this._getSigils(context);
@@ -486,6 +487,20 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		}
 	}
 	
+
+	async _getConsume(context){
+		if ( !this.document.actor ) return;
+		const items = this.document.actor.items.filter( i => i.type == 'consumable' );
+		context._selOpts.ammunition = items.reduce((acc, i) => {
+			acc.push({
+				id: i.id,
+				label: `${i.name} (${i.system.quantity})`
+			});
+			return acc;
+		}, []);
+		//context._selOpts.ammo = 
+	}
+
 	async _getSigils(context){
 		context.sigils = {
 			prefix: [],
@@ -494,6 +509,12 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		const sigils = this.document.system.sigils;
 		for (const sigilData of sigils) {
 			const sigil = await fromUuid(sigilData.parentUuid || sigilData.uuid);
+			if ( !sigil ) {
+				context.sigils['prefix'].push({
+					id: '', uuid: (sigilData.parentUuid || sigilData.uuid), name: 'error', label: 'error', infused: false
+				});
+				continue;
+			};
 			const type = sigil.system.type;
 			context.sigils[type].push({
 				id: sigil.id,

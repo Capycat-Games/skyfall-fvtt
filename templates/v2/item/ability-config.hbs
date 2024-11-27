@@ -10,15 +10,25 @@
 		</div>
 		<div class="flex100"></div>
 		{{!-- DECRIPTIONS --}}
-		<div class="form-group stacked">
+		<div class="form-group stacked" data-action="manage" data-manage="descriptors" data-field-path="system.descriptors">
 			<label>{{localize "SKYFALL2.DescriptorPl"}}</label>
-			<dropdown-tags name="system.descriptors" class="descriptors">
-				{{#each _selOpts.descriptors as | group id |}}
-					<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
-						{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
-					</optgroup>
-				{{/each}}
-			</dropdown-tags>
+			{{#if user.isDeveloper }}
+				<div class="ability-descriptors">
+					{{#each labels.descriptors as | tag key |}}
+						{{#if tag.value }}
+							<label class="descriptor active">{{tag.label}}</label>
+						{{/if}}
+					{{/each}}
+				</div>
+			{{~else}}
+				<dropdown-tags name="system.descriptors" class="descriptors">
+					{{#each _selOpts.descriptors as | group id |}}
+						<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
+							{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
+						</optgroup>
+					{{/each}}
+				</dropdown-tags>
+			{{/if}}
 		</div>
 	</div>
 	{{!-- ACTIVATION --}}
@@ -34,8 +44,6 @@
 		</div>
 		<div class="form-group">
 			<label>{{localize schema.activation.recharge.label}}</label>
-			{{log schema.activation.recharge}}
-			{{log system.activation.recharge}}
 			<div class="form-fields">
 				{{formInput schema.activation.recharge value=system.activation.recharge localize=true classes="slim"}}
 			</div>

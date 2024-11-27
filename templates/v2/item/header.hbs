@@ -4,16 +4,8 @@
 		<h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
 		<div class="flex100"></div>
 		{{#if (eq document.type 'feature')}}
+			<div class="flex2">&nbsp;</div>
 			{{formGroup schema.catharsis value=system.catharsis localize=true}}
-		{{/if}}
-		{{#if system.origin }}
-			<div class="form-group">
-				<small>
-					{{#each system.origin as | o |}}
-						<span>{{o}}</span>
-					{{/each}}
-				</small>
-			</div>
 		{{/if}}
 	</div>
 </header>

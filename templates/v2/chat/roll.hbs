@@ -1,0 +1,29 @@
+<div class="dice-roll {{roll.type}}">
+	{{#if flavor}}
+		<div class="dice-flavor">{{flavor}}</div>
+	{{/if}}
+	<div class="dice-result">
+		<div class="dice-formula">
+			{{formula}}
+			{{#if roll.evaluated }}
+				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="-"><i class="fa-solid fa-bahai"></i>
+					{{{SYSTEM.sfcatharsis}}}
+				</button>
+				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="+"><i class="fa-solid fa-bahai"></i>
+					{{{SYSTEM.sfcatharsis}}}
+				</button>
+
+			{{else}}
+				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="+"><i class="fa-solid fa-bahai"></i>
+					{{{SYSTEM.sfcatharsis}}}
+				</button>
+			{{/if}}
+		</div>
+		{{#if roll.evaluated }}
+			{{{tooltip}}}
+			<h4 class="dice-total">{{total}}</h4>
+		{{else}}
+
+		{{/if}}
+	</div>
+</div>

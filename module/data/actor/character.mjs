@@ -289,21 +289,35 @@ export default class Character extends Creature {
 	}
 
 	prepareCapacity() {
+		// const ability = this.capacity.ability;
+		// const abl = this.abilities[ability].value;
 		const str = this.abilities.str.value;
 		this.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
 		const items = this.parent.items.filter( i => 'capacity' in i.system )
-		this.capacity.value = items.reduce((acc, i) => acc += i.system.capacity * i.system.quantity, 0);
+		this.capacity.value = items.reduce((acc, i) => {
+			if ( i.system.packCapacity ) {
+				acc += Math.floor( i.system.capacity / i.system.packCapacity ) * i.system.quantity
+			} else {
+				acc += i.system.capacity * i.system.quantity
+			}
+			return acc
+		}, 0);
 	}
 
 	prepareFragmentsLimit() {
 		const ability = this.abilities[this.fragments.abl]?.value ?? 0;
 		this.fragments.max = ability + (this.proficiency * 2);
-		// TODO CHECK IF ITEM IS EQUIPPED && ATTUNED
 		const gear = this.parent.items.filter( i => i.system.equipped && i.system.attuned );
 		let uuids = gear.map( i => i.system.sigils );
 		uuids = uuids.reduce( (acc, i) => acc.concat(i), [] );
-		//.filter( i => i.type=='sigil' && i.system.infused);
-		// this.fragments.value = items.reduce((acc, i) => acc += i.system.fragments.amount, 0);
+		let fragment = 0;
+		for (const uuid of uuids) {
+			if ( !uuid.parentUuid ) continue;
+			const item = fromUuidSync(uuid.parentUuid);
+			if ( !item.system.fragments.value ) continue;
+			fragment += item.system.fragments.amount;
+		}
+		this.fragments.value = fragment;
 	}
 
 	getRollData() {

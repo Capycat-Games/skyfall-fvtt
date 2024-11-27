@@ -32,7 +32,7 @@ let _consumables = ["potion", "ammo", "food", "poison", "synapse",];
 export const consumables = _consumables.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ITEM.CONSUMABLETYPES.${key.toUpperCase()}`,
+		label: `SKYFALL2.CONSUMABLE.${key.titleCase()}`,
 	}
 	return obj;
 }, {});
@@ -126,7 +126,7 @@ equipmentKeys.reduce((obj, key) => {
 	return obj;
 }, DESCRIPTOR.EQUIPMENT);
 
-let damageTypes = ["acid", "bludgeoning", "slashing", "lightning", "energy", "cold", "fire", "necrotic", "piercing", "psychic", "radiant", "thunder", "poison", "special"];
+let damageTypes = ["acid", "bludgeoning", "slashing", "lightning", "energy", "cold", "fire", "necrotic", "piercing", "psychic", "radiant", "thunder", "poison", "mundane", "special"];
 let physicalDamage = ["bludgeoning","slashing","piercing"];
 let elementalDamage = ["acid","lightning","cold","fire"];
 damageTypes.reduce((obj, key) => {
@@ -134,8 +134,8 @@ damageTypes.reduce((obj, key) => {
 		id: key,
 		type: physicalDamage.includes(key) ? ["damage","equipment"] : ["damage"],
 		subtype: elementalDamage.includes(key) ? 'elemental' : null,
-		label: `SKYFALL.DESCRIPTORS.DAMAGE.${key.toUpperCase()}`,
-		hint: `SKYFALL.DESCRIPTORS.DAMAGE.${key.toUpperCase()}HINT`,
+		label: `SKYFALL2.DESCRIPTORS.${key.titleCase()}`,
+		hint: `SKYFALL2.DESCRIPTORS.${key.titleCase()}Hint`,
 	}
 	return obj;
 }, DESCRIPTOR.DAMAGE);

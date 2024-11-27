@@ -6,8 +6,6 @@
 			<span class="hp">{{system.recovered.hp}} {{localize "SKYFALL.ACTOR.RESOURCES.HPABBR"}}</span>
 			<span class="ep">{{system.recovered.ep}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}}</span>
 		</summary>
-		{{log "CHATMESSAGE"}}
-		{{log rolls}}
 		{{!-- {{{rollContent}}} --}}
 		{{#each rolls as |r id|}}
 			<div class="roll-entry evaluated-roll {{r.class}}" data-roll-title="{{r.options.flavor}}">

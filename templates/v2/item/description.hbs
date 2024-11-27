@@ -3,7 +3,17 @@
 		<aside class="flexcol">
 			{{formGroup schema.quantity value=system.quantity classes="slim" localize=true}}
 			{{formGroup schema.price value=system.price classes="slim" localize=true}}
-			{{formGroup schema.capacity value=system.capacity classes="slim" localize=true}}
+			{{#if (eq item.type 'consumable') }}
+				<div class="form-group stacked">
+					<label>{{localize schema.capacity.label}}</label>
+					<div class="form-fields">
+						{{formInput schema.capacity value=system.capacity}}/
+						{{formInput schema.packCapacity value=system.packCapacity}}
+					</div>
+				</div>
+			{{~else}}
+				{{formGroup schema.capacity value=system.capacity classes="slim" localize=true}}
+			{{/if}}
 			{{#if (and (isDefined system.equipped) document.isEmbedded)}}
 				{{formGroup schema.equipped value=system.equipped localize=true}}
 				{{formGroup schema.attuned value=system.attuned localize=true}}
@@ -13,15 +23,25 @@
 			{{/if}}
 		</aside>
 	{{/if}}
-	<div class="flexcol flex3">
+	<div class="flexcol flex3" data-action="manage" data-manage="descriptors" data-field-path="system.descriptors">
 		{{#if (isDefined system.descriptors)}}
-			<dropdown-tags name="system.descriptors" class="descriptors" data-document="{{document.uuid}}">
-				{{#each _selOpts.descriptors as | group id |}}
-					<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
-						{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
-					</optgroup>
+			<label>{{localize "SKYFALL2.DescriptorPl"}}</label>
+			<div class="ability-descriptors">
+				{{#each labels.descriptors as | tag key |}}
+					{{#if tag.value }}
+						<label class="descriptor active">{{tag.label}}</label>
+					{{/if}}
 				{{/each}}
-			</dropdown-tags>
+			</div>
+			{{#if 0 }}
+				<dropdown-tags name="system.descriptors" class="descriptors" data-document="{{document.uuid}}">
+					{{#each _selOpts.descriptors as | group id |}}
+						<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
+							{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.descriptors}}
+						</optgroup>
+					{{/each}}
+				</dropdown-tags>
+			{{/if}}
 		{{/if}}
 
 		{{#if (and (eq document.type 'path') (isDefined system.type))}}

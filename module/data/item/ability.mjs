@@ -411,6 +411,26 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				TextEditor.enrichHTML(modifications,{})
 			]).then((data) => labels.modifications = data );
 		}
+		if ( this.parent.isEmbedded && this.parent.parent.type == 'npc' ) {
+			const _labels = {};
+			if ( labels.properties?.attack ) {
+				_labels.properties ??= {};
+				_labels.properties.attack = labels.properties.attack;
+			}
+			if ( labels.properties?.range ) {
+				_labels.properties ??= {};
+				_labels.properties.range = labels.properties.range;
+			}
+			if ( labels.properties?.target ) {
+				_labels.properties ??= {};
+				_labels.properties.target = labels.properties.target;
+			}
+			if ( labels.properties?.trigger ) {
+				_labels.properties ??= {};
+				_labels.properties.trigger = labels.properties.trigger;
+			}
+			return foundry.utils.mergeObject( _labels, labels, {overwrite: false});
+		}
 		return labels;
 	}
 
@@ -442,26 +462,32 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 
 	/** @override */
 	async toEmbed(config, options={}) {
-		config.classes = "ability-embed";
+		config.classes = "ability-embed skyfall";
 		config.cite = false;
 		config.caption = false;
 		let modifications = this.parent.effects.filter(ef => ef.type == "modification").map(ef => `@EMBED[${ef.uuid}]`);
 		
+		const anchor = this.parent.toAnchor();
+		anchor.classList.remove('content-link');
+		anchor.querySelector('i').remove();
 		const abilityCard = await renderTemplate("systems/skyfall/templates/v2/item/ability-card.hbs", {
 			SYSTEM: SYSTEM,
 			document: this.parent,
 			item: this.parent,
 			system: this,
+			anchor: anchor.outerHTML,
 			labels: this.labels,
 			isPlayMode: true,
 			isEmbed: true,
+			isFigure: true,
 			enriched: [],
 			modifications: modifications.join(''),
 		});
 		
 		const container = document.createElement("div");
-		container.innerHTML = await TextEditor.enrichHTML(abilityCard, {});
-		
+		container.innerHTML = await TextEditor.enrichHTML(abilityCard, {
+			async: true, relativeTo: this.parent,
+		});
 		return container.firstChild;
 	}
 	/**

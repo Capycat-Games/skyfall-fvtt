@@ -21,18 +21,12 @@ export function SkyfallHooks(){
 		];
 		if ( validRolls.every( v => !change.key.startsWith(v)) ) return;
 		console.groupCollapsed("applyActiveEffect");
-		console.log(actor);
-		console.log(change);
-		console.log(current);
-		console.log(delta);
-		console.log(changes);
 		// const transformRE = /^(?<type>[a-z\-]+)#(?<method>[a-z\-]+)((?<params>\[.*\]))/;
 		// const rt = change.key.match(transformRE);
 		let type = change.key.match(/^([a-z\-]+)/g)[0];
 		let method = change.key.match(/#([a-z\-]+)/g)[0];
 		let params = change.key.match(/\[(.*)\]/g) ?? [];
 		method = method.replace('#','');
-		console.log(type, method, params);
 		
 		if ( !type || !method ) return;
 		const rollMod = {

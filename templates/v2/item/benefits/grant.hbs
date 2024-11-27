@@ -8,6 +8,7 @@
 		<li class="grant entry" data-entry-id="{{grant._index}}">
 			<fieldset class="flexrow">
 				<div class="flexrow">
+					<input type="hidden" name="{{concat ../fieldPath '.' grant._index '._id'}}" value="{{grant._id}}">
 					{{formGroup ../grantschema.granting value=grant.granting localize=true name=(concat ../fieldPath '.' grant._index '.granting') stacked=true classes="flex1"}}
 					{{#if (eq grant.granting 'path')}}
 						{{!-- <input type="hidden" name="{{concat ../fieldPath '.' grant._index '.quantity'}}" value="{{grant.quantity}}"> --}}

@@ -22,4 +22,9 @@ export default class Clothing extends PhysicalItemData {
 			}), {max: 4}),
 		})
 	}
+
+	/** @inheritDoc */
+	async _preUpdate(changes, options, user) {
+		return await super._preUpdate(changes, options, user);
+	}
 }

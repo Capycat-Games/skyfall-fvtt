@@ -4,7 +4,6 @@
 		<fieldset>
 			<legend>{{localize step.title}}</legend>
 			<ol class="plain {{ifThen (and (gte step.list.length 120) (not step.list.0.groupLabel)) 'columns-2' ''}}">
-				{{log step.list}}
 				{{#each step.list as | grant |}}
 					{{#if (and grant.groupLabel (not @first)) }}
 						</li>

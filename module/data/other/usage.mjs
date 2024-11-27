@@ -52,9 +52,23 @@ export default class UsageMessage extends foundry.abstract.TypeDataModel {
 				uses: new fields.NumberField({
 					nullable: true, blank: true, integer: true, initial:0, min: 0
 				}),
-				quantity: new fields.NumberField({
-					nullable: true, blank: true, integer: true, initial:0, min: 0
-				}),
+				quantity: new fields.ArrayField(new fields.SchemaField({
+					id: new fields.StringField({
+						require: true,
+						blank: true,
+					}),
+					path: new fields.StringField({
+						require: true,
+						blank: true,
+					}),
+					value: new fields.NumberField({
+						require: true,
+						initial: 0
+					}),
+				})),
+				// new fields.NumberField({
+				// 	nullable: true, blank: true, integer: true, initial:0, min: 0
+				// }),
 				charges: new fields.NumberField({
 					nullable: true, blank: true, integer: true, initial:0, min: 0
 				}),

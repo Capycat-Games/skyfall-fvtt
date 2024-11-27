@@ -197,7 +197,6 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	/** @inheritDoc */
 	async _onCreate(data, options, user) {
-		return;
 		await super._onCreate(data, options, user);
 	}
 
@@ -230,7 +229,9 @@ export default class SkyfallEffect extends ActiveEffect {
 
 		if ( !granparent ) return;
 		change.value = Roll.replaceFormulaData( change.value, parent.getRollData());
-		change.value = Roll.replaceFormulaData( change.value, granparent.getRollData());
+		if ( granparent.documentName == "Actor" ) {
+			change.value = Roll.replaceFormulaData( change.value, granparent.getRollData());
+		}
 		const roll = new Roll(change.value);
 		if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;
 	}

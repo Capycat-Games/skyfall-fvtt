@@ -55,7 +55,6 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			this.config.formula = this.config.formula.replace('-','+-');
 			this.config.formula.split('+').reduce((acc, term) => {
 				let t = new RollSF(term, this.rollData).terms[0];
-				console.log(term, t);
 				acc.push({
 					expression: t.options.data ? `@${t.options.data}` : t.expression,
 					label:`Base`,
@@ -184,7 +183,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	static DEFAULT_OPTIONS = {
-		classes: ["skyfall","roll-config"],
+		classes: ["skyfall", "roll-config"],
 		sheetConfig: false,
 		tag: "form",
 		form: {
@@ -373,7 +372,6 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				let combatant = combat.combatants.find(
 					(c) => ( c.initiative == null && ((boss && c.initiative == null && c.actor.id === this.actor.id ) || (!boss && c.actor.id === this.actor.id )) )
 				);
-				console.log(combatant);
 				if ( !combatant || combatant.initiative != null ) return;
 				combat.setInitiative(combatant.id, (partner ? 0 : roll.total ));
 				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);

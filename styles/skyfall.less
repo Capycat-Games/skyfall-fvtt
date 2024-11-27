@@ -1,12 +1,12 @@
 // out: "../skyfall.css", compress: false, sourceMap: false
 @import "variables.less";
 @import "elements.less";
-@import "apps.less";
 @import "actor.less";
 @import "item.less";
 @import "effects.less";
 @import "chat.less";
 @import "journal.less";
+@import "apps.less";
 
 /* ----------------------------------------- */
 /*  Skyfall Styles                           */
@@ -19,8 +19,6 @@
 // OVERWRITE LIGHT/DARK THEME
 .skyfall.sheet.character, .skyfall.sheet.npc, .skyfall.sheet {
 	.window-content {
-		* { color: black; }
-		
 		input, select { background-color: rgba(0,0,0,.05);}
 		input.slim {padding: 5px 0; text-align: center;}
 		h1, h2, h3, h4, h5, h6 {
@@ -79,7 +77,7 @@
 	}
 
 	&.sheet .window-content {
-		background: url(./assets/sheet/background.webp) repeat white;
+		// background: url(./assets/sheet/background.webp) repeat white;
 		// * { color: black; }
 		// background-image: url(./assets/sheet/background.webp);
 	}
@@ -129,7 +127,6 @@
 			}
 		}
 	}
-	
 }
 
 .skyfall, .skyfall-core {
@@ -163,6 +160,10 @@
 		text-align: center;
 		padding: 0;
 		i { margin: 0;}
+		svg, svg image {
+			width: 16px;
+			height: 16px;
+		}
 	}
 }
 

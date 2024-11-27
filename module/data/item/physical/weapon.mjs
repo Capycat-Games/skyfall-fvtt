@@ -22,8 +22,31 @@ export default class Weapon extends PhysicalItemData {
 			attack: this.attackSchema(),
 			damage: this.damageSchema(),
 			range: new fields.NumberField({required: true, min: 0, label:"SKYFALL2.Range"}),
+			consume: new fields.SchemaField({
+				type: new fields.StringField({
+					required: true,
+					blank: true,
+					initial: 'ammo',
+					label: "SKYFALL2.Type"
+				}),
+				target: new fields.StringField({
+					required: true,
+					blank: true,
+					initial: '',
+					label: "SKYFALL2.CONSUMABLE.Ammo"
+				})
+			}),
 			reload: new fields.SchemaField({
-				quantity: new fields.NumberField({required: true, min: 0, label:"SKYFALL2.Quantity"}),
+				value: new fields.NumberField({
+					required: true,
+					min: 0,
+					label:"SKYFALL2.Quantity"
+				}),
+				quantity: new fields.NumberField({
+					required: true,
+					min: 0,
+					label:"SKYFALL2.Quantity"
+				}),
 				actions: new fields.ArrayField(new fields.StringField({
 					required: true,
 					choices: [
@@ -132,6 +155,8 @@ export default class Weapon extends PhysicalItemData {
 
 	/** @inheritDoc */
 	async _preUpdate(changes, options, user) {
+		let allow = await super._preUpdate(changes, options, user);
+		if ( allow === false ) return false;
 		this.automateDescriptors(changes, options, user);
 	}
 

@@ -33,4 +33,9 @@ export default class Armor extends PhysicalItemData {
 	get isShield() {
 		return this.type == 'shield';
 	}
+
+	/** @inheritDoc */
+	async _preUpdate(changes, options, user) {
+		return await super._preUpdate(changes, options, user);
+	}
 }

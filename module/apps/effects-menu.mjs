@@ -58,7 +58,6 @@ export default class EffectsMenu extends HandlebarsApplicationMixin(DocumentShee
 		for (const eff of context.effects ) {
 			eff.tooltip = eff.statusId?.tooltip ?? await eff.richTooltip();
 		}
-		console.log(context);
 		return context;
 	}
 

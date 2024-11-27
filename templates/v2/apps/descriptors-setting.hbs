@@ -1,0 +1,98 @@
+<section class="tab setting-{{tab.id}} {{tab.cssClass}} scrollable flexcol" data-tab="{{tab.id}}"
+	data-group="{{tab.group}}">
+	<style>
+		.ability-descriptors .tab,
+		.ability-descriptors ul {
+			height: 445px;
+		}
+
+		.ability-descriptors .descriptor {
+			white-space: nowrap;
+		}
+
+		.descriptor.active .controls {
+			float: right;
+		}
+
+		.descriptor.active .controls * {
+			color: white;
+		}
+	</style>
+	{{#if (eq tab.id "descriptors")}}
+		{{#each descriptors as | group key |}}
+			<div class="ability-descriptors flexrow text-center">
+				<label>
+					{{localize (concat "SKYFALL2.DESCRIPTOR." key)}}
+				</label>
+				{{#each group as | descriptor |}}
+					<label class="descriptor active" data-tooltip="{{descriptor.hint}}" data-descriptor="{{descriptor.id}}">
+						{{localize descriptor.id}}
+					</label>
+				{{/each}}
+			</div>
+		{{/each}}
+	{{/if}}
+
+	{{#if (eq tab.id "base")}}
+		<ul class="plain flexcol">
+			{{#each setting.base as | descriptor |}}
+				<li class="flexcol">
+					<div class="ability-descriptors flexrow text-center ">
+						<label class="descriptor active" data-tooltip="{{descriptor.hint}}" data-descriptor="{{descriptor.id}}">
+							{{localize descriptor.id}}
+							<span>
+								<a data-action="delete" data-id="{{descriptor.id}}">{{SKYFALL.icons.delete}}</a>
+							</span>
+						</label>
+					</div>
+					<div>
+						{{#with @root.setting.schema.fields.base.element.fields as | schema |}}
+							{{formGroup schema.id name=(concat "base." descriptor.id ".id") value=descriptor.id localize=true classes="hidden"}}
+							{{formGroup schema.label name=(concat "base." descriptor.id ".label") value=descriptor.label localize=true}}
+							{{formGroup schema.hint name=(concat "base." descriptor.id ".hint") value=descriptor.hint localize=true}}
+							{{formGroup schema.type name=(concat "base." descriptor.id ".type") value=descriptor.type localize=true}}
+						{{/with}}
+					</div>
+				</li>
+			{{/each}}
+		</ul>
+	{{/if}}
+
+	{{#if (eq tab.id "custom")}}
+		<ul class="plain flexcol">
+			<li class="flexrow controls">
+				<div class="form-group">
+					<label>ID</label>
+					<div class="form-fields">
+						<input type="text" name="create">
+					</div>
+				</div>
+				<div class="flex0">
+					<button type="button" data-action="create">{{localize "SKYFALL2.Create"}}</button>
+				</div>
+			</li>
+			{{#each setting.custom as | descriptor |}}
+				<li class="flexcol">
+					<div class="ability-descriptors flexrow text-center ">
+						<label class="descriptor active" data-tooltip="{{descriptor.hint}}" data-descriptor="{{descriptor.id}}">
+							{{localize descriptor.id}}
+							<span class="controls">
+								<a data-action="delete" data-id="{{descriptor.id}}"
+									style="color: white;">{{{@root.SYSTEM.icons.delete}}}</a>
+							</span>
+						</label>
+					</div>
+					<div>
+						{{#with @root.setting.schema.fields.custom.element.fields as | schema |}}
+							{{formGroup schema.id name=(concat "custom." descriptor.id ".id") value=descriptor.id localize=true classes="hidden"}}
+							{{formGroup schema.label name=(concat "custom." descriptor.id ".label") value=descriptor.label localize=true}}
+							{{formGroup schema.hint name=(concat "custom." descriptor.id ".hint") value=descriptor.hint localize=true}}
+							{{formGroup schema.type name=(concat "custom." descriptor.id ".type") value=descriptor.type localize=true}}
+						{{/with}}
+					</div>
+				</li>
+			{{/each}}
+		</ul>
+	{{/if}}
+
+</section>

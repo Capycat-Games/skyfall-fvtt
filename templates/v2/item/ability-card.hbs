@@ -1,8 +1,13 @@
-<div class="ability-card scrollable flexcol {{item.filtered}} {{ifThen @root.isPlayMode '' 'editing'}}"
+<div
+	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}"
 	data-entry-id="{{item.id}}">
 	<div class="ability-header flexrow">
 		{{{labels.action.icon}}} &nbsp;
-		{{#if (or @root.isEmbed (eq @root.document.documentName "Actor")) }}
+		{{#if isFigure }}
+			{{{anchor}}}
+			<span class="cost flex1">{{{labels.cost.label}}}</span>
+			{{{labels.spell.icon}}}
+		{{~else if (or @root.isEmbed (eq @root.document.documentName "Actor")) }}
 			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
 				<h5>{{item.name}}</h5>
 			</a>

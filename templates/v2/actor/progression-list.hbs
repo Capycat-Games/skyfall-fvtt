@@ -1,7 +1,5 @@
 <ol class="plain {{cssClass}}">
-	{{!-- {{log content}} --}}
 	{{#each content as | data | }}
-		{{!-- {{log data}} --}}
 		<li class="flexrow type-{{data.type}} {{ifThen data.item '' 'empty'}}" data-entry-id="{{data.item._id}}"
 			data-source-id="{{data.id}}">
 			<div class="entry flexrow type-{{data.type}}  {{ifThen data.item '' 'empty'}}">

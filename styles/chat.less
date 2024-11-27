@@ -33,6 +33,9 @@
 				z-index: -1;
 			}
 		}
+		.message-content *:not(button) {
+			text-align: left !important;
+		}
 	}
 }
 
@@ -144,6 +147,7 @@
 		}
 
 		.ability-descriptors {
+			line-height: var(--font-size-20);
 			label.descriptor {
 				font-size: 12px;
 				padding: 2px;
@@ -187,6 +191,50 @@
 
 		.roll-entry {
 			position: relative;
+			.dice-formula, .dice-total {
+				position: relative;
+				button {
+					width: 28px;
+					min-height: 26px;
+					max-height: 26px;
+					font-size: 14px;
+					line-height: 22px;
+					position: absolute;
+					padding: 0;
+					i { margin: 0; }
+					.sf-icon { vertical-align: middle; }
+					svg, svg image { width: 16px; height: 16px;}
+					// Top Buttons
+					&[data-apply-catharsis="-"],
+					&[data-apply-catharsis="+"],
+					&[data-evaluate-roll="1"] {
+						top: -1px;
+						right: 0;
+					}
+					&[data-apply-catharsis="-"] {
+						left: 0;
+					}
+					// Bottom Buttons
+					&[data-apply-damage="-1"], 
+					&[data-apply-damage="0.5"], 
+					&[data-apply-damage="1"], 
+					&[data-apply-damage="2"] {
+						bottom: -1px;
+					}
+					&[data-apply-damage="1"] {
+						left: 0;
+					}
+					&[data-apply-damage="0.5"] {
+						left: 30px;
+					}
+					&[data-apply-damage="-1"] {
+						right: 0;
+					}
+					&[data-apply-damage="2"] {
+						right: 30px;
+					}
+				}
+			}
 		}
 
 		.roll-btns { 

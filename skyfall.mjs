@@ -25,6 +25,7 @@ import * as functions from "./module/helpers/functions.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
 import { CombatTrackerSkyfall } from "./module/combat.mjs";
 import {SkyfallHooks} from "./module/hooks/hooks.mjs";
+import SkyfallSocketHandler from "./module/helpers/socket.mjs";
 
 
 globalThis.skyfall = {
@@ -43,6 +44,7 @@ globalThis.skyfall = {
 		ShortRestV2,
 		TestApp
 	},
+	ui: {},
 	utils: functions
 }
 globalThis.RollSF = dice.SkyfallRoll;
@@ -69,6 +71,7 @@ Hooks.once('init', function () {
 	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
 	CONFIG.Token.documentClass = documents.SkyfallToken;
 	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
+	// CONFIG.ChatMessage.template = 'systems/skyfall/templates/chat/chat-message.hbs';
 	CONFIG.Token.objectClass = TokenSkyfall;
 	CONFIG.ui.combat = CombatTrackerSkyfall;
 
@@ -176,7 +179,7 @@ Hooks.once('init', function () {
 	// CONFIG.specialStatusEffects.INVISIBLE = "INVISIBLE";
 	
 	// Preload Handlebars templates.
-	preloadHandlebarsTemplates();
+	// preloadHandlebarsTemplates();
 	// HELPERS
 	registerHandlebarsHelpers()
 	// Register Fonts
@@ -184,6 +187,7 @@ Hooks.once('init', function () {
 	// Enrichers
 	registerCustomEnrichers();
 	// TODO Sockets
+	skyfall.socketHandler = new SkyfallSocketHandler();
 	// Hooks
 	// SkyfallHooks();
 });
@@ -213,7 +217,7 @@ function registerFonts() {
 	CONFIG.fontDefinitions['Skyfall'] = {
 		editor: true,
 		fonts: [
-			{urls: [`${path}NORTHWEST-Regular.woff`], weight:'400'},
+			{urls: [`${path}NORTHWEST-Bold.woff`], weight:'400'},
 			{urls: [`${path}NORTHWEST-Light.woff`], weight:'200'},
 			{urls: [`${path}NORTHWEST-Bold.woff`], weight:'700'}
 		]
@@ -270,6 +274,8 @@ Hooks.once('ready', async function () {
 	svg.id = "logo";
 	$("#logo").replaceWith(svg);
 	// $(".ui-left")[0].insertAdjacentElement('afterbegin', svg);
+	
+	skyfall.models.settings.SceneConfigSetting.init();
 });
 
 Hooks.on("renderPlayerList", (app, html, data) => {
@@ -283,9 +289,9 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 		const playerName = $(player).find('.player-name').text();
 		$(player).find('.player-name').text(`${playerName} (${catharsis})`);
 		const btn = document.createElement("button");
-		btn.innerHTML = '<i class="fa-solid fa-bahai"></i>';
+		btn.innerHTML = SYSTEM.icons.sfcatharsisblue;
 		btn.className = "give-catharsis";
-		btn.title =  game.i18n.localize('SKYFALL.GIVECATHARSIS');
+		btn.title =  game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
 		btn.dataset['action'] = 'catharsis';
 		player.appendChild(btn);
 	});
@@ -294,19 +300,43 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 
 Hooks.on("controlToken", (token, controlled) => {
 	if ( controlled && token?.actor) {
-		new EffectsMenu({document: token.actor}).render(true);
+		new skyfall.applications.EffectsMenu({document: token.actor}).render(true);
 	} else {
-		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
+		foundry.applications.instances.get(skyfall.applications.EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
 });
+
+
+Hooks.on("getSceneControlButtons", (buttons) => {
+	for (const button of buttons) {
+		if ( button.name != 'token' ) continue;
+		button.tools.push({
+			"name": "skyfall-scene-control",
+			"title": "SKYFALL2.APP.Scene",
+			"icon": "fa-solid fa-clapperboard",
+			"toggle": true,
+			"active": skyfall.ui.sceneConfig?.rendered ?? true,
+			"isActive": skyfall.ui.sceneConfig?.rendered ?? true,
+			"onClick": () => {
+				if ( skyfall.ui.sceneConfig?.rendered ) {
+					skyfall.ui.sceneConfig.close()
+				} else {
+					skyfall.ui.sceneConfig.render(true)
+				}
+			},
+			"css": "toggle active",
+		})
+	}
+});
+
 
 Hooks.on("targetToken", (user, token, target) => {
 	const actor = token.actor.clone();
 	actor.updateSource({'ownership.default': 1 });
 	actor.ownership.default = 1;
-	if ( target ) new EffectsMenu({document: actor }).render(true);
+	if ( target ) new skyfall.applications.EffectsMenu({document: actor }).render(true);
 	else {
-		foundry.applications.instances.get(EffectsMenu.DEFAULT_OPTIONS.id)?.close();
+		foundry.applications.instances.get(skyfall.applications.EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
 });
 
@@ -387,13 +417,12 @@ Hooks.on("createCombatant", (combatant, options, userId) => {
 Hooks.on("renderChatMessage", (message, jquery, messageData) => {
 	if ( !message.system.catharsis ) return;
 	const html = jquery[0];
-	console.log('renderChatMessage', message, html, messageData);
 	html.classList.add('skyfall');
 	html.classList.add('character');
 	html.classList.add('catharsis');
 	if ( game.user.isGM ) {
 		const button = document.createElement('button');
-		button.innerText = game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
+		button.innerHTML = SYSTEM.icons.sfcatharsisblue + ' ' +  game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
 		button.addEventListener('click', (event) => {
 			const actorId = message.speaker.actor;
 			const actor = game.actors.get(actorId);
@@ -569,11 +598,15 @@ async function enrichReference(match, options) {
 	let { type, config } = match.groups;
 	
 	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.SIGILDESCRIPTORS[config] ?? SYSTEM.GUILDDESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
-	if ( !reference ) return;
-	let style;
-	let tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
-	let label = game.i18n.localize(reference.label);
-	if ( SYSTEM.DESCRIPTORS[config] || SYSTEM.SIGILDESCRIPTORS[config] || SYSTEM.GUILDDESCRIPTORS[config] ) style = "descriptor-reference";
+	let style, tooltip, label;
+	if ( reference ) {
+		tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
+		label = game.i18n.localize(reference.label);
+	}
+	
+	if ( SYSTEM.DESCRIPTORS[config] || SYSTEM.SIGILDESCRIPTORS[config] || SYSTEM.GUILDDESCRIPTORS[config] ) {
+		style = "descriptor-reference";
+	}
 	else if ( SYSTEM.conditions[config] ) {
 		style = "condition-reference";
 		const journalConditions = await fromUuid(
@@ -583,6 +616,10 @@ async function enrichReference(match, options) {
 		if ( page ) {
 			tooltip = `<section class='tooltip status-effect'><h3>${label}</h3>${page.text.content}</section>`;
 		}
+	} else {
+		style = "descriptor-reference";
+		label = config;
+		tooltip = '';
 	}
 	
 	const inline = document.createElement('span');

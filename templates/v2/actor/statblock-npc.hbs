@@ -17,7 +17,6 @@
 		<div class="flex100"></div>
 		{{!-- CREATURES TYPES --}}
 		<i>
-			{{log items.identity}}
 			{{#each items.identity.hierarchy as | item |}}
 				<span data-entry-id="{{item.id}}">
 					<a data-action="edit">
@@ -28,8 +27,8 @@
 					{{/if}}
 				</span>
 			{{/each}}
-			(
 			{{#each items.identity.archetype as | item |}}
+				{{ifThen @first "(" "" }}
 				<span data-entry-id="{{item.id}}">
 					<a data-action="edit">
 						{{item.name}}
@@ -37,9 +36,8 @@
 					{{#if @root.isEditMode }}
 						<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
 					{{/if}}
-				</span>{{ifThen @last "" "," }}
+				</span>{{ifThen @last ")" "," }}
 			{{/each}}
-			)
 			{{#if isEditMode }}
 				<div class="flex100"></div>
 				{{formGroup schema.creatureType value=system.creatureType localize=true stacked=true}}
@@ -97,6 +95,7 @@
 						{{{ifThen (eq @root.rolling.type 'skill') '<i class="fa-solid fa-dice-d20"></i>' ''}}}
 						{{{ifThen (eq @root.rolling.abl abl) '<i class="fa-solid fa-dice-d20"></i>' ''}}}
 						{{{localize ability.label}}}
+						{{ifThen (eq @root.system.spellcasting abl) '*' ''}}
 					</a>
 				</div>
 				<div class="protection">
@@ -108,22 +107,8 @@
 	</div>
 	<div class="irv skills flexcol">
 		{{!-- SKILLS --}}
-		{{#if (or isEditMode _skills.length )}}
-			<div class="skills">
-				<a data-action="manage" data-manage="skills">
-					<b>{{localize "SKYFALL2.SkillPl"}}:</b>
-				</a>
-				{{#each system.skills as |skill key| }}
-					{{#if (gt skill.value 0) }}
-						<span class="skill entry" data-entry-id="{{key}}">
-							<a data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">
-								{{{ifThen @root.rolling.abl '<i class="fa-solid fa-dice-d20"></i>' ''}}} {{skill.label}}
-								{{!-- {{ifThen @root.rolling.abl (concat "(" @root.rolling.abl ")") ""}} --}}
-								{{numberFormat (ifThen @root.rolling.abl (lookup skill.roll @root.rolling.abl ) skill.roll.pro) sign=true}}</a>
-						</span>
-					{{/if}}
-				{{/each}}
-			</div>
+		{{#if isEditMode}}
+			{{formGroup schema.spellcasting value=system.spellcasting localize=true}}
 		{{/if}}
 		<div class="initiative">
 			<a data-action="roll" data-roll-type="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a>
@@ -155,8 +140,25 @@
 					<b>{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:</b>
 				</a>
 				{{#each irv.imu as | entry |}}
-					<span class="{{entry.type}}-reference">{{entry.label}}</span>
+					<span class="{{entry.type}}-reference" data-tooltip="{{entry.hint}}">{{entry.label}}</span>
 				{{/each }}
+			</div>
+		{{/if}}
+		{{#if (or isEditMode _skills.length )}}
+			<div class="skills">
+				<a data-action="manage" data-manage="skills">
+					<b>{{localize "SKYFALL2.SkillPl"}}:</b>
+				</a>
+				{{#each system.skills as |skill key| }}
+					{{#if (gt skill.value 0) }}
+						<span class="skill entry" data-entry-id="{{key}}">
+							<a data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">
+								{{{ifThen @root.rolling.abl '<i class="fa-solid fa-dice-d20"></i>' ''}}} {{skill.label}}
+								{{!-- {{ifThen @root.rolling.abl (concat "(" @root.rolling.abl ")") ""}} --}}
+								{{numberFormat (ifThen @root.rolling.abl (lookup skill.roll @root.rolling.abl ) skill.roll.pro) sign=true}}</a>{{ifThen @last "" "," }}
+						</span>
+					{{/if}}
+				{{/each}}
 			</div>
 		{{/if}}
 	</div>

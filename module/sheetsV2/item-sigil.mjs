@@ -109,6 +109,7 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		await this.getEnrichedFields(context);
 		// await this.getModificationsEmbeds(context);
 		console.log(context);
+		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
 

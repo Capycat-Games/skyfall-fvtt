@@ -11,7 +11,7 @@
 // }
 @font-face {
   font-family: NORTHWEST;
-  src: url('./fonts/NORTHWEST-Regular.woff');
+  src: url('./fonts/NORTHWEST-Bold.woff');
   descent-override: 50%;
 }
 .skyfall-icon { font-family: SkyfallIcons; }
@@ -68,6 +68,7 @@
 }
 
 .skyfall {
+  // SKYFALL
   --actor-color: #652657;
   --actor-color-faint: #d1becd;
   &.character, &.creation, &.guild {
@@ -77,6 +78,15 @@
   &.npc, &.partner {
     --actor-color: #750703;
     --actor-color-faint: #75070322;
+  }
+  
+  
+  &:not(.roll-config) .window-content {
+    background: url(./assets/sheet/background.webp) repeat white;
+    * { color: black; }
+    input {
+      color: #000000;
+    }
   }
 }
 
@@ -242,4 +252,12 @@
       // font-size: 12px;
     }
   }
+}
+
+figure.content-embed.ability-embed {
+  .SF-ability;
+  > .ability-card {
+    padding: 0;
+  }
+  padding: 0;
 }

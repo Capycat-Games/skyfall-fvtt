@@ -1,0 +1,38 @@
+<div class="dialog-content scrollable" style=" ">
+	{{#each descriptors as | group key |}}
+		<div class="ability-descriptors flexrow text-center">
+			<label>
+				{{localize (concat "SKYFALL2.DESCRIPTOR." key)}}
+			</label>
+			{{#each group as | descriptor |}}
+				<label class="descriptor {{ifThen (lookup descriptor.id @root.current) 'active' ''}}"
+					data-tooltip="{{descriptor.hint}}"
+					data-descriptor="{{descriptor.id}}">
+					{{localize descriptor.label}}
+					<input type="checkbox" name="descriptors" value="{{descriptor.id}}" {{checked (includes @root.current
+						descriptor.id)}}>
+				</label>
+			{{/each}}
+		</div>
+	{{/each}}
+	<style>
+		.dialog-content {
+			max-height: 70vh;
+			overflow: hidden;
+		}
+
+		.dialog-content.scrollable {
+			padding-right: 0 !important;
+		}
+
+		.ability-descriptors .descriptor {
+			white-space: nowrap;
+			flex-grow: initial;
+		}
+
+		.ability-descriptors .descriptor:has(:checked) {
+			font-weight: bold;
+			opacity: 1;
+		}
+	</style>
+</div>

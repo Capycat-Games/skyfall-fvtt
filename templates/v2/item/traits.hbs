@@ -10,11 +10,13 @@
 		{{formGroup schema.wield value=system.wield localize=true}}
 		{{formGroup schema.range value=system.range localize=true}}
 
+		{{formGroup schema.consume.target value=system.consume.target choices=_selOpts.ammunition valueAttr='id' labelAttr='label' localize=true}}
 		<div class="form-group">
 			<label for="">{{localize "SKYFALL2.Reload"}}</label>
 			<div class="form-fields">
+				{{formInput schema.reload.value value=system.reload.value localize=true}}
+				/
 				{{formInput schema.reload.quantity value=system.reload.quantity localize=true}}
-				{{!-- {{formInput schema.reload.actions value=system.reload.actions localize=true}} --}}
 				<label class="flexrow nowrap"> {{{SYSTEM.icons.sfaction}}}
 					<input type="checkbox" name="system.reload.actions" value="action" {{checked (includes
 						system.reload.actions 'action' )}}>

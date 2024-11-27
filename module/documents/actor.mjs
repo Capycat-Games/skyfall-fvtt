@@ -133,6 +133,7 @@ export default class SkyfallActor extends Actor {
 	async _onUpdateDescendantDocuments(parent, collection, documents, changes, options, userId) {
 		super._onUpdateDescendantDocuments( parent, collection, documents, changes, options, userId );
 		this.refreshGuild(userId);
+		this.system._automateStatuses(userId);
 	}
 	/* -------------------------------------------- */
 
