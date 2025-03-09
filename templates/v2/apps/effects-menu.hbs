@@ -1,9 +1,10 @@
 <section class="effect-menu flexcol">
+	{{log effects}}
 	{{#each effects as | ef |}}
-	<div class="effect" data-effect-id="{{ef.id}}" style="background-image:url({{ef.img}});" data-action="toggle" data-tooltip="{{ef.tooltip}}" data-tooltip-direction="LEFT">
-		{{#if (gt ef.system.stack 0)}}
-		<span class="stack">{{ef.system.stack}}</span>
-		{{/if}}
-	</div>
+		<div class="effect" data-effect-id="{{ef.id}}" style="background-image:url({{ef.img}});" data-action="toggle" data-tooltip="{{ef.tooltip}}" data-tooltip-direction="LEFT">
+			{{#if (gt ef.system.stack 0)}}
+				<span class="stack">{{ef.system.stack}}</span>
+			{{/if}}
+		</div>
 	{{/each}}
 </section>

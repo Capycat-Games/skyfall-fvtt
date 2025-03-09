@@ -66,6 +66,13 @@ export const createHTMLElement = ({tag, cssClasses=[], content, value}) => {
 	return dom;
 }
 
+export const keyPairObject = (source, key) => {
+	const data = {};
+	for (const [k, v] of Object.entries(source)) {
+		data[k] = v[key] ?? null;
+	}
+	return data;
+}
 
 /*
 // Prepare descriptor structure {id, type, label, hint, value}

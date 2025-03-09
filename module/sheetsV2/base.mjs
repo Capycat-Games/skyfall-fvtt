@@ -59,6 +59,10 @@ export const SkyfallSheetMixin = Base => {
 				expandAll: BaseSheetSkyfall.#onExpandAll,
 				logToConsole: BaseSheetSkyfall.#logToConsole,
 				convertItem: BaseSheetSkyfall.#convertItem,
+				createRoll: BaseSheetSkyfall.#createRoll,
+				deleteRoll: BaseSheetSkyfall.#deleteRoll,
+				createTerm: BaseSheetSkyfall.#createTerm,
+				deleteTerm: BaseSheetSkyfall.#deleteTerm,
 			}
 		};
 
@@ -206,8 +210,11 @@ export const SkyfallSheetMixin = Base => {
 
 			// Iterate over active effects, classifying them into categories
 			for (let e of this.effects) {
-				if (e.type == 'modification') categories.modification.effects.push(e);
-				else if (e.disabled) categories.inactive.effects.push(e);
+				if (e.type == 'modification' && e.isTemporary) {
+					categories.temporary.effects.push(e);
+				} else if ( e.type == 'modification' ) {
+					categories.modification.effects.push(e);
+				} else if (e.disabled) categories.inactive.effects.push(e);
 				else if (e.isTemporary) categories.temporary.effects.push(e);
 				else categories.passive.effects.push(e);
 			}
@@ -538,14 +545,22 @@ export const SkyfallSheetMixin = Base => {
 			} else if ( create == "ActiveEffect" ) {
 				let type = target.closest('section')?.dataset?.type ?? 'base';
 				let category = target.dataset.category;
+				
 				const effectData = {
 					type: type,
 					name: game.i18n.format("DOCUMENT.Create", {
 						type: game.i18n.localize(`TYPES.ActiveEffect.${type}`)
 					}),
-					img: ['modification'].includes(type) ? 'icons/svg/upgrade.svg' : 'icons/svg/aura.svg',
+					img: ['modification'].includes(type) ? 'icons/svg/upgrade.svg' : this.document.img,
 					disabled: category == 'inactive',
 					duration: category == 'temporary' ? {rounds:1} : {},
+				}
+				if ( this.document.documentName == 'Actor' ) {
+					effectData.name = game.i18n.format("DOCUMENT.Create", {
+						type: game.i18n.localize(`TYPES.ActiveEffect.${type}`)
+					});
+				} else {
+					effectData.name = this.document.name;
 				}
 				this.document.createEmbeddedDocuments( create, [effectData] );
 			} else if ( create == "Item" ) {
@@ -668,7 +683,7 @@ export const SkyfallSheetMixin = Base => {
 							disadvantage: event.altKey ? 1 : 0,
 						}
 					},
-					speaker: ChatMessage.getSpeaker({actor: this}),
+					speaker: ChatMessage.getSpeaker({actor: this.actor, token: this.actor.token}),
 					system: {
 						actorId: this.actor.uuid,
 						abilityId: ability.id,
@@ -691,12 +706,15 @@ export const SkyfallSheetMixin = Base => {
 			if ( event.type == 'click' ) {
 				let abilityId = target.dataset.abilityId;
 				let itemId = target.dataset.entryId;
+				console.log(abilityId);
+				console.log(itemId);
+
 				let commom = SYSTEM.actions.find( action => action.id == abilityId );
 				if ( itemId == abilityId ) return;
 				if ( commom ){
 					await ChatMessage.create({
 						content: `<h5>${game.i18n.localize(commom.name)}</h5>${game.i18n.localize(commom.hint)}`,
-						speaker: ChatMessage.getSpeaker({actor: this}),
+						speaker: ChatMessage.getSpeaker({actor: this.actor, token: this.actor.token}),
 					});
 					return;
 				}
@@ -715,13 +733,24 @@ export const SkyfallSheetMixin = Base => {
 					});
 				}
 				
+				
 				const ability = this.actor.items.get(abilityId);
-	
 				if ( !ability ) return;
 				
+				const { ModificationConfig } = skyfall.applications;
+				const MODCONFIG = await ModificationConfig.fromData({
+						actor: this.actor.uuid,
+						ability: ability.id,
+						weapon: item?.id,
+						appliedMods: [],
+						effects: ability.effects.filter( e => e.isTemporary),
+				});
+				MODCONFIG.render(true);
+
+
+				return;
 				const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
 				const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
-				
 				await ChatMessage.create({
 					type: 'usage',
 					flags: {
@@ -730,7 +759,7 @@ export const SkyfallSheetMixin = Base => {
 							disadvantage: event.altKey ? 1 : 0,
 						}
 					},
-					speaker: ChatMessage.getSpeaker({actor: this}),
+					speaker: ChatMessage.getSpeaker({actor: this.actor, token: this.actor.token}),
 					system: {
 						actorId: this.actor.uuid,
 						abilityId: ability.id,
@@ -817,7 +846,19 @@ export const SkyfallSheetMixin = Base => {
 				this.rolling.id = id;
 			}
 			if ( this.rolling.abl && this.rolling.type && this.rolling.id ) {
-				await this.actor.rollCheck(this.rolling, {skipConfig, advantageConfig});
+				const { ModificationConfig } = skyfall.applications;
+				// const ability = SYSTEM.prototypeItems.ABILITYROLL;
+				const ability = new Item(SYSTEM.prototypeItems.ABILITYROLL);
+				const MODCONFIG = await ModificationConfig.fromData({
+						actor: this.actor.uuid,
+						ability: ability, //this.actor.items.find( i => i.name == 'ABILITYROLL').id,
+						check: this.rolling,
+						appliedMods: [],
+						effects: [],
+				});
+				MODCONFIG.render(true);
+
+				// await this.actor.rollCheck(this.rolling, {skipConfig, advantageConfig});
 				this.rolling = null;
 			}
 			this.render(true);
@@ -942,6 +983,42 @@ export const SkyfallSheetMixin = Base => {
 
 			Item.create(itemData, operation);
 		}
+
+		static async #createRoll(event, target){
+			const updateData = {};
+			updateData[`system.rolls.${randomID(16)}`] = {
+				label: 'NEW ROLL',
+				type: 'attack',
+			}
+			this.document.update(updateData);
+		}
+		static async #deleteRoll(event, target){
+			const rollId = target.dataset.rollId;
+			const updateData = {};
+			updateData[`system.rolls.-=${rollId}`] = null;
+			this.document.update(updateData);
+		}
+
+		static async #createTerm(event, target){
+			const rollId = target.dataset.rollId;
+			const keyPath = `system.rolls.${rollId}.terms`;
+			const updateData = {};
+			const current = foundry.utils.getProperty(this.document.toObject(), keyPath);
+			current.push({});
+			updateData[keyPath] = current;
+			this.document.update(updateData);
+		}
+
+		static async #deleteTerm(event, target){
+			const rollId = target.dataset.rollId;
+			const termIndex = target.dataset.termIndex;
+			const keyPath = `system.rolls.${rollId}.terms`;
+			const current = foundry.utils.getProperty(this.document.toObject(), keyPath);
+			const updateData = {};
+			updateData[keyPath] = current.splice(termIndex, 1);
+			this.document.update(updateData);
+		}
+
 		/* ---------------------------------------- */
 		/*              EVENT HANDLERS              */
 		/* ---------------------------------------- */

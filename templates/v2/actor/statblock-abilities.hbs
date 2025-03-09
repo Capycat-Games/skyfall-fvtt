@@ -11,7 +11,7 @@
 		{{#each category.list as | ability | }}
 			<li class="ability entry" data-entry-id="{{ability.id}}">
 				<h4>
-					<a data-action="use" data-target="ability">
+					<a data-action="abilityUse" data-ability-id="{{ability.id}}">
 						{{#unless (eq ability.system.activation.recharge null)}}
 							{{#if (eq ability.system.activation.recharge 0)}}
 								<i class="fa-solid fa-hourglass"></i>
@@ -25,12 +25,17 @@
 						<a class="control" data-action="delete" data-delete="Item">{{{../SYSTEM.icons.delete}}}</a>
 					</span>
 				</h4>
-				{{#if ability.description }}{{{ability.description}}}{{/if}}
-					<div class="ability-properties">
-						{{#each ability.system.labels.properties as | prop | }}
-							<span><label>{{localize prop.label}}:</label> {{prop.descriptive}}</span>
-						{{/each}}
-					</div>
+				{{!-- {{#if ability.description }}{{{ability.description}}}{{/if}} --}}
+				<div class="ability-properties">
+					{{#each ability.system.labels.properties as | prop | }}
+						<span><label>{{localize prop.label}}:</label> {{prop.descriptive}}</span>
+					{{/each}}
+				</div>
+				<div class="ability-description">
+					{{!-- prepareAbi --}}
+					{{{ability._description}}}
+				</div>
+				{{#if false}}
 					{{#each ability.system.labels.attack as | prop | }}
 						<div class="rich">
 							<label>{{localize prop.label}}:</label> {{{prop.descriptive}}}
@@ -54,6 +59,7 @@
 							{{{ability.system.labels.special.descriptive}}}
 						</div>
 					{{/if}}
+				{{/if}}
 			</li>
 		{{/each}}
 	</ul>

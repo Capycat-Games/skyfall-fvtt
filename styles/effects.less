@@ -10,3 +10,44 @@
 		min-height: 500px;
 	}
 }
+
+.active-effect-config.skyfall {
+	.tab {
+		max-height: 600px;
+		gap: 0;
+	}
+	.tab.changes {
+		header, ol {
+			.key, .value {
+				flex: 0 0 60%,
+			}
+			.mode, .priority {
+				flex: 0 0 30%,
+			}
+			.controls {
+				flex: 0 0 10%,
+			}
+		}
+		ol li {
+			padding: 2px;
+		}
+	}
+	.tab.changes2 {
+		header {
+			.value, .priority {
+				display: none;
+			}
+		}
+		ol li {
+			border: 1px solid black;
+			border-radius: 10px;
+			padding: 5px;
+			span {
+				flex: 0 0 30%;
+			}
+			input {
+				flex: 0 0 70%;
+			}
+		}
+	}
+}

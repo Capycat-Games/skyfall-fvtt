@@ -30,16 +30,24 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 				"templates/generic/tab-navigation.hbs",
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
+				"systems/skyfall/templates/v2/item/item-roll.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
+				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
+				
 			],
 			scrollable: [".scrollable"],
+		},
+		deprecated: {
+			template: "systems/skyfall/templates/v2/item/item-deprecated.hbs",
+			scrollable: [""],
 		},
 	};
 
 	/** @override */
 	static TABS = {
 		config: {id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active'},
-		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"}
+		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"},
+		deprecated: {id: "deprecated", group: "configuration", label: "", icon: "fa-solid fa-trash"}
 	};
 
 	/** @override */
@@ -87,7 +95,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
-				// description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
+				description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
 			},
 			embeds: {},
 			tabs: this._getTabs(),
@@ -113,7 +121,9 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	/* ---------------------------------------- */
 
 	async getModificationsEmbeds(context){
-		const embedded = context.modifications.modification.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
+		const doc = this.document;
+		const mods = doc.effects.filter( ef => ef.type == 'modification' && !ef.isTemporary);
+		const embedded = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
 	}
 

@@ -192,4 +192,10 @@ export default class Class extends Identity {
 			BenefitsDialog.prompt({item: item, level: level});
 		}
 	}
+
+	getRollData(){
+		return {
+			classLevel: this.level,
+		}
+	}
 }

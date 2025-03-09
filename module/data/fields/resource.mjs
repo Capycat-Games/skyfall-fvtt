@@ -3,12 +3,12 @@
 export default class ResourceField extends foundry.data.fields.SchemaField {
 	constructor(fields={}, options={}) {
 		fields = {
-			value: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL.DM.CURRENT"}),
-			max: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL.DM.TOTAL"}),
-			temp: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL.DM.TEMPORARYABBR"}),
+			value: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL2.Current"}),
+			max: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL2.Total"}),
+			temp: new foundry.data.fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.TemporaryAbbr"}),
 			...fields
 		};
-		super(fields, { label: "SKYFALL.DM.RESOURCe", ...options });
+		super(fields, { label: "SKYFALL2.Resource", ...options });
 	}
 	
 

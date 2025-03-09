@@ -11,6 +11,7 @@ export default class Armor extends PhysicalItemData {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		const _fields = skyfall.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			...this.equippableSchema(),
 			/* leve | pesada | escudo */
@@ -22,6 +23,7 @@ export default class Armor extends PhysicalItemData {
 			/* uma mão | duas mãos */
 			attack: this.attackSchema(),
 			damage: this.damageSchema(),
+			rolls: new _fields.MappingField(new _fields.RollField()),
 			sigils: new fields.ArrayField(new fields.SchemaField({
 				uuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),
 				parentUuid: new fields.StringField({required: true}, {validate: Armor.validateUuid}),
@@ -35,7 +37,7 @@ export default class Armor extends PhysicalItemData {
 	}
 
 	/** @inheritDoc */
-	async _preUpdate(changes, options, user) {
-		return await super._preUpdate(changes, options, user);
+	async _preUpdate(changed, options, user) {
+		return await super._preUpdate(changed, options, user);
 	}
 }

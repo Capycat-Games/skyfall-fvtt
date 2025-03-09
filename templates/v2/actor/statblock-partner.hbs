@@ -11,7 +11,10 @@
 					<label>{{localize (concat "TYPES.Actor." document.type)}}:</label>
 					<input type="number" name="system.level.value" value="{{system.level.value}}">
 				{{else}}
-					<label>{{localize (concat "TYPES.Actor." document.type)}}</label>
+					<label>
+						{{localize (concat "TYPES.Actor." document.type)}}
+					</label>
+					<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="48" width="48" style="flex: 0 0 48px" />
 				{{/if}}
 			</h5>
 		{{else}}
@@ -20,6 +23,7 @@
 				<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}:&nbsp;{{system.level.value}}</h3>
 			{{else}}
 				<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}</h3>
+				<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="48" width="48" style="flex: 0 0 48px;" />
 			{{/if}}
 		{{/if}}
 		<div class="flex100"></div>

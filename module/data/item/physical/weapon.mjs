@@ -8,6 +8,7 @@ export default class Weapon extends PhysicalItemData {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		const _fields = skyfall.data.fields;
 		
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			...this.equippableSchema(),
@@ -61,10 +62,19 @@ export default class Weapon extends PhysicalItemData {
 				parentUuid: new fields.StringField({required: true}, {validate: Weapon.validateUuid}),
 				infused: new fields.BooleanField({required:true, initial:false})
 			}), {max: 4}),
+			rolls: new _fields.MappingField(new _fields.RollField()),
+			wip: new fields.SchemaField({
+				rolls: new _fields.MappingField(new _fields.RollField()),
+			}),
 		})
 	}
 	/* -------------------------------------------- */
 
+	static _initialRollValue(key, initial, existing) {
+		console.log('_initialRollValue');
+		console.log(key, initial, existing);
+		return initial;
+	}
 	/* -------------------------------------------- */
 	/*  Getters/Setters                             */
 	/* -------------------------------------------- */
@@ -154,17 +164,17 @@ export default class Weapon extends PhysicalItemData {
 	/* -------------------------------------------- */
 
 	/** @inheritDoc */
-	async _preUpdate(changes, options, user) {
-		let allow = await super._preUpdate(changes, options, user);
+	async _preUpdate(changed, options, user) {
+		let allow = await super._preUpdate(changed, options, user);
 		if ( allow === false ) return false;
-		this.automateDescriptors(changes, options, user);
+		this.automateDescriptors(changed, options, user);
 	}
 
-	automateDescriptors( changes, options, user ){
+	automateDescriptors( changed, options, user ){
 		if ( user.id !== game.userId ) return false;
-		if ( !foundry.utils.hasProperty(changes, 'system.descriptors') ) return true;
-		if ( !changes.system.descriptors.length ) return true;
-		const descriptors = changes.system.descriptors;
+		if ( !foundry.utils.hasProperty(changed, 'system.descriptors') ) return true;
+		if ( !changed.system.descriptors.length ) return true;
+		const descriptors = changed.system.descriptors;
 		const current = this.descriptors;
 		const actor = this.parent.actor;
 		for ( const d of descriptors ) {

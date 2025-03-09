@@ -5,6 +5,31 @@ import * as CONDITIONS from "./conditions.mjs";
 import * as TRANSFORMERS from "./transformers.mjs";
 import * as ACTIONS from "./common-actions.mjs";
 export const SYSTEM_ID = "skyfall";
+import * as MODIFICATION from "./modification/_module.mjs";
+
+const _INICIALITEMS = [
+  "Compendium.skyfall-core.character-creation.Item.8RxxWZAhzTZmVTjt",
+  "Compendium.skyfall-core.character-creation.Item.koLsCsbHE93BO6ut",
+  "Compendium.skyfall-core.character-creation.Item.CSz4IptEFOBk2GUP",
+  "Compendium.skyfall-core.equipment.Item.v09yX89RwGCewCw1",
+];
+const ABILITYROLL = {
+  name: 'ABILITYROLL',
+  type: 'ability',
+  system: {
+      identifier: 'ability-roll',
+      activation: { type: 'action' },
+      range: { value: null },
+      rolls: {
+          "kQM3D2kuTckYenl6": {
+              "label": "Teste",
+              "type": "ability",
+              "terms": [],
+              "protection": "str"
+          }
+      }
+  }
+}
 
 const _SVGICONS = {
   // sfaction: "systems/skyfall/assets/sheet/sfaction.svg",
@@ -67,6 +92,8 @@ const SHEETICONS = {
   edit: '<i class="fa-solid fa-pen-to-square"></i>',
   delete: '<i class="fa-solid fa-trash"></i>',
   create: '<i class="fa-solid fa-plus"></i>',
+  minus: '<i class="fa-solid fa-minus"></i>',
+  dice: '<i class="fa-solid fa-dice"></i>',
   gear: '<i class="fa-solid fa-gear"></i>',
   xmark: '<i class="fa-solid fa-xmark"></i>',
   on: '<i class="fa-solid fa-toggle-on"></i>',
@@ -95,9 +122,36 @@ const SHEETICONS = {
   climb: '<i class="fa-solid fa-person-falling"></i>',
   dig: '<i class="fa-solid fa-person-digging"></i>',
   reload: '<i class="fa-solid fa-rotate-left"></i>',
+  time: '<i class="fa-regular fa-clock"></i>',
+  source: '<i class="fa-solid fa-arrow-up-right-from-square"></i>',
+  scene: '<i class="fa-solid fa-clapperboard"></i>',
   // TODO
   ...SVGICONS,
   ..._FONTICONS,
+}
+
+//DiceCategories
+const damageCategories = [
+  '1d3', '1d4', '1d6', '1d8', '1d10',
+  '1d12', '2d6', '2d8', '2d10', '2d12',
+];
+
+const damageTypeIcons ={
+  "acid": "",
+  "bludgeoning": "",
+  "slashing": "",
+  "lightning": "",
+  "energy": "",
+  "cold": "",
+  "fire": "",
+  "necrotic": "",
+  "piercing": "",
+  "psychic": "",
+  "radiant": "",
+  "thunder": "",
+  "poison": "",
+  "mundane": "",
+  "special": "",
 }
 
 /**
@@ -119,6 +173,17 @@ const _SYSTEM = {
   rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
   icons: SHEETICONS,
+  initialItems: _INICIALITEMS,
+  prototypeItems: {
+    ABILITYROLL: ABILITYROLL,
+  },
+  damageCategories: damageCategories,
+  modification: {
+    actor: MODIFICATION.ActorModification,
+    item: MODIFICATION.ItemModification,
+    roll: MODIFICATION.RollModification,
+    effect: MODIFICATION.EffectModification,
+  }
 };
 
 Object.defineProperty( _SYSTEM, 'conditions', {

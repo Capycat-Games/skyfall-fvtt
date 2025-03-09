@@ -147,6 +147,27 @@
 }
 
 .skyfall {
+	&.modification-config,
+	&.ability-modification-config {
+		.modification.header,
+		.modifications > .modification {
+			position: relative;
+			.controls {
+				position: relative;
+				float: right;
+				right: 0px;
+				top: 0px;
+				height: 100%;
+				display: flex;
+				flex-wrap: nowrap;
+				flex: 0 0 90px;
+				button, input {
+					flex: 0 0 30px;
+					max-width: 30px;
+				}
+			}
+		}
+	}
 	&.item-usage-config {
 		.header > * {
 			label {

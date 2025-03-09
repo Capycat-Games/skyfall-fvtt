@@ -1,12 +1,10 @@
-<section class="tab ability-config scrollable {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}"
-	data-group="{{tab.group}}">
+<section class="tab ability-config scrollable {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}" data-group="{{tab.group}}">
 	{{!-- ITEM --}}
 	<div class="ability-image-and-description flexrow">
-		<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56"
-			height="56" />
+		<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56" height="56" />
 		<div class="form-group stacked">
-			<label>{{localize "SKYFALL2.Description"}}</label>
-			<textarea name="system.description.value" rows="1">{{{item.system.description.value}}}</textarea>
+			<label>{{localize "SKYFALL2.Description"}} FLAVOR</label>
+			<textarea name="system.description.flavor" rows="1">{{{item.system.description.flavor}}}</textarea>
 		</div>
 		<div class="flex100"></div>
 		{{!-- DECRIPTIONS --}}
@@ -30,6 +28,8 @@
 				</dropdown-tags>
 			{{/if}}
 		</div>
+		<div class="flex100"></div>
+		{{formGroup schema.description.value value=system.description.value height=250 localize=true}}
 	</div>
 	{{!-- ACTIVATION --}}
 	<fieldset>
@@ -113,32 +113,12 @@
 	<fieldset>
 		<legend>{{localize "SKYFALL2.Attack"}}</legend>
 		{{formGroup schema.attack.descriptive value=system.attack.descriptive localize=true}}
-		<div class="form-group">
-			<label>{{localize "SKYFALL2.Attack"}} / {{localize "SKYFALL2.ATTACK.Protection"}}</label>
-			<div class="form-fields slim">
-				{{formInput schema.attack.ability value=system.attack.ability localize=true}}
-				vs
-				{{formInput schema.attack.protection value=system.attack.protection localize=true}}
-			</div>
-		</div>
-		{{formGroup schema.attack.damage value=system.attack.damage localize=true}}
-		{{formGroup schema.attack.hit value=system.attack.hit localize=true}}
-		{{formGroup schema.attack.miss value=system.attack.miss localize=true}}
 	</fieldset>
 	{{!-- TRIGGER --}}
 	<fieldset>
 		<legend>{{localize "SKYFALL2.Trigger"}}</legend>
 		{{formGroup schema.trigger.descriptive value=system.trigger.descriptive localize=true}}
 	</fieldset>
-	{{!-- EFFECT --}}
-	<fieldset>
-		<legend>{{localize "SKYFALL2.Effect"}}</legend>
-		{{formGroup schema.effect.damage value=system.effect.damage localize=true}}
-		{{formGroup schema.effect.descriptive value=system.effect.descriptive localize=true}}
-	</fieldset>
-	{{!-- SPECIAL --}}
-	<fieldset>
-		<legend>{{localize "SKYFALL2.Special"}}</legend>
-		{{formGroup schema.special.descriptive value=system.special.descriptive localize=true}}
-	</fieldset>
+
+	{{> "systems/skyfall/templates/v2/item/item-roll.hbs"}}
 </section>

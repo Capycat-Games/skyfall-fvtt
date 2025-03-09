@@ -43,7 +43,7 @@
 	{{/if}}
 	{{#if system.description.value }}
 		<div class="ability-description">
-			<em><b>{{{system.description.value}}}</b></em>
+			<em><b>{{{system.description.flavor}}}</b></em>
 		</div>
 	{{/if}}
 	{{#if labels.properties }}
@@ -55,26 +55,31 @@
 			</ul>
 		</div>
 	{{/if}}
-	{{#if labels.attack.hit }}
+	{{#if enriched.description }}
+		<div class="rich">
+			{{{enriched.description}}}
+		</div>
+	{{/if}}
+	{{#if (and false labels.attack.hit) }}
 		<div class="rich">
 			<label>{{{localize labels.attack.hit.label}}}:</label>
 			{{#if enriched.hit}}{{{enriched.hit}}}{{else}}{{{labels.attack.hit.descriptive}}}{{/if}}
 		</div>
 	{{/if}}
 
-	{{#if labels.attack.miss }}
+	{{#if (and false labels.attack.miss) }}
 		<div class="rich">
 			<label>{{{localize labels.attack.miss.label}}}:</label>
 			{{#if enriched.miss}}{{{enriched.miss}}}{{else}}{{{labels.attack.miss.descriptive}}}{{/if}}
 		</div>
 	{{/if}}
-	{{#if labels.effect }}
+	{{#if (and false labels.effect) }}
 		<div class="rich">
 			<label>{{{localize labels.effect.label}}}:</label>
 			{{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
 		</div>
 	{{/if}}
-	{{#if labels.special }}
+	{{#if (and false labels.special) }}
 		<div class="rich">
 			<label>{{{localize labels.special.label}}}:</label>
 			{{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}

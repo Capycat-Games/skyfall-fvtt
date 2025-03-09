@@ -24,7 +24,7 @@ export default class Clothing extends PhysicalItemData {
 	}
 
 	/** @inheritDoc */
-	async _preUpdate(changes, options, user) {
-		return await super._preUpdate(changes, options, user);
+	async _preUpdate(changed, options, user) {
+		return await super._preUpdate(changed, options, user);
 	}
 }

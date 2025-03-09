@@ -143,7 +143,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		this._prepareSystemData(context);
 		// // 
 		// this._prepareItems(context);
-		this._prepareAbilities(context);
+		await this._prepareAbilities(context);
 		
 		// if ( context.items.abilities ) {
 		// 	context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
@@ -176,18 +176,18 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		const damageTaken = this.document.system.modifiers.damage.taken;
 		const conditionImunity = this.document.system.modifiers.condition.imune;
 		context.irv = {};
-		context.irv.vul = [];
-		context.irv.res = [];
-		context.irv.imu = [];
+		context.irv.vulnerability = [];
+		context.irv.resistance = [];
+		context.irv.imunity = [];
 		conditionImunity.forEach((k) => {
-			context.irv.imu.push({
+			context.irv.imunity.push({
 				id: k,
 				label: SYSTEM.conditions[k].name,
 				type: 'condition',
 			});
 		});
 		Object.entries(damageTaken).forEach( ([k,v]) => {
-			if ( v == "nor" ) return;
+			if ( v == "normal" ) return;
 			context.irv[v].push({
 				id: k,
 				label: SYSTEM.DESCRIPTORS[k]?.label,
@@ -269,12 +269,31 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 
 	async _prepareAbilities(context){
 		context.abilities = {};
+		const rollData = this.document.getRollData();
+		
+		const actions = {};
+		for (const item of this.document.items.filter( i => i.type=='ability')) {
+			const description = `${item.system.description.value}`;
+			item._description = await TextEditor.enrichHTML(description, {
+				secrets: item.isOwner,
+				async: true,
+				relativeTo: item,
+				rollData: rollData
+			});
+			const itemAction = item.system.activation.type;
+			actions[itemAction] ??= [];
+			actions[itemAction].push(item);
+		}
+		console.log('_prepareAbilities', actions);
+
 		["passive","reaction","action","bonus","free","maction"].reduce((acc, key) => {
-			let cat = { id: key,
+			let cat = {
+				id: key,
 				icon: SYSTEM.icons[`sf${key}`],
 				label: game.i18n.localize(`SKYFALL.ITEM.ACTIVATIONS.${key.toUpperCase()}`),
-				list: this.document.items.filter( i => i.type=='ability' && i.system.activation.type == key )
+				list: actions[key] ?? [],
 			}
+			//this.document.items.filter( i => i.type=='ability' && i.system.activation.type == key )
 			acc[key] = cat;
 			return acc;
 		}, context.abilities);

@@ -371,18 +371,18 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		const damageTaken = this.document.system.modifiers.damage.taken;
 		const conditionImunity = this.document.system.modifiers.condition.imune;
 		context.irv = {};
-		context.irv.vul = [];
-		context.irv.res = [];
-		context.irv.imu = [];
+		context.irv.vulnerability = [];
+		context.irv.resistance = [];
+		context.irv.imunity = [];
 		conditionImunity.forEach((k) => {
-			context.irv.imu.push({
+			context.irv.imunity.push({
 				id: k,
 				label: SYSTEM.conditions[k].name,
 				type: 'condition',
 			});
 		});
 		Object.entries(damageTaken).forEach( ([k,v]) => {
-			if ( v == "nor" ) return;
+			if ( v == "normal" ) return;
 			context.irv[v].push({
 				id: k,
 				label: SYSTEM.DESCRIPTOR.DAMAGE[k].label,

@@ -159,7 +159,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 
 	_hasKeep(){
 		let result =  0;
-		const rollMods = foundry.utils.getProperty(this.actor, `system.modifiers.roll.${this.config.type}`) ?? [];
+		const rollMods = foundry.utils.getProperty(this.actor, `system.modifiers.roll.${this.config.type}.mod`) ?? [];
 		const statuses = this.target?.statuses ?? new Set();
 		
 		// KEYUP

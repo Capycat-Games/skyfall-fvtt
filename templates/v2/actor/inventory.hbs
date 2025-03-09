@@ -10,11 +10,15 @@
 			</div>
 			{{!-- CAPACITY --}}
 			<div class="capacity">
-				<div class="form-group flexcol">
+				<div class="form-group flexcol stacked">
 					<label>{{localize "SKYFALL2.Capacity"}}</label>
 					<div class="form-fields">
 						{{formInput schema.capacity.value value=system.capacity.value disabled=true}}/
 						{{formInput schema.capacity.max value=system.capacity.max disabled=true}}
+					</div>
+
+					<div class="form-fields">
+						{{formInput schema.capacity.ability value=system.capacity.ability }}
 					</div>
 				</div>
 			</div>
@@ -25,6 +29,8 @@
 					<div class="form-fields">
 						{{formInput schema.fragments.value value=system.fragments.value disabled=true}}/
 						{{formInput schema.fragments.max value=system.fragments.max disabled=true}}
+					</div>
+					<div class="form-fields">
 						{{formInput schema.fragments.abl value=system.fragments.abl }}
 					</div>
 				</div>

@@ -84,6 +84,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		} else {
 			benefits = item.system._benefits;
 		}
+		console.log('benefits', benefits);
 		// const benefits = level ? item.system._benefits[level] : item.system._benefits;
 		for (const [key, data] of Object.entries(benefits)) {
 			if ( key == 'grant' && data.length ) {
@@ -96,6 +97,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 					d.item = fromUuidSync(d.uuid)
 					d.id = d._id;
 				});
+				console.log('preAddStep', this);
 				await this.addStep({
 					title: game.i18n.localize(`TYPES.Item.${key}Pl`),
 					list: data,
@@ -117,7 +119,9 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 			item.parent.items.filter( i => { 
 				return query.includes(i.system.identifier) || query.includes(i.type);
 			}).reduce((acc, i) => {
-				let feats = i.system.feats.toObject().map( f => ({
+				let feats = i.system.feats.toObject().filter( f => {
+					return !acc.find( i => i.uuid == f );
+				}).map( f => ({
 					uuid: f,
 					item: fromUuidSync(f)
 				}));
@@ -168,6 +172,8 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	}
 	
 	async addStep({title, list, mode, originId=null, sync=true}) {
+		console.log('addStep', this.steps);
+		if ( this.steps.find( i => i.title == title) ) return;
 		this.steps.push({
 			title: title,
 			mode: mode,
@@ -191,6 +197,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		_context.title = this.title;
 		_context.buttons = this.options.buttons;
 		_context.steps = this.steps;
+		console.log(this.steps);
 		return super._renderHTML(_context, _options);
 	}
 

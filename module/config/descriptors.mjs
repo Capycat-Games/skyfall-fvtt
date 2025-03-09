@@ -20,7 +20,7 @@ categoryKeys.reduce((obj, key) => {
 }, DESCRIPTOR.CATEGORY);
 
 // "bludgeoning", "slashing", "piercing", 
-let equipmentKeys = ["reach", "thrown", "noisy", "composite", "garish", "shooting", "double", "eficient", "light", "lethal", "mounted", "heavy", "precise", "brittle", "reload", "returning", "superior", "versatile","elixir","granade"];
+let equipmentKeys = ["reach", "thrown", "noisy", "composite", "garish", "shooting", "double", "eficient", "light", "lethal", "mounted", "heavy", "potent", "precise", "brittle", "reload", "returning", "superior", "versatile","elixir","granade"];
 equipmentKeys.reduce((obj, key) => {
 	obj[key] = {
 		id: key,

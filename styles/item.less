@@ -115,6 +115,21 @@
 			padding: 0;
 		}
 	}
+	prose-mirror .editor-content2 {
+		[data-field] {
+			--content-label: attr(data-label);
+			p:first-child::before {
+				content: var(--content-label);
+				content: attr(data-label);
+				font-weight: bold;
+				margin-right: 3px;
+			}
+		}
+		[data-field="attack-hit2"] p:first-child::before {
+			content: attr(data-label); // "Acerto:";
+			font-weight: bold;
+		}
+	}
 }
 .skyfall.sheet.ability {
 	.window-content {

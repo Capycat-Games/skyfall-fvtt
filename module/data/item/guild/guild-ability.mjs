@@ -110,4 +110,12 @@ export default class GuildAbility extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	prepareDerivedData() {
 	}
+	
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	getRollData() {
+		return {}
+	}
 }

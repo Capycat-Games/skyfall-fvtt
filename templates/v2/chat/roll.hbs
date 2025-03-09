@@ -1,27 +1,87 @@
-<div class="dice-roll {{roll.type}}">
+<div class="dice-roll {{roll.type}} roll-entry-v2">
+	{{!-- CHAT_TEMPLATE --}}
+	{{!-- roll.hbs --}}
+	{{log this}}
+	{{log roll}}
 	{{#if flavor}}
 		<div class="dice-flavor">{{flavor}}</div>
 	{{/if}}
-	<div class="dice-result">
+	<div class="dice-result {{ifThen roll.options.critical 'critical' ''}}">
 		<div class="dice-formula">
-			{{formula}}
-			{{#if roll.evaluated }}
-				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="-"><i class="fa-solid fa-bahai"></i>
-					{{{SYSTEM.sfcatharsis}}}
-				</button>
-				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="+"><i class="fa-solid fa-bahai"></i>
-					{{{SYSTEM.sfcatharsis}}}
-				</button>
-
-			{{else}}
-				<button data-tooltip="SKYFALL.MESSAGE.CATHARSIS" data-apply-catharsis="+"><i class="fa-solid fa-bahai"></i>
-					{{{SYSTEM.sfcatharsis}}}
-				</button>
-			{{/if}}
+			<span class="buttons left">
+				{{#if roll._evaluated }}
+					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.SubtractCatharsis'}}" data-action="catharsis" data-catharsis="+" data-apply-catharsis="-">
+						{{{SYSTEM.icons.sfcatharsis}}}
+						<b>&nbsp;-</b>
+					</button>
+				{{else}}
+					{{#if (eq roll.options.type 'damage') }}
+						<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.CriticalRoll'}}" data-action="evaluate" data-critical="1" data-roll="{{roll.index}}">
+							{{{SYSTEM.icons.dice}}}
+						</button>
+					{{/if}}
+				{{/if}}
+			</span>
+			{{!-- {{formula}} --}}
+			{{#each roll.terms as | t |}}
+				{{#if t.operator }}
+					{{t.operator}}
+				{{else}}
+					<span data-tooltip="{{t.options.data}} {{t.options.source}}" style2="border-color: greenyellow; padding: 2px 3px">
+						{{t.expression}}
+					</span>
+				{{/if}}
+			{{/each}}
+			<span class="buttons right">
+				{{#if roll._evaluated }}
+					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.AddCatharsis'}}" data-action="catharsis" data-catharsis="+" data-apply-catharsis="+">
+						{{{SYSTEM.icons.sfcatharsis}}}
+						<b>&nbsp;+</b>
+					</button>
+				{{else}}
+					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.Roll'}}" data-action="evaluate" data-roll="{{roll.index}}">
+						{{{SYSTEM.icons.dice}}}
+					</button>
+				{{/if}}
+			</span>
 		</div>
-		{{#if roll.evaluated }}
+		{{#if roll._evaluated }}
+			<small>
+
+			</small>
 			{{{tooltip}}}
-			<h4 class="dice-total">{{total}}</h4>
+			<h4 class="dice-total">
+				<span class="buttons left">
+					{{#if (eq roll.options.type 'damage') }}
+						<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.ApplyDamage'}}"
+							data-action="applyDamage" data-damage="1">
+							{{{SYSTEM.icons.minus}}}
+						</button>
+						<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.ApplyDoubleDamage'}}"
+							data-action="applyDamage" data-damage="2">
+							2x
+						</button>
+					{{else}}
+					{{/if}}
+				</span>
+				{{total}}
+				{{#if roll.options.critical }}
+					{{localize 'SKYFALL2.MESSAGE.CriticalRoll'}}
+				{{/if}}
+				<span class="buttons right">
+					{{#if (eq roll.options.type 'damage') }}
+						<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.ApplyHalfDamage'}}"
+							data-action="applyDamage" data-damage="0.5">
+							½
+						</button>
+						<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.ApplyHeal'}}"
+							data-action="applyDamage" data-damage="-1">
+							{{{SYSTEM.icons.create}}}
+						</button>
+					{{else}}
+					{{/if}}
+				</span>
+			</h4>
 		{{else}}
 
 		{{/if}}

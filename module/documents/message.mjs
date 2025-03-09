@@ -477,8 +477,8 @@ export default class SkyfallMessage extends ChatMessage {
 	/* -------------------------------------------- */
 
 	/** @inheritdoc */
-	// async _preUpdate(data, options, userId) {
-	// 	return await super._preUpdate(data, options, userId);
+	// async _preUpdate(changed, options, user) {
+	// 	return await super._preUpdate(changed, options, user);
 	// }
 
 	/* -------------------------------------------- */
@@ -749,6 +749,8 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 	}
 
+	/* -------------------------------------------- */
+	
 	_onConsumeResources(){
 		if ( game.userId != this.author.id ) return;
 		const content = ""
@@ -816,8 +818,7 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 		this._actor.update(updateData);
 	}
-
-	/* -------------------------------------------- */
+	
 	async #evaluateRoll(event){
 		event.preventDefault();
 		event.stopPropagation();

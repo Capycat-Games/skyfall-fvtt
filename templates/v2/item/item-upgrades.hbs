@@ -1,0 +1,33 @@
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+
+
+	{{!-- SIGILS --}}
+	{{#if (isDefined system.sigils)}}
+		<fieldset class="flexrow sigils">
+			<legend>{{localize "TYPES.Item.sigilPl"}}</legend>
+			{{#each sigils as | list type | }}
+				<ol class="plain flexcol flex-start" data-field-path="system.sigils" data-item-type="sigil">
+					<li><label>
+							{{#if (eq type 'prefix' ) }}
+								{{localize "SKYFALL2.SIGIL.Prefix"}}
+							{{else}}
+								{{localize "SKYFALL2.SIGIL.Sufix"}}
+							{{/if}}
+						</label></li>
+					{{#each list as | sigil |}}
+						<li class="sigil flexrow" data-uuid="{{sigil.uuid}}">
+							<div class="item-name flex2">{{sigil.label}}</div>
+							<div class="item-controls flex0">
+								<a data-action="infuse">
+									{{localize "SKYFALL2.Infused"}}
+									{{{ifThen sigil.infused  @root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square}}}
+								</a>
+								<a data-action="deleteSigil">&nbsp;{{{@root.SYSTEM.icons.delete}}}</a>
+							</div>
+						</li>
+					{{/each}}
+				</ol>
+			{{/each }}
+		</fieldset>
+	{{/if}}
+</section>

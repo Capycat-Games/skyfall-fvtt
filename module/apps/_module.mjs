@@ -14,9 +14,14 @@ export {default as AbilityDescriptorsConfig} from "./descriptors-config.mjs";
 export {default as RollConfig} from "./roll-config.mjs";
 export {default as BenefitsDialog} from "./benefits-dialog.mjs";
 
+// APPLICATIONS
+export {default as ModificationConfig} from "./usage/modification-config.mjs";
+
 // SETTINGS
 export {default as SceneSettingConfig} from "./scene-control.mjs";
 export {default as AbilityDescriptorsSetting} from "./descriptors-setting.mjs";
+
+
 
 // // Sidebar Apps
 // export {default as CrucibleCombatTracker} from "./sidebar/combat-tracker.mjs";

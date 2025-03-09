@@ -70,6 +70,78 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				label: "SKYFALL2.DamageReductionAbbr"
 			}),
 			modifiers: new fields.SchemaField({
+				roll: new fields.SchemaField({
+					attack: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					damage: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					ability: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					skill: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					deathsave: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					initiative: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+					catharsis: new fields.SchemaField({
+						bonus: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+						mod: new _fields.RollBonusField( new fields.SchemaField({
+							value: new fields.StringField(),
+							descriptors: new fields.StringField(),
+						})),
+					}),
+				}),
 				damage: new fields.SchemaField({
 					taken: this.schemaDamage(),
 					dealt: this.schemaDamage(),
@@ -141,6 +213,14 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 					),
 				}),
 				ep: new fields.SchemaField({
+					cost: new _fields.RollBonusField( new fields.SchemaField({
+						value: new fields.StringField(),
+						descriptors: new fields.StringField(),
+					})),
+					limit: new _fields.RollBonusField( new fields.SchemaField({
+						value: new fields.StringField(),
+						descriptors: new fields.StringField(),
+					})),
 					abilities: new fields.ArrayField(
 						new fields.StringField({}),
 						{
@@ -166,6 +246,11 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 					armor: new fields.ArrayField(new fields.StringField(),{}),
 					unarmored: new fields.ArrayField(new fields.StringField(),{}),
 					shield: new fields.ArrayField(new fields.StringField(),{}),
+				}),
+				protections: new fields.SchemaField({
+					all: new fields.ArrayField(new fields.StringField(),{}),
+					mental: new fields.ArrayField(new fields.StringField(),{}),
+					physical: new fields.ArrayField(new fields.StringField(),{}),
 				}),
 			}),
 			level: new fields.SchemaField({
@@ -278,6 +363,23 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 					min: 1,
 					label: "SKYFALL2.Total"
 				}),
+				bonus: new fields.ArrayField(
+					new fields.StringField({
+						initial: '',
+					}), {
+						label: "SKYFALL2.Bonus"	
+				}),
+				bonusTotal: new fields.ArrayField(
+					new fields.StringField({
+						initial: '',
+					}), {
+						label: "SKYFALL2.Bonus"	
+				}),
+				ability: new fields.StringField({
+					choices: OPTIONS.abilities,
+					initial: "str",
+					label: "SKYFALL2.Ability"
+				}),
 			}),
 			spellcasting: new fields.StringField({
 				choices: OPTIONS.abilities,
@@ -299,6 +401,38 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		}
 	}
 
+	static migrateData(source) {
+		console.log('migrateData', source);
+		if ( foundry.utils.hasProperty(source, 'modifiers.damage.taken') ) {
+			const irvLevels = {
+				"vul": 'vulnerability',
+				"nor": 'normal',
+				"res": 'resistance',
+				"imu": 'imunity'
+			};
+			for (const [key, value] of Object.entries(source.modifiers.damage.taken) ) {
+				if ( Object.values(irvLevels).includes(value) ) continue;
+				source.modifiers.damage.taken[key] = irvLevels[value] ?? 'normal'
+			}
+		}
+		if ( foundry.utils.hasProperty(source, 'modifiers.damage.dealt') ) {
+			const irvLevels = {
+				"vul": 'vulnerability',
+				"nor": 'normal',
+				"res": 'resistance',
+				"imu": 'imunity'
+			};
+			for (const [key, value] of Object.entries(source.modifiers.damage.dealt) ) {
+				if ( Object.values(irvLevels).includes(value) ) continue;
+				source.modifiers.damage.dealt[key] = irvLevels[value] ?? 'normal'
+			}
+		}
+		if ( foundry.utils.hasProperty(source, 'modifiers.condition.imune') ) {
+			source.modifiers.condition.imunity = source.modifiers.condition.imune;
+		}
+		return super.migrateData(source);
+	}
+
 	/* -------------------------------------------- */
 	/*  Schema Factory                              */
 	/* -------------------------------------------- */
@@ -309,7 +443,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const dmgTypes = Object.values(SYSTEM.DESCRIPTOR.DAMAGE);
 		dmgTypes.unshift({id: 'all', label: 'all' });
 		return new fields.SchemaField( dmgTypes.reduce((obj, dmg) => {
-			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "nor"});
+			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "normal"});
 			return obj;
 		}, {}));
 	}
@@ -739,5 +873,42 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	async _rollInitiative() {}
 
 
+	_getRollBonuses(type, descriptors) {
+		const rollData = this.parent?.getRollData();
+		console.log(this.modifiers.roll);
+		console.log(type);
+		const bonuses = this.modifiers.roll[type].bonus.filter( i => {
+			if ( !i.descriptors ) return true;
+			if ( !i.descriptors.split(' ').every( d => descriptors.includes(d) ) ) return false;
+			return true;
+		}).map( i => {
+			const roll = new SkyfallRoll(i.value, rollData, {});
+			return roll.terms.map( t => ({
+				expression: t.expression, flavor: t.flavor, data: t.data, source: t.source
+			}));
+		});
+		if ( !bonuses ) return false;
+		
+		// bonuses.unshift('1');
+		return bonuses.flat();
+		const roll = new SkyfallRoll(bonuses.join('+'), rollData);
+		roll.terms.shift();
+		return roll.terms;
+	}
+	
+	_getRollModifiers(type, descriptors) {
+		const rollData = this.parent?.getRollData();
+		
+		const modifiers = this.modifiers.roll[type].mod.filter( i => {
+			if ( !i.descriptors ) return true;
+			if ( !i.descriptors.split(' ').every( d => descriptors.includes(d) ) ) return false;
+			return true;
+		}).map( i => {
+			const roll = new SkyfallRoll(`1d6${i.value}`, rollData, {});
+			return roll.terms[0].modifiers;
+		});
+
+		return modifiers.flat( [...new Set(modifiers)]);
+	}
 
 }

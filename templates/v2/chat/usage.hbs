@@ -1,0 +1,114 @@
+<div class="skyfall chat-card usage-card ability-card {{actor.type}}" data-actor-id="{{actor.id}}" data-item-id="{{itemId}}">
+	{{log "USAGE CONTENT usage.hbs"}}
+	{{log this}}
+	<header class="card-header flexrow" style="width: 100%; flex: 100%;">
+		<h3 class="icon">{{{item.system.labels.action.icon}}} </h3>
+		<h3 class="item-name">{{item.name}}</h3>
+		<aside class="card-aside flexcol" style="width: 10%; flex: 0 0 10%;">
+			{{#if (eq item.type 'spell')}}
+				<h2>{{{item.system.labels.spell.icon}}}</h2>
+			{{/if}}
+			<h4>
+				{{ifThen item.cost item.cost '—' }} {{localize 'SKYFALL2.RESOURCE.EPAbbr'}}
+			</h4>
+	</header>
+	<div class="item-data flexcol" style="width: 100%; flex: 100%;">
+		<div class="header">
+			{{#if item.weapon.name }}
+				<h3 class="item-name">
+					<img src="{{item.img}}" width="32" height="32" style="display: inline;float:left;margin-right: 5px;">
+					{{{item.weapon.name}}}
+				</h3>
+			{{/if}}
+		</div>
+		<br>
+		<div class="ability-descriptors">
+			{{#unless item.system.descriptors.length }}
+				<label>&nbsp;</label>
+			{{/unless}}
+			{{#each item.system.descriptors as | tag i | }}
+				&REFERENCE[{{tag}}]
+			{{/each}}
+		</div>
+		<a data-action="collapse">{{{SYSTEM.icons.add}}}
+			<hr>
+		</a>
+		<div class="ability-properties">
+			{{#unless (eq item.system.activation.recharge null) }}
+				<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
+			{{/unless}}
+			{{#each item.system.labels.properties as | prop | }}
+				<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
+			{{/each}}
+		</div>
+		{{#with item.system.labels.attack.hit }}
+			<div class="ability-properties rich">
+				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+			</div>
+		{{/with}}
+
+		{{#with item.system.labels.attack.miss }}
+			<div class="ability-properties rich">
+				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+			</div>
+		{{/with}}
+
+		{{#with item.system.labels.effect }}
+			<div class="ability-properties rich">
+				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+			</div>
+		{{/with}}
+		{{#with item.system.labels.special }}
+			<div class="ability-properties rich">
+				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+			</div>
+		{{/with}}
+	</div>
+	<ul class="list-items modifications">
+
+		{{#each modifications as | mod | }}
+			<div class="{{ifThen mod.amplify 'hidden' ''}}" data-amplify="{{mod.amplifyThreshold}}">{{{mod.embed}}}</div>
+		{{/each}}
+	</ul>
+	<div class="rolls">
+		{{log rolls}}
+		{{#each rolls as | roll index | }}
+			{{{roll.template}}}
+		{{/each}}
+		{{#each rolls2 as | roll index | }}
+			{{#if roll.evaluated }}
+				{{roll.evaluated.total}}
+			{{else}}
+				<div class="roll-entry non-evaluated {{roll.original.class}}" data-roll-title="{{roll.options.flavor}}">
+					<div class="dice-roll">
+						<div class="dice-flavor">{{roll.options.flavor}}</div>
+						<div class="dice-result">
+							<div class="dice-formula">{{roll.formula}}</div>
+						</div>
+					</div>
+				</div>
+			{{/if}}
+		{{/each}}
+	</div>
+	<hr>
+	<div class="chat-actions flexcol">
+		{{#each measuredTemplate as | temp i | }}
+			<button class="chat-action" data-place-template data-action="placeTemplate">
+				<i class="fa-solid fa-ruler-combined"></i>
+				{{localize 'SKYFALL.CHATMESSAGE.USAGE.PLACETEMPLATE'}}
+			</button>
+		{{/each}}
+
+		{{#each buttons as | button | }}
+			<button class="chat-action" data-action="{{button.action}}">
+				{{button.icon}} {{localize button.label}}
+			</button>
+		{{/each}}
+
+		{{#each effects as | ef i | }}
+			<button class="chat-action effect" data-action="applyEffect" data-effect-id="{{ef._id}}">
+				<img src="{{ef.img}}" width="32" height="32">{{{ef.name}}}
+			</button>
+		{{/each}}
+	</div>
+</div>

@@ -46,4 +46,12 @@ export default class Seal extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	prepareDerivedData() {
 	}
+
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	getRollData() {
+		return {}
+	}
 }

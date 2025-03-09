@@ -55,9 +55,13 @@
 
 	<!-- Details Tab -->
 	<section class="tab details" data-tab="details">
-
-		{{formField systemFields.cost.value value=system.cost.value localize=true}}
-		{{formField systemFields.cost.resource value=system.cost.resource localize=true}}
+		<div class="form-group">
+			<label>{{localize systemFields.cost.value.label}}</label>
+			<div class="form-fields">
+				{{formInput systemFields.cost.value value=system.cost.value localize=true}}
+				{{formInput systemFields.cost.resource value=system.cost.resource localize=true}}
+			</div>
+		</div>
 		{{formField systemFields.cost.multiple value=system.cost.multiple localize=true}}
 		{{formField systemFields.apply.always value=system.apply.always localize=true}}
 
@@ -68,8 +72,7 @@
 				{{#each systemFields.apply.type.element.choices as | choice | }}
 					<label>
 						{{localize choice.label}}
-						<input type="checkbox" name="system.apply.type" value="{{choice.value}}" {{checked (includes
-							@root.system.apply.type choice.value)}}>
+						<input type="checkbox" name="system.apply.type" value="{{choice.value}}" {{checked (includes @root.system.apply.type choice.value)}}>
 					</label>
 				{{/each}}
 				<label> &nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -107,7 +110,7 @@
 
 				<dropdown-tags name="system.apply.descriptors" class="descriptors">
 					{{#each @root._selOpts.descriptors as | group id |}}
-						<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.LABEL.' id)}}">
+						<optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.' id)}}">
 							{{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.apply.descriptors}}
 						</optgroup>
 					{{/each}}

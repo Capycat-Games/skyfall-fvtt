@@ -22,6 +22,7 @@ import AbilityTemplate from "./module/helpers/ability-template.mjs";
 import ShortRestV2 from "./module/apps/restV2.mjs";
 import TokenSkyfall from "./module/token.mjs";
 import * as functions from "./module/helpers/functions.mjs";
+import SkyfallMigrationHelper from "./module/helpers/migration.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
 import { CombatTrackerSkyfall } from "./module/combat.mjs";
 import {SkyfallHooks} from "./module/hooks/hooks.mjs";
@@ -34,6 +35,10 @@ globalThis.skyfall = {
 	documents,
 	models,
 	sheets,
+	dice: {
+		SkyfallRoll: dice.SkyfallRoll,
+		D20Roll: dice.D20Roll,
+	},
 	data: {
 		fields
 	},
@@ -42,7 +47,8 @@ globalThis.skyfall = {
 	},
 	wip: {
 		ShortRestV2,
-		TestApp
+		TestApp,
+		SkyfallMigrationHelper,
 	},
 	ui: {},
 	utils: functions
@@ -71,7 +77,8 @@ Hooks.once('init', function () {
 	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
 	CONFIG.Token.documentClass = documents.SkyfallToken;
 	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
-	// CONFIG.ChatMessage.template = 'systems/skyfall/templates/chat/chat-message.hbs';
+	
+	CONFIG.ChatMessage.template = 'systems/skyfall/templates/v2/chat/chat-message.hbs';
 	CONFIG.Token.objectClass = TokenSkyfall;
 	CONFIG.ui.combat = CombatTrackerSkyfall;
 
@@ -108,8 +115,10 @@ Hooks.once('init', function () {
 	CONFIG.Item.dataModels["facility"] = models.item.Facility;
 	CONFIG.Item.dataModels["guild-ability"] = models.item.GuildAbility;
 
+	CONFIG.ActiveEffect.dataModels["base"] = models.other.SkyfallEffectData;
 	CONFIG.ActiveEffect.dataModels["modification"] = models.other.Modification;
-	CONFIG.ChatMessage.dataModels["usage"] = models.other.UsageMessage;
+	CONFIG.ChatMessage.dataModels["base"] = models.other.BaseChatMessage;
+	CONFIG.ChatMessage.dataModels["usage"] = models.other.UsageChatMessage;
 
 	// Register Roll Extensions
 	// CONFIG.Dice.rolls[0] = dice.SkyfallRoll;
@@ -118,8 +127,11 @@ Hooks.once('init', function () {
 	CONFIG.Dice.rolls = [
 		dice.SkyfallRoll,
 		dice.D20Roll
-	]
-	// CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/chat/roll.hbs';
+	];
+	CONFIG.Dice.functions.case = (level, target, value) => {
+		return level > target ? value : false;
+	}
+	CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/v2/chat/roll.hbs';
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
@@ -164,13 +176,13 @@ Hooks.once('init', function () {
 		makeDefault: true,
 	});
 	
-	Messages.registerSheet('skyfall', sheets.UsageConfig, {
+	Messages.registerSheet('skyfall', sheetsV2.SkyfallAbilityModificationsConfig, {
 		types: ['usage'],
 		makeDefault: true,
 	});
 
-	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheets.SkyfallModificationConfig, {
-		types: ['modification'],
+	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheetsV2.ActiveEffectConfig, {
+		// types: ['modification'],
 		makeDefault :true
 	});
 
@@ -256,7 +268,7 @@ Hooks.once("i18nInit", async function () {
 });
 
 Hooks.once('ready', async function () {
-	
+	await skyfall.wip.SkyfallMigrationHelper.migrate();
 	// Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
 	Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
 
@@ -519,9 +531,9 @@ async function prepareSystemLocalization() {
 
 async function prepareSystemStatusEffects() {
 	let journalConditions;
-	if ( false && game.modules.has("skyfall-core") ) {
-		journalConditions = fromUuidSync(
-			"Compendium.skyfall-core.regras.JournalEntry.TBD"
+	if ( game.modules.has("skyfall-core") ) {
+		journalConditions = await fromUuid(
+			"Compendium.skyfall-core.rules.JournalEntry.zpszVy5Kw4e06ims"
 		);
 	} else if ( false && game.modules.has("skyfall-fastplay") ) {
 		journalConditions = await fromUuid(
@@ -591,6 +603,7 @@ function registerCustomEnrichers(){
 		enricher: enrichReference
 	});
 	// (?<type>ability|skill|attack|damage|healing)
+	document.body.addEventListener("click", applyStatus);
 	document.body.addEventListener("click", rollConfig);
 }
 
@@ -614,7 +627,7 @@ async function enrichReference(match, options) {
 		);
 		const page = journalConditions.pages.find( p => p.name == label );
 		if ( page ) {
-			tooltip = `<section class='tooltip status-effect'><h3>${label}</h3>${page.text.content}</section>`;
+			tooltip = `<section class="tooltip status-effect" ><h3>${label}</h3>${page.text.content}</section>`;
 		}
 	} else {
 		style = "descriptor-reference";
@@ -624,6 +637,7 @@ async function enrichReference(match, options) {
 	
 	const inline = document.createElement('span');
 	inline.classList.add(style);
+	inline.dataset.applyStatus = config;
 	inline.dataset.tooltip = tooltip;
 	inline.innerHTML = label;
 	return inline;
@@ -653,6 +667,30 @@ function enrichRollRequest(match, options) {
 	inline.innerHTML = `<i class="fa-solid fa-dice-d20"></i> ${label}`;
 	
 	return inline;
+}
+
+async function applyStatus(event) {
+	const target = event.target.closest('[data-apply-status]');
+	if ( !target ) return;
+	const {applyStatus} = target.dataset;
+	if ( !applyStatus || !SYSTEM.conditions[applyStatus] ) return;
+	event.stopPropagation();
+	const effect = SYSTEM.conditions[applyStatus];
+	const actors = canvas.tokens.controlled.map( i => i.actor );
+	for (const actor of actors) {
+		if ( effect.system?.stackable ) {
+			const current = actor.effects.find( ef => ef.id.startsWith(applyStatus) );
+			if ( current ) {
+				await current.update({
+					"system.stack": current.system.stack + 1,
+				});
+			} else {
+				actor.toggleStatusEffect(applyStatus);
+			}
+		} else {
+			actor.toggleStatusEffect(applyStatus);
+		}
+	}
 }
 
 async function rollConfig(event){

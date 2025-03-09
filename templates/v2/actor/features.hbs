@@ -22,32 +22,32 @@
 				{{/each}}
 			</div>
 			{{!-- RESISTANCES --}}
-			{{#if (or isEditMode irv.vul )}}
+			{{#if (or isEditMode irv.vulnerability )}}
 				<div class="status vulnerability">
 					<h4><a data-action="manage" data-manage="irv">
 							{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:
 						</a></h4>
-					{{#each irv.vul as | entry |}}
+					{{#each irv.vulnerability as | entry |}}
 						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
 					{{/each }}
 				</div>
 			{{/if}}
-			{{#if (or isEditMode irv.res )}}
+			{{#if (or isEditMode irv.resistance )}}
 				<div class="status resistance">
 					<h4><a data-action="manage" data-manage="irv">
 							{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:
 						</a></h4>
-					{{#each irv.res as | entry |}}
+					{{#each irv.resistance as | entry |}}
 						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
 					{{/each }}
 				</div>
 			{{/if}}
-			{{#if (or isEditMode irv.imu )}}
+			{{#if (or isEditMode irv.imunity )}}
 				<div class="status imunity">
 					<h4><a data-action="manage" data-manage="irv">
 							{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:
 						</a></h4>
-					{{#each irv.imu as | entry |}}
+					{{#each irv.imunity as | entry |}}
 						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
 					{{/each }}
 				</div>

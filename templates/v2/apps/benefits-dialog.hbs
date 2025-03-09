@@ -1,5 +1,6 @@
 <form>
 	<input type="hidden" name="create">
+	{{log 'LALALAL' steps}}
 	{{#each steps as | step s | }}
 		<fieldset>
 			<legend>{{localize step.title}}</legend>
@@ -12,17 +13,16 @@
 			{{#if grant.groupLabel }}
 				<li class="item-header">
 					<h4>{{grant.groupLabel}}</h4>
-					<ol class="plain columns-2">
+					<ol class="plain flexrow" style="justify-content: space-between;">
 			{{/if}}
-			<li class="item {{type}} entry flexrow" data-entry-id="{{grant.item.uuid}}">
+			<li class="item {{type}} entry flexrow" data-entry-id="{{grant.item.uuid}}" style="height: 45px; flex: 0 0 49%;">
 				<div class="item-icon" style="background-image:url({{grant.item.img}})"></div>
 				<div class="item-name flex3" data-action="edit" style="cursor: pointer;">
 					{{grant.item.name}}
 				</div>
 				<div class="item-controls">
 					<input type="{{step.mode}}" name="create" value="{{ifnull step.originId grant.id}}|{{grant.item.uuid}}"
-						{{checked
-						step.checkAll}}>
+						{{checked step.checkAll}}>
 				</div>
 			</li>
 	{{/each}}

@@ -1,0 +1,29 @@
+<section class="tab item-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	{{!-- ATTACK --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Attack"}}</legend>
+		<div class="form-group">
+			<label>{{localize "SKYFALL2.Attack"}} / {{localize "SKYFALL2.ATTACK.Protection"}}</label>
+			<div class="form-fields slim">
+				{{formInput schema.attack.ability value=system.attack.ability localize=true}}
+				vs
+				{{formInput schema.attack.protection value=system.attack.protection localize=true}}
+			</div>
+		</div>
+		{{formGroup schema.attack.damage value=system.attack.damage localize=true}}
+		{{formGroup schema.attack.hit value=system.attack.hit localize=true}}
+		{{formGroup schema.attack.miss value=system.attack.miss localize=true}}
+	</fieldset>
+	{{!-- EFFECT --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Effect"}}</legend>
+		{{formGroup schema.effect.damage value=system.effect.damage localize=true}}
+		{{formGroup schema.effect.descriptive value=system.effect.descriptive localize=true}}
+	</fieldset>
+	{{!-- SPECIAL --}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Special"}}</legend>
+		{{formGroup schema.special.descriptive value=system.special.descriptive localize=true}}
+	</fieldset>
+
+</section>

@@ -11,6 +11,7 @@ export default class Consumable extends PhysicalItemData {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		const _fields = skyfall.data.fields;
 		return foundry.utils.mergeObject(super.defineSchema(), {
 			type: new fields.StringField({
 				required: true,
@@ -38,6 +39,7 @@ export default class Consumable extends PhysicalItemData {
 				initial:1, min: 0,
 				label:"SKYFALL.CAPACITY"
 			}),
+			rolls: new _fields.MappingField(new _fields.RollField()),
 			uses: new fields.SchemaField({
 				value: new fields.NumberField({
 					required: true,

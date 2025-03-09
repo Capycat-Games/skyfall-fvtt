@@ -1,5 +1,6 @@
 <section class="tab scrollable ability-config {{tab.id}} {{tab.cssClass}} flexcol" data-tab="config" "{{tab.id}}" data-group="{{tab.group}}">
 	{{!-- GUILD ABILITY --}}
+	<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56" height="56" />
 	<fieldset>
 		<legend>{{localize "TYPES.Item.guild-ability"}}</legend>
 		{{formGroup schema.type value=system.type localize=true}}

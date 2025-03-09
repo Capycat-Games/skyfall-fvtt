@@ -70,7 +70,7 @@
   "DOCUMENT": {
     "Create": "Novo {type}"
   },
-  "SKYFALL": {
+  "SKYFALL3": {
     "NAME": "Nome",
     "VALUE": "Valor",
     "TOTAL": "Totais",
@@ -1124,6 +1124,9 @@
       "CatharsisAbbr": "PC",
       "Shadow": "Pontos de Sombra",
       "ShadowAbbr": "PS",
+      "DeathSave": "Testes de Morte",
+      "Success": "Sucessos",
+      "Failures": "Falha",
       "LevelRoll": "Rolagem de Dado de Vida",
       "LevelBonus": "Bônus Por Nível",
       "TotalBonus": "Bônus Total",

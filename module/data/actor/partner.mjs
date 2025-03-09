@@ -29,6 +29,42 @@ export default class Partner extends Creature {
 				initialKeys: OPTIONS.abilities,
 				initialKeysOnly: true, label: "SKYFALL2.AbilityPl"
 			}),
+			capacity: new fields.SchemaField({
+				value: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 0,
+					min: 0,
+					label: "SKYFALL2.Current"
+				}),
+				max: new fields.NumberField({
+					required: true,
+					nullable: false,
+					integer: true,
+					initial: 1,
+					min: 1,
+					label: "SKYFALL2.Total"
+				}),
+				bonus: new fields.ArrayField(
+					new fields.StringField({
+						initial: '',
+					}), {
+						label: "SKYFALL2.Bonus"	
+				}),
+				bonusTotal: new fields.ArrayField(
+					new fields.StringField({
+						initial: '',
+					}), {
+						label: "SKYFALL2.Bonus"	
+				}),
+				ability: new fields.StringField({
+					blank: true,
+					choices: OPTIONS.abilities,
+					initial: "",
+					label: "SKYFALL2.Ability"
+				}),
+			}),
 			resources: new fields.SchemaField({
 				hc: new fields.SchemaField({
 					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL2.Current"}),

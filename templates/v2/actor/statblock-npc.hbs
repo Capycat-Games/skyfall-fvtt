@@ -181,6 +181,7 @@
 			</ol>
 	{{/if}}
 	{{!-- ABILITIES --}}
+	{{log 'ABILITIES' abilities}}
 	{{#if (or isEditMode abilities.passive.list.length )}}
 		{{> "systems/skyfall/templates/v2/actor/statblock-abilities.hbs" category=abilities.passive}}
 	{{/if}}

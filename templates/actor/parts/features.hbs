@@ -63,16 +63,15 @@
 			{{/each}}
 		</div>
 		<div class="modifiers-damage">
-			<h4><a data-action="manage"
-					data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
+			<h4><a data-action="manage" data-target="modifiers-damage.taken">{{localize "SKYFALL.ACTOR.MODIFIERS.DAMAGETAKEN"}}</a></h4>
 			{{#each system.modifiers.damage.taken as | damage key |}}
-				{{#unless (eq damage "nor") }}
+				{{#unless (eq damage "normal") }}
 					<span class="modifiers-damage">
-						{{#if (eq damage "imu") }}
+						{{#if (eq damage "imunity") }}
 							{{{../SYSTEM.icons.shield}}}
-						{{~else if (eq damage "res") }}
+						{{~else if (eq damage "resistance") }}
 							{{{../SYSTEM.icons.shieldhalf}}}
-						{{~else if (eq damage "vul") }}
+						{{~else if (eq damage "vulnerability") }}
 							{{{../SYSTEM.icons.heartcrack}}}
 						{{/if}}
 						{{localize (lookup (lookup @root.SYSTEM.DESCRIPTOR.DAMAGE key) "label")}}

@@ -38,6 +38,20 @@ export default class D20Roll extends SkyfallRoll {
 		return roll;
 	}
 
+	static fromItemRoll(itemRoll, data = {}, options = {}){
+		if ( itemRoll.terms[0]?.faces != 20 ) {
+			// itemRoll.terms.unshift({
+			// 	expression: '1d20', flavor: '', data: '', source: 'd20'
+			// });
+			
+		}
+		const roll = super.fromItemRoll(itemRoll, data, options);
+		roll.terms.unshift(new _terms.OperatorTerm({operator: "+"}));
+		roll.terms.unshift(new _terms.Die({faces: 20, number: 1, options: {source:'d20'}}));
+		// Re-compile the underlying formula
+		roll._formula = roll.constructor.getFormula(roll.terms);
+		return roll;
+	}
 	/**
 	 * Does this roll start with a d20?
 	 * @type {boolean}

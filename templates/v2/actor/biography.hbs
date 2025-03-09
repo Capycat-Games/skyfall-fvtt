@@ -1,10 +1,25 @@
 <section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}"
 	data-group="{{tab.group}}">
 	{{#unless (eq actor.type 'character')}}
-		<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="160"
-			width="160" />
+		<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="160" width="160" />
 	{{/unless}}
 	<div class="flexcol biography">
 		{{formInput schema.biography value=system.biography enriched=enriched.biography documentUUID=document.uuid toggled=true localize=true}}
 	</div>
+
+	{{#if 1}}
+		<ul class="flex100">
+			<li>BONUS (system.modifiers.roll.attack)</li>
+			<li class="flexrow">
+				<input type="text" disabled value="BONUS"> /
+				<input type="text" disabled value="DESCRITORES">
+			</li>
+			{{#each system.modifiers.roll.attack as | b i | }}
+				<li class="flexrow">
+					<input type="text" disabled value="{{b.value}}"> /
+					<input type="text" disabled value="{{b.descriptors}}">
+				</li>
+			{{/each}}
+		</ul>
+	{{/if}}
 </section>

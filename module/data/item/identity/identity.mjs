@@ -14,8 +14,8 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 			parentTypes: [],
 			benefitTypes: {feature: [], heritage: [], ability: [], grant: []},
 			sheet: {
-				parts: ["header","tabs","description","benefits","feats","effects"],
-				tabs: ["description","benefits","feats","effects"],
+				parts: ["header","tabs","description","benefits","feats","effects","deprecated"],
+				tabs: ["description","benefits","feats","effects","deprecated"],
 				tabGroups: 'description',
 			}
 		}
@@ -255,12 +255,17 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 		BenefitsDialog.prompt({item: this.parent, level: this.level});
 
 	}
-	// async _preUpdate(changes, options, user) {}
+	// async _preUpdate(changed, options, user) {}
 	// _onUpdate(changed, options, userId) {}
 
 	/* -------------------------------------------- */
 	/*  Type Methods                                */
 	/* -------------------------------------------- */
+	
+	getRollData() {
+		return {}
+	}
+
 	/**
 	 * Validate that each entry in the talents Set is a UUID.
 	 * @param {string} uuid     The candidate value

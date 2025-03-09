@@ -32,19 +32,8 @@
 			</div>
 		</div>
 
-		<fieldset class="">
-			<legend>{{localize "SKYFALL2.Attack"}}</legend>
-			{{formGroup schema.attack.ability value=system.attack.ability localize=true}}
-			{{formGroup schema.attack.bonus value=system.attack.bonus localize=true}}
-		</fieldset>
-		<fieldset class="">
-			<legend>{{localize "SKYFALL2.Damage"}}</legend>
-			{{formGroup schema.damage.die value=system.damage.die localize=true}}
-			{{formGroup schema.damage.versatile value=system.damage.versatile localize=true}}
-			{{formGroup schema.damage.ability value=system.damage.ability localize=true}}
-			{{formGroup schema.damage.bonus value=system.damage.bonus localize=true}}
-			{{!-- {{formGroup schema.damage.formula value=system.damage.formula localize=true}} --}}
-		</fieldset>
+
+		{{> "systems/skyfall/templates/v2/item/item-roll.hbs"}}
 
 	{{/if}}
 	{{#if (eq document.type 'armor')}}
@@ -66,6 +55,7 @@
 				{{formGroup schema.damage.bonus value=system.damage.bonus localize=true}}
 				{{!-- {{formGroup schema.damage.formula value=system.damage.formula localize=true}} --}}
 			</fieldset>
+			{{> "systems/skyfall/templates/v2/item/item-roll.hbs"}}
 		{{/if}}
 	{{/if}}
 	{{#if (eq document.type 'clothing')}}
@@ -83,6 +73,7 @@
 	{{#if (eq document.type 'consumable')}}
 		{{formGroup schema.type value=system.type label="Tipo" localize=true}}
 		{{formGroup schema.damage.formula value=system.damage.formula localize=true}}
+		{{> "systems/skyfall/templates/v2/item/item-roll.hbs"}}
 	{{/if}}
 
 	{{#if (eq document.type 'class')}}
@@ -109,33 +100,4 @@
 	{{#if (eq document.type 'template')}}
 	{{/if}}
 
-	{{!-- SIGILS --}}
-	{{#if (isDefined system.sigils)}}
-		<fieldset class="flexrow sigils">
-			<legend>{{localize "TYPES.Item.sigilPl"}}</legend>
-			{{#each sigils as | list type | }}
-				<ol class="plain flexcol flex-start" data-field-path="system.sigils" data-item-type="sigil">
-					<li><label>
-							{{#if (eq type 'prefix' ) }}
-								{{localize "SKYFALL2.SIGIL.Prefix"}}
-							{{else}}
-								{{localize "SKYFALL2.SIGIL.Sufix"}}
-							{{/if}}
-						</label></li>
-					{{#each list as | sigil |}}
-						<li class="sigil flexrow" data-uuid="{{sigil.uuid}}">
-							<div class="item-name flex2">{{sigil.label}}</div>
-							<div class="item-controls flex0">
-								<a data-action="infuse">
-									{{localize "SKYFALL2.Infused"}}
-									{{{ifThen sigil.infused  @root.SYSTEM.icons.squarefill @root.SYSTEM.icons.square}}}
-								</a>
-								<a data-action="deleteSigil">&nbsp;{{{@root.SYSTEM.icons.delete}}}</a>
-							</div>
-						</li>
-					{{/each}}
-				</ol>
-			{{/each }}
-		</fieldset>
-	{{/if}}
 </section>

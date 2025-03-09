@@ -48,4 +48,12 @@ export default class Facility extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	prepareDerivedData() {
 	}
+	
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	getRollData() {
+		return {}
+	}
 }

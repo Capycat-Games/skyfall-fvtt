@@ -13,7 +13,9 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 				value: new fields.HTMLField({required: true, blank: true, label:"SKYFALL.DESCRIPTION"}),
 			}),
 			unidentified: new fields.SchemaField({
-				value: new fields.BooleanField({initial: false, label:"SKYFALL2.Unidentified"}),
+				value: new fields.BooleanField({
+					initial: false, label:"SKYFALL2.Unidentified"
+				}),
 				name: new fields.StringField({required:true, blank: true, label: "SKYFALL.NameUnidentified"}),
 				description:  new fields.HTMLField({required: true, blank: true, label: "SKYFALL.DescriptionUnidentified"})
 			}),
@@ -115,9 +117,9 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 	}
 
 	/** @inheritDoc */
-	async _preUpdate(changes, options, user) {
+	async _preUpdate(changed, options, user) {
 		if ( 'equipped' in this ) {
-			let allow = await this._arcaneOverloadAlert(changes, options, user);
+			let allow = await this._arcaneOverloadAlert(changed, options, user);
 			if ( allow === false ) return false;
 		}
 
@@ -142,5 +144,13 @@ export default class PhysicalItemData extends foundry.abstract.TypeDataModel {
 			});
 			if ( !arcaneoverload ) return false;
 		}
+	}
+
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	getRollData() {
+		return {}
 	}
 }

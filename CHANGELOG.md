@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.9.600 - BETA
+
+- Modificações - Adicionado. Lógica de aplicação de Modificações para alterar rolagens, itens, atores e efeitos.
+
 ## 0.9.510 - BETA
 
 - Interface - Adicionado. Menu de configuração de Catarse da Mesa.
@@ -8,9 +12,9 @@
 - Habilidades - Adicionado. Consumo de Munição.
 - Item. Adicionado. Heranças, Características, Talentos, Habilidades possuem embeds personalizados;
 - Ficha de Personagem. Corrigido. Filtros.
-- Ficha de Equipamento. Corrigdo. Ficha não abria se a referência para o sigilo fosse perdida.
+- Ficha de Equipamento. Corrigido. Ficha não abria se a referência para o sigilo fosse perdida.
 - Mensagem de Habilidade. Corrigido. Catarse não era rolada.
-- Mensagem de Habilidade. Adiconado. Quando outro jogador usa Catarse a mensagem é atualizada.
+- Mensagem de Habilidade. Adicionado. Quando outro jogador usa Catarse a mensagem é atualizada.
 
 ## 0.9.509 - BETA
 

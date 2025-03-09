@@ -138,6 +138,7 @@ export const languages = _laguages.reduce((obj, key) => {
 }, {});
 
 let _damageModifiers = ["vul", "nor", "res", "imu"];
+_damageModifiers = ["vulnerability", "normal", "resistance", "imunity"];
 export const damageModifiers = _damageModifiers.reduce((obj, key) => {
 	obj[key] = {
 		id: key,

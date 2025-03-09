@@ -1,0 +1,63 @@
+<div>
+	<div class="usage-config header flexrow hidden">
+		<div class="actor flexrow ">
+			<img src="{{actor.img}}" width="32" height="32">
+			<label>{{actor.name}}</label>
+		</div>
+		<div class="item flexrow">
+			<img src="{{ability.img}}" width="32" height="32">
+			<label>{{ability.name}}</label>
+		</div>
+		{{#if ability.weapon.name }}
+			<div class="item flexrow">
+				<img src="{{ability.weapon.img}}" width="32" height="32">
+				<label>{{ability.weapon.name}}</label>
+			</div>
+		{{/if}}
+	</div>
+
+	<div class="modification header flexrow">
+		<div class="description">{{localize "SKYFALL2.Description"}}</div>
+		<div class="controls">{{localize "SKYFALL2.Apply"}}</div>
+		{{!-- <div class="cost">{{localize "SKYFALL2.Cost"}}</div>
+		<div class="name">{{localize "SKYFALL2.Name"}}</div> --}}
+	</div>
+	<div class="modifications scrollable flexcol">
+		{{#each modifications as | mod | }}
+			{{log mod}}
+			<div class="modification flexrow">
+				{{!-- ACTION - COST - TYPE  --}}
+				{{!-- DESCRIPTION  --}}
+				<div class="embed">
+					{{{mod.embed}}}
+				</div>
+				<div class="controls flexrow">
+					{{#if mod.system.cost.multiple }}
+						<button type="button" data-action="apply-sub"><i class="fa-solid fa-minus"></i></button>
+						<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{mod.apply}}">
+						{{!-- {{ifThen (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ifThen mod.system.apply.always 1 0) }} --}}
+						<button type="button" data-action="apply-add"><i class="fa-solid fa-plus"></i></button>
+					{{else if (xablau) }}
+						<input type="number" name="system.modifications.{{mod.id}}.apply" value="{{ifThen (lookup (lookup @root.system.modifications mod.id)  'apply')
+					(ifThen mod.system.apply.always 1 0) }}">
+					{{else }}
+						<input type="checkbox" name="system.modifications.{{mod.id}}.apply" value="1" {{checked mod.apply}}>
+						{{!-- (or mod.system.apply.always (lookup (lookup @root.system.modifications mod.id) 'apply')) --}}
+					{{/if}}
+				</div>
+				{{#if false }}
+					<div class="cost">
+						{{mod.cost}} {{mod.resource}}
+					</div>
+					<div class="name">
+						{{{mod.name}}}
+					</div>
+					<div class="description">
+						{{{mod.description}}}
+					</div>
+				{{/if}}
+			</div>
+		{{/each}}
+	</div>
+</div>

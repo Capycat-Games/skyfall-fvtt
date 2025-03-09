@@ -5,6 +5,17 @@ export default class SkyfallEffect extends ActiveEffect {
 	/* -------------------------------------------- */
 	/*  Getters                                     */
 	/* -------------------------------------------- */
+
+	/**
+	 * Describe whether the ActiveEffect has a temporary duration based on combat turns or rounds.
+	 * @type {boolean}
+	 */
+	get isTemporary() {
+		const duration = this.duration.seconds ?? (this.duration.rounds || this.duration.turns) ?? 0;
+		const special = this.system.specialDuration;
+		return special || (duration > 0) || (this.statuses.size > 0);
+	}
+	
 	get statusName() {
 		if ( this.isGroup ) {
 			let labels = [];
@@ -33,7 +44,7 @@ export default class SkyfallEffect extends ActiveEffect {
 		return SYSTEM.conditions[id] ?? null;
 	}
 	get isGroup() {
-		return ( 'group' in this.system )
+		return ( 'group' in this.system && this.system.group )
 	}
 
 	get isStack() {
@@ -50,7 +61,9 @@ export default class SkyfallEffect extends ActiveEffect {
 	get cost(){
 		if ( this.type != 'modification' ) return null;
 		const cost = this.system.cost; // {value: 1, resource:'ep', label: ``};
-		if ( !Number(cost.value) ) cost.label = ``;
+		// if ( !Number(cost.value) ) cost.label = ``;
+		
+		if ( this.system.apply.type.includes('amplify') ) cost.label = ``;
 		else {
 			cost.label = `+${cost.value} `;
 			cost.label += game.i18n.localize(`SKYFALL.ACTOR.RESOURCES.${cost.resource.toUpperCase()}ABBR`);
@@ -65,9 +78,9 @@ export default class SkyfallEffect extends ActiveEffect {
 		for (const t of type) {
 			const label = game.i18n.localize(`SKYFALL2.MODIFICATION.TYPE.${t.titleCase()}`);
 			if ( t == 'amplify' ) labels.push( `${label} ${amplifyThreshold}+` );
-			else labels.push(label);
+			else labels.push(`[${label}]`);
 		}
-		return {label: `${this.name} [${labels.join(' & ')}]`.toUpperCase()};
+		return {label: `${labels.join(' & ')}`.toUpperCase()};
 	}
 
 	/* -------------------------------------------- */
@@ -203,8 +216,8 @@ export default class SkyfallEffect extends ActiveEffect {
 	// /* -------------------------------------------- */
 
 	/** @inheritdoc */
-	async _preUpdate(data, options, userId) {
-		return await super._preUpdate(data, options, userId);
+	async _preUpdate(changed, options, user) {
+		return await super._preUpdate(changed, options, user);
 	}
 
 	// /* -------------------------------------------- */
@@ -219,21 +232,53 @@ export default class SkyfallEffect extends ActiveEffect {
   /* -------------------------------------------- */
 	
 	apply(actor, change) {
-		this.applyRollData( change );
+		let allowed = this.applyRollData( change );
+		if ( !allowed ) return;
 		return super.apply( actor, change );
 	}
-
+	
 	applyRollData( change ){
 		const parent = this.parent;
 		const granparent = this.parent ? this.parent.parent : null;
+		if ( change.key.startsWith('@') ) {
+			change.key = change.key.replace('@', 'system.');
+		}
 
-		if ( !granparent ) return;
+		if ( change.key.startsWith('_') ) {
+			change.key = change.key.replace('_', 'system._');
+		}
+		if ( !granparent ) return true;
+		if ( change.key.startsWith('?') ) {
+			const data = change.key.replace('?','').split(':').map( i => i.trim());
+			change.condition = data[0];
+			change.key = data[1];
+			change.condition = Roll.replaceFormulaData( change.condition, parent.getRollData() );
+		}
 		change.value = Roll.replaceFormulaData( change.value, parent.getRollData());
 		if ( granparent.documentName == "Actor" ) {
 			change.value = Roll.replaceFormulaData( change.value, granparent.getRollData());
+			if ( change.condition ) {
+				change.condition = Roll.replaceFormulaData( change.condition, granparent.getRollData() );
+			}
 		}
-		const roll = new Roll(change.value);
-		if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;
+		
+		if ( change.condition && Roll.safeEval(change.condition) === false ) return false;
+		else if ( change.condition ) { 
+			if ( change.key.startsWith('_') ) {
+				change.key = change.key.replace('_', 'system._');
+			}
+			if ( change.key.startsWith('@') ) {
+				change.key = change.key.replace('@', 'system.');
+			}
+		}
+		console.log(change);
+		try {
+			const roll = new Roll(change.value);
+			if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;
+			return true;
+		} catch (error) {
+			return true;
+		}
 	}
 
 	/* -------------------------------------------- */
@@ -260,12 +305,43 @@ export default class SkyfallEffect extends ActiveEffect {
 		});
 		container.innerHTML = `
 			<div class="modification-header">
-				<span style="font-family: SkyfallIcons">M</span> ${this.cost.label} ${this.modTypes.label}
+				<span style="font-family: SkyfallIcons">M</span> ${this.name} ${this.cost.label} ${this.modTypes.label}
 			</div>
 			<div class="modification-description">
 				${description}
 			</div>
 		`;
+		if ( config.controls ) {
+			const applyMulti = this.system.cost.multiple;
+			const controls = document.createElement('div');
+			controls.classList.add('controls','flexrow');
+			const input = document.createElement('input');
+			input.type = applyMulti ? 'number' : 'checkbox';
+			input.name = `effects.${this.id}.apply`;
+			input.setAttribute('value', (applyMulti ? 0 : 1));
+			if ( applyMulti ) {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.dataset.action = 'applyVary';
+				button.dataset.modificationId = this.id;
+
+				button.dataset.vary = '-';
+				button.innerHTML = SYSTEM.icons.minus;
+				controls.append(button);
+				controls.append(input);
+				
+				const button2 = button.cloneNode();
+				button2.dataset.vary = '+';
+				button2.innerHTML = SYSTEM.icons.create;
+				controls.append(button2);
+
+			} else {
+				input.dataset.action = 'applyToggle';
+				input.dataset.modificationId = this.id;
+				controls.append(input);
+			}
+			container.querySelector('.modification-header').append(controls);
+		}
 		return container.children;
 	}
 

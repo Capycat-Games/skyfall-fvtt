@@ -20,6 +20,13 @@ export default class SkyfallItem extends Item {
 		return this.system.config;
 	}
 
+	get damageType () {
+		if ( !this.system.descriptors ) return '';
+		const type = this.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
+		const heal = this.system.descriptors.find( d => d == 'heal' );
+		return heal ?? type ?? '';
+	}
+
 	/* -------------------------------------------- */
 	/*  Item Data Preparation                       */
 	/* -------------------------------------------- */
@@ -94,11 +101,17 @@ export default class SkyfallItem extends Item {
 	 * Override getRollData() that's supplied to rolls.
 	 */
 	getRollData(item = null) {
-		const data = { ...super.getRollData() };
+		const data = {
+			...super.getRollData(),
+			...this.system.getRollData(),
+		};
+		console.log(data);
+		// FIXME send to SystemTypeData
 		if ( this.type == 'weapon' || (this.type == 'armor' && this.system.type == 'shield') ) {
 			data['weapon'] = {};
 			data.weapon = this.system.damage.formula;
 		}
+		
 		if ( item ) data.item = item.getRollData();
 		
 		return data;
@@ -352,8 +365,8 @@ export default class SkyfallItem extends Item {
 	/* -------------------------------------------- */
 
 	// /** @inheritdoc */
-	// async _preUpdate(data, options, user) {
-	// 	let allowed = super._preUpdate(data, options, user);
+	// async _preUpdate(changed, options, user) {
+	// 	let allowed = super._preUpdate(changed, options, user);
 	// 	return allowed;
 	// }
 
@@ -408,7 +421,7 @@ export default class SkyfallItem extends Item {
 		ChatMessage.create({
 			content: catharsis ? description : `<h3>${name}</h3>${description}`,
 			flavor: catharsis ? `<h1>${name}</h1>` : '',
-			speaker: ChatMessage.getSpeaker(),
+			speaker: ChatMessage.getSpeaker({actor: this.actor}),
 			system: {
 				catharsis: catharsis,
 			}

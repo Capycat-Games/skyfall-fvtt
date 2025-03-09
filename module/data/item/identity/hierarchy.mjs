@@ -54,6 +54,6 @@ export default class Hierarchy extends Identity {
 
 	// _onCreate(data, options, userId) {}
 
-	// async _preUpdate(changes, options, user) {}
+	// async _preUpdate(changed, options, user) {}
 	// _onUpdate(changed, options, userId) {}
 }

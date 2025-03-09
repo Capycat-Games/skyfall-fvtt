@@ -36,8 +36,8 @@ export const statusEffects = [
 		img: "icons/svg/terror.svg",
 		// statuses: ["frightened"],
 		changes: [
-			{key: "system.modifiers.roll.ability", mode:2, value:'kl'},
-			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.ability.mod", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kl'},
 		],
 		disabled: false,
 	},
@@ -61,7 +61,7 @@ export const statusEffects = [
 		description: "SKYFALL2.CONDITIONS.ProneHint",
 		img: "icons/svg/falling.svg",
 		changes: [
-			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kl'},
 		],
 		changes: [],
 		disabled: false,
@@ -79,7 +79,7 @@ export const statusEffects = [
 			{key: "system.movement.swim", mode:1, value:0 },
 			{key: "system.movement.burrow", mode:1, value:0 },
 			{key: "system.movement.flight", mode:1, value:0 },
-			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kl'},
 		],
 		changes: [],
 		disabled: false,
@@ -123,7 +123,7 @@ export const statusEffects = [
 		img: "icons/svg/daze.svg",
 		// statuses: ["unprotected"],
 		changes: [
-			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kl'},
 		],
 		disabled: false,
 	},
@@ -140,7 +140,8 @@ export const statusEffects = [
 		],
 		disabled: false,
 		system: {
-			stack: 1
+			stack: 1,
+			stackable: true,
 		}
 	},
 	{
@@ -165,7 +166,7 @@ export const statusEffects = [
 		tint: "#00FF00",
 		// statuses: ["poisoned"],
 		changes: [
-			{key: "system.modifiers.roll.check", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.check.mod", mode:2, value:'kl'},
 		],
 		disabled: false,
 	},
@@ -212,7 +213,7 @@ export const statusEffects = [
 		img: "icons/svg/invisible.svg",
 		// statuses: ["invisible"],
 		changes: [
-			{key: "system.modifiers.roll.attack", mode:2, value:'kh'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kh'},
 		],
 		disabled: false,
 	},
@@ -227,7 +228,8 @@ export const statusEffects = [
 		changes: [],
 		disabled: false,
 		system: {
-			stack: 1
+			stack: 1,
+			stackable: true,
 		}
 	},
 	{
@@ -298,7 +300,7 @@ export const statusEffects = [
 		img: "icons/svg/eye.svg",
 		// statuses: ["provoked"],
 		changes: [
-			{key: "system.modifiers.roll.attack", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.attack.mod", mode:2, value:'kl'},
 		],
 		disabled: false,
 	},
@@ -313,9 +315,9 @@ export const statusEffects = [
 			{key: "system.movement.swim", mode:1, value:'0.5'},
 			{key: "system.movement.burrow", mode:1, value:'0.5'},
 			{key: "system.movement.flight", mode:1, value:'0.5'},
-			{key: "system.modifiers.roll.str", mode:2, value:'kl'},
-			{key: "system.modifiers.roll.dex", mode:2, value:'kl'},
-			{key: "system.modifiers.roll.con", mode:2, value:'kl'},
+			{key: "system.modifiers.roll.ability..mod", mode:2, value:'kl ; str'},
+			{key: "system.modifiers.roll.ability..mod", mode:2, value:'kl ; dex'},
+			{key: "system.modifiers.roll.ability..mod", mode:2, value:'kl ; con'},
 		],
 		disabled: false,
 	},

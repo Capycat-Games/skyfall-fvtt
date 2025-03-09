@@ -1,14 +1,14 @@
-.skyfall {
+.system-skyfall {
 
 	/* DARK THEME */
-	.theme-light {
+	&.theme-light {
 		--color-text-selection: var(--color-light-1);
 		--color-text-selection-bg: var(--color-dark-6);
 		/* ---------------------------------------- */
 		/*  Forms and Form Elements                 */
 		/* ---------------------------------------- */
 	}
-	.theme-light .application {
+	&.theme-light .application {
 		// --background: url("../ui/parchment.jpg") repeat;
 		--background: rgba(11,10,19,0.9); //THEME DARK
 		--color-text-primary: var(--color-dark-1);
@@ -21,45 +21,45 @@
 		--color-form-hint-hover: var(--color-dark-2);
 		--color-select-option-bg: var(--color-light-1);
 	}
-	.theme-light input,
-	.theme-light select {
+	&.theme-light input,
+	&.theme-light select {
 		--input-background-color: rgba(0, 0, 0, 0.1);
 		--input-border-color: var(--color-dark-6);
 		--input-text-color: var(--color-dark-2);
 		--input-placeholder-color: var(--color-dark-3);
 		--input-focus-outline-color: var(--color-warm-2);
 	}
-	.theme-light input:focus,
-	.theme-light select:focus {
+	&.theme-light input:focus,
+	&.theme-light select:focus {
 		--input-text-color: var(--color-dark-1);
 	}
-	.theme-light input:disabled,
-	.theme-light select:disabled {
+	&.theme-light input:disabled,
+	&.theme-light select:disabled {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-light label.icon {
+	&.theme-light label.icon {
 		--input-background-color: rgba(0, 0, 0, 0.1);
 		--input-border-color: var(--color-dark-6);
 		--input-text-color: var(--color-dark-2);
 		--input-focus-outline-color: var(--color-warm-2);
 	}
-	.theme-light label.icon:focus-within {
+	&.theme-light label.icon:focus-within {
 		--input-text-color: var(--color-dark-1);
 	}
-	.theme-light label.icon:has(> input:disabled) {
+	&.theme-light label.icon:has(> input:disabled) {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-light input[readonly] {
+	&.theme-light input[readonly] {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-light a.button,
-	.theme-light button {
+	&.theme-light a.button,
+	&.theme-light button {
 		--button-background-color: rgba(0 0 0 / 10%);
 		--button-border-color: var(--color-dark-5);
 		--button-text-color: var(--color-dark-1);
@@ -67,22 +67,22 @@
 		--button-hover-background-color: var(--color-warm-2);
 		--button-hover-text-color: var(--color-light-1);
 	}
-	.theme-light a.button:disabled,
-	.theme-light button:disabled {
+	&.theme-light a.button:disabled,
+	&.theme-light button:disabled {
 		--button-background-color: rgba(0 0 0 / 20%);
 		--button-border-color: transparent;
 		--button-text-color: var(--color-dark-3);
 	}
 	
 	/* DARK THEME */
-	.theme-dark {
+	&.theme-dark {
 		--color-text-selection: var(--color-light-1);
 		--color-text-selection-bg: var(--color-dark-6);
 		/* ---------------------------------------- */
 		/*  Forms and Form Elements                 */
 		/* ---------------------------------------- */
 	}
-	.theme-dark .application {
+	&.theme-dark .application {
 		// --background: url("../ui/parchment.jpg") repeat;
 		--background: rgba(11,10,19,0.9); //THEME DARK
 		--color-text-primary: var(--color-dark-1);
@@ -95,45 +95,45 @@
 		--color-form-hint-hover: var(--color-dark-2);
 		--color-select-option-bg: var(--color-light-1);
 	}
-	.theme-dark input,
-	.theme-dark select {
+	&.theme-dark input,
+	&.theme-dark select {
 		--input-background-color: rgba(0, 0, 0, 0.1);
 		--input-border-color: var(--color-dark-6);
 		--input-text-color: var(--color-dark-2);
 		--input-placeholder-color: var(--color-dark-3);
 		--input-focus-outline-color: var(--color-warm-2);
 	}
-	.theme-dark input:focus,
-	.theme-dark select:focus {
+	&.theme-dark input:focus,
+	&.theme-dark select:focus {
 		--input-text-color: var(--color-dark-1);
 	}
-	.theme-dark input:disabled,
-	.theme-dark select:disabled {
+	&.theme-dark input:disabled,
+	&.theme-dark select:disabled {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-dark label.icon {
+	&.theme-dark label.icon {
 		--input-background-color: rgba(0, 0, 0, 0.1);
 		--input-border-color: var(--color-dark-6);
 		--input-text-color: var(--color-dark-2);
 		--input-focus-outline-color: var(--color-warm-2);
 	}
-	.theme-dark label.icon:focus-within {
+	&.theme-dark label.icon:focus-within {
 		--input-text-color: var(--color-dark-1);
 	}
-	.theme-dark label.icon:has(> input:disabled) {
+	&.theme-dark label.icon:has(> input:disabled) {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-dark input[readonly] {
+	&.theme-dark input[readonly] {
 		--input-background-color: rgba(0, 0, 0, 0.2);
 		--input-border-color: transparent;
 		--input-text-color: var(--color-dark-3);
 	}
-	.theme-dark a.button,
-	.theme-dark button {
+	&.theme-dark a.button,
+	&.theme-dark button {
 		--button-background-color: rgba(0 0 0 / 10%);
 		--button-border-color: var(--color-dark-5);
 		--button-text-color: var(--color-dark-1);
@@ -141,8 +141,8 @@
 		--button-hover-background-color: var(--color-warm-2);
 		--button-hover-text-color: var(--color-light-1);
 	}
-	.theme-dark a.button:disabled,
-	.theme-dark button:disabled {
+	&.theme-dark a.button:disabled,
+	&.theme-dark button:disabled {
 		--button-background-color: rgba(0 0 0 / 20%);
 		--button-border-color: transparent;
 		--button-text-color: var(--color-dark-3);

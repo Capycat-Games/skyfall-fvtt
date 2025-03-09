@@ -8,5 +8,7 @@ export {default as AbilitySheetSkyfall} from "./item-ability.mjs";
 export {default as SigilSheetSkyfall} from "./item-sigil.mjs";
 export {default as GuildAbilitySheetSkyfall} from "./guild-ability.mjs";
 
-// export {default as EffectSheetSkyfall} from "./effect.mjs";
+export {default as ActiveEffectConfig} from "./active-effect-config.mjs";
+export {default as SkyfallAbilityModificationsConfig} from "./ability-modification-config.mjs";
+
 // export {default as ModificationSheetSkyfall} from "./modification.mjs";

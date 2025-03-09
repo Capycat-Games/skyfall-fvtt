@@ -19,7 +19,7 @@ export default class SkyfallActor extends Actor {
 		const mods = [];
 		mods.push( ...this.effects.filter(ef => ef.type == 'modification') );
 		this.items.reduce( (acc, item) => {
-			const efs = item.effects.filter(ef => ef.type == 'modification');
+			const efs = item.effects.filter(ef => ef.type == 'modification' && !ef.isTemporary);
 			acc.push(...efs);
 			return acc;
 		}, mods);
@@ -44,6 +44,31 @@ export default class SkyfallActor extends Actor {
 	 */
 	getRollData() {
 		const data = { ...this.system.getRollData() }
+		const special = foundry.utils.flattenObject(this.system['_'] ?? {});
+		for (const [k, value] of Object.entries(special)) {
+			const key = k.replace('_','');
+			data[key] = value;
+		}
+		if ( this.type == 'character' ) {
+			const classes = this.items.filter( i => i.type == "class" );
+			for (const cls of classes) {
+				const clsID = cls.system.identifier ?? cls.name.slugify();
+				data[clsID] = {};
+				data[clsID]['level'] = cls.system.level;
+				data[clsID]['hd'] = cls.system.hitDie.die;
+			}
+
+			const shield = this.items.find( i => i.type == "armor" && i.system.type == 'shield' && i.system.equipped );
+			if ( shield ) data.shield = shield.system.dr;
+		}
+		data.target = {marks: 0};
+		const targets = game.user.targets;
+		for (const target of targets) {
+			const marked = target.actor?.effects.find( i => i.id.startsWith('marked') );
+			if ( marked ) {
+				data.target.marks += marked.stack;
+			}
+		}
 		return data;
 	}
 
@@ -82,17 +107,19 @@ export default class SkyfallActor extends Actor {
 	/* -------------------------------------------- */
 
 	/** @inheritdoc */
-	async _preUpdate(data, options, userId) {
+	async _preUpdate(changed, options, user) {
+		if ( (await super._preUpdate(changed, options, user)) === false ) return false;
 		// SET DEFAULT TOKEN
-		const prototypeToken = {};
-		if ( data.system?.size ) {
-			const size = SYSTEM.actorSizes[data.system.size].gridScale ?? 1;
-			data.prototypeToken = {
-				width: size,
-				height: size
+		if ( this.system?.size && changed.system?.size ) {
+			if ( changed.system.size !== this.system.size ) {
+				const size = SYSTEM.actorSizes[changed.system.size].gridScale ?? 1;
+				console.log('gridScale', size);
+				changed.prototypeToken ??= {};
+				changed.prototypeToken.width = size;
+				changed.prototypeToken.height = size;
+				console.log(changed);
 			}
 		}
-		return await super._preUpdate(data, options, userId);
 	}
 
 	/* -------------------------------------------- */
@@ -101,6 +128,7 @@ export default class SkyfallActor extends Actor {
 	_onUpdate(changed, options, userId) {
 		super._onUpdate(changed, options, userId);
 		this.refreshGuild(userId);
+		ui.players.render();
 	}
 
 	async refreshGuild( userId ){
@@ -171,6 +199,30 @@ export default class SkyfallActor extends Actor {
 	/*  Methods                                     */
 	/* -------------------------------------------- */
 	
+	getItemModifications(options){
+		const {item, weapon} = options;
+		const itemDescriptors = item.system.descriptors;
+		const modifications = [];
+		for (const mod of this.allModifications) {
+			const {itemName, itemType, descriptors} = mod.system.apply;
+			const itemNames = itemName.split(',').map(n=>n.trim());
+			if ( !item?.name && !itemNames.includes(item?.name) ) continue;
+			if ( !weapon?.name && !itemNames.includes(weapon?.name) ) continue;
+			if ( itemType.includes('self') && mod.parent?.id != item?.id ) continue;
+			if ( itemType.length && !itemType.includes('self') && !itemType.includes(item?.type) ) {
+				continue;
+			}
+			if ( descriptors.length && !descriptors.every( d => itemDescriptors.includes(d) ) ) {
+				continue;
+			}
+			if ( mod.system.apply.always ) {
+				mod.apply = 1;
+			} else mod.apply = 0;
+			modifications.push(mod);
+		}
+		return modifications;
+	}
+
 	/* -------------------------------------------- */
 
 	async modifyTokenAttribute(attribute, value, isDelta=false, isBar=true) {

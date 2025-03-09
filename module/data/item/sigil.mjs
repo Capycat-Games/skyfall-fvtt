@@ -77,6 +77,9 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 		}
 	}
 
+	getRollData() {
+		return {};
+	}
 	/* ---------------------------------------- */
 	/*  GETTERS                                 */
 	/* ---------------------------------------- */

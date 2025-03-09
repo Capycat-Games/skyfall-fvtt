@@ -16,7 +16,7 @@ let _durations = ["turn", "round", "scene", "minute", "hour", "day", "month", "y
 export const durations = _durations.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL2.DURATION.${key.toUpperCase()}`,
+		label: `SKYFALL2.DURATION.${key.titleCase()}`,
 	}
 	return obj;
 }, {});
@@ -32,24 +32,26 @@ let _events = [
 export const events = _events.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL2.EVENT.${key.titleCase()}`,
-		prop: `SKYFALL2.DURATION.Until${key.titleCase()}`,
+		label: `SKYFALL2.EVENT.${key.capitalize()}`,
+		prop: `SKYFALL2.EVENT.${key.capitalize()}`,
+		// prop: `SKYFALL2.DURATION.Until${key.titleCase()}`,
 	}
 	return obj;
 }, {});
 
 export const movementUnits = {
-  m: "SKYFALL.ITEM.RANGES.M",
-  km: "SKYFALL.ITEM.RANGES.KM",
-  ft: "SKYFALL.ITEM.RANGES.FT",
-  mi: "SKYFALL.ITEM.RANGES.MI",
+  m: "SKYFALL2.RANGE.M",
+  km: "SKYFALL2.RANGE.Km",
+  ft: "SKYFALL2.RANGE.Ft",
+  mi: "SKYFALL2.RANGE.Mi",
 };
 
 let _ranges = ["self", "touch", "m", "km", "ft", "mi", "spec", "any"];
 export const ranges = _ranges.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ITEM.RANGES.${key.toUpperCase()}`,
+		label: `SKYFALL2.RANGE.${key.titleCase()}`,
+		// label: `SKYFALL.ITEM.RANGES.${key.toUpperCase()}`,
 	}
 	return obj;
 }, {});
@@ -70,7 +72,7 @@ export const areaTargets = Object.entries(_areaTargets).reduce((acc, key) => {
 	acc[key[0]] = {
 		id: key[0],
 		t: key[1],
-		label: `SKYFALL.ITEM.TARGETS.${key[0].toUpperCase()}`,
+		label: `SKYFALL2.TARGET.${key[0].titleCase()}`,
 	}
 	return acc;
 }, {});
@@ -79,7 +81,7 @@ let _individualTargets = ["self", "ally", "enemy", "creature", "object", "space"
 export const individualTargets = _individualTargets.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
-		label: `SKYFALL.ITEM.TARGETS.${key.toUpperCase()}`,
+		label: `SKYFALL2.TARGET.${key.titleCase()}`,
 	}
 	return obj;
 }, {});

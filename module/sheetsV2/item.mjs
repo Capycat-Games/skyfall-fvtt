@@ -1,5 +1,3 @@
-import { abilities } from "../config/creature.mjs";
-import PhysicalItemData from "../data/item/physical/physical-item.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -34,15 +32,26 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	
 	/** @override */
 	static PARTS = {
-		header: {template: "systems/skyfall/templates/v2/item/header.hbs"},
-		tabs: {template: "templates/generic/tab-navigation.hbs"},
+		header: {
+			template: "systems/skyfall/templates/v2/item/header.hbs"
+		},
+		tabs: {
+			template: "templates/generic/tab-navigation.hbs"
+		},
 		description: {
 			template: "systems/skyfall/templates/v2/item/description.hbs",
-			scrollable: [""]
+			scrollable: [""],
 		},
 		traits: {
 			template: "systems/skyfall/templates/v2/item/traits.hbs",
-			scrollable: [""]
+			templates: [
+				"systems/skyfall/templates/v2/item/item-roll.hbs"
+			],
+			scrollable: [""],
+		},
+		upgrades: {
+			template: "systems/skyfall/templates/v2/item/item-upgrades.hbs",
+			scrollable: [""],
 		},
 		heritage: {
 			template: "systems/skyfall/templates/v2/item/heritage.hbs",
@@ -58,7 +67,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		},
 		feats: {
 			template: "systems/skyfall/templates/v2/item/feats.hbs",
-			scrollable: [""]
+			scrollable: [""],
 		},
 		benefits: {
 			template: "systems/skyfall/templates/v2/item/benefits.hbs",
@@ -71,20 +80,26 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		},
 		effects: {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
-			scrollable: [""]
-		}
+			scrollable: [""],
+		},
+		deprecated: {
+			template: "systems/skyfall/templates/v2/item/item-deprecated.hbs",
+			scrollable: [""],
+		},
 	};
 
 	/** @override */
 	static TABS = {
 		description: {id: "description", group: "primary", label: "SKYFALL.DESCRIPTION", cssClass: 'active'},
 		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
+		upgrades: {id: "upgrades", group: "primary", label: "SKYFALL.TAB.UPGRADES"},
 		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
 		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
 		benefits: {id: "benefits", group: "primary", label: "SKYFALL2.BenefitPl"},
 		abilities: {id: "abilities", group: "primary", label: "TYPES.Item.abilityPl"},
 		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
-		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"}
+		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"},
+		deprecated: {id: "deprecated", group: "primary", label: "", icon: "fa-solid fa-trash"}
 	};
 
 	/** @override */
@@ -132,39 +147,51 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'clothing':
 			case 'consumable':
 			case 'equipment':
-				options.parts = ["header","tabs","description","traits","effects"];
-				this.tabs = ["description","traits","effects"];
-				break;
-				// options.parts = ["header","tabs","traits","features","heritage","feats","effects"];
-				options.parts = ["header","tabs","description","features","heritage","feats","benefits","effects"];
-				this.tabs = ["description","benefits","features","heritage","feats","effects"];
+				options.parts = [
+					"header","tabs","description","traits","upgrades","effects", "deprecated"
+				];
+				this.tabs = [
+					"description","traits", "upgrades", "effects", "deprecated"
+				];
 				break;
 			case 'heritage':
-				options.parts = ["header","tabs","description","benefits","effects"];
+				options.parts = [
+					"header","tabs","description","benefits","effects"
+				];
 				this.tabs = ["description","benefits","effects"];
 				break;
 			case 'background':
-				options.parts = ["header","tabs","description","benefits","effects"];
+				options.parts = [
+					"header","tabs","description","benefits","effects"
+				];
 				this.tabs = ["description","benefits","effects"];
 				break;
 			case 'class':
-				options.parts = ["header","tabs","traits","features","feats","benefits","effects"];
+				options.parts = [
+					"header","tabs","traits","features","feats","benefits","effects"
+				];
 				this.tabs = ["traits","features","feats","benefits","effects"];
 				this.tabGroups.primary = 'benefits';
 				break;
 			case 'curse':
 			case 'path':
-				options.parts = ["header","tabs","description","features","benefits","feats","effects"];
+				options.parts = [
+					"header","tabs","description","features","benefits","feats","effects"
+				];
 				this.tabs = ["description","features","feats","benefits","effects"];
 				break;
 			case 'feature':
 			case 'feat':
-				options.parts = ["header","tabs","description","benefits","feats","effects"];
-				this.tabs = ["description","feats","benefits","effects"];
+				options.parts = [
+					"header","tabs","description","benefits","feats","effects","deprecated"
+				];
+				this.tabs = ["description","feats","benefits","effects","deprecated"];
 				break;
 			case 'facility':
 			case 'seal':
-				options.parts = ["header","tabs","description","effects"];
+				options.parts = [
+					"header","tabs","description","effects"
+				];
 				this.tabs = ["description","effects"];
 				break;
 		}
@@ -224,13 +251,14 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	async _onDropSigils(items, fieldPath, itemType){
 		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
 		const item = await fromUuid(items.pop());
+		
 		if ( !item || type != item.system.equipment ) {
-			return ui.notifications.error("SKYFALL2.NOTIFICATION.InvalidItemSigil",{localize: true});
+			return ui.notifications.error("NOTIFICATION.InvalidItemSigil",{localize: true});
 		}
 		const updateData = {};
 		updateData[fieldPath] = foundry.utils.getProperty(this.document, fieldPath);
 		if ( updateData[fieldPath].find(i => i.uuid == item.uuid) ) {
-			return ui.notifications.error("SKYFALL2.NOTIFICATION.DuplicatedItemSigil",{localize: true});
+			return ui.notifications.error("NOTIFICATION.DuplicatedItemSigil",{localize: true});
 		}
 		updateData[fieldPath].push({
 			uuid: item.uuid,

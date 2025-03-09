@@ -1,0 +1,63 @@
+<section class="tab changes2{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if 0}}
+        <header class="flexrow">
+            <div class="key">{{localize "EFFECT.ChangeKey"}}</div>
+            <div class="mode">{{localize "EFFECT.ChangeMode"}}</div>
+            <div class="value">{{localize "EFFECT.ChangeValue"}}</div>
+            <div class="priority">{{localize "EFFECT.ChangePriority"}}</div>
+            <div class="controls"><a data-action="addChange"><i class="fa-regular fa-plus-square"></i></a></div>
+        </header>
+        <ol class="scrollable plain x">
+            {{#each source.changes as |change i|}}
+                {{#with ../fields.changes.element.fields as |changeFields|}}
+                    <li data-index="{{i}}" class="flexrow">
+                        <div class="key">
+                            {{formInput changeFields.key name=(concat "changes." i ".key") value=change.key}}
+                        </div>
+                        <div class="mode">
+                            {{formInput changeFields.mode name=(concat "changes." i ".mode") value=change.mode choices=@root.modes}}
+                        </div>
+                        <div class="value">
+                            {{formInput changeFields.value name=(concat "changes." i ".value") value=change.value}}
+                        </div>
+                        <div class="priority">
+                            {{formInput changeFields.priority name=(concat "changes." i ".priority") value=change.priority
+                placeholder=(lookup ../../priorities change.mode)}}
+                        </div>
+                        <div class="controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+                    </li>
+                {{/with}}
+            {{/each}}
+        </ol>
+    {{else}}
+        <header class="flexrow">
+            <div class="key"></div>
+            <div class="controls flex0"><a data-action="addChange"><i class="fa-regular fa-plus-square"></i></a></div>
+        </header>
+        <ol class="scrollable plain">
+            {{#each source.changes as |change i|}}
+                {{#with ../fields.changes.element.fields as |changeFields|}}
+                    <li data-index="{{i}}" class="flexcol">
+                        <div class="key flexrow">
+                            <span><b>{{localize "EFFECT.ChangeKey"}}</b></span>
+                            {{formInput changeFields.key name=(concat "changes." i ".key") value=change.key}}
+                        </div>
+                        <div class="mode flexrow">
+                            <span><b>{{localize "EFFECT.ChangeMode"}}</b></span>
+                            {{formInput changeFields.mode name=(concat "changes." i ".mode") value=change.mode choices=@root.modes}}
+                        </div>
+                        <div class="value flexrow">
+                            <span><b>{{localize "EFFECT.ChangeValue"}}</b></span>
+                            {{formInput changeFields.value name=(concat "changes." i ".value") value=change.value}}
+                        </div>
+                        <div class="priority flexrow">
+                            <span><b>{{localize "EFFECT.ChangePriority"}}</b></span>
+                            {{formInput changeFields.priority name=(concat "changes." i ".priority") value=change.priority placeholder=(lookup ../../priorities change.mode)}}
+                        </div>
+                        <div class="controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+                    </li>
+                {{/with}}
+            {{/each}}
+        </ol>
+    {{/if}}
+</section>

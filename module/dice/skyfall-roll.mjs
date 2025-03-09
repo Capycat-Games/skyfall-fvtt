@@ -16,6 +16,40 @@ export default class SkyfallRoll extends Roll {
 		super(formula, data, options);
 		this.original = formula;
 	}
+	
+	static fromItemRoll(itemRoll, data = {}, options = {}){
+		const terms = [];
+
+		options.flavor = game.i18n.localize(`SKYFALL2.ROLL.${itemRoll.type.titleCase()}`);
+		options.type = itemRoll.type;
+
+		for (const term of itemRoll.terms) {
+			terms.push(`${term.expression}[${term.flavor}|${term.data}|${term.source}]`);
+		}
+		return new this(terms.join(' + '), data, options);
+	}
+
+	static fromSkyfallTerms(terms=[], data = {}, options){
+		const dataRgx = new RegExp(/@(?<data>[a-zA-Z.0-9_-]+)/i);
+		const flavorRgx = new RegExp(/\[(?<flavor>[a-zA-Z.0-9_-|\s]+)\]/i);
+		console.log(terms);
+		terms = terms.map( (term) => {
+			let data = term.match(dataRgx)?.groups?.data ?? "";
+			let flavor = term.match(flavorRgx)?.groups?.flavor ?? "";
+			let arr = flavor.split('|');
+			arr[0] ??= "";
+			arr[1] ??= data ?? "";
+			arr[2] ??= "";
+			if ( !term.match(flavorRgx) ) {
+				term = `${term}[${arr.join('|')}]`;
+			} else {
+				term = term.replace(flavorRgx, `[${arr.join('|')}]`);
+			}
+			return term;
+		});
+		return new this(terms.join(' + '), data, options);
+	}
+
 	get type(){
 		if ( this.terms[0].faces == 20) return "d20";
 		else return "damage";
@@ -103,11 +137,12 @@ export default class SkyfallRoll extends Roll {
 
 	/** @overwrite */
 	async render({flavor, template=this.constructor.CHAT_TEMPLATE, isPrivate=false}={}) {
-		let html = await super.render(arguments)
-		html = html.replace('class="dice-roll"',`class="dice-roll ${this.type}"`);
-		return html;
+		// let html = await super.render(arguments)
+		// html = html.replace('class="dice-roll"',`class="dice-roll ${this.type}"`);
+		// return html;
 		// if ( !this._evaluated ) await this.evaluate({allowInteractive: !isPrivate});
 		const chatData = {
+			SYSTEM: SYSTEM,
 			roll: this,
 			formula: isPrivate ? "???" : this._formula,
 			flavor: isPrivate ? null : flavor ?? this.options.flavor,
@@ -117,6 +152,7 @@ export default class SkyfallRoll extends Roll {
 		};
 		return renderTemplate(template, chatData);
 	}
+
 	/** @overwrite */
 	async toMessage(messageData={}, {rollMode, create=true}={}) {
 		if ( !messageData.flavor ) {
@@ -129,13 +165,14 @@ export default class SkyfallRoll extends Roll {
 	/* Static Class Methods           */
 	/* ------------------------------ */
 
-
 	static parse(formula, data) {
 		let terms = super.parse(formula, data);
 		terms.forEach((t) => {
-			let splited = t.options.flavor?.split('%') ?? ['',''];
-			t.options.flavor = splited[0];
-			t.options.data = splited[1];
+			if ( !t.options?.flavor ) return;
+			let splited = t.options.flavor?.split('|') ?? ['','',''];
+			t.options.flavor = splited[0] ?? '';
+			t.options.data = splited[1] ?? '';
+			t.options.source = splited[2] ?? '';
 		});
 		return terms;
 	}
@@ -151,7 +188,7 @@ export default class SkyfallRoll extends Roll {
 	 * @param {boolean} [options.warn=false]  Display a warning notification when encountering an un-matched key.
 	 * @static
 	 */
-	static replaceFormulaData(formula, data, {missing, warn=false}={}) {
+	static replaceFormulaDataV1(formula, data, {missing, warn=false}={}) {
 		let dataRgx = new RegExp(/@([a-z.0-9_-]+)(\[(.*?)\])?/gi);
 		formula = formula.replace(dataRgx, (match, term)=>{
 			if ( !data[term] ) {

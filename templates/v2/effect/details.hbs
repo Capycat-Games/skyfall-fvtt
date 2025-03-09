@@ -1,0 +1,83 @@
+<section class="tab details scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if (eq document.type 'modification')}}
+        <div class="form-group">
+            <label>{{localize systemFields.cost.value.label}}</label>
+            <div class="form-fields">
+                {{formInput systemFields.cost.value value=system.cost.value localize=true}}
+                {{formInput systemFields.cost.resource value=system.cost.resource localize=true}}
+            </div>
+        </div>
+        {{!-- {{formField systemFields.cost.value value=system.cost.value localize=true}} --}}
+        {{!-- {{formField systemFields.cost.resource value=system.cost.resource localize=true}} --}}
+        {{formField systemFields.cost.multiple value=system.cost.multiple localize=true}}
+        {{formField systemFields.apply.always value=system.apply.always localize=true}}
+
+        {{!-- TYPES --}}
+        <div class="form-group ">
+            <label for="">{{localize "SKYFALL2.Type"}}</label>
+            <div class="form-fields">
+                {{#each systemFields.apply.type.element.choices as | choice | }}
+                    <label>
+                        {{localize choice.label}}
+                        <input type="checkbox" name="system.apply.type" value="{{choice.value}}" {{checked (includes @root.system.apply.type choice.value)}}>
+                    </label>
+                {{/each}}
+                <label> &nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {{formInput systemFields.apply.amplifyThreshold value=system.apply.amplifyThreshold localize=true}}
+                </label>
+            </div>
+        </div>
+        {{!--  --}}
+        <fieldset>
+            <legend>{{localize "SKYFALL.MODIFICATION.APPLYTO"}}</legend>
+            {{formField systemFields.apply.itemName value=system.apply.itemName localize=true}}
+            {{!-- TODO WIDGET ARRAY CHECKBOXES --}}
+            <div class="form-group">
+                <label>{{localize systemFields.apply.itemType.label}}</label>
+                <div class="form-fields">
+                    <label>
+                        {{localize "SKYFALL.MODIFICATION.APPLYTOSELF"}}
+                        <input type="checkbox" name="system.apply.itemType" value="self" {{checked (includes system.apply.itemType 'self' )}}>
+                    </label>
+                    <label>
+                        {{localize "TYPES.Item.ability"}}
+                        <input type="checkbox" name="system.apply.itemType" value="ability" {{checked (includes system.apply.itemType 'ability' )}}>
+                    </label>
+                    <label>
+                        {{localize "TYPES.Item.spell"}}
+                        <input type="checkbox" name="system.apply.itemType" value="spell" {{checked (includes system.apply.itemType 'spell' )}}>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{localize systemFields.apply.descriptors.label}}</label>
+
+                <dropdown-tags name="system.apply.descriptors" class="descriptors">
+                    {{#each @root._selOpts.descriptors as | group id |}}
+                        <optgroup label="{{localize (concat 'SKYFALL2.DESCRIPTOR.' id)}}">
+                            {{selectOptions group valueAttr="id" labelAttr="label" selected=@root.system.apply.descriptors}}
+                        </optgroup>
+                    {{/each}}
+                </dropdown-tags>
+                {{!-- {{> "systems/skyfall/templates/shared/descriptor-field.hbs" fieldPath='system.apply.descriptors' descriptors=descriptors }} --}}
+            </div>
+
+            {{!-- {{formField systemFields.apply.descriptors value=system.apply.descriptors localize=true widget=widgets.widgetDescriptors descriptors=descriptors }} --}}
+        </fieldset>
+
+        {{formGroup fields.description value=source.description localize=true rootId=rootId}}
+    {{else}}
+        {{formGroup fields.tint value=source.tint rootId=rootId placeholder="#ffffff"}}
+        {{formGroup fields.description value=source.description rootId=rootId}}
+        {{formGroup fields.disabled value=source.disabled rootId=rootId}}
+
+        {{#if isActorEffect}}
+            {{formGroup fields.origin value=source.origin rootId=rootId disabled=true}}
+        {{/if}}
+        {{#if isItemEffect}}
+            {{formGroup fields.transfer value=source.transfer rootId=rootId label=legacyTransfer.label hint=legacyTransfer.hint}}
+        {{/if}}
+
+        {{formGroup fields.statuses value=source.statuses options=statuses rootId=rootId classes="statuses"}}
+    {{/if}}
+</section>

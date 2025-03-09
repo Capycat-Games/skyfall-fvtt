@@ -14,10 +14,14 @@ export default class Creation extends Partner {
 		const _fields = skyfall.data.fields;
 
 		return Object.assign( super.defineSchema(), {
-			abilities: new _fields.MappingField( this.schemaAbility() , {
-				initialKeys: SYSTEM.abilities,
-				initialKeysOnly: true, label: "SKYFALL2.AbilityPl"
-			}),
+			// abilities: new _fields.MappingField( this.schemaAbility() , {
+			// 	initialKeys: {
+			// 		// SYSTEM.abilities
+			// 		physical: SYSTEM.abilities.physical,
+			// 		mental: SYSTEM.abilities.mental,
+			// 	},
+			// 	initialKeysOnly: true, label: "SKYFALL2.AbilityPl"
+			// }),
 			creator: new fields.SchemaField({
 				uuid: new fields.DocumentUUIDField({type: "Actor", label:"TYPES.Actor.character"}),
 			}),

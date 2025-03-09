@@ -11,14 +11,21 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	static defineSchema() {
 		const fields = foundry.data.fields;
+		const _fields = skyfall.data.fields;
 		const AttackAbilities = {
 			...SYSTEM.abilities,
 			magic: {id: 'magic', label:'SKYFALL2.ABILITY.Spellcasting'},
 			// weapon: {id: 'weapon', label:'TYPES.Item.weapon'},
 		}
 		return {
+			identifier: new fields.StringField({
+				required: true,
+				initial: '',
+				label: "SKYFALL2.Identifier",
+			}),
 			description: new fields.SchemaField({
 				value: new fields.HTMLField({required: true, blank: true}),
+				flavor: new fields.StringField({required: true, blank: true}),
 			}),
 			origin: new fields.ArrayField(
 				new fields.StringField({
@@ -145,7 +152,18 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 				}),
 				amount: new fields.NumberField({required: true, integer: true, label: "SKYFALL.ConsumeAmount"}),
 				scale: new fields.BooleanField({label: "SKYFALL.ConsumeScaling"})
-			}, {label: "SKYFALL.ConsumeTitle"})
+			}, {label: "SKYFALL.ConsumeTitle"}),
+			
+			rolls: new _fields.MappingField(new _fields.RollField()),
+			// rolls: new fields.TypedObjectField( new fields.EmbeddedDataField(_fields.RollField),{ label: "SKYFALL2.RollPl"}),
+			wip: new fields.SchemaField({
+				rolls: new _fields.MappingField(new _fields.RollField()),
+				description: new fields.HTMLField({
+					required: true,
+					blank: true,
+					// initial: this.initialDescription(),
+				}),
+			}),
 		}
 	}
 
@@ -158,6 +176,22 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		if ( CONST.DOCUMENT_TYPES.includes(documentType) || !foundry.data.validators.isValidId(documentId) ) {
 			throw new Error(`"${uuid}" is not a valid UUID string`);
 		}
+	}
+
+	static initialDescription(){
+		const labels = {
+			hit: game.i18n.localize('SKYFALL2.ATTACK.Hit'),
+			miss: game.i18n.localize('SKYFALL2.ATTACK.Miss'),
+			effect: game.i18n.localize('SKYFALL2.Effect'),
+			special: game.i18n.localize('SKYFALL2.Special'),
+		}
+		let description = '';
+		
+		description += `<div data-field="attack-hit" data-label="${labels.hit}:"><p></p></div>`;
+		description += `<div data-field="attack-miss" data-label="${labels.miss}:"><p></p></div>`;
+		description += `<div data-field="effect" data-label="${labels.effect}:"><p></p></div>`;
+		description += `<div data-field="special data-label="${labels.special}:""><p></p></div>`;
+		return description;
 	}
 
 	/* -------------------------------------------- */
@@ -213,6 +247,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	get isRanged(){
 		return this.range.value != 1.5;
 	}
+
 
 	get labels() {
 		const addLabel = function (dom, label) {
@@ -354,6 +389,20 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			}
 		}
 		
+		if ( this.description.value ) {
+			labels.description = {};
+			const div = document.createElement('div');
+			div.innerHTML = this.description.value;
+			let description = this.description.value.replaceAll(/\<(strong)\>(\w+:)\<\/strong\>/ig, (m, p1, p2) =>{
+				return m.replace('<strong','<label').replace('</strong','</label');
+			});
+			TextEditor.enrichHTML(description, {}).then(
+				(data) => {
+					labels.description = data;
+				}
+			);
+		}
+
 		// Attack
 		if ( labels.properties?.attack ) {
 			labels.attack = {};
@@ -434,7 +483,6 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		return labels;
 	}
 
-
 	/* -------------------------------------------- */
 	/*  Data Preparation                            */
 	/* -------------------------------------------- */
@@ -456,7 +504,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
 
-	// async _preUpdate(changes, options, user) {
+	// async _preUpdate(changed, options, user) {
 	// 	if ( user.id != game.user.id ) return false;
 	// }
 
@@ -465,7 +513,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		config.classes = "ability-embed skyfall";
 		config.cite = false;
 		config.caption = false;
-		let modifications = this.parent.effects.filter(ef => ef.type == "modification").map(ef => `@EMBED[${ef.uuid}]`);
+		let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
 		
 		const anchor = this.parent.toAnchor();
 		anchor.classList.remove('content-link');
@@ -490,6 +538,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		});
 		return container.firstChild;
 	}
+
 	/**
 	 * 
 	 * @param {*} config 
@@ -509,5 +558,112 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			</div>
 		`;
 		return container.children;
+	}
+	
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	getRollData() {
+		return {}
+	}
+
+	getAttack(config) {
+		const RollData = config.RollData;
+		const AbilityAttack = this.attack;
+		const WeaponAttack = config.weapon?.system.attack ?? {};
+		const terms = [
+			`1d20[|d20|]`,
+			`@${WeaponAttack.ability || AbilityAttack.ability || 'str'}[|ability|weapon]`,
+			`@proficiency[|proficiency|weapon]`,
+		];
+		if ( AbilityAttack.bonus ) {
+			terms.push( `${AbilityAttack.bonus}[|bonus|ability]`);
+		}
+		if ( WeaponAttack.bonus ) {
+			terms.push( `${WeaponAttack.bonus}[|bonus|weapon]`);
+		}
+		if ( RollData.modifiers.roll.attack ) {
+			terms.push( ...RollData.modifiers.roll.attack );
+		}
+		
+		return {
+			terms: terms,
+			RollData: config.RollData,
+			options: {
+				advantage: config.advantage,
+				disadvantage: config.disadvantage,
+				flavor: game.i18n.localize("SKYFALL2.ROLL.Attack"),
+				type: 'attack',
+			}
+		}
+	}
+
+	getDamage(config) {
+		const RollData = config.RollData;
+		const damageType = config.damageType;
+		const AbilityAttack = this.attack;
+		const WeaponDamage = config.weapon?.system.damage ?? {};
+		const terms = [];
+		if ( config.weapon ) {
+			// RollData.weapon = RollData.item.weapon;
+			const damage = config.versatile ? WeaponDamage.versatile : WeaponDamage.die;
+			terms.push(
+				`${damage}[${damageType}|base|weapon]`,
+			);
+			if ( WeaponDamage.ability ) {
+				terms.push(
+					`${WeaponDamage.ability}[|ability|weapon]`,
+				);
+			}
+			if ( WeaponDamage.bonus ) {
+				terms.push(
+					`${WeaponDamage.bonus}[|bonus|weapon]`,
+				);
+			}
+		} else {
+			terms.push(
+				AbilityAttack.damage
+			)
+		}
+		if ( RollData.modifiers.roll.damage ) {
+			terms.push( ...RollData.modifiers.roll.damage );
+		}
+
+		return {
+			terms: terms,
+			RollData: config.RollData,
+			options: {
+				flavor: game.i18n.localize(
+					config.versatile ? "SKYFALL2.ROLL.DamageVersatile" : "SKYFALL2.ROLL.Damage",
+				),
+				title: game.i18n.localize(
+					config.versatile ? "SKYFALL2.ROLL.DamageVersatile" : "SKYFALL2.ROLL.Damage",
+				),
+				damageType: damageType,
+				type: 'damage',
+			}
+		}
+	}
+	
+	getMeasuredTemplate() {
+		if ( !this.target.shape ) return [];
+		return [{
+			t: this.target.shape,
+			distance: this.target.length,
+		}]
+	}
+
+	getEffects() {
+		const item = this.parent;
+		const effects = [];
+		for (const ef of item.effects) {
+			if ( ef.type == 'modification' && !ef.isTemporary ) continue;
+				if ( ef.disabled ) continue;
+				let statusEffect = CONFIG.statusEffects.find(e => e.name == ef.name);
+				if( statusEffect ) statusEffect._id = statusEffect.id;
+				effects.push( statusEffect ?? ef );
+		}
+		return effects;
 	}
 }

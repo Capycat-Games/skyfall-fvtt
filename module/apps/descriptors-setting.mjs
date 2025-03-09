@@ -112,9 +112,9 @@ export default class AbilityDescriptorsSetting extends HandlebarsApplicationMixi
 		return context;
 	}
 
-	/* ---------------------------------------- */
-	/*              EVENT HANDLERS              */
-	/* ---------------------------------------- */
+	/* -------------------------------------------- */
+	/*  Actions                                     */
+	/* -------------------------------------------- */
 	
 	static async #create(event, target) {
 		const input = target.closest('.controls').querySelector('input').value;

@@ -1,0 +1,123 @@
+<fieldset>
+	<legend>
+		ROLLS
+		<a data-action="createRoll">{{{@root.SYSTEM.icons.create}}}</a>
+	</legend>
+	{{#each system.rolls as | roll rollId |}}
+		{{#with @root.system.schema.fields.rolls.model.fields as | rollData |}}
+			{{log roll rollId rollData }}
+			<div class="" style="border: 1px solid black;">
+				<div class="form-group">
+					<label>{{localize "SKYFALL2.Name"}}/{{localize "SKYFALL2.Type"}}</label>
+					<div class="form-fields">
+						{{formInput rollData.label value=roll.label name=(concat "system.rolls." rollId ".label")}}
+						{{formInput rollData.type value=roll.type name=(concat "system.rolls." rollId ".type") localize=true}}
+						{{!-- <input type="text" name="system.rolls.{{rollId}}.label" value="{{roll.label}}"> --}}
+					</div>
+					<div class="controls" style="flex:0;">
+						<a data-action="deleteRoll" data-roll-id="{{rollId}}">
+							{{{@root.SYSTEM.icons.delete}}}
+						</a>
+					</div>
+				</div>
+				{{#if (eq roll.type 'attack') }}
+					{{formGroup rollData.protection value=roll.protection name=(concat "system.rolls." rollId ".protection") localize=true}}
+				{{/if}}
+				<ul class="plain">
+					<li class="flexrow">
+						<div>expression</div>
+						<div>flavor</div>
+						<div class="hidden">data</div>
+						<div>source</div>
+						<div class="controls flex0">
+							<a data-action="createTerm" data-roll-id="{{rollId}}">{{{@root.SYSTEM.icons.create}}}</a>
+						</div>
+					</li>
+					{{#each roll.terms as | term t | }}
+						<li class="flexrow" data-term-index="{{t}}">
+							<input type="text"
+								name="system.rolls.{{rollId}}.terms.{{t}}.expression"
+								value="{{term.expression}}">
+							<input type="text"
+								name="system.rolls.{{rollId}}.terms.{{t}}.flavor"
+								value="{{term.flavor}}">
+							<input type="hidden"
+								name="system.rolls.{{rollId}}.terms.{{t}}.data"
+								value="{{term.data}}">
+							<input type="text"
+								name="system.rolls.{{rollId}}.terms.{{t}}.source"
+								value="{{term.source}}">
+							<div class="controls flex0">
+								<a data-action="deleteTerm"
+									data-term-index="{{t}}"
+									data-roll-id="{{rollId}}">
+									{{{@root.SYSTEM.icons.delete}}}
+								</a>
+							</div>
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+		{{/with}}
+	{{/each}}
+
+	{{#each system.wip.rolls2 as | roll rollId |}}
+		<div class="" style="border: 1px solid black;">
+			<div class="form-group">
+				<label>{{localize "SKYFALL2.Name"}}/{{localize "SKYFALL2.Type"}}</label>
+				<div class="form-fields">
+					<input type="text" name="system.wip.rolls.{{rollId}}.label" value="{{roll.label}}">
+					<select name="system.wip.rolls.{{rollId}}.type">
+						<option value="attack" {{ifThen (eq roll.type 'attack' ) 'selected' '' }}>
+							{{localize "SKYFALL2.Attack"}}
+						</option>
+						<option value="damage" {{ifThen (eq roll.type 'damage' ) 'selected' '' }}>
+							{{localize "SKYFALL2.Damage"}}
+						</option>
+					</select>
+
+				</div>
+				<div class="controls" style="flex:0;">
+					<a data-action="deleteRoll" data-roll-id="{{rollId}}">
+						{{{@root.SYSTEM.icons.delete}}}
+					</a>
+				</div>
+			</div>
+			<ul class="plain">
+				<li class="flexrow">
+					<div>expression</div>
+					<div>flavor</div>
+					<div class="hidden">data</div>
+					<div>source</div>
+					<div class="controls flex0">
+						<a data-action="createTerm" data-roll-id="{{rollId}}">{{{@root.SYSTEM.icons.create}}}</a>
+					</div>
+				</li>
+				{{#each roll.terms as | term t | }}
+					<li class="flexrow" data-term-index="{{t}}">
+						<input type="text"
+							name="system.wip.rolls.{{rollId}}.terms.{{t}}.expression"
+							value="{{term.expression}}">
+						<input type="text"
+							name="system.wip.rolls.{{rollId}}.terms.{{t}}.flavor"
+							value="{{term.flavor}}">
+						<input type="hidden"
+							name="system.wip.rolls.{{rollId}}.terms.{{t}}.data"
+							value="{{term.data}}">
+						<input type="text"
+							name="system.wip.rolls.{{rollId}}.terms.{{t}}.source"
+							value="{{term.source}}">
+						<div class="controls flex0">
+							<a data-action="deleteTerm"
+								data-term-index="{{t}}"
+								data-roll-id="{{rollId}}">
+								{{{@root.SYSTEM.icons.delete}}}
+							</a>
+						</div>
+					</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/each}}
+
+</fieldset>

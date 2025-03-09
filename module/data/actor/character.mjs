@@ -137,11 +137,10 @@ export default class Character extends Creature {
 		this.resources.hp.tpct = Math.round( hp.temp * 100 / hp.max );
 		this.resources.hp.negative = hp.value < 0 ;
 	}
-
 	
 	prepareMaxHPMean(){
 		const hpConfig = this.modifiers.hp;
-		const rollData = this.parent.getRollData();
+		const rollData = this.getRollData();
 		const hpData = { abl: 0, dieMean: 0 };
 		
 		for (const cls of this.classes) {
@@ -168,6 +167,7 @@ export default class Character extends Creature {
 
 		// Pseudo Roll to calculate total hp
 		const roll = new SkyfallRoll(`@dieMax + @dieMean + @abl + @levelExtra + ((@abl + @levelExtra) * @level) + @totalExtra`, hpData);
+		console.log(roll);
 		roll.evaluateSync();
 		
 		// Set max HIT POINTS
@@ -176,7 +176,7 @@ export default class Character extends Creature {
 
 	prepareMaxHPRoll(){
 		const hpConfig = this.modifiers.hp;
-		const rollData = this.parent.getRollData();
+		const rollData = this.getRollData();
 		const hpData = { abl: 0, levelExtra: 0, initial: 0 };
 		const level = this.level.value;
 		const cls = this.classes.find( i => i.system.initial );
@@ -289,10 +289,17 @@ export default class Character extends Creature {
 	}
 
 	prepareCapacity() {
-		// const ability = this.capacity.ability;
-		// const abl = this.abilities[ability].value;
-		const str = this.abilities.str.value;
-		this.capacity.max = 16 + ( str * ( str > 0 ? 3 : 2 ));
+		const ability = this.capacity.ability;
+		const abl = this.abilities[ability].value;
+		let bonus = this.capacity.bonus;
+		let tmp = new Roll(bonus.join(' + '), this.getRollData());
+		bonus = (tmp.terms.length && tmp.isDeterministic ? tmp.evaluateSync().total : 0);
+		
+		let bonusTotal = this.capacity.bonusTotal;
+		tmp = new Roll(bonusTotal.join(' + '), this.getRollData());
+		bonusTotal = (tmp.terms.length && tmp.isDeterministic ? tmp.evaluateSync().total : 0);
+		
+		this.capacity.max = (16 + bonusTotal)  + ((abl + bonus) * ( abl > 0 ? 3 : 2 ));
 		const items = this.parent.items.filter( i => 'capacity' in i.system )
 		this.capacity.value = items.reduce((acc, i) => {
 			if ( i.system.packCapacity ) {
@@ -330,6 +337,14 @@ export default class Character extends Creature {
 	/*  Database Operations                         */
 	/* -------------------------------------------- */
 	
+	async _onCreate(data, options, userId) {
+
+		if ( userId !== game.user.id ) return;
+		const items = await Promise.all(SYSTEM.initialItems.map( i => fromUuid(i)));
+		this.parent.createEmbeddedDocuments('Item', items.map( i => i.toObject()) );
+		
+	}
+
 	/* -------------------------------------------- */
 	/* Type Methods                                 */
 	/* -------------------------------------------- */

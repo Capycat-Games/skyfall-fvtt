@@ -1,14 +1,23 @@
 /* ----------------------------------------- */
 /*  ChatMessage Styles                       */
 /* ----------------------------------------- */
-
+.chat-message {
+	--chat-bg-color: white;
+	&.whisper { --chat-bg-color: #e8e8ef; }
+	&.blind { --chat-bg-color: #f5eaf5; }
+}
+	
 .chat-message:has( .skyfall ),
 .chat-message.skyfall {
-	background: url(./assets/sheet/background.webp) repeat white;
+	// background: url(./assets/sheet/background.webp) repeat white;
+	background: url(./assets/sheet/background.webp) repeat;
+	background-color: var(--chat-bg-color);
 	&.character, &.guild, &.creation {
+		--actor-color: @colorSFPlayer;
 		color: @colorSFPlayer;
 	}
 	&.npc, &.partner {
+		--actor-color: @colorSFFoe;
 		color: @colorSFFoe;
 	}
 }
@@ -65,9 +74,11 @@
 	// border-image: url(./assets/sheet/border.svg) 1;
 	// border-image: url(./assets/sheet/card-border.svg) 1;
 	&.character {
+		--actor-color: @colorSFPlayer;
 		color: @colorSFPlayer;
 	}
 	&.npc {
+		--actor-color: @colorSFFoe;
 		color: @colorSFFoe;
 	}
 
@@ -134,6 +145,13 @@
 			.fonts16 { font-size: 16px; }
 			.fonts14 { font-size: 14px; }
 			.fonts12 { font-size: 12px; }
+
+			// background-color: @colorSFPlayer;
+			// background-image: linear-gradient(45deg, #182657, #182657);
+			background-size: 100%;
+			// background-color: rgb(24,38,87);
+			
+			// background-image: linear-gradient(180deg, rgba(24,38,87,1) 0%, rgba(24,38,87,1) 0%);
 		}
 		
 		.card-aside {
@@ -247,6 +265,71 @@
 				width: 28px;
 				font-size: 14px;
 				line-height: 22px;
+			}
+		}
+	}
+	&.usage-v2 {
+		gap: 0em;
+		.message-header,
+		.card-header {
+			background-color: var(--actor-color);
+		}
+		.card-header {
+			aside {
+				min-height: unset;
+				line-height: 1em;
+				text-align: center;
+			}
+		}
+	}
+
+	.roll-entry-v2 {
+
+		.dice-formula,
+		.dice-total {
+			position: relative;
+
+			span.buttons {
+				display: flex;
+				position: absolute;
+				width: auto;
+				top: -1px;
+				white-space: nowrap;
+
+				&.left {
+					left: -2px;
+				}
+
+				&.right {
+					right: -1px;
+				}
+
+				button {
+					display: flex;
+					align-items: center;
+					line-height: 18px;
+					max-width: 40px;
+					height: 26px;
+					max-height: 26px;
+					margin: 0;
+
+					b {
+						height: 100%;
+						align-content: center;
+					}
+
+					.sf-icon, .sf-icon > svg, .sf-icon svg > image {
+						height: 100%;
+					}
+				}
+			}
+		}
+		.critical {
+			.dice-total {
+				// color: green;
+				// background-color: rgba(218, 165, 32, 0.5);
+				// background-color: rgba(0, 128, 0, 0.5);
+				
 			}
 		}
 	}

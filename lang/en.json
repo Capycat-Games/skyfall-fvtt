@@ -747,7 +747,9 @@
       "BIOGRAPHY": "Biografia",
       "STATBLOCK": "Ficha",
       "GUILD": "Guilda",
-      "EFFECTS": "Modificações e Efeitos"
+      "UPGRADES": "Melhorias e Sigilos",
+      "EFFECTS": "Modificações e Efeitos",
+      "DEPRECATED": ""
     }
   },
   "SKYFALL2": {
@@ -755,6 +757,7 @@
     "Hint": "Dica",
     "Pronouns": "Pronomes",
     "Confirm": "Confirmar",
+    "Filter": "Filtrar",
     "CONSUMABLE": {
       "Ammo": "Munição",
       "Food": "Alimentação",
@@ -1026,6 +1029,10 @@
       "Reputation": "Reputação",
       "ReputationHint": "Reputação de Guilda"
     },
+    "Success": "Sucesso",
+    "SuccessPl": "Sucessos",
+    "Failure": "Falha",
+    "FailurePl": "Falhas",
     "Identifier": "Identificador",
     "Origin": "Origem",
     "Benefit": "Benefício",
@@ -1124,6 +1131,7 @@
       "CatharsisAbbr": "PC",
       "Shadow": "Pontos de Sombra",
       "ShadowAbbr": "PS",
+      "DeathSave": "Testes de Morte",
       "LevelRoll": "Rolagem de Dado de Vida",
       "LevelBonus": "Bônus Por Nível",
       "TotalBonus": "Bônus Total",
@@ -1199,7 +1207,18 @@
       "DelayHint": "<p>No começo do seu turno, você pode usar sua reação para atrasar sua iniciativa e fazer seu turno depois de outra criatura envolvida no combate. Ao fazer isso, é preciso declarar qual sua nova ordem de iniciativa. Caso seja o último a agir, você não pode usar essa reação.</p>"
     },
     "Range": "Alcance",
-    "RANGE": {},
+    "RANGE": {
+      "Ft": "Pés",
+      "Mi": "Milhas",
+      "M": "Metros",
+      "Km": "Kilômetros",
+      "Self": "Pessoal",
+      "Touch": "Toque",
+      "Voice": "Voz",
+      "Vision": "Visão",
+      "Spec": "Especial",
+      "Any": "Ilimitado"
+    },
     "Target": "Alvo",
     "TARGET": {
       "Shape": "Área",
@@ -1210,7 +1229,25 @@
       "Width": "Largura",
       "WidthAbbr": "Larg.",
       "Descritptive": "{quantity} {type}",
-      "DescritptiveWithArea": "{quantity} {type} dentro de {shape} {length} ({squares}) de {details}"
+      "DescritptiveWithArea": "{quantity} {type} dentro de {shape} {length} ({squares}) de {details}",
+
+      "Radius": "Círculo",
+      "Sphere": "Esfera",
+      "Cylinder": "Cilindro",
+      "Cone": "Cone",
+      "Square": "Quadrado",
+      "Cube": "Cubo",
+      "Line": "Linha",
+      "Wall": "Parede",
+      "Self": "Você",
+      "Ally": "Aliado",
+      "Enemy": "Inimigo",
+      "Creature": "Criatura",
+      "Object": "Objeto",
+      "Space": "Espaço",
+      "Creatureorobject": "Criatura ou Objeto",
+      "Any": "Qualquer",
+      "Willing": "Criatura voluntária"
     },
     "Duration": "Duração",
     "DURATION": {
@@ -1273,6 +1310,14 @@
     "DAMAGE": {
       "Die": "Dado de Dano",
       "Versatile": "Versátil",
+      "Vulnerability": "Vulnerabilidade",
+      "VulnerabilityAbbr": "Vul.",
+      "Normal": "Normal",
+      "NormalAbbr": "Nor.",
+      "Resistance": "Resistência",
+      "ResistanceAbbr": "Res.",
+      "Imunity": "Imunidade",
+      "ImunityAbbr": "Imu.",
       "": ""
     },
     "Trigger": "Gatilho",
@@ -1422,11 +1467,13 @@
       "ApplyHalfDamage": "Aplicar o dobro do Dano",
       "ApplyHeal": "Aplicar Cura",
       "AddCatharsis": "Adicionar Catarse",
+      "Catharsis": "Catarse",
       "SubtractCatharsis": "Subtrair Catarse",
       "ActorHasGivenCatharsis": "{actor} usou um Ponto de Catarse para {operation} da rolagem {roll} de {target}",
       "Add": "Adicionar",
       "Subtract": "Subtrair",
-      "Roll": "Rolar"
+      "Roll": "Rolar",
+      "CriticalRoll": "Crítico"
     },
     "APP": {
       "Scene": "Catarse da Mesa",
@@ -1465,6 +1512,14 @@
         "RollTransformer": "Modificadores de Rolagem",
         "DamageRoll": "Dano: {formula}"
       }
+    },
+    "ROLL": {
+      "Attack": "Jogada de Ataque",
+      "Damage": "Jogada de Dano",
+      "Ability": "Teste de Atributo",
+      "Skill": "Teste de Perícia",
+      "DamageVersatile": "Jogada de Dano (Versátil)",
+      "x": ""
     },
     "DIALOG": {
       "SelectSkill": "Selecione a Perícia",
@@ -1575,6 +1630,14 @@
       "AbilityDescriptors": "Descritores",
       "AbilityDescriptorsHint": "Configuração de Descritores base e personalizados."
     }
+  },
+  "EFFECT": {
+    "TABS": {
+      "Details": "Detalhes",
+      "Duration": "Duração",
+      "Changes": "Efeitos"
+    },
+    "ChangePriority": "Prioridade"
   },
   "NOTIFICATION": {
     "InvalidItemSigil": "Este Sígilo não é compatível com este item.",

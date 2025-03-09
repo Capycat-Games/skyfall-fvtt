@@ -1,0 +1,39 @@
+<div style="height: 100%;">
+	<div class="flexrow">
+		<div class="actor flexrow">
+			<img src="{{data.actor.img}}" width="32" height="32" class="flex0">
+			<h4>{{data.actor.name}}</h4>
+		</div>
+		<div class="item flexrow">
+			<img src="{{data.ability.img}}" width="32" height="32" class="flex0">
+			<h4>
+				{{data.ability.name}}
+				{{ifThen data.ability.weapon.name (concat '(' data.ability.weapon.name ')') ''}}
+			</h4>
+		</div>
+		<div class="cost flexcol">
+			{{#each data.cost as | cost key |}}
+				{{#if (eq key 'ep')}}
+					<span> {{cost.base}} + {{cost.mod}}/{{cost.limit}} {{key}} </span>
+				{{else}}
+					<span> {{cost}} {{key}} </span>
+				{{/if}}
+			{{/each}}
+		</div>
+	</div>
+	<div class="rolls flexcol">
+		{{#each data.rolls.listed as | rolls id | }}
+			<div class="form-group">
+				<label>{{{rolls.options.flavor}}}</label>
+				<input type="text" disabled value="{{{rolls.formula}}}">
+			</div>
+		{{/each}}
+	</div>
+	<div class="modifications scrollable" style="max-height: 400px;">
+		{{#each data.modifications as | modification id | }}
+			<div class="modification">{{{modification.embed}}}</div>
+		{{/each}}
+	</div>
+	{{log this.SYSTEM}}
+	{{log this.data}}
+</div>

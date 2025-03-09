@@ -74,8 +74,11 @@ export function prepareActiveEffectCategories(effects, type = 'base' ) {
 
 	// Iterate over active effects, classifying them into categories
 	for (let e of effects) {
-		if (e.type == 'modification') categories.modification.effects.push(e);
-		else if (e.disabled) categories.inactive.effects.push(e);
+		if (e.type == 'modification' && e.isTemporary) {
+			categories.temporary.effects.push(e);
+		} else if ( e.type == 'modification' ) {
+			categories.modification.effects.push(e);
+		} else if (e.disabled) categories.inactive.effects.push(e);
 		else if (e.isTemporary) categories.temporary.effects.push(e);
 		else categories.passive.effects.push(e);
 	}
