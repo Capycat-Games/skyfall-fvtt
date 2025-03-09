@@ -3,6 +3,8 @@
 ## 0.9.600 - BETA
 
 - Modificações - Adicionado. Lógica de aplicação de Modificações para alterar rolagens, itens, atores e efeitos.
+- Items - Alterado. Configuração de rolagens.
+- Habilidades - Alterado. Descrição é um campo único.
 
 ## 0.9.510 - BETA
 

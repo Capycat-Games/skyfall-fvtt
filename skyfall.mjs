@@ -531,7 +531,7 @@ async function prepareSystemLocalization() {
 
 async function prepareSystemStatusEffects() {
 	let journalConditions;
-	if ( game.modules.has("skyfall-core") ) {
+	if ( false && game.modules.has("skyfall-core") ) {
 		journalConditions = await fromUuid(
 			"Compendium.skyfall-core.rules.JournalEntry.zpszVy5Kw4e06ims"
 		);
