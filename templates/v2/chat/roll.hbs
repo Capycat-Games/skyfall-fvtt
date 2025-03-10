@@ -1,4 +1,4 @@
-<div class="dice-roll {{roll.type}} roll-entry-v2">
+<div class="dice-roll {{roll.type}} roll-entry-v2" data-roll-index="{{roll.index}}">
 	{{!-- CHAT_TEMPLATE --}}
 	{{!-- roll.hbs --}}
 	{{log this}}
@@ -10,7 +10,7 @@
 		<div class="dice-formula">
 			<span class="buttons left">
 				{{#if roll._evaluated }}
-					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.SubtractCatharsis'}}" data-action="catharsis" data-catharsis="+" data-apply-catharsis="-">
+					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.SubtractCatharsis'}}" data-action="catharsis" data-catharsis="-" data-apply-catharsis="-">
 						{{{SYSTEM.icons.sfcatharsis}}}
 						<b>&nbsp;-</b>
 					</button>

@@ -51,7 +51,11 @@ globalThis.skyfall = {
 		SkyfallMigrationHelper,
 	},
 	ui: {},
-	utils: functions
+	utils: functions,
+	rules: {
+		// conditions: 
+		// descriptors: 
+	}
 }
 globalThis.RollSF = dice.SkyfallRoll;
 globalThis.SkyfallRoll = dice.SkyfallRoll;
@@ -530,20 +534,24 @@ async function prepareSystemLocalization() {
 }
 
 async function prepareSystemStatusEffects() {
-	let journalConditions;
-	if ( false && game.modules.has("skyfall-core") ) {
+	let journalConditions = false;
+	if ( !journalConditions && game.modules.has("skyfall-core") ) {
 		journalConditions = await fromUuid(
 			"Compendium.skyfall-core.rules.JournalEntry.zpszVy5Kw4e06ims"
 		);
-	} else if ( false && game.modules.has("skyfall-fastplay") ) {
+		
+	}
+	if ( !journalConditions && game.modules.has("skyfall-fastplay") ) {
 		journalConditions = await fromUuid(
-			"Compendium.skyfall-fastplay.regras.JournalEntry.65t2wLGXUdAgIIjm"
+			"Compendium.skyfall-fastplay.JournalEntry.zpszVy5Kw4e06ims"
 		);
-	} else if ( true ) { //BETA
+	}
+	if ( !journalConditions ) { //BETA
 		journalConditions = await fromUuid(
 			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
 		);
 	}
+	if ( journalConditions ) skyfall.rules.conditions = journalConditions;
 	
 	for (const [i, ef] of CONFIG.statusEffects.entries()) {
 		ef.name = game.i18n.localize(ef.name);
@@ -622,12 +630,14 @@ async function enrichReference(match, options) {
 	}
 	else if ( SYSTEM.conditions[config] ) {
 		style = "condition-reference";
-		const journalConditions = await fromUuid(
-			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
-		);
-		const page = journalConditions.pages.find( p => p.name == label );
-		if ( page ) {
-			tooltip = `<section class="tooltip status-effect" ><h3>${label}</h3>${page.text.content}</section>`;
+		const journalConditions = skyfall.rules.conditions;
+		if ( journalConditions ) {
+			const page = journalConditions.pages.find( p => p.name == label );
+			if ( page ) {
+				tooltip = `<section class="tooltip status-effect" ><h3>${label}</h3>${page.text.content}</section>`;
+			}
+		} else {
+			return console.warn('SKYFALL RPG: Unable to find status condition journal.');
 		}
 	} else {
 		style = "descriptor-reference";

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.601 - BETA
+
+- Condições - Corrigido. Busca por journal de condições nos módulos oficiais.
+- Mensagem de Habilidade - Corrigido. Os botões de aplicar dano e catarse voltam a funcionar.
+
 ## 0.9.600 - BETA
 
 - Modificações - Adicionado. Lógica de aplicação de Modificações para alterar rolagens, itens, atores e efeitos.

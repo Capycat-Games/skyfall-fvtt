@@ -120,8 +120,6 @@ export default class SkyfallMessage extends ChatMessage {
 		const rollsDiv = document.createElement('div');
 		content.innerHTML = message.content;
 		let amplify = 0;
-		console.error(rolls);
-		let criticalHit = rolls.some( r => r.options?.critical );
 		for (const [i, roll] of rolls.entries()) {
 			const r = SkyfallRoll.fromData(roll);
 			// const roll = message.system.rolls[index];
@@ -133,6 +131,7 @@ export default class SkyfallMessage extends ChatMessage {
 				await r.evaluate();
 				if ( r.options.type == 'attack' ) {
 					const criticalTarget = roll.options.critical?.range ?? 20; 
+					console.error(criticalTarget);
 					if ( r.dice[0].total >= criticalTarget ) {
 						rolls[i].options.critical = true;
 					}
@@ -215,7 +214,56 @@ export default class SkyfallMessage extends ChatMessage {
 	async #applyCatharsis(event, target) {
 		event.preventDefault();
 		event.stopPropagation();
-		return;
+		let actor;
+		if ( !game.user.isGM && canvas.tokens.controlled) {
+			actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
+			if ( !actor ) ui.notifications.warn("Nenhum personagem selecionado");
+			const current = actor.system.resources.catharsis.value;
+			if ( current == 0 ) return ui.notifications.info("Catarse Insuficiente");
+			actor.update({"system.resources.catharsis.value": current - 1});
+		}
+
+		const button = event.currentTarget;
+		button.event = event.type; //Pass the trigger mouse click event
+		const operator = button.dataset.catharsis;
+
+		// Update the roll adding the catharsis dice;
+		const chatCardId = button.closest(".chat-message").dataset.messageId;
+		const rollIndex = button.closest("[data-roll-index]").dataset.rollIndex;
+		const message = game.messages.get(chatCardId);
+		const roll = message.rolls[rollIndex];
+		roll.index = rollIndex;
+		await roll.applyCatharsis({operator});
+		
+		// Update the chat content swapping the modified roll;
+		const content = document.createElement('div');
+		content.innerHTML = message.content;
+		roll.template = await roll.render();
+		const template = content.querySelector(`[data-roll-index="${rollIndex}"]`);
+		template.outerHTML = roll.template;
+		const updateData = {};
+		message.rolls.splice(rollIndex, 1, roll);
+		updateData['rolls'] = message.rolls;
+		updateData['content'] = content.innerHTML;
+		if ( !foundry.utils.isEmpty(updateData) ) {
+			if ( !game.user.isGM && game.userId != this.author.id ) {
+				await skyfall.socketHandler.emit("RollCatharsis", {
+					id: message.id,
+					updateData: updateData,
+				});
+				ChatMessage.create({
+					content: game.i18n.format("SKYFALL2.MESSAGE.ActorHasGivenCatharsis",{
+						actor: actor?.name,
+						target: message.alias,
+						roll: roll.options.flavor,
+						operation: game.i18n.localize(`SKYFALL2.MESSAGE.${operator == '+' ? 'Add' : 'Subtract'}`),
+					}),
+					speaker: ChatMessage.getSpeaker()
+				})
+			} else {
+				await message.update(updateData);
+			}
+		}
 	}
 	
 	
@@ -224,15 +272,11 @@ export default class SkyfallMessage extends ChatMessage {
 		event.stopPropagation();
 		const button = event.currentTarget;
 		button.event = event.type; //Pass the trigger mouse click event
-		const modifier = Number(button.dataset.applyDamage);
-		const damage = button.closest('.roll-entry').querySelector('.dice-total').innerText;
-
+		const modifier = Number(button.dataset.damage);
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
+		const rollIndex = button.closest("[data-roll-index]").dataset.rollIndex;
 		const message = game.messages.get(chatCardId);
-		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
-		const rollIndex = button.closest(".roll-entry").dataset.rollIndex;
 		const roll =  message.rolls[rollIndex];
-		//.find( r => r.options.title == rollTitle && r.options.types.includes('damage') );
 		
 		for (const token of canvas.tokens.controlled) {
 			token.actor.applyDamage( roll , modifier, true );
