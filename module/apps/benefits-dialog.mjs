@@ -25,7 +25,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 			minimizable: false
 		},
 		position: {
-			width: 500,
+			width: 600,
 			height: "auto"
 		},
 		buttons: [
@@ -173,7 +173,6 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	
 	async addStep({title, list, mode, originId=null, sync=true}) {
 		console.log('addStep', this.steps);
-		if ( this.steps.find( i => i.title == title) ) return;
 		this.steps.push({
 			title: title,
 			mode: mode,
@@ -226,8 +225,9 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		event.preventDefault();
 		const form = target.closest('dialog').querySelector('form');
 		const fd = new FormDataExtended(form);
-		const content = fd.object.create.filter(Boolean).map(i => i.split('|'));
-		
+		const steps = Object.values(foundry.utils.expandObject(fd.object).create);
+		const content = steps.map( s => s.filter(Boolean).map(i => i.split('|')) ).flat();
+
 		const toCreate = [];
 		for (const [grantId, uuid] of content) {
 			const item = await fromUuid(uuid);

@@ -1015,7 +1015,7 @@ export const SkyfallSheetMixin = Base => {
 			const keyPath = `system.rolls.${rollId}.terms`;
 			const current = foundry.utils.getProperty(this.document.toObject(), keyPath);
 			const updateData = {};
-			updateData[keyPath] = current.splice(termIndex, 1);
+			updateData[keyPath] = current.filter( (v, i) => i != termIndex);
 			this.document.update(updateData);
 		}
 

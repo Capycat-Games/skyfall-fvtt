@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.603 - BETA
+
+- Personagem - Corrigido. Bugs com interações de efeitos.
+- Efeitos - Corrigido. Bugs na aplicação de certos campos.
+
 ## 0.9.602 - BETA
 
 - Condições - Corrigido. Busca por journal de condições nos módulos oficiais.

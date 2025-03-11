@@ -1,8 +1,8 @@
 <form>
-	<input type="hidden" name="create">
-	{{log 'LALALAL' steps}}
+
 	{{#each steps as | step s | }}
 		<fieldset>
+			<input type="hidden" name="create.{{s}}">
 			<legend>{{localize step.title}}</legend>
 			<ol class="plain {{ifThen (and (gte step.list.length 120) (not step.list.0.groupLabel)) 'columns-2' ''}}">
 				{{#each step.list as | grant |}}
@@ -21,7 +21,7 @@
 					{{grant.item.name}}
 				</div>
 				<div class="item-controls">
-					<input type="{{step.mode}}" name="create" value="{{ifnull step.originId grant.id}}|{{grant.item.uuid}}"
+					<input type="{{step.mode}}" name="create.{{s}}" value="{{ifnull step.originId grant.id}}|{{grant.item.uuid}}"
 						{{checked step.checkAll}}>
 				</div>
 			</li>

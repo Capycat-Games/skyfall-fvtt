@@ -18,10 +18,13 @@
 							{{/if}}
 						</a>
 					{{~else if (eq data.type 'class')}}
-						{{localize "SKYFALL2.Level"}} {{data.level}} —
+						{{localize "SKYFALL2.Level"}} {{data.level}} —&nbsp;
 						<a data-action="edit" class="class-level" data-level="{{data.level}}">
-							{{ifnull data.item.name (localize (concat "TYPES.Item." data.type))}}
-							{{data.classLevel}}
+							{{#if data.item}}
+								{{data.item.name}} {{data.classLevel}}
+							{{else}}
+								{{localize (concat "TYPES.Item." data.type)}}
+							{{/if}}
 						</a>
 					{{else}}
 						<a data-action="edit">

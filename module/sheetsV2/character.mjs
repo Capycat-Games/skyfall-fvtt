@@ -382,7 +382,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			});
 		});
 		Object.entries(damageTaken).forEach( ([k,v]) => {
-			if ( v == "normal" ) return;
+			if ( v == "normal" || !v ) return;
 			context.irv[v].push({
 				id: k,
 				label: SYSTEM.DESCRIPTOR.DAMAGE[k].label,

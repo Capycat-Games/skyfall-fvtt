@@ -116,6 +116,7 @@ export default class Character extends Creature {
 	prepareDerivedData() {
 		super.prepareDerivedData();
 		
+		this.prepareProtections();
 		this.prepareHitPoints();
 		this.prepareEmphasysPoints();
 		this.prepareNextLevelXP();
@@ -125,6 +126,22 @@ export default class Character extends Creature {
 		
 	}
 	
+	prepareProtections() {
+		try {
+			for (const [key, ability] of Object.entries(this.abilities)) {
+				const rollData = this.getRollData();
+				const protectionMod = this.modifiers.protections;
+				const type = ['str','dex','con', 'physical'].includes(key) ? 'physical' : 'mental';
+				let roll = new SkyfallRoll([
+					...protectionMod.all, protectionMod[type]
+				].join('+'), rollData);
+				ability.protection += roll.terms.length && roll.isDeterministic ? roll.evaluateSync().total : 0;
+			}
+		} catch (error) {
+			
+		}
+	}
+
 	prepareHitPoints(){
 		let hpPerLevelMethod = game.settings.get('skyfall', 'hpPerLevelMethod');
 		if( hpPerLevelMethod == 'user' ) {
