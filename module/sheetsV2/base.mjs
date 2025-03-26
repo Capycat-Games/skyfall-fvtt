@@ -502,6 +502,7 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static async #onCreate(event, target) {
 			const create = target.dataset.create;
+			console.log("ONCREATE", create);
 			if ( create == "skill" ) {
 				let type = 'custom'; //taget.dataset.type;
 				const select = document.createElement("select");
@@ -706,9 +707,7 @@ export const SkyfallSheetMixin = Base => {
 			if ( event.type == 'click' ) {
 				let abilityId = target.dataset.abilityId;
 				let itemId = target.dataset.entryId;
-				console.log(abilityId);
-				console.log(itemId);
-
+				
 				let commom = SYSTEM.actions.find( action => action.id == abilityId );
 				if ( itemId == abilityId ) return;
 				if ( commom ){
@@ -745,26 +744,16 @@ export const SkyfallSheetMixin = Base => {
 						appliedMods: [],
 						effects: ability.effects.filter( e => e.isTemporary),
 				});
-				MODCONFIG.render(true);
-
-
-				return;
+				
 				const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
 				const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
-				await ChatMessage.create({
-					type: 'usage',
-					flags: {
-						skyfall: {
-							advantage: event.ctrlKey ? 1 : 0,
-							disadvantage: event.altKey ? 1 : 0,
-						}
-					},
-					speaker: ChatMessage.getSpeaker({actor: this.actor, token: this.actor.token}),
-					system: {
-						actorId: this.actor.uuid,
-						abilityId: ability.id,
-						itemId: item?.id ?? null,
-					}}, {skipConfig: skip});
+				if ( skip ) {
+					const message = await MODCONFIG.createMessage();
+					message.evaluateAll();
+					console.log(message);
+				} else {
+					MODCONFIG.render(true);
+				}
 			} else {
 				const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
 				const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);

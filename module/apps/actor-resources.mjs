@@ -52,17 +52,20 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 	async _prepareContext(_options={}) {
 		const context = {
 			SYSTEM: SYSTEM,
-			system: this.document.system.toObject(),
+			system: this.document.system.toObject(true),
 			schema: this._getDataFields(),
 			_app: {
 				fields: foundry.applications.fields,
 				element: foundry.applications.elements
 			},
+			hpPerLevelSetting: game.settings.get('skyfall','hpPerLevelMethod'),
+			hpPerLevelMethod: this.document.getFlag('skyfall','hpPerLevelMethod') ?? 'mean',
 			buttons: [
 				{type: "submit", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
 			]
 		}
 		this._prepareSystem(context);
+		console.log(context);
 		return context;
 	}
 
@@ -96,6 +99,7 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 		const object = foundry.utils.expandObject( formData.object );
 		object.hp.levelRoll = Object.values( object.hp.levelRoll );
 		object.hp.levelRoll[0] = 0;
+		console.log(object);
 		const updateData = {
 			"system.modifiers.hp": {
 				abilities: object.hp.abilities.filter(Boolean),
@@ -108,6 +112,10 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 				totalExtra: [ object.ep.totalExtra ?? 0 ],
 			}
 		}
+		if ( object.flags ){
+			updateData.flags = object.flags;
+		}
+		console.log(updateData);
 		await this.document.update( updateData );
 	}
 }

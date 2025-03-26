@@ -4,3 +4,6 @@ export {default as MappingField} from "./mapping.mjs";
 export {default as ResourceField} from "./resource.mjs";
 export {default as RollBonusField} from "./rollbonus.mjs";
 export {default as RollField} from "./roll.mjs";
+
+export {default as SelectField} from "./field-select.mjs";
+

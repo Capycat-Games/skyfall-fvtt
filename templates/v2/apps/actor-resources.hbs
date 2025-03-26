@@ -8,8 +8,7 @@
 					{{#unless (or (eq abl 'mental') (eq abl 'physical'))}}
 						<label>
 							{{ability.abbr}}
-							<input type="checkbox" name="hp.abilities" value="{{abl}}" {{checked (includes abl
-								@root.system.modifiers.hp.abilities) }}>
+							<input type="checkbox" name="hp.abilities" value="{{abl}}" {{checked (includes @root.system.modifiers.hp.abilities abl) }}>
 						</label>
 					{{/unless}}
 				{{/each}}
@@ -28,6 +27,21 @@
 			</div>
 		</div>
 		<hr>
+		{{#if (eq hpPerLevelSetting 'user')}}
+			<div class="form-group flexrow">
+				<label>{{localize "SKYFALL2.SETTINGS.HPPerLevelMethod"}}</label>
+				<div class="form-fields">
+					<label>
+						{{localize "SKYFALL2.SETTINGS.HPPerLevelMethodRoll"}}
+						<input type="radio" name="flags.skyfall.hpPerLevelMethod" value="roll" {{checked (eq hpPerLevelMethod 'roll' ) }}>
+					</label>
+					<label>
+						{{localize "SKYFALL2.SETTINGS.HPPerLevelMethodMean"}}
+						<input type="radio" name="flags.skyfall.hpPerLevelMethod" value="mean" {{checked (eq hpPerLevelMethod 'mean' ) }}>
+					</label>
+				</div>
+			</div>
+		{{/if}}
 		<div class="form-group flexcol">
 			<label>{{localize schema.modifiers.hp.levelRoll.label}}</label>
 			<ol class="plain " style="columns: 3;font-size:14px;text-align:center;">

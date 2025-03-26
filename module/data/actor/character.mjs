@@ -145,7 +145,7 @@ export default class Character extends Creature {
 	prepareHitPoints(){
 		let hpPerLevelMethod = game.settings.get('skyfall', 'hpPerLevelMethod');
 		if( hpPerLevelMethod == 'user' ) {
-			hpPerLevelMethod = this.parent.getFlag('skyfall','hpPerLevelMethod');
+			hpPerLevelMethod = this.parent.getFlag('skyfall','hpPerLevelMethod') ?? 'mean';
 		}
 		if( hpPerLevelMethod == 'mean' ) this.prepareMaxHPMean();
 		else if( hpPerLevelMethod == 'roll' ) this.prepareMaxHPRoll();

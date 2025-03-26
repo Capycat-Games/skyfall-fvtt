@@ -123,8 +123,11 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	async getModificationsEmbeds(context){
 		const doc = this.document;
 		const mods = doc.effects.filter( ef => ef.type == 'modification' && !ef.isTemporary);
+		console.log(doc);
+		console.log(mods);
 		const embedded = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
+		console.log(context.enriched.modifications);
 	}
 
 	async getEnrichedFields(context){

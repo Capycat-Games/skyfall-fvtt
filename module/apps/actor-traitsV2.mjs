@@ -75,6 +75,7 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 			]
 		}
 		this._prepareManagedContext(context);
+		console.log(context);
 		return context;
 	}
 
@@ -122,7 +123,8 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 	 * @param {*} context 
 	 */
 	IRVContext(context){
-		const damageTaken = this.document.system.modifiers.damage.taken;
+		const system = this.document.system.toObject(true);
+		const damageTaken = system.modifiers.damage.taken;
 		context.damageTaken = {};
 		
 		for ( let [key, damage] of Object.entries(damageTaken) ) {
@@ -167,6 +169,7 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
 		const submitData = this._prepareSubmitData(event, form, formData);
+		console.log(submitData);
 		await this.document.update(submitData);
 	}
 }

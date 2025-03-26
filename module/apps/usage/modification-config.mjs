@@ -513,6 +513,8 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 
 	static async #onSubmit(event, form, formData) {
+		this.createMessage();
+		return;
 		console.groupCollapsed("onSubmit");
 		console.log(event);
 		console.log(form);
@@ -587,29 +589,78 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		await ChatMessage.create({
 			type: 'usage', system: messageData, content: content,
 		});
-		return false;
-		let xablau;
-		// const message = new ChatMessage({type: 'usage', system: messageData});
-		// const template = "systems/skyfall/templates/v2/chat/usage.hbs";
-		// const content = await renderTemplate( template, message.system );
-		//  {
-		// 	targets: data.targets,
-		// 	actor: data.actor,
-		// 	item: data.item,
-		// 	rolls: data.rolls,
-		// 	effects: data.effects,
-		// 	ability: data.ability,
-		// 	cost: data.cost,
-		// 	modifications: messageData.modifications,
-		// 	measuredTemplate: data.measuredTemplate,
-		// });
-		ChatMessage.create({
-			type: 'usage', system: messageData,
-			content: content,
-		});
-		console.groupEnd();
 		return;
 	}
 
+	async createMessage(){
+		const data = this.manage;
+		data.measuredTemplate = data.ability.system.getMeasuredTemplate();
+		data.effects = data.effects.map( i => {
+			const ef = {
+				_id: foundry.utils.randomID(),
+			};
+			foundry.utils.mergeObject(ef, i);
+			return ef;
+		});
+		console.log(data.rolls);
+		for (const [i, roll] of data.rolls.entries()) {
+			roll.index = i;
+			roll.template = await roll.render();
+		}
+		
+		const messageData = {
+			portrait: data.actor?.img,
+			origin: {
+				actor: data.actor.uuid,
+				item: data.ability.uuid,
+				ability: data.ability.id,
+				weapon: data.ability.weapon?.id ?? null,
+				feature: '',
+				// item: '',
+			},
+			actor: data.actor,
+			item: data.ability,
+			modifications: Object.values(data.modifications).reduce( (acc, mod) => {
+				if ( !mod.apply ) return acc;
+				const div = document.createElement('div');
+				div.innerHTML = mod.embed;
+				const label = game.i18n.localize(`SKYFALL2.RESOURCE.${mod.resource.toUpperCase()}Abbr`);
+				div.querySelector('.controls').innerHTML = `<span>${mod.cost * mod.apply} ${label}</span>`;
+				acc[mod.id] = {
+					_effect: mod._effect,
+					id: mod.id,
+					uuid: mod.uuid,
+					apply: mod.apply,
+					embed: div.innerHTML, //mod.embed,
+					name: mod.name,
+					description: mod.description,
+					cost: mod.cost,
+					resource: mod.resource,
+					isAmplify: mod.isAmplify,
+					amplified: mod.amplified,
+					amplifyThreshold: mod.amplifyThreshold,
+				}
+				return acc;
+			}, {}),
+			rolls: data.rolls, //.map( i => ({original: i.original.toJSON(), evaluated: null})),
+			targets: [],
+			measuredTemplate: data.measuredTemplate,
+			effects: data.effects, //.map( i => i.toJSON()),
+			costs: {
+				ep: 5
+			}
+		}
+		const template = "systems/skyfall/templates/v2/chat/usage.hbs";
+		const content = await renderTemplate( template, messageData );
 
+		// CREATE MESSAGE
+		console.log('messageData', messageData);
+		console.groupEnd();
+		const message = await ChatMessage.create({
+			type: 'usage',
+			system: messageData,
+			content: content,
+		});
+		return message;
+	}
 }

@@ -439,14 +439,19 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 
 	static schemaDamage() {
 		const fields = foundry.data.fields;
+		const _fields = skyfall.data.fields;
 		const dmgResLevels = Object.keys(SYSTEM.damageModifiers);
 		const dmgTypes = Object.values(SYSTEM.DESCRIPTOR.DAMAGE);
 		dmgTypes.unshift({id: 'all', label: 'all' });
 		return new fields.SchemaField( dmgTypes.reduce((obj, dmg) => {
-			obj[dmg.id] = new fields.StringField({choices: dmgResLevels, initial: "normal"});
+			obj[dmg.id] = new _fields.SelectField({
+				choices: dmgResLevels,
+				initial: "normal",
+			});
 			return obj;
 		}, {}));
 	}
+
 
 	static schemaAbility() {
 		const fields = foundry.data.fields;

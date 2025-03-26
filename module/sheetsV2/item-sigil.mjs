@@ -31,7 +31,8 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				"templates/generic/tab-navigation.hbs",
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
-				"systems/skyfall/templates/v2/shared/effects.hbs"
+				"systems/skyfall/templates/v2/shared/effects.hbs",
+				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
 			],
 			scrollable: [".scrollable"],
 		},

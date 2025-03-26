@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.9.604 - BETA
+
+- Ameaça - Corrigido. Botão para criar habilidades.
+- Personagem - Corrigido. Controle de Pontos de Vida persistência de atributo.
+- Personagem - Corrigido. Controle de Pontos de Vida por nível e rolado.
+- Personagem - Corrigido. Efeitos que melhoram/pioram as resistências e imunidades.
+- Habilidades - Corrigido. Exibição de Modificações.
+- Habilidades - Corrigido. Reabilitando a opção de Pular Configuração de Uso.
+- Sígilo - Adicionado. Exibição do item vinculado.
+
 ## 0.9.603 - BETA
 
 - Personagem - Corrigido. Bugs com interações de efeitos.

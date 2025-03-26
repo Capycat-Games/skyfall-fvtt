@@ -105,7 +105,64 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 	}
 
+	async evaluateAll(){
+		console.log(this);
+		const rolls = this.system.rolls;
+		for (const [i, roll] of Object.entries(rolls)) {
+			console.log(i);
+			const critical = roll.options.type == 'damage' && this.rolls.some( r => r.options.type == 'attack' && r.options.critical );
+			await this.evaluateRoll(i, critical);
+		}
+	}
 	
+	async evaluateRoll(index, critical = false){
+		const message = this;
+		const rolls = message.system.rolls;
+
+		const content = document.createElement('div');
+		const rollsDiv = document.createElement('div');
+		content.innerHTML = message.content;
+		let amplify = 0;
+		for (const [i, roll] of rolls.entries()) {
+			console.log(index, i, roll, roll.terms);
+			const r = (roll instanceof SkyfallRoll ? roll : SkyfallRoll.fromData(roll) );
+			r.index = i;
+			if ( index == i ) {
+				if ( r.options.type == 'damage' && critical ) {
+					r.alter(2);
+				}
+				await r.evaluate();
+				if ( r.options.type == 'attack' ) {
+					const criticalTarget = roll.options.critical?.range ?? 20; 
+					
+					if ( r.dice[0].total >= criticalTarget ) {
+						rolls[i].options.critical = true;
+					}
+					amplify = r.terms[0].total;
+					for (const [ii, roll2] of rolls.entries()) {
+						console.error( roll2 );
+						roll2.terms = roll2.terms.filter( t => ((t.options.amplify ?? 0 ) <= amplify) );
+						// roll2.formula = roll2.resetFormula();
+					}
+				}
+			}
+			r.template = await r.render();
+			const rdiv = document.createElement('div');
+			rdiv.innerHTML = r.template;
+			rollsDiv.append(rdiv);
+			rolls[i] = r;
+		}
+		
+		content.querySelectorAll('.modifications .hidden[data-amplify]')
+			.forEach( i => Number(i.dataset.amplify) <= amplify ? i.classList.remove('hidden') : null);
+		content.querySelector('.rolls').innerHTML = rollsDiv.innerHTML;
+
+		await message.update({
+			"content": content.innerHTML,
+			"system.rolls": message.system.rolls,
+			"rolls": rolls.filter( i => i._evaluated),
+		});
+	}
 	
 	async #evaluateRoll(event, target){
 		event.preventDefault();
@@ -114,6 +171,8 @@ export default class SkyfallMessage extends ChatMessage {
 		const critical = target.dataset.critical;
 		const messageId = target.closest(".chat-message").dataset.messageId;
 		const message = game.messages.get(messageId);
+		message.evaluateRoll(index, critical);
+		return;
 		const rolls = message.system.rolls;
 
 		const content = document.createElement('div');

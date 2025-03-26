@@ -135,6 +135,10 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 		if ( this.descriptors.length ){
 			labels.descriptors =  skyfall.utils.descriptorsTags(this.descriptors, {sigil: true});
 		}
+		if ( this.item ) {
+			labels.equipment = fromUuidSync(this.item);
+			labels.equipment.name = labels.equipment.magicName ?? labels.equipment.name;
+		}
 		return labels;
 	}
 
