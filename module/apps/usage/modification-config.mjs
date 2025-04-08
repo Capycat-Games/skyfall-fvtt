@@ -22,7 +22,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			submitOnChange: false,
 		},
 		window: {
-			title: "SKYFALL2.APPLICATION.ModificationConfig",
+			title: "SKYFALL2.APP.ModificationConfig",
 			frame: true,
 			positioned: true,
 		},
@@ -108,6 +108,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				mod: 0,
 				limit: actor.system.proficiency,
 			},
+			quantity: [],
 		};
 		console.warn(createData.targets);
 		return new this(createData, options);
@@ -119,12 +120,12 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		// GET TARGETS
 		this.manage.targets = await ModificationConfig.getTargets(this.manage.actor);
 		this.manage.cost = {
-			ep: this.manage.item?.system.activation.cost ?? 0,
 			ep: {
 				base: this.manage.item?.system.activation.cost ?? 0,
 				mod: 0,
 				limit: this.manage.actor?.system.proficiency,
 			},
+			quantity: [],
 		}
 		
 		// this.manage.modifications = await ModificationConfig.getModifications(
@@ -234,6 +235,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		ability.weapon = weapon;
 		ability.img = weapon.img;
 		ability.system.consume.ammo = Boolean(weapon.system.consume.target);
+
 		// 1console.error(ability.system.descriptors);
 
 		ability.system.descriptors = [
@@ -262,7 +264,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			}
 		}
 		console.log(ability);
-		console.log('fimMErGE', ability);
+		console.log('fimMERGE', ability);
 		// return ability; //new this({item: ability});
 	}
 	
@@ -374,7 +376,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	
 	static async parseChanges(modifications) {
 		console.log(modifications);
-		console.groupCollapsed("AAAAAAAAAAAAAAAAAAAAA");
+		console.groupCollapsed("parseChanges");
 		const changes = [];
 		const cost = {};
 		const typeCls = SYSTEM.modification;
@@ -466,7 +468,8 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			SYSTEM: SYSTEM,
 			data: this.manage,
 			buttons: [
-				{type: "submit", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
+				{type: "submit", icon: "fas fa-check", label: "SKYFALL2.Confirm"},
+				{type: "submit", action:"roll", icon: "fas fa-check", label: "SKYFALL2.APP.ConfirmRoll"},
 			],
 		}
 		console.log(this);
@@ -513,87 +516,16 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 
 	static async #onSubmit(event, form, formData) {
-		this.createMessage();
-		return;
-		console.groupCollapsed("onSubmit");
-		console.log(event);
-		console.log(form);
-		console.log(formData);
-		console.log(this);
-		const data = this.manage;
-		data.measuredTemplate = data.ability.system.getMeasuredTemplate();
-		data.effects = data.effects.map( i => {
-			const ef = {
-				_id: foundry.utils.randomID(),
-			};
-			foundry.utils.mergeObject(ef, i);
-			return ef;
-		});
-		console.log(data.rolls);
-
-		for (const [i, roll] of data.rolls.entries()) {
-			roll.index = i;
-			roll.template = await roll.render();
+		const message = await this.createMessage();
+		if ( event.submitter.dataset?.action == 'roll' ) {
+			message.evaluateAll();
 		}
-		
-		const messageData = {
-			portrait: data.actor?.img,
-			origin: {
-				actor: data.actor.uuid,
-				item: data.ability.uuid,
-				ability: data.ability.id,
-				weapon: data.ability.weapon?.id ?? null,
-				feature: '',
-				// item: '',
-			},
-			actor: data.actor,
-			item: data.ability,
-			// actor: JSON.stringify(data.actor),
-			// item: JSON.stringify(data.ability),
-			modifications: Object.values(data.modifications).reduce( (acc, mod) => {
-				if ( !mod.apply ) return acc;
-				const div = document.createElement('div');
-				div.innerHTML = mod.embed;
-				const label = game.i18n.localize(`SKYFALL2.RESOURCE.${mod.resource.toUpperCase()}Abbr`);
-				div.querySelector('.controls').innerHTML = `<span>${mod.cost * mod.apply} ${label}</span>`;
-				acc[mod.id] = {
-					_effect: mod._effect,
-					id: mod.id,
-					uuid: mod.uuid,
-					apply: mod.apply,
-					embed: div.innerHTML, //mod.embed,
-					name: mod.name,
-					description: mod.description,
-					cost: mod.cost,
-					resource: mod.resource,
-					isAmplify: mod.isAmplify,
-					amplified: mod.amplified,
-					amplifyThreshold: mod.amplifyThreshold,
-				}
-				return acc;
-			}, {}),
-			rolls: data.rolls, //.map( i => ({original: i.original.toJSON(), evaluated: null})),
-			targets: [],
-			measuredTemplate: data.measuredTemplate,
-			effects: data.effects, //.map( i => i.toJSON()),
-			costs: {
-				ep: 5
-			}
-		}
-		const template = "systems/skyfall/templates/v2/chat/usage.hbs";
-		const content = await renderTemplate( template, messageData );
-
-		// CREATE MESSAGE
-		console.log('messageData', messageData);
-		console.groupEnd();
-		await ChatMessage.create({
-			type: 'usage', system: messageData, content: content,
-		});
-		return;
+		message.consumeResources();
 	}
 
 	async createMessage(){
 		const data = this.manage;
+		const cost = data.cost;
 		data.measuredTemplate = data.ability.system.getMeasuredTemplate();
 		data.effects = data.effects.map( i => {
 			const ef = {
@@ -647,15 +579,25 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			measuredTemplate: data.measuredTemplate,
 			effects: data.effects, //.map( i => i.toJSON()),
 			costs: {
-				ep: 5
+				ep: (cost.ep.base + cost.ep.mod),
+				quantity: [],
 			}
+		}
+
+		if ( data.ability?.weapon ) {
+			messageData.costs.quantity.push({
+				id: data.ability.weapon.system.consume.target,
+				path: 'system.quantity',
+				value: -1,
+			});
 		}
 		const template = "systems/skyfall/templates/v2/chat/usage.hbs";
 		const content = await renderTemplate( template, messageData );
-
+		
 		// CREATE MESSAGE
-		console.log('messageData', messageData);
 		console.groupEnd();
+		console.log(this);
+		console.log('messageData', messageData);
 		const message = await ChatMessage.create({
 			type: 'usage',
 			system: messageData,

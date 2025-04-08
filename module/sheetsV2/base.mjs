@@ -750,6 +750,7 @@ export const SkyfallSheetMixin = Base => {
 				if ( skip ) {
 					const message = await MODCONFIG.createMessage();
 					message.evaluateAll();
+					message.consumeResources();
 					console.log(message);
 				} else {
 					MODCONFIG.render(true);

@@ -105,6 +105,86 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 	}
 
+	
+	async consumeResources(){
+		if ( game.userId != this.author.id ) return;
+		const {actor, item} = await this.system.getDocuments();
+		console.log(actor, item);
+		const content = ""
+		const updateData = {};
+		const costs = this.system.costs;
+		
+		if ( costs.hp ) {
+			const hp = foundry.utils.getProperty(actor, 'system.resources.hp');
+			updateData['system.resources.hp.value'] = hp.value - costs.hp;
+		}
+		// costs.ep = this.item.system?.activation?.cost ?? 0;
+		if ( costs.ep ) { //costs.ep
+			const ep = foundry.utils.getProperty(actor, 'system.resources.ep');
+			updateData['system.resources.ep.value'] = ep.value - costs.ep;
+		}
+		if ( costs.catharsis ) {
+			const catharsis = foundry.utils.getProperty(actor, 'system.resources.catharsis');
+			updateData['system.resources.catharsis.value'] = catharsis.value - costs.catharsis;
+		}
+		if ( costs.shadow ) {
+			const shadow = foundry.utils.getProperty(actor, 'system.resources.shadow');
+			updateData['system.resources.shadow.value'] = shadow.value - costs.shadow;
+		}
+		// TODO - Potions, Extras
+		// Consumable with uses
+		if ( costs.uses ) {
+			// updateData['items'] ??= [];
+		}
+		// Consumable
+		if ( costs.quantity ) {
+			for (const consumeItem of costs.quantity) {
+				const ammo = actor.items.get(consumeItem.id);
+				const weapon = actor.items.get(this.system.origin.weapon);
+				const currAmmo = foundry.utils.getProperty(ammo, consumeItem.path);
+				const currWeaponAmmo = foundry.utils.getProperty(weapon, 'system.reload.value');
+				updateData['items'] ??= [];
+				updateData['items'].push({
+					_id: consumeItem.id,
+					[consumeItem.path]: currAmmo + consumeItem.value
+				});
+				updateData['items'].push({
+					_id: weapon.id,
+					'system.reload.value': currWeaponAmmo + consumeItem.value
+				});
+			}
+		}
+		// SIGIL
+		const sigil = item?.type == "sigil" ? item : null;
+		if ( sigil ) { //sigil
+			if ( sigil.system.charges.value == 0 ) {
+				return ui.notifications.error(
+					game.i18n.format("NOTIFICATION.NotEnougthResource", {
+						resource: game.i18n.localize("SKYFALL2.RESOURCE.ChargePl"),
+					})
+				)
+			}
+
+			updateData['items'] ??= [];
+			updateData['items'].push({
+				"_id": sigil.id,
+				"system.charges.value": sigil.system.charges.value - 1
+			});
+		}
+		const recharge = item.type == "ability" ? this._ability : null;
+		if ( recharge && actor.type == 'npc' ) {
+			updateData['items'] ??= [];
+			updateData['items'].push({
+				"_id": recharge.id,
+				"system.activation.recharge": 0,
+			});
+			skyfall.ui.sceneConfig.scene.addCatharsis();
+		}
+		console.warn(updateData);
+		actor.update(updateData);
+
+	}
+
 	async evaluateAll(){
 		console.log(this);
 		const rolls = this.system.rolls;

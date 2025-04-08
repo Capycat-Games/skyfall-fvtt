@@ -10,6 +10,7 @@
 				{{#if (eq document.type 'partner') }}
 					<label>{{localize (concat "TYPES.Actor." document.type)}}:</label>
 					<input type="number" name="system.level.value" value="{{system.level.value}}">
+					<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="48" width="48" style="flex: 0 0 48px" />
 				{{else}}
 					<label>
 						{{localize (concat "TYPES.Actor." document.type)}}
@@ -21,6 +22,7 @@
 			<h1 class="flex2">{{actor.name}}</h1>
 			{{#if (eq document.type 'partner') }}
 				<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}:&nbsp;{{system.level.value}}</h3>
+				<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="48" width="48" style="flex: 0 0 48px" />
 			{{else}}
 				<h3 class="cr flex0">{{localize (concat "TYPES.Actor." document.type)}}</h3>
 				<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="48" width="48" style="flex: 0 0 48px;" />

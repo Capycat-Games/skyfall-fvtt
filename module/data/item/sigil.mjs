@@ -137,7 +137,7 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 		}
 		if ( this.item ) {
 			labels.equipment = fromUuidSync(this.item);
-			labels.equipment.name = labels.equipment.magicName ?? labels.equipment.name;
+			labels.equipment.magicName = labels.equipment.magicName ?? labels.equipment.name;
 		}
 		return labels;
 	}

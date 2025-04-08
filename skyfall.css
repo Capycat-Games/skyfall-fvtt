@@ -2715,6 +2715,20 @@ dropdown-tags .tags-dropdown fieldset legend {
   flex: 0 0 30px;
   max-width: 30px;
 }
+.skyfall.modification-config .form-footer,
+.skyfall.ability-modification-config .form-footer {
+  display: flex;
+  flex-direction: row;
+}
+.skyfall.modification-config .form-footer button,
+.skyfall.ability-modification-config .form-footer button {
+  background-color: #182657;
+  color: white;
+}
+.skyfall.modification-config .form-footer button label,
+.skyfall.ability-modification-config .form-footer button label {
+  color: white;
+}
 .skyfall.item-usage-config .header > * label {
   align-content: center;
   margin-left: 5px;

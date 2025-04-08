@@ -162,7 +162,7 @@ export default class Character extends Creature {
 		
 		for (const cls of this.classes) {
 			const die = new Roll( cls.system.hitDie.die ).terms[0].faces;
-			const mean = (((Number(die)) / 2) + 1);
+			const mean = Math.floor(((Number(die) + 1) / 2));
 			
 			if ( cls.system.initial ) hpData.dieMax = Number(die);
 			hpData.dieMean += mean * (cls.system.level - (cls.system.initial ? 1 : 0));
@@ -357,8 +357,17 @@ export default class Character extends Creature {
 	async _onCreate(data, options, userId) {
 
 		if ( userId !== game.user.id ) return;
+		
+		// Create default itens.
 		const items = await Promise.all(SYSTEM.initialItems.map( i => fromUuid(i)));
-		this.parent.createEmbeddedDocuments('Item', items.map( i => i.toObject()) );
+		const createList = [];
+		for (const item of items) {
+			if ( !this.parent.items.find(item.name) ) continue;
+			createList.push(item.toObject());
+		}
+		if ( createList ) {
+			this.parent.createEmbeddedDocuments('Item', createList );
+		}
 		
 	}
 

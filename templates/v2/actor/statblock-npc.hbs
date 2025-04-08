@@ -114,32 +114,32 @@
 			<a data-action="roll" data-roll-type="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a>
 		</div>
 		{{!-- RESISTANCES --}}
-		{{#if (or isEditMode irv.vul.length )}}
+		{{#if (or isEditMode irv.vulnerability.length )}}
 			<div class="status vulnerability">
 				<a data-action="manage" data-manage="irv">
 					<b>{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:</b>
 				</a>
-				{{#each irv.vul as | entry |}}
+				{{#each irv.vulnerability as | entry |}}
 					<span class="{{entry.type}}-reference">{{entry.label}}</span>
 				{{/each }}
 			</div>
 		{{/if}}
-		{{#if (or isEditMode irv.res.length )}}
+		{{#if (or isEditMode irv.resistance.length )}}
 			<div class="status resistance">
 				<a data-action="manage" data-manage="irv">
 					<b>{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:</b>
 				</a>
-				{{#each irv.res as | entry |}}
+				{{#each irv.resistance as | entry |}}
 					<span class="{{entry.type}}-reference">{{entry.label}}</span>
 				{{/each }}
 			</div>
 		{{/if}}
-		{{#if (or isEditMode irv.imu.length )}}
+		{{#if (or isEditMode irv.imunity.length )}}
 			<div class="status imunity">
 				<a data-action="manage" data-manage="irv">
 					<b>{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:</b>
 				</a>
-				{{#each irv.imu as | entry |}}
+				{{#each irv.imunity as | entry |}}
 					<span class="{{entry.type}}-reference" data-tooltip="{{entry.hint}}">{{entry.label}}</span>
 				{{/each }}
 			</div>

@@ -3,8 +3,8 @@
     "Actor": {
       "character": "Personagem",
       "characterPl": "Personagens",
-      "npc": "NPC",
-      "npcPl": "NPCS",
+      "npc": "Ameaça",
+      "npcPl": "Ameaças",
       "partner": "Comparsa",
       "partnerPl": "Comparsas",
       "creation": "Criação",
@@ -1481,12 +1481,15 @@
         "NotStarted": "Não há uma cena ativa",
         "Start": "Iniciar",
         "End": "Terminar",
+        "NoTokensSelected": "Nenhum Token selecionado",
         "AddCatharsis": "Adicionar Catarse",
         "TakeCatharsis": "Pegar Catarse",
         "RechargeAbility": "Recarregar Habilidade",
         "EmptyCatharsis": "Não há Ponto de Catarse na Mesa.",
         "ReclaimedTableCatharsis": "{actor} pegou um Ponto de Catarse da Mesa",
-        "RechargedAbility": "[{actor}] A habilidade {item} foi recarregada"
+        "RechargedAbility": "[{actor}] A habilidade {item} foi recarregada",
+        "NoCooldownAbilities": "Não há habilidades para recarregar.",
+        "NoFoeInCombat": "Não há Ameaças no Combate."
       },
       "Rest": "Descanso",
       "ShortRest": "Descanso Curto",
@@ -1504,6 +1507,8 @@
       "Proficiencies": "Proficiências",
       "NPCSelectSkill": "Proficiências em Perícias",
       "ActorResourcesConfig": "Recursos",
+      "ModificationConfig": "Configuração de Modificações",
+      "ConfirmRoll": "Confirmar & Rolar",
       "RollConfig": "Configuração de Rolagem",
       "ROLLCONFIG": {
         "Check": "Teste de {type}",
@@ -1518,8 +1523,7 @@
       "Damage": "Jogada de Dano",
       "Ability": "Teste de Atributo",
       "Skill": "Teste de Perícia",
-      "DamageVersatile": "Jogada de Dano (Versátil)",
-      "x": ""
+      "DamageVersatile": "Jogada de Dano (Versátil)"
     },
     "DIALOG": {
       "SelectSkill": "Selecione a Perícia",

@@ -8,7 +8,7 @@ export default class RollBonusField extends foundry.data.fields.ArrayField {
 	_applyChangeAdd(value, delta, model, change) {
 		const dataRgx = new RegExp(/@(?<data>[a-zA-Z.0-9_-]+)/i);
 		const flavorRgx = new RegExp(/\[(?<flavor>[a-zA-Z.0-9_-|\s]+)\]/i);
-		const [val, desc] = String(change.value).split(';').map( i => i.trim());
+		const [val, desc] = String(change.value).split(/,|;/).map( i => i.trim());
 		let terms = [val];
 		terms = terms.map( (term) => {
 			let data = term.match(dataRgx)?.groups?.data ?? "";

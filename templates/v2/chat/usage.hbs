@@ -2,14 +2,19 @@
 	{{log "USAGE CONTENT usage.hbs"}}
 	{{log this}}
 	<header class="card-header flexrow" style="width: 100%; flex: 100%;">
-		<h3 class="icon">{{{item.system.labels.action.icon}}} </h3>
+		<h3 class="icon">
+			{{{item.system.labels.action.icon}}}
+		</h3>
+		{{#if (eq item.type 'spell')}}
+			<h3 class="icon">
+				{{{item.system.labels.spell.icon}}}
+			</h3>
+			{{!-- <h2>{{{item.system.labels.spell.icon}}}</h2> --}}
+		{{/if}}
 		<h3 class="item-name">{{item.name}}</h3>
 		<aside class="card-aside flexcol" style="width: 10%; flex: 0 0 10%;">
-			{{#if (eq item.type 'spell')}}
-				<h2>{{{item.system.labels.spell.icon}}}</h2>
-			{{/if}}
 			<h4>
-				{{ifThen item.cost item.cost '—' }} {{localize 'SKYFALL2.RESOURCE.EPAbbr'}}
+				{{ifThen costs.ep costs.ep '—' }} {{localize 'SKYFALL2.RESOURCE.EPAbbr'}}
 			</h4>
 	</header>
 	<div class="item-data flexcol" style="width: 100%; flex: 100%;">

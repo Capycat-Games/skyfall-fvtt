@@ -84,9 +84,9 @@ export default class SceneConfigSetting extends foundry.abstract.DataModel {
 			return ui.notifications.warn('NOTIFICATIONS.NoActiveGM', {localize: true});
 		}
 
-		const actor = game.user.character ?? game.canvas.tokens.controlled.pop() ?? false;
+		const actor = game.user.character ?? game.canvas?.tokens.controlled.pop()?.document.actor ?? false;
 		if ( !actor || actor.type != 'character' ) {
-			return ui.notifications.warn('NOTIFICATIONS.NoTokensSelected', {localize: true});
+			return ui.notifications.warn('SKYFALL2.APP.SCENE.NoTokensSelected', {localize: true});
 		}
 		if ( this.catharsis == 0 ) {
 			return ui.notifications.warn('SKYFALL2.APP.SCENE.EmptyCatharsis', {localize: true});
@@ -105,13 +105,19 @@ export default class SceneConfigSetting extends foundry.abstract.DataModel {
 
 	async rechargeAbility(){
 		if ( !game.user.isGM ) return;
+		if ( !game.combat ) return;
 		const foes = game.combat.combatants.reduce( (acc, c) => {
 			if ( acc.find( a => a.id == c.actorId ) ) return acc;
-			if ( c.isNPC ) acc.push(c.actor);
+			if ( c.actor && c.isNPC ) acc.push(c.actor);
 			return acc;
 		}, [] );
 		const hasCooldown = [];
+		if ( !foes.length ) {
+			return ui.notifications.warn("SKYFALL2.APP.SCENE.NoFoeInCombat");
+		}
+
 		for (const foe of foes) {
+			if ( !foe.items ) continue;
 			const cooldown = foe.items.filter( i => i.type == 'ability' && i.system.activation.recharge == 0);
 			if ( cooldown.length ) {
 				hasCooldown.push({
@@ -121,7 +127,7 @@ export default class SceneConfigSetting extends foundry.abstract.DataModel {
 			}
 		}
 		if ( !hasCooldown.length ) {
-			return ui.notifications.warn("NoneCooldownAbilities");
+			return ui.notifications.warn("SKYFALL2.APP.SCENE.NoCooldownAbilities");
 		}
 		const template = await renderTemplate('systems/skyfall/templates/v2/apps/recharge-dialog.hbs', {
 			actors: hasCooldown,
