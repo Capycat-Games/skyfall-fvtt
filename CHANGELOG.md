@@ -2,11 +2,11 @@
 
 ## 0.9.605 - BETA
 
-- Comparse - Corrigido. Alterar Imagem.
+- Comparsa - Corrigido. Alterar Imagem.
 - Personagem - Corrigido. Consumo de EP e Munição.
 - Personagem - Corrigido. Adquirir Catarse da Mesa.
 - Personagem - Corrigido. Criação de items padrão.
-- Ameaça - Corrigido. Exibiçãod e Resistências e Vulnerabilidades.
+- Ameaça - Corrigido. Exibição de Resistências e Vulnerabilidades.
 - Habilidades - Corrigido. Aplicar Modificações e Rolar automático.
 - Mensagem de Habilidade - Corrigido. Ícone de Magia.
 - Mensagem de Habilidade - Corrigido. Exibição de Custo.
