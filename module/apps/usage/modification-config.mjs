@@ -6,9 +6,10 @@ import SkyfallRoll from "../../dice/skyfall-roll.mjs";
 export default class ModificationConfig extends HandlebarsApplicationMixin(ApplicationV2) {
 	constructor(data, options){
 		super(options);
-
+		console.log("ModificationConfig", data, options);
 		// init
 		this.manage = data;
+		// this.manage.rollconfig = {};
 	}
 	manage = {};
 
@@ -56,6 +57,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	static async fromData(data, options){
 		const { appliedMods, effects } = data;
 		const createData = {}
+		createData.rollconfig = data.rollconfig;
 		const actor = fromUuidSync(data.actor)?.clone({}, {keepId: true});
 		// const ability = actor.items.get(data.ability);
 		const ability = ( data.check ? new Item(SYSTEM.prototypeItems.ABILITYROLL) : actor.items.get(data.ability) );
@@ -460,6 +462,24 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	/* -------------------------------------------- */
 	/*  Rendering                                   */
 	/* -------------------------------------------- */
+	
+	
+
+	async _renderHTML(_context, _options) {
+		const form = await super._renderHTML(_context, _options);
+		const inputs = form.content.querySelectorAll('.rolls input.bonus, .rollmode input.mode');
+		for (const input of inputs) {
+			input.addEventListener("change", (ev) => {
+				this.manage.rollconfig ??= {};
+				this.manage.rollconfig[ev.currentTarget.name] = ev.currentTarget.value;
+				this.manage.rollconfig = foundry.utils.expandObject(this.manage.rollconfig);
+			});
+		}
+		
+		return form;
+	}
+
+
 
 	/** @override */
 	async _prepareContext(options) {
@@ -534,8 +554,29 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			foundry.utils.mergeObject(ef, i);
 			return ef;
 		});
-		console.log(data.rolls);
+		
 		for (const [i, roll] of data.rolls.entries()) {
+			const rollbonus = data.rollconfig?.roll?.[i]?.bonus ?? null;
+			if ( rollbonus ) {
+				const terms = SkyfallRoll.parse(`0 + (${rollbonus})[||bonus]`, roll.data);
+				terms.shift();
+				roll.terms.push(...terms);
+				roll.resetFormula();
+			}
+			const rollmode = data.rollconfig?.rollmode ?? null;
+			if ( rollmode && roll.options.type == "attack" ) {
+				roll.terms[0].modifiers = roll.terms[0].modifiers.filter( m => !["kh","khe","kl","kle"].includes(m));
+				if( rollmode == "normal" ) {
+					roll.terms[0].number = 1;
+				} else if( rollmode == "advantage" ) {
+					roll.terms[0].number = 2;
+					roll.terms[0].modifiers.push("kh");
+				} else if( rollmode == "disadvantage" ) {
+					roll.terms[0].number = 2;
+					roll.terms[0].modifiers.push("kl");
+				}
+				roll.resetFormula();
+			}
 			roll.index = i;
 			roll.template = await roll.render();
 		}

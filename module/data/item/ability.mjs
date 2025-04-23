@@ -508,13 +508,21 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	// 	if ( user.id != game.user.id ) return false;
 	// }
 
+	_onUpdate(changed, options, userId) {
+		super._onUpdate(changed, options, userId);
+		if ( this.parent._enriched ) this.parent._enriched = null;
+	}
+
 	/** @override */
 	async toEmbed(config, options={}) {
 		config.classes = "ability-embed skyfall";
 		config.cite = false;
 		config.caption = false;
 		let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
-		
+
+		const labels = this.labels;
+		console.log("Ability.toEmbed", config, options);
+
 		const anchor = this.parent.toAnchor();
 		anchor.classList.remove('content-link');
 		anchor.querySelector('i').remove();
@@ -524,10 +532,12 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			item: this.parent,
 			system: this,
 			anchor: anchor.outerHTML,
-			labels: this.labels,
+			labels: labels,
 			isPlayMode: true,
 			isEmbed: true,
-			isFigure: true,
+			isFigure: config.isFigure ?? true,
+			isSheetEmbedded: config.isSheetEmbedded,
+			collapse: config.collapse ?? false,
 			enriched: [],
 			modifications: modifications.join(''),
 		});

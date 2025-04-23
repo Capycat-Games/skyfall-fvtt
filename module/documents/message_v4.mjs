@@ -4,7 +4,6 @@ import SkyfallRoll from "../dice/skyfall-roll.mjs";
 export default class SkyfallMessage extends ChatMessage {
 	
 	async getHTML() {
-		console.log('getHTML', this);
 		let html = await super.getHTML();
 		const messageDocs = await this.system.getDocuments();
 		if ( this.system.portrait ) {
@@ -144,10 +143,12 @@ export default class SkyfallMessage extends ChatMessage {
 				const currAmmo = foundry.utils.getProperty(ammo, consumeItem.path);
 				const currWeaponAmmo = foundry.utils.getProperty(weapon, 'system.reload.value');
 				updateData['items'] ??= [];
+				if ( !consumeItem.id ) continue;
 				updateData['items'].push({
 					_id: consumeItem.id,
 					[consumeItem.path]: currAmmo + consumeItem.value
 				});
+				if ( !weapon.id ) continue;
 				updateData['items'].push({
 					_id: weapon.id,
 					'system.reload.value': currWeaponAmmo + consumeItem.value
@@ -186,11 +187,9 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 
 	async evaluateAll(){
-		console.log(this);
 		const rolls = this.system.rolls;
 		for (const [i, roll] of Object.entries(rolls)) {
-			console.log(i);
-			const critical = roll.options.type == 'damage' && this.rolls.some( r => r.options.type == 'attack' && r.options.critical );
+			const critical = roll.options.type == 'damage' && this.rolls.some( r => r.options.type == 'attack' && r.options.criticalHit );
 			await this.evaluateRoll(i, critical);
 		}
 	}
@@ -204,7 +203,6 @@ export default class SkyfallMessage extends ChatMessage {
 		content.innerHTML = message.content;
 		let amplify = 0;
 		for (const [i, roll] of rolls.entries()) {
-			console.log(index, i, roll, roll.terms);
 			const r = (roll instanceof SkyfallRoll ? roll : SkyfallRoll.fromData(roll) );
 			r.index = i;
 			if ( index == i ) {
@@ -214,13 +212,11 @@ export default class SkyfallMessage extends ChatMessage {
 				await r.evaluate();
 				if ( r.options.type == 'attack' ) {
 					const criticalTarget = roll.options.critical?.range ?? 20; 
-					
 					if ( r.dice[0].total >= criticalTarget ) {
-						rolls[i].options.critical = true;
+						rolls[i].options.criticalHit = true;
 					}
 					amplify = r.terms[0].total;
 					for (const [ii, roll2] of rolls.entries()) {
-						console.error( roll2 );
 						roll2.terms = roll2.terms.filter( t => ((t.options.amplify ?? 0 ) <= amplify) );
 						// roll2.formula = roll2.resetFormula();
 					}
@@ -477,7 +473,6 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	prepareBaseData() {
 		super.prepareBaseData();
-		console.log('prepareData');
 		if ( this.type == 'usage' && this.system.actorId ) {
 			// this.system.actor = fromUuidSync(this.system.actorId);
 		}
@@ -507,7 +502,6 @@ export default class SkyfallMessage extends ChatMessage {
 		const actor = fromUuidSync(`Actor.${this.speaker.actor}`)?.img;
 		const owner = fromUuidSync(`${this.system.actorId}`)?.img;
 		const portrait = owner ?? actor ?? token ?? 'icons/svg/mystery-man.svg';
-		console.log('actorPortrait', portrait);
 		this.updateSource({'system.portrait': portrait});
 	}
 

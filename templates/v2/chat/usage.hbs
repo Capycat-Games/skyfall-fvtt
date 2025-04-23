@@ -46,28 +46,11 @@
 				<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 			{{/each}}
 		</div>
-		{{#with item.system.labels.attack.hit }}
+		{{#if item.system.description.value }}
 			<div class="ability-properties rich">
-				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
+				{{{item.system.description.value}}}
 			</div>
-		{{/with}}
-
-		{{#with item.system.labels.attack.miss }}
-			<div class="ability-properties rich">
-				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-			</div>
-		{{/with}}
-
-		{{#with item.system.labels.effect }}
-			<div class="ability-properties rich">
-				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-			</div>
-		{{/with}}
-		{{#with item.system.labels.special }}
-			<div class="ability-properties rich">
-				<label>{{{localize this.label}}}:</label> {{{this.descriptive}}}
-			</div>
-		{{/with}}
+		{{/if}}
 	</div>
 	<ul class="list-items modifications">
 

@@ -732,7 +732,6 @@ export const SkyfallSheetMixin = Base => {
 					});
 				}
 				
-				
 				const ability = this.actor.items.get(abilityId);
 				if ( !ability ) return;
 				
@@ -742,6 +741,9 @@ export const SkyfallSheetMixin = Base => {
 						ability: ability.id,
 						weapon: item?.id,
 						appliedMods: [],
+						rollconfig: {
+							rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
+						},
 						effects: ability.effects.filter( e => e.isTemporary),
 				});
 				
@@ -843,6 +845,9 @@ export const SkyfallSheetMixin = Base => {
 						actor: this.actor.uuid,
 						ability: ability, //this.actor.items.find( i => i.name == 'ABILITYROLL').id,
 						check: this.rolling,
+						rollconfig: {
+							rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
+						},
 						appliedMods: [],
 						effects: [],
 				});

@@ -16,6 +16,24 @@
 		min-height: unset;
 	}
 	.window-content {
+		.overrided-fields {
+			position: relative;
+			min-height: 22px;
+			input {
+				position: absolute;
+				align-self: anchor-center;
+				justify-self: anchor-center;
+				&:not(:disabled) {
+					opacity: 0;
+				}
+				&:focus {
+					opacity: 1;
+				}
+				&:focus + input {
+					opacity: 0;
+				}
+			}
+		}
 		button {
 			background-color: var(--actor-color);
 			color: white;

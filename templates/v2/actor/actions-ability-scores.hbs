@@ -1,25 +1,27 @@
 <div class="background-cut ability-scores abilities flexrow">
 	{{#each system.abilities as | ability abl |}}
-	<div class="ability entry flexcol2 text-center" data-type="ability">
-		<div class="flexcol top">
-			<div class="flex1">
-				<h6 data-tooltip="{{localize 'SKYFALL.ROLL.ABL'}}" >
-					<a class="{{#if (and @root.rolling (or (eq @root.rolling.abl abl) (eq @root.rolling.abl null))) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="ability" data-id="{{abl}}">{{{localize ability.label}}}{{#if ability.spellcasting}}*{{/if}}</a>
-				</h6>
+		<div class="ability entry flexcol2 text-center" data-type="ability">
+			<div class="flexcol top">
+				<div class="flex1">
+					<h6 data-tooltip="{{localize 'SKYFALL.ROLL.ABL'}}">
+						<a class="{{#if (and @root.rolling (or (eq @root.rolling.abl abl) (eq @root.rolling.abl null))) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="ability" data-id="{{abl}}">{{{localize ability.label}}}{{#if ability.spellcasting}}*{{/if}}</a>
+					</h6>
+				</div>
+				<div class="flex2 overrided-fields">
+					{{#if @root.isEditable}}
+						{{log "ability" ability}}
+						<input type="number" name="system.abilities.{{abl}}.value" value="{{lookup (lookup @root.source.abilities abl) 'value'}}">
+						<input type="number" name="" value="{{ability.value}}" disabled>
+					{{else}}
+						<h2>{{ability.value}}</h2>
+					{{/if}}
+				</div>
 			</div>
-			<div class="flex2">
-				{{#if @root.isEditable}}
-					<input type="number" name="system.abilities.{{abl}}.value" value="{{ability.value}}">
-				{{else}}
-					<h2>{{ability.value}}</h2>
-				{{/if}}
-			</div>
-		</div>
-		<div class="flexcol bottom">
+			<div class="flexcol bottom">
 				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">{{localize "SKYFALL.ACTOR.PROTECTION"}}</a>
 				<label>{{ability.protection}}</label>
 				{{!-- <input type="number" disabled value="{{ability.protection}}"> --}}
+			</div>
 		</div>
-	</div>
 	{{/each}}
 </div>

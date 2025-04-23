@@ -363,6 +363,24 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.minimized {
   min-height: unset;
 }
+.skyfall.sheet.actor .window-content .overrided-fields {
+  position: relative;
+  min-height: 22px;
+}
+.skyfall.sheet.actor .window-content .overrided-fields input {
+  position: absolute;
+  align-self: anchor-center;
+  justify-self: anchor-center;
+}
+.skyfall.sheet.actor .window-content .overrided-fields input:not(:disabled) {
+  opacity: 0;
+}
+.skyfall.sheet.actor .window-content .overrided-fields input:focus {
+  opacity: 1;
+}
+.skyfall.sheet.actor .window-content .overrided-fields input:focus + input {
+  opacity: 0;
+}
 .skyfall.sheet.actor .window-content button {
   background-color: var(--actor-color);
   color: white;

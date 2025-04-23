@@ -302,7 +302,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		// Prepare data
 		this._prepareSystemData(context);
 		// 
-		this._prepareItems(context);
+		await this._prepareItems(context);
 		if ( context.items.abilities ) {
 			// context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
 		}
@@ -395,7 +395,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	/**
 	 * Item Organization
 	 */
-	_prepareItems(context){
+	async _prepareItems(context){
 		const items = {
 			abilities: [],
 			actions: [],
@@ -426,9 +426,39 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				}
 			}
 			if ( ['feature','feat'].includes(item.type) ) items.features.push(item);
-			if ( item.type == 'ability' ) items.abilities.push(item);
-			if ( item.type == 'spell' ) items.spells.push(item);
-			if ( item.type == 'sigil' ) items.sigils.push(item);
+			if ( item.type == 'ability' ) {
+				items.abilities.push(item);
+				if ( !item._enriched ) {
+					const embedded = await item.toEmbed({
+						isSheetEmbedded: true,
+						isFigure: false,
+						collapse: true,
+					}, {});
+					item._enriched = embedded.innerHTML;
+				}
+			}
+			if ( item.type == 'spell' ) {
+				items.spells.push(item);
+				if ( !item._enriched ) {
+					const embedded = await item.toEmbed({
+						isSheetEmbedded: true,
+						isFigure: false,
+						collapse: true,
+					}, {});
+					item._enriched = embedded.innerHTML;
+				}
+			} 
+			if ( item.type == 'sigil' ) {
+				items.sigils.push(item);
+				if ( !item._enriched ) {
+					const embedded = await item.toEmbed({
+						isSheetEmbedded: true,
+						isFigure: false,
+						collapse: true,
+					}, {});
+					item._enriched = embedded.innerHTML;
+				}
+			}
 			if ( progression.includes(item.type) ) items[item.type] = item;
 			if ( classPaths.includes(item.type) ) items[item.type].push(item);
 		}

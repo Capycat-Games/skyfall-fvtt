@@ -22,10 +22,13 @@
 		</div>
 	</div>
 	<div class="rolls flexcol">
-		{{#each data.rolls.listed as | rolls id | }}
+		{{#each data.rolls as | rolls id | }}
 			<div class="form-group">
 				<label>{{{rolls.options.flavor}}}</label>
-				<input type="text" disabled value="{{{rolls.formula}}}">
+				<div class="form-fields">
+					<input type="text" disabled value="{{{rolls.formula}}}">
+					<input type="text" class="bonus" name="roll.{{id}}.bonus" value="{{lookup (lookup @root.data.rollconfig.roll id) 'bonus'}}" style="flex: 0 0 90px;" placeholder="{{localize 'SKYFALL2.Bonus'}}">
+				</div>
 			</div>
 		{{/each}}
 	</div>
@@ -34,4 +37,25 @@
 			<div class="modification">{{{modification.embed}}}</div>
 		{{/each}}
 	</div>
+
+	<div class="form-group stacked text-center rollmode">
+		<label data-tooltip="{{localize 'SKYFALL2.APP.ForceRollModeHint'}}">{{localize "SKYFALL2.APP.ForceRollMode"}}:</label>
+		<div class="form-group">
+			{{log data}}
+			<label>
+				<input type="radio" class="mode" name="rollmode" value="disadvantage" {{checked (eq data.rollconfig.rollmode "disadvantage" ) }}>
+				{{localize "SKYFALL.ROLL.DISADVANTAGE"}}
+			</label>
+
+			<label>
+				<input type="radio" class="mode" name="rollmode" value="normal" {{checked (eq data.rollconfig.rollmode "normal" ) }}>
+				{{localize "SKYFALL.ROLL.NORMAL"}}
+			</label>
+			<label>
+				<input type="radio" class="mode" name="rollmode" value="advantage" {{checked (eq data.rollconfig.rollmode "advantage" ) }}>
+				{{localize "SKYFALL.ROLL.ADVANTAGE"}}
+			</label>
+		</div>
+	</div>
+
 </div>

@@ -20,8 +20,14 @@
 		{{{SYSTEM.icons.sfcatharsiswhite}}}
 	</div>
 
-	<div class="damage-reduction attribute flexcol">
-		{{formGroup schema.dr value=system.dr stacked=true disabled=true localize=true}}
+	<div class="damage-reduction attribute">
+		<div class="form-group stacked">
+			<label>{{localize schema.dr.label}}</label>
+			<div class="form-fields overrided-fields flexrow">
+				{{formInput schema.dr value=source.dr localize=true}}
+				{{formInput schema.dr value=system.dr name="" disabled=true localize=true}}
+			</div>
+		</div>
 	</div>
 
 	<div class="resource hp flexrow">

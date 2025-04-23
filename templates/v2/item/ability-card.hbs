@@ -3,11 +3,13 @@
 	data-entry-id="{{item.id}}">
 	<div class="ability-header flexrow">
 		{{{labels.action.icon}}} &nbsp;
+		{{log "ITEMCARD" this}}
 		{{#if isFigure }}
 			{{{anchor}}}
 			<span class="cost flex1">{{{labels.cost.label}}}</span>
 			{{{labels.spell.icon}}}
-		{{~else if (or @root.isEmbed (eq @root.document.documentName "Actor")) }}
+		{{~else if @root.isSheetEmbedded }}
+			{{log "ITEMCARD.isSheetEmbedded" this}}
 			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
 				<h5>{{item.name}}</h5>
 			</a>
@@ -41,7 +43,7 @@
 			{{/each}}
 		</div>
 	{{/if}}
-	{{#if system.description.value }}
+	{{#if system.description.flavor }}
 		<div class="ability-description">
 			<em><b>{{{system.description.flavor}}}</b></em>
 		</div>
@@ -59,33 +61,11 @@
 		<div class="rich">
 			{{{enriched.description}}}
 		</div>
-	{{/if}}
-	{{#if (and false labels.attack.hit) }}
+	{{else}}
 		<div class="rich">
-			<label>{{{localize labels.attack.hit.label}}}:</label>
-			{{#if enriched.hit}}{{{enriched.hit}}}{{else}}{{{labels.attack.hit.descriptive}}}{{/if}}
+			{{{system.description.value}}}
 		</div>
 	{{/if}}
-
-	{{#if (and false labels.attack.miss) }}
-		<div class="rich">
-			<label>{{{localize labels.attack.miss.label}}}:</label>
-			{{#if enriched.miss}}{{{enriched.miss}}}{{else}}{{{labels.attack.miss.descriptive}}}{{/if}}
-		</div>
-	{{/if}}
-	{{#if (and false labels.effect) }}
-		<div class="rich">
-			<label>{{{localize labels.effect.label}}}:</label>
-			{{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
-		</div>
-	{{/if}}
-	{{#if (and false labels.special) }}
-		<div class="rich">
-			<label>{{{localize labels.special.label}}}:</label>
-			{{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}
-		</div>
-	{{/if}}
-
 	{{!-- MODIFICATIONS --}}
 	{{{enriched.modifications}}}
 </div>

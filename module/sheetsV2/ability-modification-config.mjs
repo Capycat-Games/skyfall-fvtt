@@ -63,10 +63,7 @@ export default class SkyfallAbilityModificationsConfig extends HandlebarsApplica
 
 	/** @inheritdoc */
 	static async #onSubmitDocumentForm(event, form, formData) {
-		console.log(form);
-		console.log(formData);
 		const submitData = this._prepareSubmitData(event, form, formData);
-		console.log(submitData);
 		await this._processSubmitData(event, form, submitData);
 	}
 }
