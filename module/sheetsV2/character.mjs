@@ -434,7 +434,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 						isFigure: false,
 						collapse: true,
 					}, {});
-					item._enriched = embedded.innerHTML;
+					if ( embedded ) {
+						item._enriched = embedded.innerHTML;
+					}
 				}
 			}
 			if ( item.type == 'spell' ) {
@@ -445,7 +447,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 						isFigure: false,
 						collapse: true,
 					}, {});
-					item._enriched = embedded.innerHTML;
+					if ( embedded ) {
+						item._enriched = embedded.innerHTML;
+					}
 				}
 			} 
 			if ( item.type == 'sigil' ) {
@@ -456,7 +460,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 						isFigure: false,
 						collapse: true,
 					}, {});
-					item._enriched = embedded.innerHTML;
+					if ( embedded ) {
+						item._enriched = embedded.innerHTML;
+					}
 				}
 			}
 			if ( progression.includes(item.type) ) items[item.type] = item;

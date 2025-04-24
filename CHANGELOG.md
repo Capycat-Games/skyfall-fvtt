@@ -1,12 +1,16 @@
 # CHANGELOG
 
+## 0.9.606b - BETA
+
+- Personagem - Corrigido. Erro ao renderizar sigilos impedia a ficha de abrir.
+
 ## 0.9.606 - BETA
 
 - Personagem - Adicionado. Campo editaval de RD.
 - Personagem - Corrigido. Atributos modificados por Efeitos eram salvos com o valor alterado.
-- Habilidade - Corrigido - Exibição da descriçaõ na ficha e no chat.
-- Configuração de Uso - Adicionado - Campos para bônus manual nas rolagems.
-- Configuração de Uso - Adicionado - Campo para forçar Rolagem com Vantagem/Desvantagem.
+- Habilidade - Corrigido. Exibição da descriçaõ na ficha e no chat.
+- Configuração de Uso - Adicionado. Campos para bônus manual nas rolagems.
+- Configuração de Uso - Adicionado. Campo para forçar Rolagem com Vantagem/Desvantagem.
 - Correções menores de bugs e ajustes.
 
 ## 0.9.605 - BETA
