@@ -188,9 +188,7 @@ export default class ActiveEffectConfig extends HandlebarsApplicationMixin(Docum
 	 * @type {ApplicationClickAction}
 	 */
 	static async #onAddChange() {
-		console.log(this, this.element);
 		const submitData = this._processFormData(null, this.element, new FormDataExtended(this.element));
-		console.log(submitData);
 		submitData.changes ??= [];
 		const changes = Object.values(submitData.changes);
 		changes.push({});
@@ -217,11 +215,7 @@ export default class ActiveEffectConfig extends HandlebarsApplicationMixin(Docum
 	/* ----------------------------------------- */
 
 	static async #onSubmitDocumentForm(event, form, formData) {
-		console.log(form);
-		console.log(formData);
-		// this._processFormData(formData);
 		const submitData = this._prepareSubmitData(event, form, formData);
-		console.log(submitData);
 		await this._processSubmitData(event, form, submitData);
 	}
 
@@ -230,11 +224,8 @@ export default class ActiveEffectConfig extends HandlebarsApplicationMixin(Docum
 		if ( fdObject['system.apply.itemType'] ) {
 			formData.object['system.apply.itemType'] = fdObject['system.apply.itemType'].filter(Boolean);
 		}
-		console.log(fdObject);
-		console.log(fdObject['system.apply.type']);
 		if ( fdObject['system.apply.type'] ) {
 			formData.object['system.apply.type'] = fdObject['system.apply.type'].filter(Boolean);
-			console.log(fdObject);
 		}
 		if ( fdObject['system.apply.descriptors'] ) {
 			fdObject['system.apply.descriptors'] = fdObject['system.apply.descriptors'].filter(Boolean);

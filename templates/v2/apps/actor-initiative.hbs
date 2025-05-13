@@ -1,0 +1,36 @@
+<div class="flexrow">
+	<fieldset>
+		<legend>{{localize property.schema.label}}</legend>
+		{{formGroup
+			schema.abilities
+			value=property._source.abilities
+			localize=true
+			classes="slim"
+		}}
+		{{formGroup
+			schema.bonus
+			value=property._source.bonus
+			localize=true
+			classes="slim"
+		}}
+	</fieldset>
+	{{formInput
+		schema.bonuses
+		value=property.bonuses
+	}}
+	<style>
+		.roll-bonuses button {
+			font-size: 14px;
+			height: 22px;
+		}
+
+		.roll-bonuses button i {
+			margin: 0;
+		}
+
+		.roll-bonuses button:disabled {
+			opacity: 0;
+		}
+	</style>
+
+</div>

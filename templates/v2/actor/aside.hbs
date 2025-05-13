@@ -9,7 +9,6 @@
 	<div class="actor-actions flexrow flex0">
 		<button data-action="manage" data-manage="short-rest">{{{SYSTEM.icons.food}}}</button>
 		<button data-action="manage" data-manage="long-rest">{{{SYSTEM.icons.tent}}}</button>
-
 		<div class="hitDie flexrow">
 			{{#each hitDies.dies as | hd |}}
 				<span class="die" style="background-image:url({{hd.icon}})">{{hd.value}}</span>
@@ -17,7 +16,7 @@
 		</div>
 		<input type="number" name="system.resources.catharsis.value" value="{{system.resources.catharsis.value}}"
 			data-tooltip="CATARSE">
-		{{{SYSTEM.icons.sfcatharsiswhite}}}
+		{{{SYSTEM.icons.sfcatharsis}}}
 	</div>
 
 	<div class="damage-reduction attribute">
@@ -90,9 +89,11 @@
 		</div>
 	</div>
 
-	<div class="shadow flexcol">
-		<h4 data-tooltip="{{localize " SKYFALL2.RESOURCE.ShadowHint"}}">
-			{{localize "SKYFALL2.RESOURCE.Shadow"}}
+	<div class="shadow flexrow">
+		<h4 class="flex100" data-tooltip2="{{localize " SKYFALL2.RESOURCE.ShadowHint"}}">
+			<a>
+				{{localize "SKYFALL2.RESOURCE.Shadow"}}
+			</a>
 		</h4>
 		<h4>
 			<a data-action="vary" data-field-path="system.resources.shadow.value">

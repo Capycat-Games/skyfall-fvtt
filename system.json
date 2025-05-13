@@ -2,9 +2,9 @@
   "id": "skyfall",
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
-  "version": "0.9.606b",
+  "version": "0.9.607",
   "manifest": "https://raw.githubusercontent.com/Capycat-Games/skyfall-fvtt/main/system.json",
-  "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.9.606b-Beta.zip",
+  "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.9.607-Beta.zip",
   "url": "https://github.com/Capycat-Games/skyfall-fvtt",
   "bugs": "https://github.com/Capycat-Games/skyfall-fvtt/issues",
   "license": "LICENSE",
@@ -28,9 +28,9 @@
     }
   ],
   "compatibility": {
-    "minimum": 12,
-    "verified": "12.320",
-    "maximun": "12.320"
+    "minimum": "12",
+    "verified": "12",
+    "maximun": "12"
   },
   "esmodules": ["skyfall.mjs"],
   "styles": ["skyfall.css"],

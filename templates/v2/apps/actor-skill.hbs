@@ -1,0 +1,32 @@
+<div class="flexcol">
+	{{log "skill" this}}
+	<fieldset>
+		<legend>{{localize "SKYFALL2.Skill"}}: {{localize property.label}}</legend>
+		{{formGroup
+			schema.bonus
+			value=property._source.bonus
+			name=(concat "system.skills." entryId ".bonus")
+			localize=true
+			classes=""
+		}}
+	</fieldset>
+	{{formInput
+		schema.bonuses
+		value=property.bonuses
+		name=(concat "system.skills." entryId ".bonuses")
+	}}
+	<style>
+		.roll-bonuses button {
+			font-size: 14px;
+			height: 22px;
+		}
+
+		.roll-bonuses button i {
+			margin: 0;
+		}
+
+		.roll-bonuses button:disabled {
+			opacity: 0;
+		}
+	</style>
+</div>

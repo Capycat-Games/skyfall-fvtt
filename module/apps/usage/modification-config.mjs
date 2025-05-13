@@ -6,7 +6,6 @@ import SkyfallRoll from "../../dice/skyfall-roll.mjs";
 export default class ModificationConfig extends HandlebarsApplicationMixin(ApplicationV2) {
 	constructor(data, options){
 		super(options);
-		console.log("ModificationConfig", data, options);
 		// init
 		this.manage = data;
 		// this.manage.rollconfig = {};
@@ -81,9 +80,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		if ( check ) {
 			this.mergeAbilityCheck(ability, check);
 		}
-		console.log('posMERGE', createData);
 		createData.targets = await ModificationConfig.getTargets(actor);
-		console.log(createData);
 		// PREPARE MODS
 		createData.modifications = await this.getModifications(actor, ability, appliedMods);
 		const {changes, cost} = await ModificationConfig.parseChanges(createData.modifications);
@@ -96,7 +93,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		const rolls = await this.getAbilityRolls(actor, ability);
 		
 		// APPLY MODS TO ROLLS
-		console.log(rolls);
+		console.log("AAAA", check, rolls);
 		createData.rolls = await this.applyModificationToRolls(rolls, changes);
 		
 		// APPLY MODS TO EFFECT
@@ -117,7 +114,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 
 	async updateData(){
-		console.log(this);
 		// return;
 		// GET TARGETS
 		this.manage.targets = await ModificationConfig.getTargets(this.manage.actor);
@@ -175,7 +171,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 	static getTargets(actor) {
 		console.groupCollapsed('getTargets');
-		console.log(actor);
 		const token = fromUuidSync(actor.uuid)?.getActiveTokens()[0];
 		console.warn(token);
 		
@@ -207,19 +202,25 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			ability.system.descriptorsSpecial.push('skill', check.skill);
 			ability.system.identifier = `check-${check.ability}-${check.skill}`;
 		}
+		if ( check.type == "initiative" ) {
+			ability.system.descriptorsSpecial.push('initiative');
+			ability.system.identifier = `check-${check.ability}-initiative`;
+		}
 		for (const [rollId, _roll] of Object.entries(ability.system.rolls)) {
+			console.log("mergeAbilityCheck", _roll, check);
 			if ( !_roll.type == 'ability' ) continue;
-			console.log('mergeAbilityCheck', _roll);
 			_roll.terms.push(
 				{expression: `@${check.abl}`, data: 'ability', flavor:'', source: ''}
 			)
-			if ( check.type == 'skill') {
+			if ( check.type == 'skill' ) {
 				_roll.terms.push(
 					{expression: `@${check.skill}`, data: 'skill', flavor:'', source: ''}
 				)
 			}
+			if ( check.type == "initiative" ) {
+				_roll.type = "initiative";
+			}
 		}
-		console.log('mergeAbilityCheck', ability.system.rolls)
 	}
 
 	static mergeAbilityItem(ability, secondary){
@@ -252,7 +253,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		}
 		
 		const isVersatile = weapon.system.descriptors.includes( d => d == 'versatile' );
-		console.log(ability);
 		for (const [rollId, _roll] of Object.entries(ability.system.rolls)) {
 			if ( _roll.type == 'attack' ) {
 				let r = Object.values(weapon.system.rolls).find( i => i.type == 'attack');
@@ -265,8 +265,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				_roll.terms = _roll.terms.flat();
 			}
 		}
-		console.log(ability);
-		console.log('fimMERGE', ability);
 		// return ability; //new this({item: ability});
 	}
 	
@@ -282,7 +280,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		const descriptors = [...ability.system.descriptors, ...ability.system.descriptorsSpecial];
 		for (const _roll of Object.values(abilityRolls)) {
 			const bonuses = actor.system._getRollBonuses(_roll.type, descriptors);
-			// 1console.error(bonuses, _roll.terms);
 			const modifiers = actor.system._getRollModifiers(_roll.type, descriptors);
 			if ( bonuses ) {
 				_roll.terms.push(...bonuses);
@@ -303,7 +300,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 					break;
 				}
 				rolls.push( roll );
-			} else if ( ['ability'].includes(_roll.type) ) {
+			} else if ( ['ability', 'initiative'].includes(_roll.type) ) {
 				const roll = D20Roll.fromItemRoll(_roll, RollData, {});
 				for (const term of roll.terms) {
 					if ( !(term instanceof DiceTerm) ) continue;
@@ -318,14 +315,10 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 	static async getModifications(actor, item, applied){
 		const modifications = {};
-		// console.log(actor.allModifications);
-		// console.log(item);
-		// console.log(applied);
 		
 		
 		for (const mod of actor.allModifications ) {
 			const {itemName, itemType, descriptors, type, amplifyThreshold} = mod.system.apply;
-			// console.log(itemName, itemType, descriptors);
 			const names = new Set( itemName.split(';').map( n => n.trim() ));
 			// const name = item.name;
 			const name = [item.name, item.weapon?.name];
@@ -334,7 +327,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 			// Ignore modifications if apply condition is not met;
 			// if ( itemName && !itemName.split(';').map( n => n.trim() ).includes(item.name) ) continue;
-			// console.log(names, name, identifier);
 			// console.error("PRE NAMES");
 			if ( names.filter(Boolean).size && names.every(n => !name.includes(n) && !identifier.includes(n)) ) continue;
 			// if ( names.filter(Boolean).size && !names.has(name) && !names.has(identifier) ) continue;
@@ -377,7 +369,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 	
 	static async parseChanges(modifications) {
-		console.log(modifications);
 		console.groupCollapsed("parseChanges");
 		const changes = [];
 		const cost = {};
@@ -385,7 +376,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		for (const modification of Object.values(modifications)) {
 			if ( modification.apply == 0) continue;
 			const _changes = modification._effect.changes.map(i => {
-				console.log("change ini", i);
 				const change = {
 					original: i.key,
 					mode: i.mode,
@@ -407,7 +397,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				} else if ( typeCls.roll.isValidModification.includes(handler) ){
 					change.type = 'roll';
 				} else change.type = 'invalid';
-				console.log("change fin", change);
 				return change;
 			});
 			
@@ -416,7 +405,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			cost[modification.resource] += modification.apply * modification.cost;
 		}
 		changes.sort( (a, b) => a.priority - b.priority);
-		console.log(changes);
 		console.groupEnd();
 		return {
 			changes: changes,
@@ -439,17 +427,14 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	static async applyModificationToRolls(rolls, changes) {
 		console.groupCollapsed("applyModificationToRolls");
 		for (const roll of rolls) {
-			console.log(roll);
 			SYSTEM.modification.roll.callApplyRoll(roll, changes);
 		}
 		console.groupEnd();
-		console.log(rolls);
 		return rolls;
 	}
 
 	static async applyModificationToEffects(effects, changes) {
 		console.groupCollapsed("applyModificationToEffects");
-		console.log(effects, changes);
 		SYSTEM.modification.effect.callApplyEffect(effects, changes);
 		console.groupEnd();
 		return effects;
@@ -492,7 +477,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				{type: "submit", action:"roll", icon: "fas fa-check", label: "SKYFALL2.APP.ConfirmRoll"},
 			],
 		}
-		console.log(this);
 		for (const modificationId in context.data.modifications) {
 			const mod = context.data.modifications[modificationId];
 			const div = document.createElement('div');
@@ -504,7 +488,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			} else input.setAttribute('value', mod.apply);
 			
 			mod.embed = div.innerHTML;
-			console.log(mod);
 		}
 		console.groupEnd();
 		return context;
@@ -516,7 +499,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 	static async #applyToggle(event, target) {
 		const {modificationId} = target.dataset;
-		console.log(modificationId, this.manage.modifications);
 		const current = this.manage.modifications[modificationId].apply;
 		this.manage.modifications[modificationId].apply = current ? 0 : 1;
 		await this.updateData();
@@ -524,7 +506,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 
 	static async #applyVary(event, target) {
-		console.log(this);
 		const {modificationId, vary} = target.dataset;
 		const input = target.closest('.controls').querySelector('input');
 		if ( vary == '+' ) input.value = Number(input.value) + 1;
@@ -564,7 +545,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				roll.resetFormula();
 			}
 			const rollmode = data.rollconfig?.rollmode ?? null;
-			if ( rollmode && roll.options.type == "attack" ) {
+			if ( rollmode && ["attack","ability","initiative"].includes(roll.options.type) ) {
 				roll.terms[0].modifiers = roll.terms[0].modifiers.filter( m => !["kh","khe","kl","kle"].includes(m));
 				if( rollmode == "normal" ) {
 					roll.terms[0].number = 1;
@@ -577,6 +558,9 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				}
 				roll.resetFormula();
 			}
+			console.log("AAAA", roll);
+
+
 			roll.index = i;
 			roll.template = await roll.render();
 		}
@@ -637,8 +621,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		
 		// CREATE MESSAGE
 		console.groupEnd();
-		console.log(this);
-		console.log('messageData', messageData);
 		const message = await ChatMessage.create({
 			type: 'usage',
 			system: messageData,

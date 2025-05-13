@@ -75,7 +75,7 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 			]
 		}
 		this._prepareManagedContext(context);
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 
@@ -169,7 +169,6 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
 		const submitData = this._prepareSubmitData(event, form, formData);
-		console.log(submitData);
 		await this.document.update(submitData);
 	}
 }

@@ -154,7 +154,7 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			acc.push(ef);
 			return acc;
 		}, []);
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 
@@ -284,7 +284,6 @@ export default class NPCSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			actions[itemAction] ??= [];
 			actions[itemAction].push(item);
 		}
-		console.log('_prepareAbilities', actions);
 
 		["passive","reaction","action","bonus","free","maction"].reduce((acc, key) => {
 			let cat = {

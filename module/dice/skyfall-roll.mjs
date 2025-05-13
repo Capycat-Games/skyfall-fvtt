@@ -32,7 +32,6 @@ export default class SkyfallRoll extends Roll {
 	static fromSkyfallTerms(terms=[], data = {}, options){
 		const dataRgx = new RegExp(/@(?<data>[a-zA-Z.0-9_-]+)/i);
 		const flavorRgx = new RegExp(/\[(?<flavor>[a-zA-Z.0-9_-|\s]+)\]/i);
-		console.log(terms);
 		terms = terms.map( (term) => {
 			let data = term.match(dataRgx)?.groups?.data ?? "";
 			let flavor = term.match(flavorRgx)?.groups?.flavor ?? "";

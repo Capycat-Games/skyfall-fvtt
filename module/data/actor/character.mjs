@@ -184,7 +184,6 @@ export default class Character extends Creature {
 
 		// Pseudo Roll to calculate total hp
 		const roll = new SkyfallRoll(`@dieMax + @dieMean + @abl + @levelExtra + ((@abl + @levelExtra) * @level) + @totalExtra`, hpData);
-		console.log(roll);
 		roll.evaluateSync();
 		
 		// Set max HIT POINTS

@@ -1,14 +1,16 @@
 <section class="tab scrollable actor-{{tab.id}} {{tab.cssClass}} flexrow space-between" data-tab="{{tab.id}}" data-group="{{tab.group}}">
 	{{!-- ABILITY SCORES --}}
 	{{> "systems/skyfall/templates/v2/actor/actions-ability-scores.hbs"}}
-	
+
 	{{!-- INITIATIVE AND MOVEMENT --}}
 	<div class="attributes background-cut flexcol text-center">
 		<div class="initiative box flexcol flex1">
 			<h6>
 				<a data-action="roll" data-roll-type="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a>
 			</h6>
-			<input type="number" value="{{system.initiative}}" disabled>
+			<div class="fa-solid text-center" data-action="edit" data-field-path="system.initiative" data-tooltip='{{{system.initiative.totalTooltip}}}'>
+				<input type="number" value="{{system.initiative.total}}" disabled>
+			</div>
 		</div>
 		<div class="movement  box flexcol flex1">
 			<h6>
@@ -16,9 +18,9 @@
 			</h6>
 			<div class="values">
 				{{#each movement as | move | }}
-				<span data-tooltip="{{localize move.label}}">
-					{{{move.icon}}} {{move.value}} 
-				</span>
+					<span data-tooltip="{{localize move.label}}">
+						{{{move.icon}}} {{move.value}}
+					</span>
 				{{/each}}
 				<span>&nbsp;</span>
 			</div>

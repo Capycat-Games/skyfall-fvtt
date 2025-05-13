@@ -105,7 +105,6 @@ export default class SkyfallItem extends Item {
 			...super.getRollData(),
 			...this.system.getRollData(),
 		};
-		console.log(data);
 		// FIXME send to SystemTypeData
 		if ( this.type == 'weapon' || (this.type == 'armor' && this.system.type == 'shield') ) {
 			data['weapon'] = {};
@@ -118,121 +117,61 @@ export default class SkyfallItem extends Item {
 	}
 
 	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	/**
+	 * Send Description to Chat
+	 * @public
+	 */
+	async toMessage() {
+		const catharsis = this.type == 'feature' && this.system.catharsis;
+		const regex = new RegExp(/\(|\)|Melancolia|Evento Marcante|Lema de Guilda|Maldição/gi);
+		const name = catharsis ? this.name.replaceAll(regex, '') : this.name;
+		const description = this.system.description.value;
+		ChatMessage.create({
+			content: catharsis ? description : `<h3>${name}</h3>${description}`,
+			flavor: catharsis ? `<h1>${name}</h1>` : '',
+			speaker: ChatMessage.getSpeaker({actor: this.actor}),
+			system: {
+				catharsis: catharsis,
+			}
+		});
+	}
+
+	static async abilityUse(event, abilityUuid, itemUuid) {
+		const ability = fromUuidSync(abilityUuid);
+		const item = fromUuidSync(itemUuid);
+		const abilityTypes = ["ability", "spell", "sigil", "guild-ability"];
+		const weaponTypes = ["weapon", "armor"];
+		if ( ability && abilityTypes.includes(ability.type) ) {
+			return await ability.system.abilityUse(event, item);
+		} else if ( item && weaponTypes.includes(item.type) ) {
+			return await item.system.weaponUse(event);
+		} else {
+			return ui.notifications.warn('Item is not of valid type');
+		}
+	}
+
+	static async weaponUse(event, itemUuid) {
+		const item = fromUuidSync(itemUuid);
+		if ( !["weapon", "armor"].includes(item.type) ) {
+			return ui.notifications.warn('Item is not of valid type');
+		} else await item.system.weaponUse(event, item);
+	}
+
+
+	/* -------------------------------------------- */
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
 
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
 		let allowed = super._preCreate(data, options, user);
-		// if ( allowed && this.parent ) allowed = this._precreateValidateParent();
-		// if ( allowed && this.parent ) allowed = await this._preCreateUniqueItem(data, options, user);
 		return allowed;
 	}
 
 	/* -------------------------------------------- */
-	/* DEPRECATE */
-	_precreateValidateParent(){
-		const actorTypes = {
-			character: [
-				"legacy", 'heritage', "curse", "background", "class", "path", "feature", "feat", "ability", "spell", "weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
-			],
-			creation: [
-				"feature",
-			],
-			npc: [
-				"feature", "ability", "spell",
-				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
-			],
-			partner: [
-				"feature", "ability", "spell",
-				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
-			],
-			guild: [
-				"seal", "facility", "guild-ability", "guild-feature",
-				"weapon", "armor", "clothing", "equipment", "consumable", "loot", "sigil"
-			]
-		}
-		if ( actorTypes[this.parent.type].includes(this.type) ) return true;
-		else {
-			ui.notifications.warn(
-				game.i18n.localize("SKYFALL2.NOTIFICATION.InvalidParentType")
-			);
-			return false;
-		}
-	}
-	/* DEPRECATE */
-	async _preCreateUniqueItem( data, options, user ){
-		const { DialogV2 }  = foundry.applications.api;
-
-		const uniques = ["legacy", "heritage", "curse", "background", "class", "path"];
-		// ALLOW DUPLICATE OF [ "feature", "feat", "ability", "spell" ] ?;
-		if ( !uniques.includes(data.type) ) return true;
-		if ( !user.isSelf ) return false;
-		const items = this.parent.items.filter( i => i.type == data.type );
-		let allowed = true;
-		if ( items.length == 0 ) return allowed;
-		
-		if ( data.type == 'class' ) {
-			// WHEN EXISTING CLASS UPDATE LEVEL
-			const item = items.find( i => i.name == data.name );
-			if ( item ) {
-				await item.update({"system.level": item.system.level + 1 });
-				if ( Object.values(item.system._benefits[level]).some(i => i.length) ) {
-					const { BenefitsDialog } = skyfall.applications;
-					BenefitsDialog.prompt({item: item});
-				}
-				this.parent.sheet.render();
-				allowed = false;
-			}
-		} else if ( data.type == 'path' ) {
-			if ( items.length == 1  ) {
-				const item = items.find( i => i.name == data.name );
-				// WHEN EXISTING CLASS UPDATE LEVEL
-				if ( item ) {
-					const current = item.system.origin;
-					const level = item.system.level + 1;
-					const lvl = String(level).padStart(2,0);
-					current.push(`path-${lvl}`);
-					console.warn('system.origin', current);
-					await item.update({"system.origin": current });
-					if ( Object.values(item.system._benefits[level]).some(i => i.length) ) {
-						const { BenefitsDialog } = skyfall.applications
-						BenefitsDialog.prompt({item: item});
-					}
-					this.parent.sheet.render();
-					allowed = false;
-				} else {
-					// console.warn(this);
-					console.warn('system.origin', ['path-02']);
-					this.updateSource({"system.origin": ['path-02'] });
-					allowed = true;
-				}
-
-			} else if ( items.length > 1 ) {
-				// WHEN EXISTING PATH UPDATE LEVEL
-				ui.notifications.warn(
-					game.i18n.localize("SKYFALL2.NOTIFICATION.PathsLimitReached")
-				);
-				allowed = false;
-			} else {
-				console.warn('system.origin', ['path-01']);
-				this.updateSource({"system.origin": ['path-01'] });
-				allowed = true;
-			}
-		} else {
-			allowed = await DialogV2.confirm({
-				content: game.i18n.format("SKYFALL2.DIALOG.OverwriteExistingItem", {
-					actor: this.parent.name,
-					type: game.i18n.localize(`TYPES.Item.${data.type}`),
-				})
-			});
-			if ( allowed ) {
-				const item = items.pop();
-				this.parent.deleteEmbeddedDocuments("Item", [item.id]);
-			}
-		}
-		return allowed;
-	}
 
 	/* -------------------------------------------- */
 
@@ -246,89 +185,6 @@ export default class SkyfallItem extends Item {
 			return this._createSigils(data, options, userId);
 		}
 		return;
-	}
-
-	/* -------------------------------------------- */
-	/* DEPRECATE */
-	async _promptLegacyHeritage( heritages, createItems, updateData, userId){
-		if ( game.user.id != userId ) return;
-		const { DialogV2 }  = foundry.applications.api;
-		let li = '';
-		for (const [key, heritage] of Object.entries( heritages ) ) {
-			li += `<li class="item entry flexrow">
-				<label class="flex2 flexrow" data-tooltip="${heritage.description}">
-					${heritage.name}
-				</label>
-				<div class="item-controls flex0">
-					<input type="radio" name="chosen" value="${key}">
-				</div>
-			</li>`;
-		}
-		const div = document.createElement('div');
-		div.innerHTML = '<ul class="list-items flexcol plain">'+ li +'</ul>';
-		const chosen = await DialogV2.prompt({
-			window: {
-				title: game.i18n.localize("SelectHeritage")
-			},
-			position: { width: 300 },
-			content: div.outerHTML,
-			ok: {
-				callback: (event, button, dialog) => button.form.elements.chosen.value
-			}
-		});
-		if ( !chosen ) return;
-		updateData[`system.heritages.${chosen}.chosen`] = true;
-		const grantedList = heritages[chosen].features;
-		await this._promptGrantedItems( grantedList, createItems, userId );
-		return;
-	}
-
-	/* DEPRECATE */
-	async _promptGrantedItems(grantedList, createItems, userId){
-		if ( game.user.id != userId ) return;
-		const { DialogV2 }  = foundry.applications.api;
-		let li = '';
-		let type = '';
-		for ( const uuid of grantedList ) {
-			const item = fromUuidSync(uuid);
-			if ( !item ) continue;
-			type = item.type;
-			li += `<li class="item entry flexrow">
-				<img src="${item.img}" class="flex0" width=36 height=36>
-				<label class="flex2 flexrow">${item.name}
-				</label>
-				<div class="item-controls flex0">
-					<input type="checkbox" name="item_create" value="${uuid}" checked>
-				</div>
-			</li>`;
-		}
-		const div = document.createElement('div');
-		div.innerHTML = '<ul class="list-items flexcol plain">'+ li +'</ul>';
-		const granted = await DialogV2.prompt({
-			window: {
-				title: game.i18n.format("SKYFALL2.DIALOG.CreateGrantedItems",{
-					type: type + "Pl"
-				})
-			},
-			position: { width: 300 },
-			content: div.outerHTML,
-			ok: {
-				callback: (event, button, dialog) => {
-					const item_create = button.form.elements.item_create ?? [];
-					let to_create = item_create.length ? [ ...item_create ] : [ item_create ];
-					to_create = to_create.map(i => i.checked ? i.value : null )
-					return to_create.filter(Boolean);
-				}
-			}
-		});
-		
-		for ( const [i, uuid] of granted.entries() ) {
-			const item = await fromUuid( uuid );
-			if ( !item ) continue;
-			const itemData = item.toObject(true);
-			itemData._stats.compendiumSource = uuid;
-			createItems.push( itemData );
-		}
 	}
 	
 	/* -------------------------------------------- */
@@ -409,23 +265,5 @@ export default class SkyfallItem extends Item {
 
 	/* -------------------------------------------- */
 
-	/**
-	 * Send Description to Chat
-	 * @public
-	 */
-	async toMessage() {
-		const catharsis = this.type == 'feature' && this.system.catharsis;
-		const regex = new RegExp(/\(|\)|Melancolia|Evento Marcante|Lema de Guilda|Maldição/gi);
-		const name = catharsis ? this.name.replaceAll(regex, '') : this.name;
-		const description = this.system.description.value;
-		ChatMessage.create({
-			content: catharsis ? description : `<h3>${name}</h3>${description}`,
-			flavor: catharsis ? `<h1>${name}</h1>` : '',
-			speaker: ChatMessage.getSpeaker({actor: this.actor}),
-			system: {
-				catharsis: catharsis,
-			}
-		});
-	}
 }
 

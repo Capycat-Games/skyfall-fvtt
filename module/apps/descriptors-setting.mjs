@@ -139,15 +139,11 @@ export default class AbilityDescriptorsSetting extends HandlebarsApplicationMixi
 		setting.custom.findSplice( i => i.id == descriptorId );
 		await game.settings.set("skyfall", "abilityDescriptors", setting );
 		this.setting = await game.settings.get('skyfall', 'abilityDescriptors');
-		console.log(descriptorId, setting, this.setting);
 		this.render();
 	}
 	
 
 	static async #onSubmit(event, form, formData) {
-		console.log(event);
-		console.log(form);
-		console.log(formData);
 		return;
 	}
 }

@@ -8,6 +8,7 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 		this.actor = options.actor;
 		const proficiency = this.actor.system.proficiency;
 		this.consumed = { value: 0, max: proficiency };
+		console.log(this.actor);
 		this.updateData = {
 			"system.resources.hp.value": this.actor.system.resources.hp.value,
 			"system.resources.hp.temp": this.actor.system.resources.hp.temp,
@@ -16,6 +17,7 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 			"system.resources.catharsis.value": this.actor.system.resources.catharsis.value,
 			"items": []
 		}
+		console.log(this.updateData);
 		this.recovered = {
 			hp: {value: 0, temp: 0},
 			ep: {value: proficiency, temp: 0},

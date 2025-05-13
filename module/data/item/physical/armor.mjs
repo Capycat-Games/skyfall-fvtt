@@ -40,4 +40,29 @@ export default class Armor extends PhysicalItemData {
 	async _preUpdate(changed, options, user) {
 		return await super._preUpdate(changed, options, user);
 	}
+
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	async weaponUse(event){
+		if ( !this.isShield ) return;
+		const actor = this.parent.actor;
+		const weaponAbilitiesOptions = actor.items.filter(i =>{
+			return i.type == 'ability' && i.system.descriptors.includes('weapon');
+		}).map( i => {
+			return `<label><input type="radio" name="abilityId" value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon}</span> ${i.name}</label><br>`
+		}).join('');
+		const abilityId = await foundry.applications.api.DialogV2.prompt({
+			window: { title: "SKYFALL2.DIALOG.SelectAbilityItem" },
+			content: weaponAbilitiesOptions,
+			ok: {
+				label: "SKYFALL2.Confirm",
+				callback: (event, button, dialog) => button.form.elements.abilityId.value
+			}
+		});
+		const ability = actor.items.get(abilityId);
+		if ( !ability ) return;
+		return ability.system.abilityUse(event, this.parent);
+	}
 }

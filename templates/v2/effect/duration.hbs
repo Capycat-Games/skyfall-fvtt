@@ -23,7 +23,6 @@
                 {{formInput fields.duration.fields.startTurn value=source.duration.startTurn id=(concat rootId "-duration.startTurn")}}
             </div>
         </div>
-        {{log system}}
         {{#if (eq document.type 'modification')}}
         {{/if}}
         {{formGroup systemFields.specialDuration value=system.specialDuration localize=true}}

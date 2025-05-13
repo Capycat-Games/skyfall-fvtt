@@ -155,4 +155,35 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 	get clothing(){
 		return this.descriptors.find( i => SYSTEM.SIGILDESCRIPTOR.CLOTHING[i] );
 	}
+
+	/* -------------------------------------------- */
+	/*  System Methods                              */
+	/* -------------------------------------------- */
+
+	async abilityUse(event, item){
+		const ability = this.document ?? this.parent;
+		if ( !ability || !ability.actor ) return;
+
+		const { ModificationConfig } = skyfall.applications;
+		const MODCONFIG = await ModificationConfig.fromData({
+				actor: ability.actor.uuid,
+				ability: ability.id,
+				weapon: item?.id,
+				appliedMods: [],
+				rollconfig: {
+					rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
+				},
+				effects: ability.effects.filter( e => e.isTemporary),
+		});
+
+		const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
+		const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
+		if ( skip ) {
+			const message = await MODCONFIG.createMessage();
+			message.evaluateAll();
+			message.consumeResources();
+		} else {
+			MODCONFIG.render(true);
+		}
+	}
 }

@@ -5,7 +5,6 @@
 	</legend>
 	{{#each system.rolls as | roll rollId |}}
 		{{#with @root.system.schema.fields.rolls.model.fields as | rollData |}}
-			{{log roll rollId rollData }}
 			<div class="" style="border: 1px solid black;">
 				<div class="form-group">
 					<label>{{localize "SKYFALL2.Name"}}/{{localize "SKYFALL2.Type"}}</label>

@@ -32,16 +32,23 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				initialKeys: OPTIONS.abilities,
 				initialKeysOnly: true, label: "SKYFALL2.AbilityPl"
 			}),
-			skills: new _fields.MappingField(new fields.SchemaField({
-				value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, max:2, label: "SKYFALL.DM.RANK"}),
-				other: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL.DM.OTHER"}),
-				bonuses: new fields.ArrayField(new fields.StringField({})),
-				custom: new fields.BooleanField({initial: false}),
-				label: new fields.StringField({required: true}),
-			}), {
-				initialKeys: SYSTEM.skills, 
-				initialKeysOnly: false, label: "SKYFALL.DM.SKILLPL"
-			}),
+			// skills: new _fields.MappingField(new fields.SchemaField({
+			// 	value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, max:2, label: "SKYFALL.DM.RANK"}),
+			// 	bonus: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL.DM.OTHER"}),
+			// 	bonuses: new fields.ArrayField(new fields.StringField({})),
+			// 	custom: new fields.BooleanField({initial: false}),
+			// 	label: new fields.StringField({required: true}),
+			// }), {
+			// 	initialKeys: SYSTEM.skills, 
+			// 	initialKeysOnly: false, label: "SKYFALL.DM.SKILLPL"
+			// }),
+			
+			skills: new _fields.MappingField(
+				new fields.EmbeddedDataField( _fields.SkillData ), {
+					initialKeys: SYSTEM.skills, 
+					initialKeysOnly: false, label: "SKYFALL.DM.SKILLPL"
+				}
+			),
 			proficiency: new fields.NumberField({
 				required: true,
 				nullable: false,
@@ -49,11 +56,24 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				initial: 2,
 				label: "SKYFALL2.Proficiency"
 			}),
-			proficiencies: new fields.ArrayField(
+			// proficiencies: new fields.ArrayField(
+			// 	new fields.StringField({
+			// 		choices: SYSTEM.proficiencies
+			// 	}),
+			// 	{label: "SKYFALL2.ProficiencyPl"}
+			// ),
+			proficiencies: new _fields.ArrayField(
 				new fields.StringField({
-					choices: SYSTEM.proficiencies
-				}),
-				{label: "SKYFALL2.ProficiencyPl"}
+					blank: false,
+				}), {
+					choices: skyfall.utils.keyPairObject(
+						{...SYSTEM.weapons, ...SYSTEM.armors}, 'label'
+					),
+					initial: ['simple'],
+					type: "checkboxes",
+					custom: true,
+					label: "SKYFALL2.ProficiencyPl",
+				}
 			),
 			languages: new fields.ArrayField(
 				new fields.StringField({
@@ -68,6 +88,9 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				initial: 0,
 				min: 0,
 				label: "SKYFALL2.DamageReductionAbbr"
+			}),
+			initiative: new fields.EmbeddedDataField( _fields.InitiativeData, {
+				label: "SKYFALL2.Initiative",
 			}),
 			modifiers: new fields.SchemaField({
 				roll: new fields.SchemaField({
@@ -402,7 +425,6 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	}
 
 	static migrateData(source) {
-		console.log('migrateData', source);
 		if ( foundry.utils.hasProperty(source, 'modifiers.damage.taken') ) {
 			const irvLevels = {
 				"vul": 'vulnerability',
@@ -664,21 +686,22 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	/** @inheritDoc */
 	prepareDerivedData() {
 		this.prepareSkillBonuses();
+		this.initiative._prepareData();
 	}
 
 	prepareSkillBonuses(){
 		const rollData = this.parent.getRollData();
 		for (const [key, skill] of Object.entries(this.skills)) {
-			const r = new Roll( skill.bonuses.join('+'), rollData );
-			r.terms = r.terms.filter( t => t.isDeterministic );
-			r.resetFormula();
-			if ( r.formula && r.isDeterministic ) r.evaluateSync();
-			const bonuses = Number(r.total);
-			
-			skill.roll = {};
-			skill.roll['pro'] = this.proficiency * skill.value + bonuses;
+			skill.label = game.i18n.localize( SYSTEM.skills[key].label ?? "SKYFALL2.Skill" );
+
+			const roll = skill.roll;
+			roll.terms = roll.terms.filter( t => t.isDeterministic );
+			roll.resetFormula();
+			if ( roll.formula && roll.isDeterministic ) roll.evaluateSync();
+			skill._roll = {};
+			skill._roll['pro'] = roll.total;
 			for (const [abl, ability] of Object.entries(this.abilities)) {
-				skill.roll[abl] = (this.proficiency * skill.value) + ability.value + bonuses;
+				skill._roll[abl] = roll.total + ability.value;
 			}
 		}
 	}
@@ -880,8 +903,6 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 
 	_getRollBonuses(type, descriptors) {
 		const rollData = this.parent?.getRollData();
-		console.log(this.modifiers.roll);
-		console.log(type);
 		const bonuses = this.modifiers.roll[type].bonus.filter( i => {
 			if ( !i.descriptors ) return true;
 			if ( !i.descriptors.split(' ').every( d => descriptors.includes(d) ) ) return false;

@@ -153,7 +153,7 @@ export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		// if ( context.items.abilities ) {
 		// 	context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
 		// }
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 

@@ -65,7 +65,7 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 			]
 		}
 		this._prepareSystem(context);
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 
@@ -99,7 +99,6 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 		const object = foundry.utils.expandObject( formData.object );
 		object.hp.levelRoll = Object.values( object.hp.levelRoll );
 		object.hp.levelRoll[0] = 0;
-		console.log(object);
 		const updateData = {
 			"system.modifiers.hp": {
 				abilities: object.hp.abilities.filter(Boolean),
@@ -115,7 +114,6 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 		if ( object.flags ){
 			updateData.flags = object.flags;
 		}
-		console.log(updateData);
 		await this.document.update( updateData );
 	}
 }

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.9.607 - BETA
+
+- Personagem - Adicionado. Campos de Bônus para iniciativa e pericias.
+- Personagem - Adicionado. Proficiências aceita valores customizados.
+- Personagem - Corrigido. Campo de Atributo deslocado no aplicativo.
+- Configuração de Uso - Adicionado. Rolagem com Vantagem/Desvantagem em testes de atributo.
+- Mensagem de Descanso - Correção. Botão de recuperação de rescurso não aplicava atualizava personagem.
+- Macros - Adicionado. Armas e Habilidades podem ser arrastadas para a barra de atalhos, gerando uma macro para seu uso.
+- Correções menores de bugs e limpeza de código.
+
 ## 0.9.606b - BETA
 
 - Personagem - Corrigido. Erro ao renderizar sigilos impedia a ficha de abrir.

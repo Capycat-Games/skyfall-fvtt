@@ -16,7 +16,8 @@ export default class BaseChatMessage extends foundry.abstract.TypeDataModel {
 				weapon: new fields.StringField(),
 				feature: new fields.StringField(),
 				item: new fields.StringField(),
-			})
+			}),
+			restUpdate: new fields.ObjectField(),
 		}
 	}
 	

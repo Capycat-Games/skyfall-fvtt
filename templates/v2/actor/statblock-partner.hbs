@@ -139,7 +139,7 @@
 							<a data-action="roll" data-roll-type="skill" data-id="{{skill.id}}">
 								{{{ifThen @root.rolling.abl '<i class="fa-solid fa-dice-d20"></i>' ''}}} {{skill.label}}
 
-								{{{numberFormat (ifThen @root.rolling.abl (lookup skill.roll @root.rolling.abl) skill.roll.pro) sign=true}}}{{#unless
+								{{{numberFormat (ifThen @root.rolling.abl (lookup skill._roll @root.rolling.abl) skill._roll.pro) sign=true}}}{{#unless
 								@last}},{{/unless}}
 							</a>
 						</span>

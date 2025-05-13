@@ -1,15 +1,14 @@
 <div
 	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}"
 	data-entry-id="{{item.id}}">
+	{{log item.filters}}
 	<div class="ability-header flexrow">
 		{{{labels.action.icon}}} &nbsp;
-		{{log "ITEMCARD" this}}
 		{{#if isFigure }}
 			{{{anchor}}}
 			<span class="cost flex1">{{{labels.cost.label}}}</span>
 			{{{labels.spell.icon}}}
 		{{~else if @root.isSheetEmbedded }}
-			{{log "ITEMCARD.isSheetEmbedded" this}}
 			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
 				<h5>{{item.name}}</h5>
 			</a>

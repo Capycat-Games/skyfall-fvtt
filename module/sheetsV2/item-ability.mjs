@@ -113,7 +113,7 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 		this.getDescriptors(context);
 		await this.getEnrichedFields(context);
 		await this.getModificationsEmbeds(context);
-		console.log(context);
+		// console.log(context);
 		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
@@ -123,11 +123,8 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 	async getModificationsEmbeds(context){
 		const doc = this.document;
 		const mods = doc.effects.filter( ef => ef.type == 'modification' && !ef.isTemporary);
-		console.log(doc);
-		console.log(mods);
 		const embedded = mods.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
 		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
-		console.log(context.enriched.modifications);
 	}
 
 	async getEnrichedFields(context){

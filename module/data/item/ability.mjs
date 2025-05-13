@@ -105,7 +105,13 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 			range: new fields.SchemaField({
 				descriptive: new fields.StringField({required: true, blank: true, label: "SKYFALL2.Description"}),
 				value: new fields.NumberField({required: true, min: 0, label: "SKYFALL2.Value"}),
-				units: new fields.StringField({required: true, blank: true, choices: SYSTEM.ranges, initial: "self", label: "SKYFALL2.Unit"}),
+				units: new fields.StringField({
+					required: true,
+					blank: true,
+					choices: SYSTEM.ranges,
+					initial: "",
+					label: "SKYFALL2.Unit"
+				}),
 			}),
 			
 			attack: new fields.SchemaField({
@@ -521,7 +527,6 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
 
 		const labels = this.labels;
-		console.log("Ability.toEmbed", config, options);
 
 		const anchor = this.parent.toAnchor();
 		anchor.classList.remove('content-link');
@@ -573,6 +578,33 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/*  System Methods                              */
 	/* -------------------------------------------- */
+
+	async abilityUse(event, item){
+		const ability = this.document ?? this.parent;
+		if ( !ability || !ability.actor ) return;
+
+		const { ModificationConfig } = skyfall.applications;
+		const MODCONFIG = await ModificationConfig.fromData({
+				actor: ability.actor.uuid,
+				ability: ability.id,
+				weapon: item?.id,
+				appliedMods: [],
+				rollconfig: {
+					rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
+				},
+				effects: ability.effects.filter( e => e.isTemporary),
+		});
+
+		const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
+		const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
+		if ( skip ) {
+			const message = await MODCONFIG.createMessage();
+			message.evaluateAll();
+			message.consumeResources();
+		} else {
+			MODCONFIG.render(true);
+		}
+	}
 
 	getRollData() {
 		return {}

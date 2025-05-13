@@ -4,10 +4,10 @@ import ActorTraitsV2 from "../apps/actor-traitsV2.mjs";
 
 import ShortRestV2 from "../apps/restV2.mjs";
 import RestConfig from "../apps/rest-config.mjs";
-import ShortRest from "../apps/short-rest.mjs";
 import { SYSTEM } from "../config/system.mjs";
 import { weapons } from "../config/types.mjs";
 import AbilityDescriptorsConfig from "../apps/descriptors-config.mjs";
+import ActorConfigurationSheet from "./actor-config.mjs";
 const {HandlebarsApplicationMixin} = foundry.applications.api;
 const {ItemSheetV2} = foundry.applications.sheets;
 
@@ -324,7 +324,7 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		_setupDragAndDrop() {
 			const dd = new DragDrop({
-				dragSelector: "[data-entry-id]", // .wrapper
+				dragSelector: ".actions [data-action=abilityUse], .inventory-list [data-entry-id]", // .wrapper
 				dropSelector: ".application",
 				permissions: {
 					dragstart: this._canDragStart.bind(this),
@@ -361,13 +361,23 @@ export const SkyfallSheetMixin = Base => {
 		 * @param {Event} event
 		 */
 		async _onDragStart(event) {
-			const id = event.currentTarget.closest("[data-entry-id]").dataset.entryId;
-			const uuid = event.currentTarget.closest("[data-entry-id]").dataset.itemUuid;
-
-			const item = this.document.items?.get(id) ?? this.document.effects?.get(id) ?? await fromUuid(uuid);
-			if ( !item ) return;
-			const data = item.toDragData();
-			event.dataTransfer.setData("text/plain", JSON.stringify(data));
+			const {action, entryId, abilityId} = event.currentTarget.dataset;
+			const doc = this.document;
+			const item = doc.items?.get(entryId) ?? doc.effects?.get(entryId);
+			const ability = doc.items?.get(abilityId);
+			if ( action == "abilityUse" ) {
+				const data = {}
+				data.action = action;
+				data.item = item?.toDragData();
+				data.ability = ability?.toDragData();
+				event.dataTransfer.setData("text/plain", JSON.stringify(data));
+			} else {
+				const data = item.toDragData();
+				data.name = item.name;
+				data.action = action;
+				data.abilityId = abilityId;
+				event.dataTransfer.setData("text/plain", JSON.stringify(data));
+			}
 		}
 
 		/**
@@ -502,7 +512,6 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static async #onCreate(event, target) {
 			const create = target.dataset.create;
-			console.log("ONCREATE", create);
 			if ( create == "skill" ) {
 				let type = 'custom'; //taget.dataset.type;
 				const select = document.createElement("select");
@@ -574,6 +583,16 @@ export const SkyfallSheetMixin = Base => {
 				}
 				const created = await this.document.createEmbeddedDocuments( create, [itemData] );
 				created[0].sheet.render(true);
+			} else {
+				const {fieldPath} = target.dataset;
+				const datamodel = foundry.utils.getProperty(
+					this.document, fieldPath
+				);
+				const datafield = this.document.system.schema._getField(
+					fieldPath.replace('system.','').split('.')
+				);
+				if ( "_onCreate" in datamodel ) datamodel._onCreate(this.document, target);
+				else if ( "_onCreate" in datafield ) datafield._onCreate(this.document, target);
 			}
 		}
 
@@ -584,9 +603,45 @@ export const SkyfallSheetMixin = Base => {
 		 */
 		static async #onEdit(event, target) {
 			const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
-			const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
-			if ( !document ) return;
-			document.sheet.render(true);
+			const {fieldPath} = target.dataset;
+			if ( fieldPath ) {
+				const property = foundry.utils.getProperty(this.document, fieldPath);
+				
+				const datamodel = foundry.utils.getProperty(
+					this.document, fieldPath
+				);
+				const datafield = this.document.system.schema._getField(
+					fieldPath.replace('system.','').split('.')
+				);
+				console.log(property, datamodel, datafield);
+				if ( "sheet" in property ) return property.sheet;
+				if ( "sheet" in datamodel ) datamodel.sheet;
+				else if ( "sheet" in datafield ) {
+					console.log(
+						{
+						document: this.document,
+						fieldPath: fieldPath,
+						skyfallConfig: {
+							schema: datafield,
+						},
+						skyfallConfigParts: [datafield.name],
+					}
+					)
+					new ActorConfigurationSheet({
+						document: this.document,
+						fieldPath: fieldPath,
+						skyfallConfig: {
+							schema: datafield,
+						},
+						skyfallConfigParts: [datafield.name],
+					}).render(true);
+				}
+				
+			} else {
+				const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
+				if ( !document ) return;
+				document.sheet.render(true);
+			}
 		}
 
 		/**
@@ -594,7 +649,7 @@ export const SkyfallSheetMixin = Base => {
 		 * @param {Event} event             The initiating click event.
 		 * @param {HTMLElement} target      The current target of the event listener.
 		 */
-		static #onDelete(event, target) {
+		static #onDelete2(event, target) {
 			const type = target.dataset.delete;
 			const {entryId} = target.closest("[data-entry-id]")?.dataset ?? {};
 			const {fieldPath} = target.closest("[data-field-path]")?.dataset ?? {};
@@ -619,6 +674,45 @@ export const SkyfallSheetMixin = Base => {
 				const updateData = {};
 				updateData[`${fieldPath}-=${entryId}`] = null;
 				this.document.update(updateData);
+			} else if ( document ) {
+				this.document.deleteEmbeddedDocuments( document.documentName, [entryId] );
+			}
+		}
+
+		static async #onDelete(event, target) {
+			const type = target.dataset.delete;
+			const {entryId} = target.closest("[data-entry-id]")?.dataset ?? {};
+			const {fieldPath} = target.closest("[data-field-path]")?.dataset ?? {};
+			const document = this.document.items?.get(entryId) ?? this.document.effects?.get(entryId);
+			const documentData = this.document.toObject(true);
+			const currentField = foundry.utils.getProperty(documentData, fieldPath);
+			
+			if ( type == 'id' || type == 'index' ) {
+				const list = foundry.utils.getProperty(this.document, fieldPath);
+				if ( !list ) return;
+				if ( list instanceof Set ) {
+					list.find((v, i) => {
+						if ( i == entryId || v.id == entryId || v.uuid == entryId ) {
+							return list.delete(v);
+						} return false;
+					});
+					//list.delete(entryId) || list.forEach(i=>i.uuid==entryId ? list.delete(i) : i);
+				}
+				else if (list instanceof Array) list.splice(entryId, 1);
+				const updateData = {};
+				updateData[fieldPath] = [...list];
+				return this.document.update(updateData);
+			} else if ( currentField instanceof Array ) {
+				if ( currentField.includes(entryId) ) {
+					currentField.findSplice( i => i == entryId);
+				} else currentField.splice( entryId , 1);
+				const updateData = {};
+				updateData[fieldPath] = currentField;
+				return this.document.update(updateData);
+			} else if ( currentField instanceof Object ) {
+				const updateData = {};
+				updateData[`${fieldPath}.-=${entryId}`] = null;
+				return this.document.update(updateData);
 			} else if ( document ) {
 				this.document.deleteEmbeddedDocuments( document.documentName, [entryId] );
 			}
@@ -719,44 +813,12 @@ export const SkyfallSheetMixin = Base => {
 				}
 				const item = this.actor.items.get(itemId);
 				if ( !abilityId && ['weapon','armor'].includes(item?.type) ) {
-					const weaponAbilitiesOptions = this.actor.items.filter(i => i.type == 'ability' && i.system.descriptors.includes('weapon')).map( i => 				`<label><input type="radio" name="abilityId" value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon}</span> ${i.name}</label><br>` ).join('');
-					// `<option value="${i.id}"><img src="${i.img}" width="20px" height="20px" style="display:inline;"><span style="font-family:SkyfallIcons">${i.system.labels.action.icon} ${i.name}</option>`
-					//.map(i => [i.id, i.name, i.img, i.system.labels.action.icon]);
-					abilityId = await foundry.applications.api.DialogV2.prompt({
-						window: { title: "SKYFALL2.DIALOG.SelectAbilityItem" },
-						content: weaponAbilitiesOptions, //'<select name="abilityId" autofocus>'+weaponAbilitiesOptions+'</select>',
-						ok: {
-							label: "SKYFALL2.Confirm",
-							callback: (event, button, dialog) => button.form.elements.abilityId.value
-						}
-					});
+					return item.system.weaponUse(event);
 				}
 				
 				const ability = this.actor.items.get(abilityId);
 				if ( !ability ) return;
-				
-				const { ModificationConfig } = skyfall.applications;
-				const MODCONFIG = await ModificationConfig.fromData({
-						actor: this.actor.uuid,
-						ability: ability.id,
-						weapon: item?.id,
-						appliedMods: [],
-						rollconfig: {
-							rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
-						},
-						effects: ability.effects.filter( e => e.isTemporary),
-				});
-				
-				const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
-				const skip = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
-				if ( skip ) {
-					const message = await MODCONFIG.createMessage();
-					message.evaluateAll();
-					message.consumeResources();
-					console.log(message);
-				} else {
-					MODCONFIG.render(true);
-				}
+				return ability.system.abilityUse(event, item);
 			} else {
 				const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
 				const document = this.document.items?.get(itemId) ?? this.document.effects?.get(itemId) ?? await fromUuid(itemId);
@@ -803,29 +865,39 @@ export const SkyfallSheetMixin = Base => {
 			const skipUsageConfig = game.settings.get('skyfall','skipUsageConfig');
 			const skipConfig = ( skipUsageConfig=='shift' && event.shiftKey) || ( skipUsageConfig=='click' && !event.shiftKey);
 			const advantageConfig = (event.altKey ? 1 : (event.ctrlKey ? -1 : 0));
-
 			const id = target.dataset.id;
 			const rollType = target.dataset.rollType;
+			
 			if ( event.type == 'contextmenu' ) {
 				this.rolling = null;
 				return this.render(true);
 			}
+			
 			// rolling {type:"skill|attack|ability|"}
 			if ( rollType == 'levelHitDie' ) { return; }
 			else if ( rollType == 'healHitDie' ) { return; }
 			else if ( rollType == 'deathSave' ) { return; }
 			else if ( rollType == 'initiative' ) {
-				this.rolling = null;
-				const combat = game.combats.active;
-				const combatants = combat.combatants.filter(
-					(c) => c.actorId === this.actor.id && this.initiative == null
-				);
-				for (const combatant of combatants) {
-					this.actor.rollInitiative();
-				}
-				return;
+				// this.rolling = null;
+				// const combat = game.combats.active;
+				// const combatants = combat.combatants.filter(
+				// 	(c) => c.actorId === this.actor.id && this.initiative == null
+				// );
+				// if ( combatants ) {
+				// 	for (const combatant of combatants) {
+				// 		this.actor.rollInitiative();
+				// 	}
+				// } else {
+				// 	this.actor.rollInitiative();
+				// }
+
+				// return;
 			}
 
+			if ( this.rolling?.type == 'initiative' && rollType == "ability" ) {
+				this.rolling.id = id;
+				this.rolling.abl = id;
+			}
 			if ( !this.rolling ) {
 				if ( rollType == 'ability') this.rolling = {type:null, id:null, abl: id};
 				else this.rolling = {type: rollType, id: id, abl: null};
@@ -836,6 +908,13 @@ export const SkyfallSheetMixin = Base => {
 			} else {
 				this.rolling.type = rollType;
 				this.rolling.id = id;
+			}
+			if ( this.rolling ) {
+				if ( this.rolling.type == 'skill' ) {
+					this.rolling.abilities = Object.keys(this.document.system.abilities);
+				} else if ( this.rolling.type == 'initiative' ) {
+					this.rolling.abilities = this.document.system.initiative.abilities;
+				}
 			}
 			if ( this.rolling.abl && this.rolling.type && this.rolling.id ) {
 				const { ModificationConfig } = skyfall.applications;
@@ -961,8 +1040,10 @@ export const SkyfallSheetMixin = Base => {
 
 		static #logToConsole(){
 			console.group("LOG DOCUMENT AND SHEET ");
-			console.log(this.document);
-			console.log(this);
+			console.
+				log(this.document);
+			console.
+				log(this);
 			console.groupEnd()
 		}
 

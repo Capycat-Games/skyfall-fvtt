@@ -3,13 +3,12 @@
 		<div class="ability entry flexcol2 text-center" data-type="ability">
 			<div class="flexcol top">
 				<div class="flex1">
-					<h6 data-tooltip="{{localize 'SKYFALL.ROLL.ABL'}}">
-						<a class="{{#if (and @root.rolling (or (eq @root.rolling.abl abl) (eq @root.rolling.abl null))) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="ability" data-id="{{abl}}">{{{localize ability.label}}}{{#if ability.spellcasting}}*{{/if}}</a>
+					<h6 data-tooltip="{{localize 'SKYFALL2.ROLL.Ability'}}">
+						<a class="{{#if (and @root.rolling (or (eq @root.rolling.abl abl) (and (eq @root.rolling.abl null) (includes @root.rolling.abilities abl)))) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="ability" data-id="{{abl}}">{{{localize ability.label}}}{{#if ability.spellcasting}}*{{/if}}</a>
 					</h6>
 				</div>
 				<div class="flex2 overrided-fields">
 					{{#if @root.isEditable}}
-						{{log "ability" ability}}
 						<input type="number" name="system.abilities.{{abl}}.value" value="{{lookup (lookup @root.source.abilities abl) 'value'}}">
 						<input type="number" name="" value="{{ability.value}}" disabled>
 					{{else}}
@@ -18,7 +17,16 @@
 				</div>
 			</div>
 			<div class="flexcol bottom">
-				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">{{localize "SKYFALL.ACTOR.PROTECTION"}}</a>
+				<div class="hidden protection icon {{#if ability.proficient}}active{{/if}}">
+					{{#if ability.proficient}}
+						{{{@root.SYSTEM.icons.shield}}}
+					{{else}}
+						{{{@root.SYSTEM.icons.squaretilt}}}
+					{{/if}}
+				</div>
+				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">
+					{{localize "SKYFALL.ACTOR.PROTECTION"}}
+				</a>
 				<label>{{ability.protection}}</label>
 				{{!-- <input type="number" disabled value="{{ability.protection}}"> --}}
 			</div>

@@ -12,7 +12,6 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 	
 	async getHTML() {
-		console.log('getHTML');
 		let html = await super.getHTML();
 		
 		if ( this.system.portrait ) {
@@ -239,7 +238,6 @@ export default class SkyfallMessage extends ChatMessage {
 	/** @inheritdoc */
 	prepareData() {
 		super.prepareData();
-		console.log('prepareData');
 		if ( this.type == 'usage' && this.system.actorId ) {
 			
 			// this.system.actor = fromUuidSync(this.system.actorId);
@@ -344,7 +342,6 @@ export default class SkyfallMessage extends ChatMessage {
 	}
 
 	async updateContent() {
-		console.log('updateContent');
 		this.updateData = {};
 		const template = "systems/skyfall/templates/v2/chat/usage.hbs";
 		// const messageData = await this.system.prepareContentData();
@@ -356,7 +353,6 @@ export default class SkyfallMessage extends ChatMessage {
 			advantage: this.getFlag('skyfall', 'advantage'),
 			disadvantage: this.getFlag('skyfall', 'disadvantage'),
 		});
-		console.log(messageData);
 		messageData.buttons = this._getButtons();
 		this.updateData['system.rolls'] = messageData.rolls.listed;
 		this.updateData['content'] = await renderTemplate(template, messageData);
@@ -388,8 +384,6 @@ export default class SkyfallMessage extends ChatMessage {
 		let allowed = await super._preCreate(data, options, user);
 		this.actorPortrait();
 		console.groupCollapsed("MESSAGE _preCreate");
-		console.log(data);
-		console.log(allowed, data.content, options.skipContent);
 		console.groupEnd();
 		if ( allowed && !data.content && !options.skipContent ) {
 			await this.updateContent();
@@ -411,7 +405,6 @@ export default class SkyfallMessage extends ChatMessage {
 		const actor = fromUuidSync(`Actor.${this.speaker.actor}`)?.img;
 		const owner = fromUuidSync(`${this.system.actorId}`)?.img;
 		const portrait = owner ?? actor ?? token ?? 'icons/svg/mystery-man.svg';
-		console.log('actorPortrait', portrait);
 		this.updateSource({'system.portrait': portrait});
 	}
 

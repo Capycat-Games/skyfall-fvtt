@@ -148,7 +148,7 @@ export default class PartnerSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2)
 			acc.push(ef);
 			return acc;
 		}, []);
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 

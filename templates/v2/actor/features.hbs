@@ -16,7 +16,7 @@
 				{{/each}}
 			</div>
 			<div class="proficiencies">
-				<h4><a data-action="manage" data-manage="proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
+				<h4><a data-action="edit" data-field-path="system.proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
 				{{#each proficiencies as | proficiency |}}
 					<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
 				{{/each}}

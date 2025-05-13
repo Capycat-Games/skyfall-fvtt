@@ -13,6 +13,7 @@ import * as sheetsV2 from "./module/sheetsV2/_module.mjs";
 import * as dice from "./module/dice/_module.mjs";
 import * as elements from "./module/apps/elements/_module.mjs"
 import EffectsMenu from "./module/apps/effects-menu.mjs";
+import * as hotbar  from "./module/helpers/hotbar.mjs";
 
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
@@ -21,13 +22,12 @@ import { registerSystemSettings } from "./module/helpers/settings.mjs";
 import AbilityTemplate from "./module/helpers/ability-template.mjs";
 import ShortRestV2 from "./module/apps/restV2.mjs";
 import TokenSkyfall from "./module/token.mjs";
-import * as functions from "./module/helpers/functions.mjs";
+import * as utils from "./module/helpers/utils.mjs";
 import SkyfallMigrationHelper from "./module/helpers/migration.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
 import { CombatTrackerSkyfall } from "./module/combat.mjs";
 import {SkyfallHooks} from "./module/hooks/hooks.mjs";
 import SkyfallSocketHandler from "./module/helpers/socket.mjs";
-
 
 globalThis.skyfall = {
 	CONST: SYSTEM,
@@ -51,11 +51,12 @@ globalThis.skyfall = {
 		SkyfallMigrationHelper,
 	},
 	ui: {},
-	utils: functions,
+	utils,
 	rules: {
 		// conditions: 
 		// descriptors: 
-	}
+	},
+	macros: hotbar,
 }
 globalThis.RollSF = dice.SkyfallRoll;
 globalThis.SkyfallRoll = dice.SkyfallRoll;
@@ -274,7 +275,7 @@ Hooks.once("i18nInit", async function () {
 Hooks.once('ready', async function () {
 	await skyfall.wip.SkyfallMigrationHelper.migrate();
 	// Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-	Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
+	Hooks.on('hotbarDrop', (bar, data, slot) => onDropCreateMacro(data, slot));
 
 	for (const [key, desc] of Object.entries(SYSTEM.DESCRIPTORS)) {
 		SYSTEM.DESCRIPTORS[key].label = game.i18n.localize( desc.label );
@@ -305,7 +306,7 @@ Hooks.on("renderPlayerList", (app, html, data) => {
 		const playerName = $(player).find('.player-name').text();
 		$(player).find('.player-name').text(`${playerName} (${catharsis})`);
 		const btn = document.createElement("button");
-		btn.innerHTML = SYSTEM.icons.sfcatharsisblue;
+		btn.innerHTML = SYSTEM.icons.sfcatharsis;
 		btn.className = "give-catharsis";
 		btn.title =  game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
 		btn.dataset['action'] = 'catharsis';
@@ -438,7 +439,7 @@ Hooks.on("renderChatMessage", (message, jquery, messageData) => {
 	html.classList.add('catharsis');
 	if ( game.user.isGM ) {
 		const button = document.createElement('button');
-		button.innerHTML = SYSTEM.icons.sfcatharsisblue + ' ' +  game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
+		button.innerHTML = SYSTEM.icons.sfcatharsis + ' ' +  game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
 		button.addEventListener('click', (event) => {
 			const actorId = message.speaker.actor;
 			const actor = game.actors.get(actorId);
@@ -495,8 +496,17 @@ function fetchSVG(src) {
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
+async function onDropCreateMacro(data, slot){
+	if ( data.action && data.action in skyfall.macros ) {
+		return skyfall.macros[data.action](data, slot);
+	}
+}
 async function createItemMacro(data, slot) {
+	// return;
 	// First, determine if this is a valid owned item.
+	if ( data.action && data.action in skyfall.macros ) {
+		return skyfall.macros[data.action](data, slot);
+	}
 	if (data.type !== 'Item') return;
 	if (!data.uuid.includes('Actor.') && !data.uuid.includes('Token.')) {
 		return ui.notifications.warn(

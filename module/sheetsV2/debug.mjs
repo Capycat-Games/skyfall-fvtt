@@ -345,7 +345,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		};
 		await this._getDataFields(context),
 		await this._typeContext(context);
-		console.log(context);
+		// console.log(context);
 		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}

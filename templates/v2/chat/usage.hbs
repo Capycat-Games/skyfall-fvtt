@@ -1,6 +1,4 @@
 <div class="skyfall chat-card usage-card ability-card {{actor.type}}" data-actor-id="{{actor.id}}" data-item-id="{{itemId}}">
-	{{log "USAGE CONTENT usage.hbs"}}
-	{{log this}}
 	<header class="card-header flexrow" style="width: 100%; flex: 100%;">
 		<h3 class="icon">
 			{{{item.system.labels.action.icon}}}
@@ -59,7 +57,6 @@
 		{{/each}}
 	</ul>
 	<div class="rolls">
-		{{log rolls}}
 		{{#each rolls as | roll index | }}
 			{{{roll.template}}}
 		{{/each}}

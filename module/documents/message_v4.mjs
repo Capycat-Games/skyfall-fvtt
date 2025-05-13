@@ -53,7 +53,7 @@ export default class SkyfallMessage extends ChatMessage {
 		// html.find('.aid').click(this._dealDamageClicked.bind(this))
 		// html.on("click", "[data-apply-damage]", this.#applyDamage.bind(this));
 		// html.on("click", "[data-apply-catharsis]", this.#applyCatharsis.bind(this));
-		// html.on("click", "[data-apply-rest]", this.#applyRest.bind(this));
+		html.on("click", "[data-apply-rest]", this.#applyRest.bind(this));
 		html.on("click", "[data-evaluate-roll]", this.#evaluateRoll.bind(this));
 		
 		html.on('click', '[data-place-template]', this.#placeTemplate.bind(this));
@@ -104,11 +104,20 @@ export default class SkyfallMessage extends ChatMessage {
 		}
 	}
 
+	async #applyRest(event, target){
+		event.preventDefault();
+		const button = event.currentTarget;
+		const actorId = button.closest('.rest-card').dataset.actorId;
+		const actor = game.actors.get(actorId);
+		const messageId = button.closest('.chat-message').dataset.messageId;
+		const message = game.messages.get(messageId);
+		if ( !actor || actor.isOwnser ) return;
+		actor.shortRest(message);
+	}
 	
 	async consumeResources(){
 		if ( game.userId != this.author.id ) return;
 		const {actor, item} = await this.system.getDocuments();
-		console.log(actor, item);
 		const content = ""
 		const updateData = {};
 		const costs = this.system.costs;
@@ -172,7 +181,7 @@ export default class SkyfallMessage extends ChatMessage {
 				"system.charges.value": sigil.system.charges.value - 1
 			});
 		}
-		const recharge = item.type == "ability" ? this._ability : null;
+		const recharge = item?.type == "ability" ? this._ability : null;
 		if ( recharge && actor.type == 'npc' ) {
 			updateData['items'] ??= [];
 			updateData['items'].push({
@@ -248,102 +257,6 @@ export default class SkyfallMessage extends ChatMessage {
 		const messageId = target.closest(".chat-message").dataset.messageId;
 		const message = game.messages.get(messageId);
 		message.evaluateRoll(index, critical);
-		return;
-		const rolls = message.system.rolls;
-
-		const content = document.createElement('div');
-		const rollsDiv = document.createElement('div');
-		content.innerHTML = message.content;
-		let amplify = 0;
-		for (const [i, roll] of rolls.entries()) {
-			const r = SkyfallRoll.fromData(roll);
-			// const roll = message.system.rolls[index];
-			r.index = i;
-			if ( index == i ) {
-				if ( r.options.type == 'damage' && critical ) {
-					r.alter(2);
-				}
-				await r.evaluate();
-				if ( r.options.type == 'attack' ) {
-					const criticalTarget = roll.options.critical?.range ?? 20; 
-					console.error(criticalTarget);
-					if ( r.dice[0].total >= criticalTarget ) {
-						rolls[i].options.critical = true;
-					}
-					amplify = r.terms[0].total;
-					for (const [ii, roll2] of rolls.entries()) {
-						console.error( roll2 );
-						roll2.terms = roll2.terms.filter( t => ((t.options.amplify ?? 0 ) <= amplify) );
-						// roll2.formula = roll2.resetFormula();
-					}
-				}
-			}
-			r.template = await r.render();
-			const rdiv = document.createElement('div');
-			rdiv.innerHTML = r.template;
-			rollsDiv.append(rdiv);
-			rolls[i] = r;
-		}
-		console.error(amplify);
-		content.querySelectorAll('.modifications .hidden[data-amplify]').forEach( i => Number(i.dataset.amplify) <= amplify ? i.classList.remove('hidden') : null);
-		content.querySelector('.rolls').innerHTML = rollsDiv.innerHTML;
-
-		message.update({
-			"content": content.innerHTML,
-			"system.rolls": message.system.rolls,
-			"rolls": rolls.filter( i => i._evaluated),
-		});
-
-		return;
-		const button = event.currentTarget;
-		const chatCardId = button.closest(".chat-message").dataset.messageId;
-		// const message = game.messages.get(chatCardId);
-		const rollTitle = button.closest(".roll-entry").dataset.rollTitle;
-		const rollIndex = message.system.rolls.findIndex( r => r.options.flavor == rollTitle );
-		
-		await message.#evaluateRolls(rollIndex, {
-			skipConfig: event.shiftKey
-		});
-		if ( !foundry.utils.isEmpty(message.updateData) ) { 
-			await message.update(message.updateData);
-			message.updateData = null;
-		}
-	}
-	
-	async #evaluateRolls(index = null, options){
-		const rollData = this.system.rolls[index];
-		const roll = SkyfallRoll.fromData(rollData);
-		roll.toMessage();
-		return;
-		await this.getDocuments();
-		this.rollData = {};
-		if ( this._actor ) {
-			this.rollData = this._actor?.getRollData();
-			if ( this._ability ) {
-				this.rollData = foundry.utils.mergeObject(this.rollData, (this._ability?.getRollData() ?? {}));
-			}
-			if ( this._item ) { 
-				this.rollData = foundry.utils.mergeObject(this.rollData, (this._item?.getRollData() ?? {}));
-				// rollData.weapon = rollData.item.weapon ?? null;
-			}
-		}
-		let criticalHit = false;
-		for (const [i, rollData] of Object.entries(this.system.rolls)) {
-			if( index != null && index != i ) continue;
-			const roll = await new RollConfig({
-				type: rollData.options.type,
-				ability: rollData.options.ability,
-				bonus: rollData.options.bonus,
-				formula: rollData.options.formula,
-				protection: rollData.options.protection,
-				damageType: rollData.options.damageType,
-				rollIndex: i,
-				message: this.id,
-				rollData: this.rollData,
-				createMessage: false,
-				skipConfig: options.skipConfig ?? false,
-			}).render( !options.skipConfig );
-		}
 	}
 
 	async #applyCatharsis(event, target) {
@@ -525,7 +438,24 @@ export default class SkyfallMessage extends ChatMessage {
 	
 	/** @inheritDoc */
 	_onUpdate(changed, options, userId) {
-		return super._onUpdate(changed, options, userId);
+		const update =  super._onUpdate(changed, options, userId);
+		const initRolls = this.rolls.filter( r => r.options.type == "initiative");
+		const combat = game.combats.active;
+		if ( initRolls.length > 0 && combat ) {
+			const actor = fromUuidSync(this.system?.origin?.actor);
+			const combatants = combat.combatants.filter(
+				(c) => c.actorId === actor.id && c.initiative == null
+			);
+			for (const combatant of combatants) {
+				const roll = initRolls.pop();
+				if ( roll ) {
+					combatant.update({
+						initiative: roll.total,
+					});
+				}
+			}
+		}
+		return update;
 	}
 
 }

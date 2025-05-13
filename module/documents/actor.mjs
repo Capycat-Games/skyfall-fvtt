@@ -113,11 +113,9 @@ export default class SkyfallActor extends Actor {
 		if ( this.system?.size && changed.system?.size ) {
 			if ( changed.system.size !== this.system.size ) {
 				const size = SYSTEM.actorSizes[changed.system.size].gridScale ?? 1;
-				console.log('gridScale', size);
 				changed.prototypeToken ??= {};
 				changed.prototypeToken.width = size;
 				changed.prototypeToken.height = size;
-				console.log(changed);
 			}
 		}
 	}

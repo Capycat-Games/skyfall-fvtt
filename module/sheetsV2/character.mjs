@@ -301,7 +301,8 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		// _prepareHeaderData 
 		// Prepare data
 		this._prepareSystemData(context);
-		// 
+		
+		
 		await this._prepareItems(context);
 		if ( context.items.abilities ) {
 			// context.enriched.debug = await TextEditor.enrichHTML(`<div>@Embed[${context.items.abilities[0].uuid}]{TESTE}</div>`, enrichmentOptions);
@@ -314,7 +315,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			return acc;
 		}, []);
 		
-		console.log(context);
+		// console.log(context);
 		return context;
 	}
 
@@ -328,7 +329,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		];
 		for (let [key, skill] of Object.entries(context.system.skills)) {
 			skill.id = key;
-			skill.label = SYSTEM.skills[key]?.label ?? skill.label ?? "SKILL";
+			skill.name = SYSTEM.skills[key]?.name ?? skill.name ?? "SKILL";
 			skill.icon = profIcons[skill.value];
 			skill.type = SYSTEM.skills[key]?.type ?? 'apti' ?? 'custom';
 		}
@@ -339,7 +340,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		context.skills = [...coreSkill.slice(0,2), ...aptitudeSkills, ...coreSkill.slice(2)];
 		
 		
-		context.system.initiative = context.system.abilities.dex.value;
+		// context.system.initiative = context.system.abilities.dex.value;
 		// MOVEMENT
 		context.movement = {};
 		for (let [key, movement] of Object.entries(context.system.movement)) {
@@ -460,9 +461,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 						isFigure: false,
 						collapse: true,
 					}, {});
-					if ( embedded ) {
+					// if ( embedded ) {
 						item._enriched = embedded.innerHTML;
-					}
+					// }
 				}
 			}
 			if ( progression.includes(item.type) ) items[item.type] = item;
@@ -543,7 +544,9 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				const tags = new Set(item.system.descriptors);
 				if ( item.system?.isRanged && valid(filters, 'ranged') ) show = false;
 				if ( item.system?.isMelee && valid(filters, 'melee') ) show = false;
+				console.log(action, filters, item, show);
 				if ( action && valid(filters, action) ) show = false;
+				console.log(action, valid(filters, action), show);
 				if ( sigil && valid(filters, 'sigil') ) show = false;
 				if ( tags.has('control') && valid(filters, 'control') ) show = false;
 				if ( tags.has('ofensive') && valid(filters, 'ofensive') ) show = false;
@@ -551,6 +554,16 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 
 				item.filters ??= {};
 				item.filters[key] = show ? '' : 'hidden';
+				if ( item._enriched ) {
+					const div = document.createElement('div');
+					div.innerHTML = item._enriched;
+					if ( show ) {
+						div.querySelector('.ability-card').classList.remove('hidden');
+					} else {
+						div.querySelector('.ability-card').classList.add('hidden');
+					}
+					item._enriched = div.innerHTML;
+				}
 				console.groupEnd();
 			}
 			console.groupEnd();

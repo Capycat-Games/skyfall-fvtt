@@ -52,14 +52,14 @@ const _SVGICONS = {
   sfranged: "icons/svg/target.svg",
   sfsigil: "icons/svg/sun.svg",
 
-  sfcunning: "systems/skyfall/assets/sheet/sfcunning.svg",
-  sfcrafting: "systems/skyfall/assets/sheet/sfcrafting.svg",
-  sfknowledge: "systems/skyfall/assets/sheet/sfknowledge.svg",
-  sfreputation: "systems/skyfall/assets/sheet/sfreputation.svg",
+  // sfcunning: "systems/skyfall/assets/sheet/sfcunning.svg",
+  // sfcrafting: "systems/skyfall/assets/sheet/sfcrafting.svg",
+  // sfknowledge: "systems/skyfall/assets/sheet/sfknowledge.svg",
+  // sfreputation: "systems/skyfall/assets/sheet/sfreputation.svg",
 
-  sfcatharsis: "systems/skyfall/assets/sheet/sfcatharsis.svg",
-  sfcatharsisblue: "systems/skyfall/assets/sheet/sfcatharsis-blue.svg",
-  sfcatharsiswhite: "systems/skyfall/assets/sheet/sfcatharsis-white.svg",
+  // sfcatharsis: "systems/skyfall/assets/sheet/sfcatharsis.svg",
+  // sfcatharsisblue: "systems/skyfall/assets/sheet/sfcatharsis-blue.svg",
+  // sfcatharsiswhite: "systems/skyfall/assets/sheet/sfcatharsis-white.svg",
 }
 
 const _FONTICONS = {
@@ -78,6 +78,12 @@ const _FONTICONS = {
   sfspellofensive: '<span class="skyfall-icon">J</span>',
   sfspellcontrol: '<span class="skyfall-icon">K</span>',
   sfspellutility: '<span class="skyfall-icon">H</span>',
+  sfcatharsis: '<span class="skyfall-icon">C</span>',
+
+  sfcunning: '<span class="skyfall-icon">c</span>',
+  sfcrafting: '<span class="skyfall-icon">p</span>',
+  sfknowledge: '<span class="skyfall-icon">k</span>',
+  sfreputation: '<span class="skyfall-icon">r</span>',
 }
 
 const SVGICONS = {}
@@ -127,6 +133,8 @@ const SHEETICONS = {
   source: '<i class="fa-solid fa-arrow-up-right-from-square"></i>',
   scene: '<i class="fa-solid fa-clapperboard"></i>',
   effect: '<i class="fa-solid fa-person-rays"></i>',
+  squaretilt: '<i class="fa-regular fa-square-full fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>',
+
   // TODO
   ...SVGICONS,
   ..._FONTICONS,

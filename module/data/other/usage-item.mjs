@@ -43,12 +43,9 @@ export default class UsageItem extends foundry.abstract.DataModel {
 					break;
 			}
 		}
-		console.log('posMERGE', createData);
 		createData.targets = game.user.targets.toObject().map( i => i.document.uuid);
-		console.log(createData);
 		// PREPARE MODS
 		createData.modifications = await this.getModifications(actor, ability, appliedMods);
-		console.log(createData);
 		// APPLY MODS TO ACTOR
 		createData.actor = await this.applyModificationToActor(actor, createData.modifications);
 		// APPLY MODS TO ITEM
@@ -114,7 +111,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
 		}
 		
 		const isVersatile = weapon.system.descriptors.includes( d => d == 'versatile' );
-		console.log(ability);
 		for (const [rollId, _roll] of Object.entries(ability.system.rolls)) {
 			if ( _roll.type == 'attack' ) {
 				let r = Object.values(weapon.system.rolls).find( i => i.type == 'attack');
@@ -130,13 +126,10 @@ export default class UsageItem extends foundry.abstract.DataModel {
 				_roll.terms = _roll.terms.flat();
 			}
 		}
-		console.log(ability);
-		console.log('fimMErGE', ability);
 		// return ability; //new this({item: ability});
 	}
 	
 	static async getAbilityRolls({advantage=false, disadvantage=false}){
-		console.log(this);
 		const item = this.item;
 		const rolls = {listed: [], evaluated: []}
 		const RollData = foundry.utils.mergeObject(
@@ -161,7 +154,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
 		);
 		const damageType = item.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
 		const isVersatile = item.system.descriptors.includes( d => d == 'versatile' );
-		console.log(RollData);
 		if ( item.system.attack.ability ) {
 			const attack = item.system.getAttack({
 				RollData: RollData,
@@ -169,7 +161,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
 				advantage: advantage ?? 0,
 				disadvantage: disadvantage ?? 0,
 			});
-			console.log('Attack', attack.terms);
 			const roll = D20Roll.fromSkyfallTerms(attack.terms, RollData, attack.options);
 			rolls.listed.push( roll );
 		}
@@ -180,18 +171,15 @@ export default class UsageItem extends foundry.abstract.DataModel {
 				damageType: damageType,
 				versatile: false,
 			});
-			console.log('Damage', damage.terms);
 			const roll = SkyfallRoll.fromSkyfallTerms(damage.terms, RollData, damage.options);
 			rolls.listed.push( roll );
 			if ( isVersatile ) {
 				damage.versatile = true;
-				console.log('Damage Versatile', damage.terms);
 				const roll = SkyfallRoll.fromSkyfallTerms(damage.terms, RollData, damage.options);
 				rolls.listed.push( roll );
 			}
 		}
 		if ( item.system.effect.damage.formula ) {
-			console.log('Damage Effect', item.system.effect.damage, RollData.modifiers.roll.damage);
 			const roll = SkyfallRoll.fromSkyfallTerms([
 				item.system.effect.damage.formula,
 				...RollData.modifiers.roll.damage,
@@ -203,12 +191,8 @@ export default class UsageItem extends foundry.abstract.DataModel {
 	
 	static async getModifications(actor, item, applied){
 		const modifications = {};
-		console.log(actor.allModifications);
-		console.log(item);
-		console.log(applied);
 		for (const mod of actor.allModifications ) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
-			console.log(itemName, itemType, descriptors);
 			// Ignore modifications if apply condition is not met;
 			if ( itemName && !itemName.split(',').map( n => n.trim() ).includes(item.name) ) continue;
 			if ( itemType.includes('self') && mod.parent.id != item._id ) continue;
@@ -234,8 +218,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
 		const item = this.item;
 		const actor = this.item.parent;
 		const modifications = {};
-		console.log(actor.allModifications);
-		console.log(item);
 		for (const mod of actor.allModifications ) {
 			const {itemName, itemType, descriptors} = mod.system.apply;
 			// Ignore modifications if apply condition is not met;
@@ -272,7 +254,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
 	static async applyModificationToActor(actor, modifications) {
 		return;
 		for (const modification of Object.values(modifications)) {
-			console.log(modification)
 			for (const change of modification.changes) {
 				
 			}
@@ -295,7 +276,6 @@ export default class UsageItem extends foundry.abstract.DataModel {
    * @returns {*}                      The updated value.
    */
   applyChange(value, model, change) {
-		console.log(value, model, change);
     return;
 		const delta = this._castChangeDelta(change.value);
     switch ( change.mode ) {

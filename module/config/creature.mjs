@@ -10,6 +10,16 @@ export const abilities = _abilities.reduce((obj, key) => {
 	return obj;
 }, {});
 
+let _abilitiesCore = ["str", "dex", "con", "int", "wis", "cha"];
+export const abilitiesCore = _abilitiesCore.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		label: `SKYFALL2.ABILITY.${key.titleCase()}`,
+		abbr: `SKYFALL2.ABILITY.${key.titleCase()}Abbr`,
+	}
+	return obj;
+}, {});
+
 /**
  * "APRE": "Apresentacao",			"Pres": Presentation,
  * "APTI": "Aptidao",						"Apti": Aptitude,
@@ -45,6 +55,24 @@ let _skills = ["pres","apti","forg","pois","fish","alch","dist","cart","tail","c
 let _coreSkills = ["pres","apti","arca","cult","dipl","doct","stea","inti","insi","magi","rogu","mani","medi","natu","perc","fitn"];
 let _aptiSkills = ["forg","pois","fish","alch","dist","cart","tail","cook","pain","craf","navi","inst"];
 export const skills = _skills.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: (_coreSkills.includes(key) ? 'core' :  (_aptiSkills.includes(key) ? 'apti' : 'custom')),
+		label: `SKYFALL.ACTOR.SKILLS.${key.toUpperCase()}`,
+	}
+	return obj;
+}, {});
+
+
+export const coreSkills = _coreSkills.reduce((obj, key) => {
+	obj[key] = {
+		id: key,
+		type: (_coreSkills.includes(key) ? 'core' :  (_aptiSkills.includes(key) ? 'apti' : 'custom')),
+		label: `SKYFALL.ACTOR.SKILLS.${key.toUpperCase()}`,
+	}
+	return obj;
+}, {});
+export const aptitudeSkills = _aptiSkills.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
 		type: (_coreSkills.includes(key) ? 'core' :  (_aptiSkills.includes(key) ? 'apti' : 'custom')),

@@ -271,7 +271,6 @@ export default class SkyfallEffect extends ActiveEffect {
 				change.key = change.key.replace('@', 'system.');
 			}
 		}
-		console.log(change);
 		try {
 			const roll = new Roll(change.value);
 			if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;

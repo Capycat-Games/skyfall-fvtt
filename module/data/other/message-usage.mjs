@@ -119,8 +119,6 @@ export default class UsageChatMessage extends BaseChatMessage {
 	
 	prepareBaseData() {
 		super.prepareBaseData();
-		console.log('prepareBaseData USAGE');
-		console.log(this);
 		// return;
 		//if ( this.actor && !foundry.utils.isSubclass(this.actor, Actor) ) {
 		if ( this.actor == "[object Object]" ){
@@ -261,8 +259,6 @@ export default class UsageChatMessage extends BaseChatMessage {
 	/* -------------------------------------------- */
 
 	async _preCreate(data, options, user) {
-		console.log('MESSAGE._preCreate', data);
-		console.log('MESSAGE._preCreate', this);
 		// for (const roll of data.system.rolls ) {
 		// 	roll.template = await roll.render();
 		// }
@@ -291,8 +287,6 @@ export default class UsageChatMessage extends BaseChatMessage {
 	
 	/** @inheritDoc */
 	_onCreate(data, options, userId) {
-		console.log('MESSAGE._onCreate', data);
-		console.log('MESSAGE._onCreate', this);
 		return super._onCreate(data, options, userId);
 	}
 

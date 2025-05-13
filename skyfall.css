@@ -360,10 +360,22 @@ dropdown-tags .tags-dropdown fieldset legend {
   position: relative;
   overflow: hidden;
 }
+.skyfall.sheet.actor [data-action="edit"]:has(input:disabled) {
+  position: relative;
+}
+.skyfall.sheet.actor [data-action="edit"]:has(input:disabled):hover::after {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  font-size: 12px;
+  font-weight: 900;
+  content: "\f013";
+}
 .skyfall.sheet.actor.minimized {
   min-height: unset;
 }
 .skyfall.sheet.actor .window-content .overrided-fields {
+  display: flex;
   position: relative;
   min-height: 22px;
 }
@@ -884,6 +896,20 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .top input,
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom input {
   width: 80%;
+  margin: 0 10%;
+}
+.skyfall.sheet.actor.character .window-content .ability-scores .ability .top .protection.icon,
+.skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .protection.icon {
+  font-size: 10px;
+  height: 0;
+  width: 100%;
+  position: relative;
+}
+.skyfall.sheet.actor.character .window-content .ability-scores .ability .top .protection.icon i,
+.skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .protection.icon i {
+  left: -4px;
+  top: -4px;
+  position: absolute;
 }
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .top .active,
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .active {
@@ -2797,6 +2823,7 @@ dropdown-tags .tags-dropdown fieldset legend {
   gap: 2px;
 }
 .skyfall.scene-control .window-content .table-catharsis .die {
+  font-size: 32px;
   height: 32px;
   flex: 0 0 32px;
   line-height: 32px;
@@ -2983,6 +3010,9 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall .text-center {
   text-align: center;
 }
+.skyfall.standard-form .form-group:hover > label {
+  color: black !important;
+}
 .skyfall .background {
   background-image: url(assets/sheet/background-cut.png);
   background-size: cover;
@@ -3131,6 +3161,24 @@ aside[role=tooltip] .property-summary ul.ability-tooltip li:last-child,
 aside[role=tooltip] .property-summary ol.ability-tooltip li:last-child,
 #tooltip .property-summary ol.ability-tooltip li:last-child {
   border-top: 1px solid white;
+}
+aside[role=tooltip] .skyfall.tooltip-total,
+#tooltip .skyfall.tooltip-total {
+  font-size: 1em;
+}
+aside[role=tooltip] .skyfall.tooltip-total div,
+#tooltip .skyfall.tooltip-total div {
+  flex: 100%;
+  text-align: right;
+}
+aside[role=tooltip] .skyfall.tooltip-total i,
+#tooltip .skyfall.tooltip-total i {
+  flex: 0 0 1em;
+}
+aside[role=tooltip] .skyfall.tooltip-total hr,
+#tooltip .skyfall.tooltip-total hr {
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
 }
 .skyfall.sheet #context-menu {
   background-color: white;
