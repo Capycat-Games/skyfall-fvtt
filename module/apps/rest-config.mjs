@@ -169,6 +169,10 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 		// Prepare Actor Update
 		this.updateData["system.resources.hp.value"] += roll.total;
 		this.updateData["system.resources.ep.value"] += proficiency;
+		const hppath = "system.resources.hp.value";
+		const eppath = "system.resources.ep.value";
+		this.updateData[hppath] = Math.min( this.updateData[hppath], resources.hp.max );
+		this.updateData[eppath] = Math.min( this.updateData[eppath], resources.ep.max );
 		
 		// Prepare Message
 		const messageData = {

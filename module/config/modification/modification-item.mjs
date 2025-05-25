@@ -72,7 +72,7 @@ export default class ItemModification {
 	}
 
 	static addRoll(item, change) {
-		console.error('addRoll');
+		console.error('addRoll', item, change);
 		switch (change.mode) {
 			case MODE.CUSTOM:
 			case MODE.OVERRIDE:
@@ -81,10 +81,19 @@ export default class ItemModification {
 				break;
 			case MODE.ADD:
 				const damageType =  ( change.key == 'damage' ? item.damageType : '' );
+				const roll = new RollSF(change.value);
+				const terms = roll.terms.reduce((acc, i) => {
+					if ( i instanceof foundry.dice.terms.OperatorTerm ) return acc;
+					acc.push({
+						expression: i.expression,
+						flavor: i.flavor ?? damageType ?? "",
+					});
+					return acc;
+				}, [])
 				item.system.rolls[change.effect.id] = {
 					type: change.key,
 					label: change.effect.parent.name,
-					terms: change.value.split('+').map( i => ({expression: i, flavor: damageType})),
+					terms: terms,
 				}
 				break;
 			case MODE.DOWNGRADE:

@@ -506,6 +506,198 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		this.range.icon = this.isRanged ? SYSTEM.icons.sfranged : SYSTEM.icons.melee;
 	}
 
+	async prepareCardData(options){
+		const card = {};
+		card.name = this.parent.name;
+		
+		// Action icon
+		card.action = SYSTEM.icons[`sf${this.activation.type}`];
+		
+		// Cost
+		card.cost = this.activation.cost ?? "";
+		card.repeatable = ( this.activation.repeatable ? SYSTEM.icons.sfrepeatable
+			: "");
+		
+		// SPELL ICON
+		const spellDescriptors = ['control','ofensive','utility'];
+		for ( const spelld of spellDescriptors ) {
+			if ( this.descriptors.includes(spelld) ) {
+				card.spellIcon = SYSTEM.icons[`sfspell${spelld}`]
+			}
+		}
+		// Descriptors
+		card.descriptors = this.descriptors;
+		card.flavor = this.description.flavor;
+		
+		card.description = await TextEditor.enrichHTML(
+			this.description.value, {
+			async: true,
+			relativeTo: this.parent,
+		});
+		card.properties = {};
+		this._prepareRangeLabel(card);
+		this._prepareTargetLabel(card);
+		this._prepareDurationLabel(card);
+		this._prepareTriggerLabel(card);
+		this._prepareAttackLabel(card);
+
+		if ( options.modifications ) {
+			card.modifications = [];
+			const modifications = this.document.effects.filter( i => i.type == 'modification' && i.system.apply.itemType == 'self');
+			for (const modification of modifications) {
+				const embedded = await modification.toEmbed({
+					caption: false,
+					controls: false,
+				});
+				card.modifications.push(embedded);
+			}
+		}
+		return card;
+	}
+
+	async renderCardTemplate(options){
+		const card = await this.prepareCardData(options);
+		const cardTemplate = "systems/skyfall/templates/v2/item/ability-card-v2.hbs";
+		const templateData = {
+			card: card,
+			SYSTEM: SYSTEM,
+			item: this.parent,
+			renderAt: options.renderAt ?? "ItemSheet",
+			anchor: this.parent.toAnchor().outerHTML,
+			collapse: true,
+		}
+		if ( game.version.startsWith('13') ){
+			let template = await foundry.applications.handlebars.renderTemplate(cardTemplate, templateData);
+			template = await TextEditor.enrichHTML(template, {
+				async: true, relativeTo: this.parent,
+			});
+			return template;
+		} else {
+			let template = await renderTemplate(cardTemplate, templateData);
+			template = await TextEditor.enrichHTML(template, {
+				async: true, relativeTo: this.parent,
+			});
+			return template;
+		}
+	}
+
+	_prepareRangeLabel(card){
+		const {descriptive, units, value} = this.range;
+		console.log("_prepareRangeLabel", descriptive);
+		const choices = {
+			units: this.schema.fields.range.fields.units.choices,
+		}
+		const format = {
+			label: "SKYFALL.ITEM.ABILITY.RANGE",
+		}
+		if ( descriptive ) {
+			format.value = descriptive;
+		} else if ( ['m','km','ft','mi'].includes(units) ) {
+			format.value = skyfall.i18n.format('{value} {units}', {
+				value: value,
+				units: SYSTEM.ranges[units]?.label ?? ''
+			});
+		} else if ( units ) {
+			format.value = SYSTEM.ranges[units]?.label ?? '';
+		}
+		if ( format.value ) {
+			card.properties.range = skyfall.i18n.format(
+				"<b>{label}:</b> {value}.", format
+			);
+		}
+	}
+
+	_prepareTargetLabel(card){
+		const { descriptive, type, quantity, shape, length, width, units } = this.target;
+		if ( !descriptive && !type ) return;
+		const format = {
+			label: "SKYFALL.ITEM.ABILITY.TARGET",
+		}
+		
+		const squares = length / game.system.grid.distance;
+		const details = {
+			general: game.i18n.localize('SKYFALL2.TARGET.Length'),
+			circle: game.i18n.localize('SKYFALL2.TARGET.CircleLength'),
+		}
+		if ( descriptive ) {
+			format.value = descriptive;
+		} else if ( shape ) {
+			const descriptive = game.i18n.format('SKYFALL2.TARGET.DescritptiveWithArea', {
+				quantity: quantity || '',
+				type: SYSTEM.individualTargets[type].label,
+				shape: SYSTEM.areaTargets[shape].label,
+				length: `${length}${units}`,
+				squares: `${squares}q`,
+				details: ['radius','cylinder','sphere'].includes(shape) ? details.circle : details.general
+			});
+			format.value = descriptive;
+		} else {
+			const descriptive = game.i18n.format('SKYFALL2.TARGET.Descritptive', {
+				quantity: quantity || '',
+				type: SYSTEM.individualTargets[type].label
+			});
+			format.value = descriptive;
+		}
+		if ( format.value ) {
+			card.properties.target = skyfall.i18n.format(
+				"<b>{label}:</b> {value}.", format
+			);
+		}
+	}
+
+	_prepareDurationLabel(card){
+		const {descriptive, value, units, concentration, event} = this.duration;
+		if ( !descriptive && !units ) return;
+		const format = {
+			label: "SKYFALL.ITEM.ABILITY.DURATION",
+		}
+		if ( descriptive ) {
+			format.value = descriptive;
+		} else {
+			const con = game.i18n.localize('SKYFALL2.DURATION.Concentration');
+			const formatString = units == 'until' && event ? SYSTEM.events[event].prop : '{value} {units} {concentration}';
+			format.value = game.i18n.format(formatString, {
+				value: value || '',
+				units: SYSTEM.durations[units].label,
+				concentration: concentration ? `(${con})` : '',
+			})
+		}
+		if ( format.value ) {
+			card.properties.duration = skyfall.i18n.format(
+				"<b>{label}:</b> {value}.", format
+			);
+		}
+	}
+
+	_prepareTriggerLabel(card){
+		const {descriptive, label, type} = this.trigger;
+		
+		const format = {
+			label: "SKYFALL.ITEM.ABILITY.TRIGGER",
+		}
+		if ( descriptive ) {
+			format.value = descriptive;
+		} else {
+			
+		}
+		if ( format.value ) {
+			card.properties.trigger = skyfall.i18n.format(
+				"<b>{label}:</b> {value}.", format
+			);
+		}
+	}
+
+	_prepareAttackLabel(card){
+		if ( this.attack.descriptive ) {
+			card.properties.attack = skyfall.i18n.format(
+				"<b>{label}:</b> {value}.", {
+					label: "SKYFALL.ITEM.ABILITY.ATTACK",
+					value: this.attack.descriptive
+				}
+			);
+		}
+	}
+
 	/* -------------------------------------------- */
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
@@ -521,31 +713,36 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 
 	/** @override */
 	async toEmbed(config, options={}) {
-		config.classes = "ability-embed skyfall";
+		config.classes = "ability-embed skyfall sheet";
 		config.cite = false;
 		config.caption = false;
-		let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
-
-		const labels = this.labels;
+		// let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
 
 		const anchor = this.parent.toAnchor();
 		anchor.classList.remove('content-link');
 		anchor.querySelector('i').remove();
-		const abilityCard = await renderTemplate("systems/skyfall/templates/v2/item/ability-card.hbs", {
+		const templateData = {
+			card: await this.prepareCardData(options),
 			SYSTEM: SYSTEM,
 			document: this.parent,
 			item: this.parent,
 			system: this,
 			anchor: anchor.outerHTML,
-			labels: labels,
 			isPlayMode: true,
 			isEmbed: true,
 			isFigure: config.isFigure ?? true,
-			isSheetEmbedded: config.isSheetEmbedded,
+			embeddedAt: config.embeddedAt ?? "Embedded", //isSheetEmbedded,
 			collapse: config.collapse ?? false,
 			enriched: [],
-			modifications: modifications.join(''),
-		});
+			// modifications: modifications.join(''),
+		}
+		let abilityCard;
+		const cardTemplate = "systems/skyfall/templates/v2/item/ability-card-v2.hbs";
+		if ( game.version.startsWith('13') ){
+			abilityCard = await foundry.applications.handlebars.renderTemplate(cardTemplate, templateData);
+		} else {
+			abilityCard = await renderTemplate(cardTemplate, templateData);
+		}
 		
 		const container = document.createElement("div");
 		container.innerHTML = await TextEditor.enrichHTML(abilityCard, {

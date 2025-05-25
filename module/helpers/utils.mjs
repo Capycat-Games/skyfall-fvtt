@@ -19,13 +19,13 @@ export function filterObject(source, keys, onlyKeys = false) {
 }
 
 export function referenceTag(key, tagName = "span") {
-	const descriptor = SKYFALL.DESCRIPTORS[key];
-	const statusEffect = SKYFALL.statusEffects[key];
+	const descriptor = SYSTEM.DESCRIPTORS[key];
+	const statusEffect = SYSTEM.statusEffects[key];
 	if ( !descriptor && !statusEffect ) return "";
 	const reference = descriptor ?? statusEffect;
 	const tag = document.createElement(tagName);
-	if ( descriptor ) tag.classList.add( "skyfall-reference", "flex0", "descriptor" );
-	if ( statusEffect ) tag.classList.add( "skyfall-reference", "flex0", "statusEffect" );
+	if ( descriptor ) tag.classList.add( "skyfall-reference", "flex0", "descriptor", "descriptor-reference" );
+	if ( statusEffect ) tag.classList.add( "skyfall-reference", "flex0", "statusEffect", "condition-reference" );
 	tag.innerText = game.i18n.localize(reference.label ?? reference.name);
 	tag.dataset.tooltip = game.i18n.localize(reference.tooltip ?? reference.hint);
 	return tag.outerHTML;

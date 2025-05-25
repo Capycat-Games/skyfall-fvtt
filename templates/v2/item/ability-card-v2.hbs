@@ -1,0 +1,99 @@
+<div
+	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}"
+	data-entry-id="{{item.id}}">
+
+	{{#if (eq embeddedAt "ItemSheet")}}
+		<div class="ability-header flexrow">
+			{{{card.action}}} &nbsp;
+
+			<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name" />
+
+			<span class="cost flex1">
+				{{#if card.repeatable }}
+					{{{card.repeatable}}}
+				{{~else if card.cost}}
+					{{card.cost}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}}
+				{{~else}}
+				{{/if}}
+			</span>
+			{{{card.spellIcon}}}
+			<a data-action="toggleMode"
+				class="toggle-edit flex0">
+				{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}
+			</a>
+		</div>
+	{{~else if (eq embeddedAt "ActorSheet")}}
+		<div class="ability-header flexrow">
+			{{{card.action}}} &nbsp;
+
+			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+				<h5>{{item.name}}</h5>
+			</a>
+
+			<span class="cost flex1">
+				{{#if card.repeatable }}
+					{{{card.repeatable}}}
+				{{~else if card.cost}}
+					{{card.cost}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}}
+				{{~else}}
+				{{/if}}
+			</span>
+			{{{card.spellIcon}}}
+			{{#if collapse }}
+				<a data-action="collapse" class="expand isEditing flex0">
+					<i class="fa-solid fa-expand"></i>
+				</a>
+				<a data-action="collapse" class="compress isEditing flex0">
+					<i class="fa-solid fa-compress"></i>
+				</a>&nbsp;
+			{{/if}}
+			<a class="isEditing flex0" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>&nbsp;&nbsp;
+			<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+		</div>
+	{{~else if (eq embeddedAt "Embedded")}}
+		<div class="ability-header flexrow">
+			{{{card.action}}} &nbsp;
+			{{{anchor}}}
+			<span class="cost flex1">
+				{{#if card.repeatable }}
+					{{{card.repeatable}}}
+				{{~else if card.cost}}
+					{{card.cost}} {{localize "SKYFALL.ACTOR.RESOURCES.EPABBR"}}
+				{{~else}}
+				{{/if}}
+			</span>
+			{{{card.spellIcon}}}
+		</div>
+	{{/if}}
+
+	{{#if card.descriptors }}
+		<div class="ability-descriptors flexrow" style="gap: 5px;">
+			{{#each card.descriptors as | descriptor |}}
+				{{{reference descriptor 'span'}}}
+			{{/each}}
+		</div>
+	{{/if}}
+	{{#if card.flavor }}
+		<div class="ability-description">
+			<em><b>{{{card.flavor}}}</b></em>
+		</div>
+	{{/if}}
+	{{#if card.properties }}
+		<div class="ability-properties">
+			<ul class="plain properties" style="columns: 2;">
+				{{#each card.properties as | prop |}}
+					<li>{{{prop}}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
+	{{#if card.description }}
+		<div class="rich">
+			{{{card.description}}}
+		</div>
+	{{/if}}
+	{{!-- MODIFICATIONS --}}
+	{{#each card.modifications as | modification |}}
+		{{{modification}}}
+	{{/each}}
+</div>

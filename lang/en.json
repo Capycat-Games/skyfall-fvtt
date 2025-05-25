@@ -1086,6 +1086,11 @@
     "HitDieAbbr": "DdV",
     "Proficiency": "Proficiência",
     "ProficiencyPl": "Proficiências",
+    "PROFICIENCY": {
+      "Unproficient": "Não Proficiente",
+      "Proficient": "Proficiente",
+      "Expert": "Expert"
+    },
     "Component": "Componente",
     "ComponentPl": "Componentes",
     "COMPONENTS": {},

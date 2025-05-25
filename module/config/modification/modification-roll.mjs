@@ -14,6 +14,7 @@ export default class RollModification {
 			'perDie',
 			'targetDR',
 			'targetIRV',
+			'target',
 
 			'targetResistance',
 			'targetImunity',
@@ -44,7 +45,10 @@ export default class RollModification {
 			console.groupCollapsed('applyRoll');
 			console.error(roll, change);
 			try {
-				if (change.key.startsWith('?')) continue;
+				if ( change.handler == "targetDR" ) {
+					change.key = "damage";
+				}
+				if (change.key?.startsWith('?')) continue;
 				// const [handler, key] = change.key.split('_');
 				// if ( !RollModification.isValidModification.includes(handler) ) continue;
 				// console.log(handler, key);
@@ -84,11 +88,15 @@ export default class RollModification {
 		const fn = change.handler ? this[change.handler] : this.addTerm;
 		if( !(fn instanceof Function) ) return roll;
 		switch (fn.name) {
+			case 'target': 
+				fn.call(this, roll, change);
+				break;
 			// Not term transform functions
 			case 'addTerm':
 			case 'criticalRange':
 			case 'perDie':
 			case 'targetDR':
+			case 'targetIRV':
 				fn.call(this, roll, change);
 				break;
 			case 'targetResistance':
@@ -122,16 +130,13 @@ export default class RollModification {
 	
 	// ROLL TRANSFORM
 	static addTerm(roll, change) {
-		console.error(roll, change );
 		// let temp = new SkyfallRoll(change.value, roll.data);
 		let temp = SkyfallRoll.fromSkyfallTerms([change.value], roll.data);
-		console.log(temp);
 		change.isAmplify = change.effect.system.apply.type.includes('amplify');
 		if ( change.isAmplify ) {
 			change.amplifyThreshold = change.effect.system.apply.amplifyThreshold;
 			temp.terms.forEach( t => t.options.amplify = change.amplifyThreshold );
 		}
-		console.error(temp);
 		let allowed = ( change.condition ? false : true );
 		for (const term of roll.terms) {
 			if ( !RollModification.validateTermType(term, [DiceTerm, NumericTerm]) ) continue;
@@ -146,6 +151,10 @@ export default class RollModification {
 				let operator = new OperatorTerm({operator: '+'});
 				if ( change.isAmplify ) {
 					operator.options.amplify = change.amplifyThreshold;
+				}
+				console.log(roll, change, temp);
+				if( change.multiply ) {
+					temp.alter(change.apply, 0, {multiplyNumeric: true})
 				}
 				roll.terms.push(operator);
 				roll.terms.push( ...temp.terms );
@@ -185,6 +194,17 @@ export default class RollModification {
 				break;
 		}
 		return roll;
+	}
+
+	static target(roll, change) {
+		console.log("TARGET", roll, change);
+		roll.options.changes ??= [];
+		const targetChange = {
+			key: change.key.replace(/^\w+\./,''),
+			mode: change.mode,
+			value: change.value,
+		}
+		roll.options.changes.push(targetChange)
 	}
 
 	static damageType(roll, change) {
@@ -239,63 +259,32 @@ export default class RollModification {
 
 	// TARGET TRANSFORM
 	static targetDR(roll, change) {
-		change.value = SkyfallRoll.replaceFormulaData(change.value, roll.data);
-		change.value = Number(change.value);
-		if( isNaN(change.value) ) return roll;
-		if( change.multiply ) change.value *= change.apply;
-		roll.options.target ??= {};
-		roll.options.target.dr ??= 0;
-		switch (change.mode) {
-			case MODE.CUSTOM:
-				break;
-			case MODE.MULTIPLY:
-				roll.options.target.dr *= change.value;
-				break;
-			case MODE.ADD:
-				roll.options.target.dr += change.value;
-				break;
-			case MODE.DOWNGRADE:
-				break;
-			case MODE.UPGRADE:
-				break;
-			case MODE.OVERRIDE:
-				roll.options.target.dr = change.value;
-				break;
+		console.groupCollapsed("targetDR");
+		
+		const targetChange = {
+			key: "system.dr",
+			mode: change.mode,
+			value: change.value,
 		}
+		roll.options.changes ??= [];
+		roll.options.changes.push(targetChange);
+		console.groupEnd();
 	}
 
 	static targetIRV(roll, change, property) {
+		console.groupCollapsed("targetIRV");
 		const temp = new SkyfallRoll(change.value, roll.data).terms[0];
+		console.log(roll, change, temp);
 		const damageType = temp.flavor ?? 'all';
-		change.value = Number(temp.expression);
-		if( isNaN(change.value) ) return term;
-		if( change.multiply ) change.value *= change.apply;
-		roll.options.target ??= {};
-		roll.options.target.irv ??= {};
-		roll.options.target.irv[damageType] ??= {}
-		// irv = {
-		// 	fire: {imunity: 'resistance', resistance: 'normal', normal: 'vulnerability'}
-		// }
-		const irvrank = ["vulnerability", "normal", "resistance", "imunity"];
-		switch (change.mode) {
-			case MODE.CUSTOM:
-			case MODE.MULTIPLY:
-			case MODE.ADD:
-				break;
-			case MODE.DOWNGRADE:
-				if ( irvrank.indexOf(property) > irvrank.indexOf(change.value) ) {
-					roll.options.target.irv[damageType][property] = change.value;
-				}
-				break;
-			case MODE.UPGRADE:
-				if ( irvrank.indexOf(property) < irvrank.indexOf(change.value) ) {
-					roll.options.target.irv[damageType][property] = change.value;
-				}
-				break;
-			case MODE.OVERRIDE:
-				roll.options.target.irv[damageType][property] = change.value;
-				break;
+
+		const targetChange = {
+			key: `system.modifiers.damage.taken.${damageType}`,
+			mode: change.mode,
+			value: temp.expression,
 		}
+		roll.options.changes ??= [];
+		roll.options.changes.push(targetChange);
+		console.groupEnd();
 	}
 	
 	// DIE TRANSFORM

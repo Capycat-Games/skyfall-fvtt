@@ -1,3 +1,5 @@
+import { referenceTag } from "./utils.mjs";
+
 /* SKYFALL Handlebars */
 export function registerHandlebarsHelpers() {
 	Handlebars.registerHelper("toArray", function (...values) {
@@ -33,4 +35,6 @@ export function registerHandlebarsHelpers() {
 		values = values.flat();
 		return values.includes(search) === true;
 	});
+
+	Handlebars.registerHelper("reference", referenceTag );
 }

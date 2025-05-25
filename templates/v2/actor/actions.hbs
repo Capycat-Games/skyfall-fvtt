@@ -2,30 +2,34 @@
 	{{!-- ABILITY SCORES --}}
 	{{> "systems/skyfall/templates/v2/actor/actions-ability-scores.hbs"}}
 
-	{{!-- INITIATIVE AND MOVEMENT --}}
-	<div class="attributes background-cut flexcol text-center">
-		<div class="initiative box flexcol flex1">
-			<h6>
+	<fieldset class="attribute">
+		{{!-- INITIATIVE --}}
+		<div class="form-group stacked initiative">
+			<label>
 				<a data-action="roll" data-roll-type="initiative">{{localize "SKYFALL.ACTOR.INITIATIVE"}}</a>
-			</h6>
-			<div class="fa-solid text-center" data-action="edit" data-field-path="system.initiative" data-tooltip='{{{system.initiative.totalTooltip}}}'>
+			</label>
+			<div class="form-fields" data-action="edit" data-field-path="system.initiative" data-tooltip='{{{system.initiative.totalTooltip}}}'>
 				<input type="number" value="{{system.initiative.total}}" disabled>
 			</div>
 		</div>
-		<div class="movement  box flexcol flex1">
-			<h6>
+		{{!-- MOVEMENT --}}
+		<div class="form-group stacked movement">
+			<label>
 				<a data-action="manage" data-manage="movement">{{localize "SKYFALL.ACTOR.MOVEMENT"}}</a>
-			</h6>
-			<div class="values">
+			</label>
+			<div class="form-fields values" style="text-align: center;">
 				{{#each movement as | move | }}
 					<span data-tooltip="{{localize move.label}}">
 						{{{move.icon}}} {{move.value}}
 					</span>
 				{{/each}}
-				<span>&nbsp;</span>
+				{{#unless movement}}
+					<span>&nbsp;</span>
+				{{/unless}}
 			</div>
 		</div>
-	</div>
+	</fieldset>
+
 	<div class="flex100"></div>
 	{{!-- SKILLS --}}
 	<div class="background-cut skills">

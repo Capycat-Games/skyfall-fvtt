@@ -11,13 +11,14 @@
 		{{else if (and (eq skill.type "apti") (eq skill.value 0))}}
 		{{else}}
 			<li class="skill entry flexrow" data-type="skill" data-entry-id="{{skillId}}">
-				<a data-action="vary" data-field-path="system.skills.{{skillId}}.value">
+				<a data-action="vary" data-field-path="system.skills.{{skillId}}.value"
+					data-tooltip="{{localize skill.rank}}">
 					{{#if (eq skill.value 0)}}
 						{{{@root.SYSTEM.icons.square}}}
 					{{else if (eq skill.value 1)}}
-						{{{@root.SYSTEM.icons.check}}}
+						{{{@root.SYSTEM.icons.squarefill}}}
 					{{else if (eq skill.value 2)}}
-						{{{@root.SYSTEM.icons.checkdouble}}}
+						{{{@root.SYSTEM.icons.diamondfill}}}
 					{{/if}}
 				</a>
 				<h5 class="flex3"><a class="{{#if (or (eq @root.rolling.id skillId) (eq @root.rolling.type 1)) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="skill" data-id="{{skillId}}">

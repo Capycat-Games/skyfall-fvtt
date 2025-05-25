@@ -26,12 +26,23 @@ export default class Character extends Creature {
 					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, label: "SKYFALL2.Current"}),
 					max: new fields.NumberField({required: true, nullable: false, integer: true, initial: 1, min: 1, label: "SKYFALL2.Total"}),
 					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.Temporary"}),
+				}, {
+					label: "SKYFALL2.RESOURCE.EP"
 				}),
 				catharsis: new fields.SchemaField({
-					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, max: 5, label: "SKYFALL2.RESOURCE.Catharsis"}),
+					value: new fields.NumberField({
+						required: true,
+						nullable: false,
+						integer: true,
+						initial: 0,
+						min: 0,
+						// max: 5,
+						label: "SKYFALL2.RESOURCE.Catharsis"
+					}),
 				}),
 				shadow: new fields.SchemaField({
 					value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 5, min: 0, max: 5, label: "SKYFALL2.RESOURCE.Shadow"}),
+					temp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0, min: 0, label: "SKYFALL2.Temporary"}),
 				}),
 			}),
 			death: new fields.SchemaField({
@@ -368,6 +379,13 @@ export default class Character extends Creature {
 			this.parent.createEmbeddedDocuments('Item', createList );
 		}
 		
+	}
+
+	/** @inheritdoc */
+	async _preUpdate(changed, options, user) {
+		let allowed = super._preUpdate(changed, options, user);
+		console.log(changed);
+		return allowed;
 	}
 
 	/* -------------------------------------------- */

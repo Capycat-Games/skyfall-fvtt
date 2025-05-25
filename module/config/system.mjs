@@ -79,11 +79,15 @@ const _FONTICONS = {
   sfspellcontrol: '<span class="skyfall-icon">K</span>',
   sfspellutility: '<span class="skyfall-icon">H</span>',
   sfcatharsis: '<span class="skyfall-icon">C</span>',
-
+  sfshadow: '<span class="skyfall-icon">S</span>',
+  sfshadowe: '<span class="skyfall-icon">s</span>',
   sfcunning: '<span class="skyfall-icon">c</span>',
   sfcrafting: '<span class="skyfall-icon">p</span>',
   sfknowledge: '<span class="skyfall-icon">k</span>',
   sfreputation: '<span class="skyfall-icon">r</span>',
+  sfmelee: '<span class="skyfall-icon">O</span>',
+  sfranged: '<span class="skyfall-icon">a</span>',
+  sfsigil: '<span class="skyfall-icon">G</span>',
 }
 
 const SVGICONS = {}
@@ -104,12 +108,15 @@ const SHEETICONS = {
   xmark: '<i class="fa-solid fa-xmark"></i>',
   on: '<i class="fa-solid fa-toggle-on"></i>',
   off: '<i class="fa-solid fa-toggle-off"></i>',
+  circle: '<i class="fa-regular fa-circle"></i>',
+  circlefill: '<i class="fa-solid fa-circle"></i>',
   check: '<i class="fa-solid fa-check"></i>',
   checkdouble: '<i class="fa-solid fa-check-double"></i>',
   star: '<i class="fa-regular fa-star"></i>',
   starfill: '<i class="fa-solid fa-star"></i>',
   square: '<i class="fa-regular fa-square"></i>',
   squarefill: '<i class="fa-solid fa-square"></i>',
+  diamondfill: '<i class="fa-solid fa-diamond"></i>',
   heart: '<i class="fa-solid fa-heart"></i>',
   heartline: '<i class="fa-solid fa-heart-pulse"></i>',
   heartcrack: '<i class="fa-solid fa-heart-crack"></i>',
@@ -139,6 +146,24 @@ const SHEETICONS = {
   ...SVGICONS,
   ..._FONTICONS,
 }
+
+const _SVGELEMENTS = {
+  ribbon: "systems/skyfall/assets/sheet-v2/name-title.svg",
+}
+const SVGELEMENTS = {}
+Object.entries(_SVGELEMENTS).reduce(async (acc, ent) => {
+	const svg = await fetch(ent[1])
+		.then(b => b.text())
+		.then(t => {
+			const temp = document.createElement("div");
+			temp.innerHTML = t;
+			const svg = temp.querySelector("svg");
+			return svg;
+		});
+  return acc[ent[0]] = svg;
+  acc[ent[0]] = `<svg><image href="${ent[1]}"/></svg>`
+  return acc;
+}, SVGELEMENTS);
 
 //DiceCategories
 const damageCategories = [
@@ -183,6 +208,7 @@ const _SYSTEM = {
   rollTransformers: TRANSFORMERS.rollTransformers,
   statusEffects: CONDITIONS.statusEffects,
   icons: SHEETICONS,
+  svg: SVGELEMENTS,
   initialItems: _INICIALITEMS,
   prototypeItems: {
     ABILITYROLL: ABILITYROLL,

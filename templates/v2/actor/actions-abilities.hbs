@@ -1,15 +1,13 @@
 <div class="actions flexcol">
-	<div class="actions-filters flexrow flex0">
-		<ul class="plain filter-list flexrow" data-filter-id="actions">
-			<li class="">{{localize "SKYFALL.FILTER"}}</li>
+	<ul class="action-list plain flexcol">
+		<li class="header"> {{localize "SKYFALL.FILTER"}}</li>
+		<li class="item filter-list flexrow" data-filter-id="actions">
 			{{#each filters.actions as | action key | }}
-				<li data-action="filter" data-filter="{{key}}" class="filter-item {{ifThen action.active 'active' '' }}"
-					data-tooltip="{{localize action.label}}">{{{action.icon}}}</li>
+				<div data-action="filter" data-filter="{{key}}" class="filter-item {{ifThen action.active 'active' '' }}" data-tooltip="{{localize action.label}}">
+					{{{action.icon}}}
+				</div>
 			{{/each}}
-		</ul>
-	</div>
-
-	<ul class="plain flexcol">
+		</li>
 		{{#each items.actions as | item |}}
 			{{#if item.weapons}}
 				<li class="item {{item.type}} weapon entry flexcol {{item.filters.actions}}" data-entry-id="{{item.id}}">

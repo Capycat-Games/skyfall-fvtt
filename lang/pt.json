@@ -103,6 +103,7 @@
     "DURATION": "Duração",
     "ORIGIN": "Origem",
     "SOURCE": "Fonte",
+    "Config": "Configuração",
     "SHEET": {
       "FACE": "Face",
       "ACTIONS": "Ações",
@@ -692,6 +693,7 @@
       "MODIFIER": "Modificador",
       "ADVANTAGE": "Vantagem",
       "DISADVANTAGE": "Desvantagem",
+      "NORMAL": "Normal",
       "DC": "Dificuldade",
       "DCABBR": "CD",
 
@@ -1084,6 +1086,11 @@
     "HitDieAbbr": "DdV",
     "Proficiency": "Proficiência",
     "ProficiencyPl": "Proficiências",
+    "PROFICIENCY": {
+      "Unproficient": "Não Proficiente",
+      "Proficient": "Proficiente",
+      "Expert": "Expert"
+    },
     "Component": "Componente",
     "ComponentPl": "Componentes",
     "COMPONENTS": {},
@@ -1509,6 +1516,8 @@
       "ActorResourcesConfig": "Recursos",
       "ModificationConfig": "Configuração de Modificações",
       "ConfirmRoll": "Confirmar & Rolar",
+      "ForceRollMode": "Forçar Rolagem",
+      "ForceRollModeHint": "A rolagem ira ignorar habilidades que coloquem vantagem ou desvantagem.",
       "RollConfig": "Configuração de Rolagem",
       "ROLLCONFIG": {
         "Check": "Teste de {type}",
@@ -1522,6 +1531,7 @@
       "Attack": "Jogada de Ataque",
       "Damage": "Jogada de Dano",
       "Ability": "Teste de Atributo",
+      "Initiative": "Teste de Iniciativa",
       "Skill": "Teste de Perícia",
       "DamageVersatile": "Jogada de Dano (Versátil)"
     },
@@ -1633,6 +1643,23 @@
       "sceneConfigHint": "Menu que permite o controle dos Pontos de Catarse da Mesa em uma cena.",
       "AbilityDescriptors": "Descritores",
       "AbilityDescriptorsHint": "Configuração de Descritores base e personalizados."
+    },
+    "BONUSES": {
+      "Attribute": "Bônus de {attr}",
+      "FormulaBonus": "Bônus de Cálculo",
+      "RollBonus": "Bônus de Rolagem",
+      "Value": "Bonus",
+      "ValueTooltip": "Um valor válido para uma Fórmula de Rolagem (1d6, @str, 2, (2 * @proficiency), etc)",
+      "Value Tooltip2": "Um valor válido para uma Fórmula de Rolagem (1d6, @str, 2, (2 * @proficiency), etc) ou um modificador de Rolagem (kh, rr=1, min=3, etc)",
+      "Flavor": "Tipo",
+      "FlavorTooltip": "Tipo de dano (acid, slashing, etc). Se vazio herdará o dano do Item.",
+      "Condition": "Condição",
+      "ConditionTooltip": "Condição para inclusão do bônus, incluindo tipo de Item (ex.: ability, spell, sigil), Tipo de Rolagem (ex.: skill, initiative), Descritores (ex.: attack, weapon, shallow, fire), outros bônus de rolagem (advantage, str).",
+      "Data": "Variável",
+      "DataTooltip": "Substitui a variável que identifica esse bônus (ex. value: @wis, data: ability o bônus pode ser identificado como [|ability|])",
+      "Source": "Origem",
+      "SourceTooltip": "A origem desse bônus, efeitos adicionam automáticamente, e podem ser usados para identificação do bônus (Um bônus incluido pela habilidade Ataque Poderoso pode ser identificado como [||Ataque Poderoso])",
+      "": ""
     }
   },
   "EFFECT": {

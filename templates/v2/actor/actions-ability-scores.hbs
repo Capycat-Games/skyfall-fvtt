@@ -1,4 +1,25 @@
 <div class="background-cut ability-scores abilities flexrow">
+	{{#each system.abilities2 as | ability abl |}}
+		<fieldset class="ability">
+			<div class="form-group stacked score">
+				<label>
+					1
+				</label>
+				<div class="form-fields">
+					<input type="text" disabled>
+				</div>
+			</div>
+
+			<div class="form-group stacked protection">
+				<label>
+					1
+				</label>
+				<div class="form-fields">
+					<input type="text" disabled>
+				</div>
+			</div>
+		</fieldset>
+	{{/each}}
 	{{#each system.abilities as | ability abl |}}
 		<div class="ability entry flexcol2 text-center" data-type="ability">
 			<div class="flexcol top">
@@ -17,14 +38,14 @@
 				</div>
 			</div>
 			<div class="flexcol bottom">
-				<div class="hidden protection icon {{#if ability.proficient}}active{{/if}}">
+				<div class="hidden protection2 icon2 {{#if ability.proficient}}active{{/if}}">
 					{{#if ability.proficient}}
 						{{{@root.SYSTEM.icons.shield}}}
 					{{else}}
 						{{{@root.SYSTEM.icons.squaretilt}}}
 					{{/if}}
 				</div>
-				<a class="{{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">
+				<a class="protection icon {{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{abl}}.proficient">
 					{{localize "SKYFALL.ACTOR.PROTECTION"}}
 				</a>
 				<label>{{ability.protection}}</label>

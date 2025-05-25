@@ -57,6 +57,15 @@ globalThis.skyfall = {
 		// descriptors: 
 	},
 	macros: hotbar,
+	i18n: {
+		localize: (value) => { return game.i18n.localize(value) },
+		format: (stringId, data={}) => {
+			for (const [key, value] of Object.entries(data)) {
+				data[key] = game.i18n.localize("" + value);
+			}
+			return game.i18n.format(stringId, data);
+		}
+	}
 }
 globalThis.RollSF = dice.SkyfallRoll;
 globalThis.SkyfallRoll = dice.SkyfallRoll;

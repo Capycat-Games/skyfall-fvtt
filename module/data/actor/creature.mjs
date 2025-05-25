@@ -693,7 +693,8 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const rollData = this.parent.getRollData();
 		for (const [key, skill] of Object.entries(this.skills)) {
 			skill.label = game.i18n.localize( SYSTEM.skills[key].label ?? "SKYFALL2.Skill" );
-
+			const ranks = ["Unproficient", "Proficient", "Expert"];
+			skill.rank = `SKYFALL2.PROFICIENCY.${ranks[skill.value]}`;
 			const roll = skill.roll;
 			roll.terms = roll.terms.filter( t => t.isDeterministic );
 			roll.resetFormula();
@@ -780,18 +781,32 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	
 	async _applyDamage(roll, multiplier = 1, applyDR = false) {
 		console.groupCollapsed( 'applyDamage' );
+
+		// Apply changes to the ACTOR
+		const { changes } = roll.options;
+		if ( changes ) {
+			const effect = new ActiveEffect({
+				name: "Roll Modifiers", type: "base",
+				disabled: false,
+				changes: changes,
+			});
+			for (const change of changes) {
+				effect.apply(this.parent, change);
+			}
+		}
+
 		// Get current resource values
 		const { hp, ep } = this.resources;
 		applyDR = multiplier == -1 ? false : applyDR;
 		const dr = this.dr;
 		
 		let drTypes = this.modifiers.damage.taken;
-		const drMods = {nor:1, imu:0, res:0.5, vul:1.5 };
+		const drMods = {normal: 1, imunity: 0, resistance: 0.5, vulnerability: 1.5 };
 		drTypes = Object.entries(drTypes).reduce( (acc, dr ) => {
 				acc[dr[0]] = drMods[dr[1]];
 				return acc;
 		}, {});
-
+		
 		let damage;
 		let typeDamage = {};
 		if( roll ){
@@ -809,31 +824,44 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		
 		if ( applyDR ) damage = 0 - dr;
 		else damage = 0;
+		const specialTypes = ['temp-hp','temp-ep', 'ep'];
+		const recovery = {
+			ep: 0,
+			tempHP: 0,
+			tempEP: 0,
+		}
 		// Apply Damage Reduction for each type of damage
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
-			const typeMod = drTypes[type] ?? 1;
-			dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
-			damage += dmg;
+			overview.types[type] = dmg;
+			if ( specialTypes.includes(type) ) {
+				dmg = Math.floor(dmg * Number(multiplier) );
+				if ( type == "ep" ) {
+					recovery.ep += dmg;
+				} else if ( type == "temp-hp" ) recovery.tempHP -= dmg;
+				else if ( type == "temp-ep" ) recovery.tempEP -= dmg;
+			} else {
+				const typeMod = drTypes[type] ?? 1;
+				dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
+				damage += dmg;
+			}
+			
 		}
-		// Deduct value from temp resource first
-		let updHPT = hp.temp;
-		if ( damage > 0 ) {
-			updHPT = Math.max( (updHPT - damage), 0 );
-			if ( damage >= hp.temp  ) damage = damage - hp.temp;
-		}
-		// Remaining goes to resource
-		let updHPV = hp.value;
-		updHPV = Math.clamp( (updHPV - damage), (hp.max*-1), hp.max );
 		
+		const deltaTemp = damage > 0 ? Math.min(hp.temp, damage) : 0;
+		const deltaHP = Math.clamp(damage - deltaTemp, -hp.max, hp.max * 2);
+		const deltaTempEP = recovery.ep > 0 ? Math.min(ep.temp, recovery.ep) : 0;
+		const deltaEP = Math.clamp(recovery.ep - deltaTempEP, 0, ep.max);
+
 		// Update the Actor
 		const updateData = {
-			"system.resources.hp.temp": updHPT,
-			"system.resources.hp.value": updHPV,
+			"system.resources.hp.value": hp.value - deltaHP,
+			"system.resources.hp.temp": Math.max(hp.temp - deltaTemp, recovery.tempHP),
+			"system.resources.ep.value": ep.value - deltaEP,
+			"system.resources.ep.temp": Math.max(ep.temp - deltaTempEP, recovery.tempEP),
 		};
+		console.groupEnd();
 
 		await this.parent.update(updateData);
-		
-		console.groupEnd();
 	}
 
 	_prepareItems(){

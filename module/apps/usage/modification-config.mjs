@@ -3,14 +3,18 @@ const {HandlebarsApplicationMixin, ApplicationV2} = foundry.applications.api;
 import D20Roll from "../../dice/d20-roll.mjs";
 import SkyfallRoll from "../../dice/skyfall-roll.mjs";
 
+const { DiceTerm, OperatorTerm, NumericTerm } = foundry.dice.terms;
+
 export default class ModificationConfig extends HandlebarsApplicationMixin(ApplicationV2) {
 	constructor(data, options){
 		super(options);
 		// init
 		this.manage = data;
+		this.data = data;
 		// this.manage.rollconfig = {};
 	}
 	manage = {};
+	data = {};
 
 	/** @override */
 	static DEFAULT_OPTIONS = {
@@ -56,10 +60,13 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	static async fromData(data, options){
 		const { appliedMods, effects } = data;
 		const createData = {}
+		console.log(data);
 		createData.rollconfig = data.rollconfig;
 		const actor = fromUuidSync(data.actor)?.clone({}, {keepId: true});
 		// const ability = actor.items.get(data.ability);
-		const ability = ( data.check ? new Item(SYSTEM.prototypeItems.ABILITYROLL) : actor.items.get(data.ability) );
+		const ability = ( data.check ? new Item(SYSTEM.prototypeItems.ABILITYROLL, {
+			parent: actor,
+		}) : actor.items.get(data.ability) );
 		if ( ability ) ability.system.descriptorsSpecial = [];
 		
 		const weapon = actor.items.get(data.weapon);
@@ -93,7 +100,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		const rolls = await this.getAbilityRolls(actor, ability);
 		
 		// APPLY MODS TO ROLLS
-		console.log("AAAA", check, rolls);
 		createData.rolls = await this.applyModificationToRolls(rolls, changes);
 		
 		// APPLY MODS TO EFFECT
@@ -101,6 +107,9 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		
 		createData.actor = actor;
 		createData.ability = ability;
+		createData.weapon = weapon;
+		
+		createData.check = check;
 		createData.cost = {
 			ep: {
 				base: ability.system.activation.cost ?? 0,
@@ -115,11 +124,34 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 	async updateData(){
 		// return;
+		this.manage.actor = this.data.actor?.clone({}, {keepId: true});
+		this.manage.ability = this.data.ability?.clone({}, {keepId: true});
+		this.manage.weapon = this.data.weapon?.clone({}, {keepId: true});
+		this.manage.rolls = this.data.rolls.map( i => i.clone());
+		console.log(this.manage);
+		if ( this.manage.ability ) this.manage.ability.system.descriptorsSpecial = [];
+		// MERGE ITEMS
+		if ( this.manage.weapon ) {
+			switch (this.manage.ability.type) {
+				case 'ability':
+				case 'spell':
+				case 'sigil':
+				case 'guild-ability':
+					ModificationConfig.mergeAbilityItem(this.manage.ability, this.manage.weapon);
+					break;
+				default:
+					break;
+			}
+		}
+		if ( this.manage.check ) {
+			ModificationConfig.mergeAbilityCheck(this.manage.ability, this.manage.check);
+		}
+
 		// GET TARGETS
 		this.manage.targets = await ModificationConfig.getTargets(this.manage.actor);
 		this.manage.cost = {
 			ep: {
-				base: this.manage.item?.system.activation.cost ?? 0,
+				base: this.manage.ability?.system.activation.cost ?? 0,
 				mod: 0,
 				limit: this.manage.actor?.system.proficiency,
 			},
@@ -150,7 +182,6 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		await ModificationConfig.applyModificationToItem(
 			this.manage.ability, changes
 		);
-		// FIXME GET WEAPON ROLL
 
 		// GET ITEM ROLLS
 		const rolls = await ModificationConfig.getAbilityRolls(
@@ -323,6 +354,11 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			// const name = item.name;
 			const name = [item.name, item.weapon?.name];
 			const identifier = [item.system.identifier, item.weapon?.system?.identifier];
+			if ( item.system.identifier.startsWith('check') ) {
+				const checkId = item.system.identifier.split('-');
+				checkId.shift();
+				checkId.map( i => identifier.push(`check-${i}`));
+			}
 			const itemDescriptors = [...item.system.descriptors, ...item.system.descriptorsSpecial];
 
 			// Ignore modifications if apply condition is not met;

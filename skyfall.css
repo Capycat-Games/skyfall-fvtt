@@ -898,19 +898,6 @@ dropdown-tags .tags-dropdown fieldset legend {
   width: 80%;
   margin: 0 10%;
 }
-.skyfall.sheet.actor.character .window-content .ability-scores .ability .top .protection.icon,
-.skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .protection.icon {
-  font-size: 10px;
-  height: 0;
-  width: 100%;
-  position: relative;
-}
-.skyfall.sheet.actor.character .window-content .ability-scores .ability .top .protection.icon i,
-.skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .protection.icon i {
-  left: -4px;
-  top: -4px;
-  position: absolute;
-}
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .top .active,
 .skyfall.sheet.actor.character .window-content .ability-scores .ability .bottom .active {
   font-weight: bold;
@@ -1388,6 +1375,469 @@ dropdown-tags .tags-dropdown fieldset legend {
 .skyfall.sheet.actor.character .background-box .box {
   background-color: white;
   border: 2px solid #424f66;
+}
+.skyfall.sheet.actor.character.review .window-content {
+  padding-top: 0;
+  padding-left: 200px;
+}
+.skyfall.sheet.actor.character.review .window-content [data-action] {
+  cursor: pointer;
+}
+.skyfall.sheet.actor.character.review .window-content [data-action]:hover {
+  color: var(--actor-color);
+  text-decoration: underline;
+  text-shadow: none;
+}
+.skyfall.sheet.actor.character.review .window-content .tab {
+  min-width: 630px;
+}
+.skyfall.sheet.actor.character.review .window-content input {
+  border-radius: 0px;
+  padding: 0 0.2rem;
+}
+.skyfall.sheet.actor.character.review .window-content input:disabled {
+  border: none;
+}
+.skyfall.sheet.actor.character.review .window-content button {
+  border-radius: 0px;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  padding: 2px;
+  background-color: white;
+  border: 2px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content button i {
+  color: var(--actor-color);
+  margin: 0;
+}
+.skyfall.sheet.actor.character.review .window-content button:hover {
+  box-shadow: none;
+  background-color: var(--actor-color-faint);
+}
+.skyfall.sheet.actor.character.review .window-content select {
+  height: 28px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute {
+  text-align: center;
+  align-items: stretch;
+  border: none;
+  width: 100%;
+  height: auto;
+  background-image: url(assets/sheet/cut-attributes.svg);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding: 0.5rem;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group {
+  background-color: white;
+  border: 2px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group:has(.form-fields.catharsis) {
+  border-left: 1px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group:has(.form-fields.dr) {
+  border-right: 1px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group label {
+  font-family: NORTHWEST;
+  font-size: 12px;
+  line-height: 1em;
+  padding: 2px;
+  min-height: 1.5em;
+  max-height: 1.5em;
+  border-bottom: 2px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group label .skyfall-icon {
+  font-size: 14px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields {
+  padding: 5px 0;
+  min-height: 38px;
+  justify-content: center;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields input {
+  height: 28px;
+  width: 28px;
+  max-width: 28px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields select {
+  height: 28px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields input[data-temporary] {
+  border-radius: 50px;
+  z-index: 1;
+  background-color: #f2f2f2;
+  border: 1px dashed var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields.separator {
+  position: relative;
+  justify-content: space-evenly;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields.separator:before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  content: '0';
+  color: transparent;
+  display: block;
+  height: 100%;
+  width: calc(50% - 0px);
+  border-right: 2px solid var(--actor-color);
+  z-index: 0;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields.input-vary {
+  flex-direction: column;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields.input-vary [data-action] {
+  text-decoration: none;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group .form-fields:has(+ select) {
+  border-bottom: 2px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.currency {
+  padding: 0 5px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.currency label {
+  text-align: left;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.currency input {
+  min-width: 60px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.shadow .form-fields {
+  font-size: 20px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.shadow .form-fields .temporary-shadow {
+  position: relative;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.shadow .form-fields .temporary-shadow .skyfall-icon {
+  color: var(--actor-color-faint);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .form-group.shadow .form-fields .temporary-shadow .value {
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  font-size: 12px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .hitDie {
+  flex: 0 0 30px;
+  justify-content: center;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .hitDie .die {
+  flex: 0 0 20px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.attribute .rest {
+  flex: 0 0 30px;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability {
+  border: none;
+  padding: 0;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability > * {
+  text-align: center;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score,
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score {
+  --element-w: 65px;
+  --element-h: 70px;
+  width: var(--element-w);
+  height: var(--element-h);
+  position: relative;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score > * {
+  z-index: 1;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score:before,
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score:after {
+  content: "";
+  z-index: 0;
+  position: absolute;
+  background-color: white;
+  clip-path: polygon(23% 0, 75% 0%, 100% 15%, 100% 100%, 0 100%, 0% 20%);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score:before {
+  background-color: var(--actor-color);
+  width: var(--element-w);
+  height: var(--element-h);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.score:after {
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  width: calc(var(--element-w) - 4px);
+  height: calc(var(--element-h) - 4px);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection {
+  --element-w: 65px;
+  --element-h: 50px;
+  width: var(--element-w);
+  height: var(--element-h);
+  position: relative;
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection:before,
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection:after {
+  content: "";
+  z-index: 0;
+  position: absolute;
+  background-color: white;
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 20% 100%, 0% 80%);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection:before {
+  background-color: var(--actor-color);
+  width: var(--element-w);
+  height: var(--element-h);
+}
+.skyfall.sheet.actor.character.review .window-content fieldset.ability .form-group.protection:after {
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  width: calc(var(--element-w) - 4px);
+  height: calc(var(--element-h) - 4px);
+}
+.skyfall.sheet.actor.character.review .window-content aside.sheet-header-v2 {
+  background-color: var(--actor-color);
+  background-opacity: 0.5;
+  position: absolute;
+  float: left;
+  left: 0;
+  width: 190px;
+  margin-right: 10px;
+  height: auto;
+  padding: 0.5rem;
+  gap: 5px;
+}
+.skyfall.sheet.actor.character.review .window-content aside.sheet-header-v2 .charname {
+  flex: 0 0 30px;
+}
+.skyfall.sheet.actor.character.review .window-content aside.sheet-header-v2 .charname input {
+  text-align: center;
+  height: 30px;
+  background-image: url(assets/sheet-v2/name-title-blue.svg);
+  background-repeat: no-repeat;
+  background-size: 150% 34px;
+  background-position: 100% 100%;
+  padding: 0 25px 0 5px;
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs {
+  border: 1px solid var(--actor-color);
+  align-items: stretch;
+  text-transform: uppercase;
+  line-height: 1em;
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs .item {
+  flex: auto;
+  background-color: white;
+  border: 1px solid var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs .item i {
+  visibility: hidden;
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs .item label {
+  color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs .item.active {
+  background-color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content nav.sheet-tabs .item.active label {
+  color: white;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores2 {
+  height: 145px;
+  align-content: flex-start;
+  background-image: url(assets/sheet/cut-abilities.svg);
+  background-size: cover;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores2 .protection.icon {
+  font-size: 10px;
+  height: 0;
+  width: 100%;
+  position: relative;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores2 .protection.icon i {
+  left: -4px;
+  top: -4px;
+  position: absolute;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores .ability .bottom {
+  margin-top: 6px;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores .ability .protection.icon {
+  position: relative;
+  line-height: 14px;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores .ability .protection.icon:before {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  content: "";
+  background-color: white;
+  border: 1px solid var(--actor-color);
+  transform: rotate(45deg);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .ability-scores .ability .protection.icon.active:before {
+  background-color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .header {
+  font-family: NORTHWEST;
+  text-align: center;
+  color: white;
+  background-color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list {
+  text-align: center;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div {
+  min-height: 26px;
+  height: 100%;
+  border-right: 2px solid var(--actor-color-faint);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div > * {
+  vertical-align: -webkit-baseline-middle;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div .skyfall-icon {
+  color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div.active {
+  background-color: var(--actor-color);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div.active .skyfall-icon {
+  color: white;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list .filter-list div:hover {
+  background-color: var(--actor-color-faint);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list li {
+  min-height: 30px;
+  margin: 0;
+  border-left: 2px solid var(--actor-color-faint);
+  border-right: 2px solid var(--actor-color-faint);
+  border-top: 2px solid var(--actor-color-faint);
+  background-color: white;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-actions .actions .action-list li:last-child {
+  border-bottom: 2px solid var(--actor-color-faint);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits {
+  align-items: stretch;
+  gap: 1em;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group {
+  padding: 1.5em;
+  position: relative;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait {
+  min-height: 70px;
+  width: 100%;
+  padding: 0 5px;
+  position: relative;
+  align-content: flex-start;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait > * {
+  z-index: 1;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait:before {
+  content: "";
+  position: absolute;
+  height: 70px;
+  width: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(assets/sheet-v2/header-b-blue.svg);
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait.left:before {
+  transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  background-position: 100% 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait.right {
+  justify-content: flex-end;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait.right > * {
+  text-align: right;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait.right:before {
+  background-position: 100% 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait label {
+  min-height: 28px;
+  max-width: 150px;
+  place-content: center;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait label,
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait label > * {
+  font-family: NORTHWEST;
+  font-size: 1em;
+  line-height: 1em;
+  color: white;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait select,
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait input {
+  height: 28px;
+  width: 100%;
+  background-color: white;
+  border: 2px solid var(--actor-color-faint);
+  border-radius: 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .form-group.trait .values {
+  padding: 0 0.5rem;
+  min-height: 28px;
+  width: 100%;
+  align-content: center;
+  background-color: white;
+  border: 2px solid var(--actor-color-faint);
+  border-radius: 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group.left::before,
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group.right::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(assets/sheet-v2/border-detail.svg);
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 50%;
+  z-index: 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group.left::before {
+  transform: scale(-1);
+  -webkit-transform: scale(-1);
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .debugOLD:before,
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .debugOLD:after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(assets/sheet-v2/border-detail.svg);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  z-index: 0;
+}
+.skyfall.sheet.actor.character.review .window-content .tab.actor-features .actor-traits .traits-group .debugOLD:before {
+  transform: scale(-1);
+  -webkit-transform: scale(-1);
 }
 /* ----------------------------------------- */
 /*  NPC Styles                               */

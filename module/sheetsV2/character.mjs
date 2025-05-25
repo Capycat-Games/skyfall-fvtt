@@ -9,8 +9,8 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		window:{
 			resizable: true,
 		},
-		classes: ["skyfall", "actor", "character"],
-		position: { width: 800, height: 660},
+		classes: ["skyfall", "actor", "character", "review"],
+		position: { width: 830, height: 760},
 		actions: {
 			inventoryDisplay: CharacterSheetSkyfall.#inventoryDisplay,
 			itemToChat: CharacterSheetSkyfall.#itemToChat,
@@ -21,7 +21,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 	/** @override */
 	static PARTS = {
 		aside: {
-			template: "systems/skyfall/templates/v2/actor/aside.hbs"
+			template: "systems/skyfall/templates/v2/actor/aside-new.hbs"
 		},
 		tabs: {
 			template: "templates/generic/tab-navigation.hbs"
@@ -101,7 +101,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			},
 			sigil: {
 				active: true,
-				icon: SYSTEM.icons.gem,
+				icon: SYSTEM.icons.sfsigil,
 				label:"TYPES.Item.sigil"
 			},
 			action: {
@@ -386,8 +386,8 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 			if ( v == "normal" || !v ) return;
 			context.irv[v].push({
 				id: k,
-				label: SYSTEM.DESCRIPTOR.DAMAGE[k].label,
-				hint: SYSTEM.DESCRIPTOR.DAMAGE[k].hint,
+				label: SYSTEM.DESCRIPTOR.DAMAGE[k]?.label ?? k,
+				hint: SYSTEM.DESCRIPTOR.DAMAGE[k]?.hint,
 				type: 'descriptor',
 			});
 		});
@@ -427,44 +427,26 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 				}
 			}
 			if ( ['feature','feat'].includes(item.type) ) items.features.push(item);
+			
+			if ( ['ability','spell','sigil'].includes(item.type) && !item._enriched ) {
+				const embedded = await item.toEmbed({
+					isFigure: false,
+					collapse: true,
+					embeddedAt: "ActorSheet",
+				}, {
+				});
+				if ( embedded ) {
+					item._enriched = embedded.innerHTML;
+				}
+			}
 			if ( item.type == 'ability' ) {
 				items.abilities.push(item);
-				if ( !item._enriched ) {
-					const embedded = await item.toEmbed({
-						isSheetEmbedded: true,
-						isFigure: false,
-						collapse: true,
-					}, {});
-					if ( embedded ) {
-						item._enriched = embedded.innerHTML;
-					}
-				}
 			}
 			if ( item.type == 'spell' ) {
 				items.spells.push(item);
-				if ( !item._enriched ) {
-					const embedded = await item.toEmbed({
-						isSheetEmbedded: true,
-						isFigure: false,
-						collapse: true,
-					}, {});
-					if ( embedded ) {
-						item._enriched = embedded.innerHTML;
-					}
-				}
 			} 
 			if ( item.type == 'sigil' ) {
 				items.sigils.push(item);
-				if ( !item._enriched ) {
-					const embedded = await item.toEmbed({
-						isSheetEmbedded: true,
-						isFigure: false,
-						collapse: true,
-					}, {});
-					// if ( embedded ) {
-						item._enriched = embedded.innerHTML;
-					// }
-				}
 			}
 			if ( progression.includes(item.type) ) items[item.type] = item;
 			if ( classPaths.includes(item.type) ) items[item.type].push(item);

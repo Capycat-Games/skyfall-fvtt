@@ -142,6 +142,7 @@ export const SkyfallSheetMixin = Base => {
 		}
 
 		_getPlayMode(){
+			if ( ['character'].includes(this.document.type) ) return;
 			const tabs = this.element.querySelector("nav.tabs");
 			const toggleMode = document.createElement("a");
 			toggleMode.classList = "toggle-mode";
@@ -919,7 +920,9 @@ export const SkyfallSheetMixin = Base => {
 			if ( this.rolling.abl && this.rolling.type && this.rolling.id ) {
 				const { ModificationConfig } = skyfall.applications;
 				// const ability = SYSTEM.prototypeItems.ABILITYROLL;
-				const ability = new Item(SYSTEM.prototypeItems.ABILITYROLL);
+				const ability = new Item(SYSTEM.prototypeItems.ABILITYROLL, {
+					parent: this.document,
+				});
 				const MODCONFIG = await ModificationConfig.fromData({
 						actor: this.actor.uuid,
 						ability: ability, //this.actor.items.find( i => i.name == 'ABILITYROLL').id,

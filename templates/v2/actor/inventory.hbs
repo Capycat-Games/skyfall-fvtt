@@ -3,38 +3,92 @@
 	{{#if (eq document.type "character") }}
 		<div class="inventory-header flexrow">
 			{{!-- CURRENCY --}}
-			<div class="currency text-center flexcol">
-				{{formGroup schema.currency.t value=system.currency.t classes="stacked2" localize=true}}
-				{{formGroup schema.currency.p value=system.currency.p classes="stacked2" localize=true}}
-				{{formGroup schema.currency.k value=system.currency.k classes="stacked2" localize=true}}
-			</div>
-			{{!-- CAPACITY --}}
-			<div class="capacity">
-				<div class="form-group flexcol stacked">
-					<label>{{localize "SKYFALL2.Capacity"}}</label>
+			<fieldset class="attribute">
+				<div class="form-group currency">
+					<label>
+						• {{localize schema.currency.t.label}}
+					</label>
 					<div class="form-fields">
-						{{formInput schema.capacity.value value=system.capacity.value disabled=true}}/
+						{{formInput schema.currency.t value=system.currency.t localize=true}}
+					</div>
+					<div class="flex100"></div>
+					<label>
+						• {{localize schema.currency.p.label}}
+					</label>
+					<div class="form-fields">
+						{{formInput schema.currency.p value=system.currency.p localize=true}}
+					</div>
+					<div class="flex100"></div>
+					<label>
+						• {{localize schema.currency.k.label}}
+					</label>
+					<div class="form-fields">
+						{{formInput schema.currency.k value=system.currency.k localize=true}}
+					</div>
+				</div>
+			</fieldset>
+			{{#if oldDesign}}
+				<div class="currency text-center flexcol">
+					{{formGroup schema.currency.t value=system.currency.t classes="stacked2" localize=true}}
+					{{formGroup schema.currency.p value=system.currency.p classes="stacked2" localize=true}}
+					{{formGroup schema.currency.k value=system.currency.k classes="stacked2" localize=true}}
+				</div>
+			{{/if}}
+			{{!-- CAPACITY --}}
+			<fieldset class="attribute">
+				<div class="form-group stacked capacity">
+					<label>
+						{{localize "SKYFALL2.Capacity"}}
+					</label>
+					<div class="form-fields separator">
+						{{formInput schema.capacity.value value=system.capacity.value disabled=true}}
 						{{formInput schema.capacity.max value=system.capacity.max disabled=true}}
 					</div>
+					{{formInput schema.capacity.ability value=system.capacity.ability }}
+				</div>
+			</fieldset>
+			{{#if oldDesign}}
+				<div class="capacity">
+					<div class="form-group flexcol stacked">
+						<label>{{localize "SKYFALL2.Capacity"}}</label>
+						<div class="form-fields">
+							{{formInput schema.capacity.value value=system.capacity.value disabled=true}}/
+							{{formInput schema.capacity.max value=system.capacity.max disabled=true}}
+						</div>
 
-					<div class="form-fields">
-						{{formInput schema.capacity.ability value=system.capacity.ability }}
+						<div class="form-fields">
+							{{formInput schema.capacity.ability value=system.capacity.ability }}
+						</div>
 					</div>
 				</div>
-			</div>
+			{{/if}}
 			{{!-- ATTUNEMENT --}}
-			<div class="fragments flex2">
-				<div class="form-group flexcol">
-					<label>{{localize "SKYFALL2.FragmentPl"}}</label>
-					<div class="form-fields">
-						{{formInput schema.fragments.value value=system.fragments.value disabled=true}}/
+			<fieldset class="attribute">
+				<div class="form-group stacked fragments">
+					<label>
+						{{localize "SKYFALL2.FragmentPl"}}
+					</label>
+					<div class="form-fields separator">
+						{{formInput schema.fragments.value value=system.fragments.value disabled=true}}
 						{{formInput schema.fragments.max value=system.fragments.max disabled=true}}
 					</div>
-					<div class="form-fields">
-						{{formInput schema.fragments.abl value=system.fragments.abl }}
+					{{formInput schema.fragments.abl value=system.fragments.abl }}
+				</div>
+			</fieldset>
+			{{#if oldDesign}}
+				<div class="fragments flex2">
+					<div class="form-group flexcol">
+						<label>{{localize "SKYFALL2.FragmentPl"}}</label>
+						<div class="form-fields">
+							{{formInput schema.fragments.value value=system.fragments.value disabled=true}}/
+							{{formInput schema.fragments.max value=system.fragments.max disabled=true}}
+						</div>
+						<div class="form-fields">
+							{{formInput schema.fragments.abl value=system.fragments.abl }}
+						</div>
 					</div>
 				</div>
-			</div>
+			{{/if}}
 		</div>
 	{{/if}}
 	<div class="item-list inventory-list scrollable">

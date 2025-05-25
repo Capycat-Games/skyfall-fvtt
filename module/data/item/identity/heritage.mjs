@@ -13,7 +13,7 @@ export default class Heritage extends Identity {
 		return {
 			...super._typeOptions,
 			type: 'heritage',
-			unique: true,
+			unique: false,
 			parentTypes: ['character'],
 			benefitTypes: {feature: [], grant: []},
 		}

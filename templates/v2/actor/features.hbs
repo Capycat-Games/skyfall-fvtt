@@ -2,59 +2,159 @@
 	data-group="{{tab.group}}">
 
 	<div class="flexrow actor-traits" style="width: 100%;">
-		<div class="">
-			{{formField schema.creatureType value=system.creatureType localize=true stacked=true}}
-			{{formField schema.size value=system.size localize=true stacked=true}}
-			{{formField schema.spellcasting value=system.spellcasting localize=true stacked=true}}
-			{{formField schema.details.pronouns value=system.details.pronouns localize=true stacked=true}}
+		<div class="traits-group left">
+			{{formGroup
+				schema.creatureType
+				value=system.creatureType
+				localize=true
+				stacked=true
+				classes="trait left"
+			}}
+			{{formGroup
+				schema.size
+				value=system.size
+				localize=true
+				stacked=true
+				classes="trait left"
+			}}
+			{{formGroup
+				schema.spellcasting
+				value=system.spellcasting
+				localize=true
+				stacked=true
+				classes="trait left"
+			}}
+			{{formGroup
+				schema.details.pronouns
+				value=system.details.pronouns
+				localize=true
+				stacked=true
+				classes="trait left"
+			}}
 		</div>
-		<div class="">
-			<div class="languages">
-				<h4><a data-action="manage" data-manage="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
-				{{#each languages as | language |}}
-					<span class="language">{{localize language}}{{ifThen @last "" "," }}</span>
-				{{/each}}
+		<div class="traits-group right">
+			{{!-- LANGUAGES --}}
+			<div class="form-group stacked trait right languages">
+				<label>
+					<a data-action="manage" data-manage="languages">
+						{{localize "SKYFALL.ACTOR.LANGUAGE"}}
+					</a>
+				</label>
+				<div class="form-fields">
+					<div class="values">
+						{{#each languages as | language |}}
+							<span class="language">{{localize language}}{{ifThen @last "" "," }}</span>
+						{{/each}}
+					</div>
+				</div>
 			</div>
-			<div class="proficiencies">
-				<h4><a data-action="edit" data-field-path="system.proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
-				{{#each proficiencies as | proficiency |}}
-					<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
-				{{/each}}
+			{{!-- PROFICIENCIES --}}
+			<div class="form-group stacked trait right proficiencies">
+				<label>
+					<a data-action="edit" data-field-path="system.proficiencies">
+						{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}
+					</a>
+				</label>
+				<div class="form-fields">
+					<div class="values">
+						{{#each proficiencies as | proficiency |}}
+							<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
+						{{/each}}
+					</div>
+				</div>
 			</div>
-			{{!-- RESISTANCES --}}
-			{{#if (or isEditMode irv.vulnerability )}}
-				<div class="status vulnerability">
-					<h4><a data-action="manage" data-manage="irv">
-							{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:
-						</a></h4>
-					{{#each irv.vulnerability as | entry |}}
-						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
-					{{/each }}
+			{{!-- VULNERABILITY --}}
+			<div class="form-group stacked trait right status vulnerability">
+				<label>
+					<a data-action="manage" data-manage="irv">
+						{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}
+					</a>
+				</label>
+				<div class="form-fields">
+					<div class="values flexrow">
+						{{#each irv.vulnerability as | entry |}}
+							{{{reference entry.id 'span'}}}&nbsp;
+						{{/each }}
+					</div>
 				</div>
-			{{/if}}
-			{{#if (or isEditMode irv.resistance )}}
-				<div class="status resistance">
-					<h4><a data-action="manage" data-manage="irv">
-							{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:
-						</a></h4>
-					{{#each irv.resistance as | entry |}}
-						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
-					{{/each }}
-				</div>
-			{{/if}}
-			{{#if (or isEditMode irv.imunity )}}
-				<div class="status imunity">
-					<h4><a data-action="manage" data-manage="irv">
-							{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:
-						</a></h4>
-					{{#each irv.imunity as | entry |}}
-						<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
-					{{/each }}
-				</div>
-			{{/if}}
+			</div>
+			{{!-- RESISTANCE --}}
 
-			<div class="background-box flexcol hidden">
+			<div class="form-group stacked trait right status resistance">
+				<label>
+					<a data-action="manage" data-manage="irv">
+						{{localize "SKYFALL2.MODIFIER.ResistancePl"}}
+					</a>
+				</label>
+				<div class="form-fields">
+					<div class="values flexrow">
+						{{#each irv.resistance as | entry |}}
+							{{{reference entry.id 'span'}}}&nbsp;
+						{{/each }}
+					</div>
+				</div>
 			</div>
+			{{!-- IMUNITY --}}
+			<div class="form-group stacked trait right status imunity">
+				<label>
+					<a data-action="manage" data-manage="irv">
+						{{localize "SKYFALL2.MODIFIER.ImunityPl"}}
+					</a>
+				</label>
+				<div class="form-fields">
+					<div class="values flexrow">
+						{{#each irv.imunity as | entry |}}
+							{{{reference entry.id 'span'}}}&nbsp;
+						{{/each }}
+					</div>
+				</div>
+			</div>
+
+			{{#if oldDesign}}
+				<div class="languages">
+					<h4><a data-action="manage" data-manage="languages">{{localize "SKYFALL.ACTOR.LANGUAGE"}}</a></h4>
+					{{#each languages as | language |}}
+						<span class="language">{{localize language}}{{ifThen @last "" "," }}</span>
+					{{/each}}
+				</div>
+				<div class="proficiencies">
+					<h4><a data-action="edit" data-field-path="system.proficiencies">{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}</a></h4>
+					{{#each proficiencies as | proficiency |}}
+						<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
+					{{/each}}
+				</div>
+				{{!-- RESISTANCES --}}
+				{{#if (or isEditMode irv.vulnerability )}}
+					<div class="status vulnerability">
+						<h4><a data-action="manage" data-manage="irv">
+								{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}:
+							</a></h4>
+						{{#each irv.vulnerability as | entry |}}
+							<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+						{{/each }}
+					</div>
+				{{/if}}
+				{{#if (or isEditMode irv.resistance )}}
+					<div class="status resistance">
+						<h4><a data-action="manage" data-manage="irv">
+								{{localize "SKYFALL2.MODIFIER.ResistancePl"}}:
+							</a></h4>
+						{{#each irv.resistance as | entry |}}
+							<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+						{{/each }}
+					</div>
+				{{/if}}
+				{{#if (or isEditMode irv.imunity )}}
+					<div class="status imunity">
+						<h4><a data-action="manage" data-manage="irv">
+								{{localize "SKYFALL2.MODIFIER.ImunityPl"}}:
+							</a></h4>
+						{{#each irv.imunity as | entry |}}
+							<span class="{{entry.type}}-reference">{{entry.label}}{{ifThen @last "" ","}}</span>
+						{{/each }}
+					</div>
+				{{/if}}
+			{{/if}}
 		</div>
 	</div>
 	{{> "systems/skyfall/templates/v2/actor/progression-list.hbs" content=progression cssClass='actor-progression columns-2'}}
