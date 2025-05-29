@@ -51,8 +51,13 @@
 		{{!-- HP / DR / MOVEMENT --}}
 		<div class="resource hp flexrow text-center" data-tooltip="SKYFALL2.RESOURCE.HP">
 			{{{SYSTEM.icons.sfheart}}}
-			{{formInput schema.resources.hp.value value=system.resources.hp.value}}/
-			{{formInput schema.resources.hp.max value=system.resources.hp.max}}
+			{{formInput
+				schema.resources.hp.max
+				value=system.resources.hp.max
+				disabled=(not isEditMode)
+			}}
+			({{formInput schema.resources.hp.temp value=system.resources.hp.temp}})
+			{{formInput schema.resources.hp.value value=system.resources.hp.value}}
 		</div>
 		<div class="dr flexrow text-center" data-tooltip="SKYFALL2.DamageReduction">
 			{{{SYSTEM.icons.sfdr}}}

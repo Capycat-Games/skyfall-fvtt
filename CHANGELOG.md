@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 0.9.609 - BETA
+
+- Personagem - Corrigido. Aplicação de dano e recuperação de recursos.
+
+## 0.9.608 - BETA
+
+- Personagem - Atualizado. Design da Ficha de personagem.
+- Personagem - Corrigido. Aplicação de dano e recuperação de recursos.
+- Personagem - Corrigido. Erro na preparação das habilidades impedia a ficha de abrir.
+- Configuração de Uso - Corrigido. Modificações não eram removidas se desativadas.
+- Configuração de Uso - Corrigido. Aplicação de efeitos de TargetDR e TargetIRV.
+- Configuração de Uso - Corrigido. Aplicação de efeitos com addRoll.
+
 ## 0.9.607 - BETA
 
 - Personagem - Adicionado. Campos de Bônus para iniciativa e pericias.

@@ -832,7 +832,6 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		}
 		// Apply Damage Reduction for each type of damage
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
-			overview.types[type] = dmg;
 			if ( specialTypes.includes(type) ) {
 				dmg = Math.floor(dmg * Number(multiplier) );
 				if ( type == "ep" ) {
@@ -846,19 +845,23 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 			}
 			
 		}
-		
-		const deltaTemp = damage > 0 ? Math.min(hp.temp, damage) : 0;
-		const deltaHP = Math.clamp(damage - deltaTemp, -hp.max, hp.max * 2);
-		const deltaTempEP = recovery.ep > 0 ? Math.min(ep.temp, recovery.ep) : 0;
-		const deltaEP = Math.clamp(recovery.ep - deltaTempEP, 0, ep.max);
-
 		// Update the Actor
-		const updateData = {
-			"system.resources.hp.value": hp.value - deltaHP,
-			"system.resources.hp.temp": Math.max(hp.temp - deltaTemp, recovery.tempHP),
-			"system.resources.ep.value": ep.value - deltaEP,
-			"system.resources.ep.temp": Math.max(ep.temp - deltaTempEP, recovery.tempEP),
-		};
+		const updateData = {};
+		if ( hp ) {
+			const deltaTemp = damage > 0 ? Math.min(hp.temp, damage) : 0;
+			const deltaHP = Math.clamp(damage - deltaTemp, -hp.max, hp.max * 2);
+
+			updateData["system.resources.hp.value"] = hp.value - deltaHP;
+			updateData["system.resources.hp.temp"] = Math.max(hp.temp - deltaTemp, recovery.tempHP);
+		}
+		if ( ep ) {
+			const deltaTempEP = recovery.ep > 0 ? Math.min((ep.temp ?? 0), recovery.ep) : 0;
+			const deltaEP = Math.clamp(recovery.ep - deltaTempEP, 0, (ep.max ?? 0));
+			updateData["system.resources.ep.value"] = ep.value - deltaEP;
+			updateData["system.resources.ep.temp"] = Math.max(ep.temp - deltaTempEP, recovery.tempEP);
+		}
+
+		
 		console.groupEnd();
 
 		await this.parent.update(updateData);
