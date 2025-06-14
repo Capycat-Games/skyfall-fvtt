@@ -1,3 +1,4 @@
+const {renderTemplate} = foundry.applications.handlebars;
 import RollConfig from "../apps/roll-config.mjs";
 
 const _terms = foundry.dice.terms;

@@ -1,0 +1,9 @@
+<section class="tab character-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="character">
+
+	<div class="biography">
+		{{formInput schema.biography value=system.biography enriched=enriched.biography documentUUID=document.uuid toggled=true localize=true}}
+	</div>
+</section>

@@ -11,6 +11,10 @@ import ActorConfigurationSheet from "./actor-config.mjs";
 const {HandlebarsApplicationMixin} = foundry.applications.api;
 const {ItemSheetV2} = foundry.applications.sheets;
 
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
+const ContextMenu = foundry.applications.ux.ContextMenu.implementation;
+const DragDrop = foundry.applications.ux.DragDrop.implementation;
+
 /**
  * @typedef {object} TabConfiguration
  * @property {string} id        The unique key for this tab.
@@ -162,7 +166,7 @@ export const SkyfallSheetMixin = Base => {
 			
 			// Add console.log button
 			const logLabel = game.i18n.localize("CONSOLE.LOG");
-			const logBtn = `<button type="button" class="header-control fa-solid fa-terminal" data-action="logToConsole" data-tooltip="${logLabel}" aria-label="${logLabel}"></button>`;
+			const logBtn = `<button type="button" class="header-control fa-solid fa-terminal icon" data-action="logToConsole" data-tooltip="${logLabel}" aria-label="${logLabel}"></button>`;
 			this.window.close.insertAdjacentHTML("beforebegin", logBtn);
 			// const convertBtn = `<button type="button" class="header-control fa-solid fa-recycle" data-action="convertItem" data-tooltip="CONVERT" aria-label="CONVERT"></button>`;
 			// this.window.close.insertAdjacentHTML("beforebegin", convertBtn);
@@ -248,6 +252,7 @@ export const SkyfallSheetMixin = Base => {
 			const itemTypes = ["weapon","armor","clothing","equipment","consumable","loot"];
 			
 			new ContextMenu(this.element, '.window-content [data-create-list]', [], {
+				jQuery: false,
 				eventName: "click",
 				onOpen: entry => {
 					ui.context.menuItems = itemTypes.map( type => {
@@ -263,8 +268,9 @@ export const SkyfallSheetMixin = Base => {
 						}
 					})
 				}
-			});
+			})
 			new ContextMenu(this.element, '.window-content .class, .window-content .path', [], {
+				jQuery: false,
 				onOpen: entry => {
 					const entryId = entry.dataset.entryId;
 					const item = this.document.items.find(it => it.id==entryId);
@@ -285,6 +291,7 @@ export const SkyfallSheetMixin = Base => {
 			});
 
 			new ContextMenu(this.element, '.window-content .class-level', [], {
+				jQuery: false,
 				onOpen: entry => {
 					const originId = entry.dataset.level;
 					const classes = this.document.items.filter(i => i.type == 'class');
@@ -454,7 +461,7 @@ export const SkyfallSheetMixin = Base => {
 			siblings = Array.from(siblings).map(s => collection.get(s.dataset.entryId));
 			siblings.findSplice(i => i === item);
 
-			let updates = SortingHelpers.performIntegerSort(item, {target: sibling, siblings: siblings, sortKey: "sort"});
+			let updates = foundry.utils.SortingHelpers.performIntegerSort(item, {target: sibling, siblings: siblings, sortKey: "sort"});
 			updates = updates.map(({target, update}) => ({_id: target.id, sort: update.sort}));
 			this.document.updateEmbeddedDocuments("Item", updates);
 		}
@@ -868,7 +875,7 @@ export const SkyfallSheetMixin = Base => {
 			const advantageConfig = (event.altKey ? 1 : (event.ctrlKey ? -1 : 0));
 			const id = target.dataset.id;
 			const rollType = target.dataset.rollType;
-			
+			const isDeathSave = rollType == 'deathsave';
 			if ( event.type == 'contextmenu' ) {
 				this.rolling = null;
 				return this.render(true);
@@ -877,7 +884,13 @@ export const SkyfallSheetMixin = Base => {
 			// rolling {type:"skill|attack|ability|"}
 			if ( rollType == 'levelHitDie' ) { return; }
 			else if ( rollType == 'healHitDie' ) { return; }
-			else if ( rollType == 'deathSave' ) { return; }
+			else if ( rollType == 'deathsave' ) { 
+				this.rolling = {
+					id: 'deathsave',
+					abl: 'deathsave',
+					type: 'deathsave',
+				}
+			}
 			else if ( rollType == 'initiative' ) {
 				// this.rolling = null;
 				// const combat = game.combats.active;
@@ -917,7 +930,7 @@ export const SkyfallSheetMixin = Base => {
 					this.rolling.abilities = this.document.system.initiative.abilities;
 				}
 			}
-			if ( this.rolling.abl && this.rolling.type && this.rolling.id ) {
+			if ( isDeathSave || (this.rolling.abl && this.rolling.type && this.rolling.id) ) {
 				const { ModificationConfig } = skyfall.applications;
 				// const ability = SYSTEM.prototypeItems.ABILITYROLL;
 				const ability = new Item(SYSTEM.prototypeItems.ABILITYROLL, {
@@ -938,7 +951,7 @@ export const SkyfallSheetMixin = Base => {
 				// await this.actor.rollCheck(this.rolling, {skipConfig, advantageConfig});
 				this.rolling = null;
 			}
-			this.render(true);
+			if ( !isDeathSave ) this.render(true);
 		}
 
 		static #onEditImage(event, target) {

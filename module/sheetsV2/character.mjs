@@ -2,6 +2,7 @@ import { SYSTEM } from "../config/system.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ActorSheetV2 } = foundry.applications.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
@@ -9,7 +10,7 @@ export default class CharacterSheetSkyfall extends SkyfallSheetMixin(ActorSheetV
 		window:{
 			resizable: true,
 		},
-		classes: ["skyfall", "actor", "character", "review"],
+		classes: ["skyfall", "actor", "character", "standard-form", "review"],
 		position: { width: 830, height: 760},
 		actions: {
 			inventoryDisplay: CharacterSheetSkyfall.#inventoryDisplay,

@@ -1,5 +1,5 @@
+const {renderTemplate} = foundry.applications.handlebars;
 import SkyfallRoll from "./skyfall-roll.mjs";
-
 const _terms = foundry.dice.terms;
 /**
  * A type of Roll specific to a d20-based check

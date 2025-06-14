@@ -1,0 +1,62 @@
+<div data-entry-id="{{item.id}}"
+	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}">
+	{{#if (eq embeddedAt "ItemSheet")}}
+		<div class="ability-header flexrow">
+			{{{card.abilityIcon}}} &nbsp;
+			<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name" />
+			<span class="cost flex1">
+				{{card.cost}} {{{card.action}}}
+			</span>
+			<a data-action="toggleMode"
+				class="toggle-edit flex0">
+				{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}
+			</a>
+		</div>
+	{{~else if (eq embeddedAt "ActorSheet")}}
+		<div class="ability-header flexrow">
+			{{{card.abilityIcon}}} &nbsp;
+			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+				<h5>{{item.name}}</h5>
+			</a>
+			<span class="cost flex1">
+				{{card.cost}} {{{card.action}}}
+			</span>
+		</div>
+	{{~else if (eq embeddedAt "Embedded")}}
+		<div class="ability-header flexrow">
+			{{{card.abilityIcon}}} &nbsp;
+			{{{anchor}}}
+			<span class="cost flex1">
+				{{card.cost}} {{{card.action}}}
+			</span>
+		</div>
+	{{/if}}
+	{{#if card.descriptors }}
+		<div class="ability-descriptors flexrow" style="gap: 5px;">
+			{{#each card.descriptors as | descriptor |}}
+				{{{reference descriptor 'span'}}}
+			{{/each}}
+		</div>
+	{{/if}}
+
+	{{#if card.resources }}
+		<div class="sigil-charges">
+			{{{card.resources}}}
+			{{!-- <label>{{{localize card.resources.label}}}:</label> {{{card.resources.value}}} --}}
+		</div>
+	{{/if}}
+
+	{{#if card.effect }}
+		<div class="sigil-charges">
+			{{{card.effect}}}
+			{{!-- <label>{{{localize card.effect.label}}}:</label> {{{card.effect.value}}} --}}
+		</div>
+	{{/if}}
+
+	{{#if card.special }}
+		<div class="sigil-charges">
+			{{{card.special}}}
+			{{!-- <label>{{{localize card.special.label}}}:</label> {{{card.special.value}}} --}}
+		</div>
+	{{/if}}
+</div>

@@ -1,5 +1,5 @@
-import { SYSTEM } from "../config/system.mjs";
-
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
+const {renderTemplate} = foundry.applications.handlebars;
 export default class SkyfallEffect extends ActiveEffect {
 	tooltip;
 	/* -------------------------------------------- */
@@ -61,12 +61,18 @@ export default class SkyfallEffect extends ActiveEffect {
 	get cost(){
 		if ( this.type != 'modification' ) return null;
 		const cost = this.system.cost; // {value: 1, resource:'ep', label: ``};
-		// if ( !Number(cost.value) ) cost.label = ``;
+		const schema = this.system.schema;
 		
+		// if ( !Number(cost.value) ) cost.label = ``;
 		if ( this.system.apply.type.includes('amplify') ) cost.label = ``;
 		else {
 			cost.label = `+${cost.value} `;
-			cost.label += game.i18n.localize(`SKYFALL.ACTOR.RESOURCES.${cost.resource.toUpperCase()}ABBR`);
+			const resources = schema.fields.cost.fields.resource.choices;
+			if (this.parent?.type == "guild-ability") {
+				cost.label += game.i18n.localize(`${resources[cost.resource].label}`);
+			} else {
+				cost.label += game.i18n.localize(`${resources[cost.resource].label}ABBR`);
+			}
 		}
 		return cost;
 	}
@@ -111,6 +117,7 @@ export default class SkyfallEffect extends ActiveEffect {
 		} else {
 			this.tooltip = this.description;
 		}
+		// this.tooltip = `<div>${this.tooltip}</div>`;
 	}
 	
 	getRollData(){
@@ -303,8 +310,10 @@ export default class SkyfallEffect extends ActiveEffect {
 			async: true, relativeTo: this
 		});
 		container.innerHTML = `
-			<div class="modification-header">
-				<span style="font-family: SkyfallIcons">M</span> ${this.name} ${this.cost.label} ${this.modTypes.label}
+			<div class="modification-header flexrow">
+				<div class="modification-name">
+					<span style="font-family: SkyfallIcons">M</span> ${this.name} ${this.cost.label} ${this.modTypes.label}
+				</div>
 			</div>
 			<div class="modification-description">
 				${description}

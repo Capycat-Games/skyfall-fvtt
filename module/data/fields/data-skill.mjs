@@ -88,7 +88,9 @@ export default class SkillData extends SkyfallDataModel {
 		const rollData = this.document.getRollData();
 		const bonuses = [...this.bonuses];
 		const terms = [];
-		terms.push( `@proficiency[|proficiency|proficiency]` );
+		if ( this.value ) {
+			terms.push( `(${this.value} * @proficiency)[|proficiency|proficiency]` );
+		}
 		// terms.push( `@${ability}[||ability]` );
 		terms.push( `${this.bonus}[||bonus]` );
 		terms.push( ...bonuses.map( i => `${i.value ?? 0}[||${i.source ?? '-'}]`));

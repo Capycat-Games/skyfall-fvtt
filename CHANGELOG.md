@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.9.610 - BETA
+
+- Sistema - Atualizado. Compatibilidade com a v13.
+- Régua de Movimentação - Adicionado. Medição de deslocamento do token integrada com a movimentação do personagem.
+- Módulos - Adicionado. Suporte ao Polyglot.
+- Personagem - Corrigido. Aplicação de dano.
+- Personagem - Corrigido. A recuperação de pontos de vida é modificada de acordo com os pontos de sombra e o descritor ´magical´ na habilidade.
+- Personagem - Corrigido. Rolagem de Teste de Morte.
+- Personagem - Corrigido. Ordem inventário.
+- Guilda - Atualizado. Design da Ficha de Guilda.
+
 ## 0.9.609 - BETA
 
 - Personagem - Corrigido. Aplicação de dano e recuperação de recursos.

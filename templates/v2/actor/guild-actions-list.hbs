@@ -1,0 +1,101 @@
+<div class="actions flexcol">
+	<ul class="action-list plain flexcol">
+		<li class="header"> {{localize "SKYFALL.FILTER"}}</li>
+		<li class="item filter-list flexrow" data-filter-id="actions">
+			{{#each filters.actions as | action key | }}
+				<div data-action="filter" data-filter="{{key}}" class="filter-item {{ifThen action.active 'active' '' }}" data-tooltip="{{localize action.label}}">
+					{{{action.icon}}}
+				</div>
+			{{/each}}
+		</li>
+		{{#each items.actions as | item |}}
+			{{#if item.weapons}}
+				<li class="item {{item.type}} weapon entry flexcol {{item.filters.actions}}" data-entry-id="{{item.id}}">
+					<div class="item-name">{{{item.system.activation.action.icon}}}
+						{{{ifThen item.system.activation.cost.value item.system.activation.cost.value ''}}} - {{item.name}}
+					</div>
+					<div class="item-controls flexrow flex100">
+						{{#each item.weapons as | weapon | }}
+							<a data-action="abilityUse" data-ability-id="{{item.id}}" data-entry-id="{{./weapon.id}}"
+								data-tooltip="{{abl.name}}">
+								{{weapon.name}}
+							</a>
+						{{/each}}
+					</div>
+				</li>
+			{{else if item.abilities }}
+				{{!-- WEAPONS --}}
+				<li class="item {{item.type}} entry flexrow {{item.filters.actions}}" data-entry-id="{{item.id}}">
+					<div class="item-name">
+						<a data-action="abilityUse" data-entry-id="{{item.id}}">
+							{{ifThen item.magicName item.magicName item.name }}
+							{{#if item.system.reload.quantity }}
+								({{item.system.reload.value}})
+							{{/if}}
+						</a>
+					</div>
+					<div class="item-controls" style="flex:1;">
+						{{!-- item.abilities: {uuid:ability, with:item.id, action:icon, cost:EP, extra: @arma[@prof + @abl] (@arma[@damage] + @abl)  } --}}
+						{{#if (and item.system.reload.quantity (not item.system.reload.value)) }}
+							<a class="control ability" data-action="itemRecharge" data-entry-id="{{item.id}}"
+								data-tooltip="{{localize 'SKYFALL2.Reload'}}">
+								{{#each item.system.reload.actions as | reload |}}
+									{{{lookup @root.SYSTEM.icons (concat 'sf' reload)}}}
+									{{{@root.SYSTEM.icons.reload}}}
+								{{/each}}
+							</a>
+						{{else}}
+							{{#each item.abilities as | abl | }}
+								<a class="control ability" data-action="abilityUse" data-ability-id="{{abl.id}}"
+									data-entry-id="{{item.id}}" data-tooltip="{{abl.name}}">
+									{{{abl.system.labels.action.icon}}} <img src="{{{abl.img}}}" height="18px" width="18px"
+										style="display: inline; background:black;">
+									{{!-- {{{abl.system.range.icon}}} --}}
+								</a>
+							{{/each}}
+						{{/if}}
+					</div>
+				</li>
+			{{else if (or (eq item.type 'spell') (eq item.type 'ability') (eq item.type 'sigil'))}}
+				<li class="item {{item.type}} entry flexrow {{item.filters.actions}}" data-entry-id="{{item.id}}">
+					<div class="item-name">
+						<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+							{{{item.system.labels.action.icon}}}
+							{{item.name}} {{#if item.system.labels.cost.label}}({{item.system.labels.cost.label}}){{/if}}
+								{{#if item.system.labels.charges}}({{item.system.labels.charges.descriptive}}){{/if}}
+						</a>
+					</div>
+					<div class="item-controls">
+						<a class="control ability" data-action="use" data-target="ability" data-item-id="{{item.id}}">
+							{{{item.system._labels.action.icon}}}
+							{{{ifThen item.system._labels.cost.value item.system._labels.cost.value ''}}} - {{item.name}}
+						</a>
+					</div>
+				</li>
+			{{else if (or (eq item.type 'consumable') (eq item.type 'tool'))}}
+				<li class="item {{item.type}} flexcol {{item.filters.actions}}" data-entry-id="{{item.id}}">
+					<div class="item-name">
+						<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+							{{{item.system.labels.action.icon}}}
+							{{item.name}} {{#if item.system.labels.cost.label}}({{item.system.labels.cost.label}}){{/if}}
+						</a>
+					</div>
+					<div class="item-controls">
+						<a class="control" data-action="usage" data-target="item">
+							{{{../SYSTEM.icons.star}}}
+						</a>
+					</div>
+				</li>
+			{{else if (eq item.type 'commom')}}
+				<li class="item {{item.type}} entry flexrow {{item.filters.actions}}" data-entry-id="{{item.id}}">
+					<div class="item-name">
+						<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+							<span class="skyfall-icon">{{item.action}}</span>
+							{{localize item.name}}
+						</a>
+					</div>
+				</li>
+			{{/if}}
+		{{/each}}
+	</ul>
+</div>

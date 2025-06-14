@@ -3,6 +3,7 @@ import { SYSTEM } from "../config/system.mjs";
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ActorSheetV2 } = foundry.applications.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
@@ -10,8 +11,8 @@ export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		window:{
 			resizable: true,
 		},
-		classes: ["skyfall", "actor", "guild"],
-		position: { width: 550, height: 660},
+		classes: ["skyfall", "actor", "guild", "review"],
+		position: { width: 600, height: 660 },
 		actions: {
 			startArc: GuildSheetSkyfall.#startArc,
 			endArc: GuildSheetSkyfall.#endArc,
@@ -26,7 +27,13 @@ export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
 	static PARTS = {
 		tabs: {template: "templates/generic/tab-navigation.hbs"},
-		guild: {template: "systems/skyfall/templates/v2/actor/guild.hbs"},
+		guild: {
+			template: "systems/skyfall/templates/v2/actor/guild.hbs",
+			templates: [
+				"systems/skyfall/templates/v2/actor/guild-ability.hbs",
+				"systems/skyfall/templates/v2/actor/guild-actions-list.hbs",
+			]
+		},
 		members: {template: "systems/skyfall/templates/v2/actor/guild-members.hbs"},
 		actions: {
 			template: "systems/skyfall/templates/v2/actor/guild-actions.hbs",
@@ -127,6 +134,7 @@ export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 			schema: this._getDataFields(),
 			items: {},
 			SYSTEM: SYSTEM,
+			currentArc: skyfall.ui.sceneConfig.scene.guildArc,
 			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
 			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
 			enriched: {
@@ -330,6 +338,7 @@ export default class GuildSheetSkyfall extends SkyfallSheetMixin(ActorSheetV2) {
 		this.document.system.startGuildArc({
 			arcLength: arcLength
 		});
+
 	}
 
 	static async #endArc(event, target) {

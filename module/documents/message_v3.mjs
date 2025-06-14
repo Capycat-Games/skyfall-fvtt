@@ -1,6 +1,6 @@
+const {renderTemplate} = foundry.applications.handlebars;
 import D20Roll from "../dice/d20-roll.mjs";
 import SkyfallRoll from "../dice/skyfall-roll.mjs";
-
 export default class SkyfallMessage extends ChatMessage {
 	actor;
 	item;

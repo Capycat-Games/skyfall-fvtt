@@ -1,5 +1,5 @@
 import SkyfallRoll from "../dice/skyfall-roll.mjs";
-
+const {renderTemplate} = foundry.applications.handlebars;
 export default class ShortRestV2 extends foundry.applications.api.ApplicationV2 {
 	constructor(options={}) {
 		super(options);

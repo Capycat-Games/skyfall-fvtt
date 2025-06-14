@@ -15,10 +15,11 @@ export default class SceneSettingConfig extends HandlebarsApplicationMixin(Appli
 			frame: true,
 			positioned: true,
 			minimizable: false,
+			closable: false,
 		},
 		classes: ["skyfall", "sheet", "scene-control"],
 		position: {
-			width: 200, height: 150,
+			width: 200, height: "auto",
 			top: 220, left: 120,
 		},
 		actions: {
@@ -40,9 +41,12 @@ export default class SceneSettingConfig extends HandlebarsApplicationMixin(Appli
 		}
 	}
 
-	// async _renderFrame(options) {
-
-	// }
+	async _renderFrame(options) {
+		const frame = await super._renderFrame(options);
+		const buttom = frame.querySelectorAll('button');
+		for (const btn of buttom) btn.classList.add('hidden');
+		return frame;
+	}
 
 	/** @override */
 	async _prepareContext(options) {
@@ -86,10 +90,7 @@ export default class SceneSettingConfig extends HandlebarsApplicationMixin(Appli
 		this.scene = game.settings.get('skyfall', 'sceneConfig');
 		// this.object = this.scene;
 	}
-
-	async close2(options) {
-		return;
-	}
+	async close(options) {}
 
 	async render(options={}, _options={}) {
 		this.#setScene();

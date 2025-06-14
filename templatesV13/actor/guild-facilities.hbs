@@ -1,0 +1,53 @@
+<section class="tab guild-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="{{tab.id}}">
+
+	<div class="blueprints">
+		<div class="form-group corner-frame stacked">
+			<div class="form-label">
+				<span class="label">{{localize "SKYFALL2.GUILD.BlueprintPl"}}</span>
+			</div>
+			<div class="form-fields">
+				<textarea name="system.blueprints">{{system.blueprints}}</textarea>
+			</div>
+		</div>
+	</div>
+	<div class="facilities-list border-design-a">
+		<div class="left"></div>
+		<ul class="plain item-list facilities">
+			<li class="facility header flexrow">
+				<div class="item-image">
+
+				</div>
+				<div class="item-name flex2">
+					<label>
+						{{localize "SKYFALL2.Name"}}
+					</label>
+				</div>
+				<div class="item-level">
+					{{localize "SKYFALL2.Level"}}
+				</div>
+				<div class="item-controls">
+
+				</div>
+			</li>
+			{{#each items.facilities as | facility i|}}
+				<li class="facility entry flexrow" data-entry-id="{{facility.id}}" data-index="{{i}}">
+					<div class="item-image">
+						<img src="{{facility.img}}" class="flex0">
+					</div>
+					<div class="item-name flexrow flex2">
+						{{facility.name}}
+					</div>
+					<div class="item-level">{{facility.system.level}}</div>
+					<div class="item-controls">
+						<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+						<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+					</div>
+				</li>
+			{{/each}}
+		</ul>
+		<div class="right"></div>
+	</div>
+</section>

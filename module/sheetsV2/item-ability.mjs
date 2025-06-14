@@ -1,11 +1,12 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ItemSheetV2 } = foundry.applications.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
-		classes: ["skyfall", "ability", "item"],
+		classes: ["skyfall", "ability", "item", "standard-form"],
 		position: {width: "auto", height: "auto"},
 		form: {
 			handler: this.#onSubmitDocumentForm,
@@ -33,7 +34,6 @@ export default class AbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) 
 				"systems/skyfall/templates/v2/item/item-roll.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
 				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
-				
 			],
 			scrollable: [".scrollable"],
 		},

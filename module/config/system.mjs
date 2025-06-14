@@ -148,7 +148,7 @@ const SHEETICONS = {
 }
 
 const _SVGELEMENTS = {
-  ribbon: "systems/skyfall/assets/sheet-v2/name-title.svg",
+  // ribbon: "systems/skyfall/assets/sheet-v2/name-title.svg",
 }
 const SVGELEMENTS = {}
 Object.entries(_SVGELEMENTS).reduce(async (acc, ent) => {

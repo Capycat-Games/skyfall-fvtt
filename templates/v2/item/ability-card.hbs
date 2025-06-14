@@ -1,7 +1,6 @@
 <div
 	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}"
 	data-entry-id="{{item.id}}">
-	{{log item.filters}}
 	<div class="ability-header flexrow">
 		{{{labels.action.icon}}} &nbsp;
 		{{#if isFigure }}

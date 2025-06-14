@@ -156,8 +156,8 @@ export const currency = Object.freeze({
 	},
 });
 
-let _laguages = ["common","abyssal","anuri","bo","celestial","draconic","toranio","elvish","kia","kishi","vampy"];
-export const languages = _laguages.reduce((obj, key) => {
+let _languages = ["common","abyssal","anuri","bo","celestial","draconic","toranio","elvish","kia","kishi","vampy"];
+export const languages = _languages.reduce((obj, key) => {
 	obj[key] = {
 		id: key,
 		label: `SKYFALL.LANGUAGES.${key.toUpperCase()}`,

@@ -1,3 +1,5 @@
+const {renderTemplate} = foundry.applications.handlebars;
+
 import D20Roll from "../../dice/d20-roll.mjs";
 import SkyfallRoll from "../../dice/skyfall-roll.mjs";
 import BaseChatMessage from "./message-base.mjs";

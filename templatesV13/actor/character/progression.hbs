@@ -1,0 +1,73 @@
+<ol class="plain actor-progression {{cssClass}}">
+	{{#each content as | data | }}
+		<li class="flexrow type-{{data.type}} {{ifThen data.item '' 'empty'}}" data-entry-id="{{data.item._id}}"
+			data-source-id="{{data.id}}">
+			<div class="entry flexrow type-{{data.type}}  {{ifThen data.item '' 'empty'}}">
+				<div class="item-name flexrow">
+					<div class="item-image" data-action="itemToChat" data-target="item"
+						style="background: url({{data.item.img}}) center / cover;"></div>
+					{{#if (or (eq data.type 'bonus') (eq data.type 'guild'))}}
+						{{data.item.name}}
+					{{~else if (eq data.type 'grant')}}
+						<a data-action="edit">
+							{{#if data.item.name}}
+								{{data.item.name}}
+							{{else}}
+								{{localize (concat "SKYFALL2.Grant")}} 1
+								{{localize (concat "TYPES.Item." data.granting)}}
+							{{/if}}
+						</a>
+					{{~else if (eq data.type 'class')}}
+						{{localize "SKYFALL2.Level"}} {{data.level}} —&nbsp;
+						<a data-action="edit" class="class-level" data-level="{{data.level}}">
+							{{#if data.item}}
+								{{data.item.name}} {{data.classLevel}}
+							{{else}}
+								{{localize (concat "TYPES.Item." data.type)}}
+							{{/if}}
+						</a>
+					{{else}}
+						<a data-action="edit">
+							{{ifnull data.item.name (localize (concat "TYPES.Item." data.type))}}
+							{{ifnull data.item.rank '' }}
+						</a>
+					{{/if}}
+				</div>
+				<div class="item-controls">
+					{{#if (and (eq data.type 'grant') (ifThen data.item false true)) }}
+						<a class="control" data-action="promptBenefitsDialog"
+							data-origin-id="{{data.id}}">{{{@root.SYSTEM.icons.search}}}</a>
+					{{~else if (eq data.type 'guild')}}
+					{{~else if (eq data.type 'bonus')}}
+						<a class="control" data-action="create" data-create="Item" data-type="feature">
+							{{{@root.SYSTEM.icons.create}}}
+							{{localize "TYPES.Item.feature"}}
+						</a>
+						<a class="control" data-action="create" data-create="Item" data-type="feat">
+							{{{@root.SYSTEM.icons.create}}}
+							{{localize "TYPES.Item.feat"}}
+						</a>
+					{{~else if data.item}}
+						{{#if (not data.empty) }}
+							<a class="control" data-action="promptBenefitsDialog"
+								data-origin-id="{{data.id}}">{{{@root.SYSTEM.icons.box}}}</a>
+						{{/if}}
+						<a class="control" data-action="delete" data-delete="Item">{{{@root.SYSTEM.icons.delete}}}</a>
+					{{else}}
+						<a class="control" data-action="create" data-create="Item"
+							data-type="{{data.type}}">{{{@root.SYSTEM.icons.create}}}</a>
+					{{/if}}
+				</div>
+			</div>
+			{{#if (eq data.type 'bonus')}}{{!-- BONUS LIST IS NOT NESTED --}}
+		</li>
+	{{else}}
+		<div class="flex100"></div>
+		{{/if}}
+		{{#each data.children as | childArr key | }}
+			{{> "systems/skyfall/templatesV13/actor/character/progression.hbs" content=childArr cssClass="nested-itens" }}
+			<div class="flex100"></div>
+		{{/each}}
+		</li>
+	{{/each}}
+</ol>

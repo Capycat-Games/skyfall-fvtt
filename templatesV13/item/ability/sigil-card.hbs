@@ -1,0 +1,57 @@
+<div class="ability-card flexcol {{ifThen @root.isPlayMode '' 'editing'}}" data-entry-id="{{item.id}}">
+	<div class="ability-header flexrow">
+		{{{labels.type.icon}}} &nbsp;
+		{{#if (eq @root.document.documentName "Actor") }}
+			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
+				<h5>{{item.name}}</h5>
+			</a>
+			<span class="cost flex1">
+				{{{labels.cost}}}
+				{{{labels.action.icon}}}
+			</span>
+			<a class="isEditing flex0" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>&nbsp;
+			<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>&nbsp;
+			{{#if collapse }}
+				<a data-action="collapse" class="isEditing flex0">{{{@root.SYSTEM.icons.gear}}}</a>
+			{{/if}}
+		{{else}}
+			<input class="flex3" name="name" type="text" value="{{item.name}}" placeholder="Name" />
+			<span class="cost flex1">
+				{{{labels.cost}}}
+				{{{labels.action.icon}}}
+			</span>
+			{{!-- <a class="isEditing flex0" data-edit="toggle">{{{@root.SYSTEM.icons.gear}}}</a> --}}
+			<a data-action="toggleMode" class="toggle-edit flex0">{{{ifThen @root.isPlayMode '<i class="fa-solid fa-lock"></i>' '<i class="fa-solid fa-lock-open"></i>'}}}</a>
+		{{/if}}
+	</div>
+	{{#if descriptors }}
+		<div class="ability-descriptors">
+			{{#each descriptors as | tag key |}}
+				{{#if tag.value }}
+					<label class="descriptor active">{{tag.label}}</label>
+				{{/if}}
+			{{/each}}
+		</div>
+	{{/if}}
+	{{#if labels.properties }}
+		<div class="ability-properties">
+			<ul class="plain properties">
+				{{#each labels.properties as | prop |}}
+					<li><label>{{{localize prop.label}}}:</label> {{prop.descriptive}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
+	{{#if labels.effect }}
+		<div class="rich">
+			<label>{{{localize labels.effect.label}}}:</label> {{#if enriched.effect}}{{{enriched.effect}}}{{else}}{{{labels.effect.descriptive}}}{{/if}}
+		</div>
+	{{/if}}
+	{{#if labels.special }}
+		<div class="rich">
+			<label>{{{localize labels.special.label}}}:</label> {{#if enriched.special}}{{{enriched.special}}}{{else}}{{{labels.special.descriptive}}}{{/if}}
+		</div>
+	{{/if}}
+	{{!-- MODIFICATIONS --}}
+	{{{enriched.modifications}}}
+</div>

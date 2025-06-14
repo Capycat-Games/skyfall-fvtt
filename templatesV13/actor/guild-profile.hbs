@@ -1,0 +1,87 @@
+<section class="tab guild-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="{{tab.id}}">
+	{{!-- TOP --}}
+	<div class="profile-abilities flexrow">
+		<fieldset class="profile cutbg cut-rect-vertical flexcol">
+			{{!-- IMAGE --}}
+			<div class="profile-image" name="img" data-action="editImage" style="background-image: url({{actor.img}});">
+				{{!-- BACKGROUND IMAGE --}}
+			</div>
+
+			{{!-- NAME --}}
+			<div class="charname">
+				<input name="name" type="text" value="{{actor.name}}" placeholder="Name" />
+			</div>
+
+			<div class="level flexrow">
+				<div class="form-label">
+					{{localize "SKYFALL2.Level"}}
+				</div>
+				<div class="form-fields">
+					<input type="number" disabled value="{{system.level}}">
+				</div>
+			</div>
+
+			<div class="guild-arc flexrow">
+
+				{{#if currentArc}}
+					<button class="boxed" data-action="endArc" {{#unless user.isGM}}disabled{{/unless}} data-tooltip='{{localize "SKYFALL2.GUILD.EndGuildArc"}}'>
+						{{localize "SKYFALL2.GUILD.GuildArc"}}
+						{{{SYSTEM.icons.scene}}}
+					</button>
+				{{else}}
+					<button class="boxed" data-action="startArc" {{#unless user.isGM}}disabled{{/unless}} data-tooltip='{{localize "SKYFALL2.GUILD.StartGuildArc"}}'>
+						{{localize "SKYFALL2.GUILD.AdventureArc"}}
+						{{{SYSTEM.icons.scene}}}
+					</button>
+				{{/if}}
+			</div>
+		</fieldset>
+
+		{{!-- ABILITIES --}}
+		<fieldset class="ability-scores cutbg cut-rect-horizontal flexrow flex3">
+			{{> "systems/skyfall/templatesV13/actor/guild/ability.hbs" schema=schema.abilities.cunning ability=system.abilities.cunning key="cunning" label="SKYFALL2.GUILD.Cunning"}}
+
+			{{> "systems/skyfall/templatesV13/actor/guild/ability.hbs" schema=schema.abilities.knowledge ability=system.abilities.knowledge key="knowledge" label="SKYFALL2.GUILD.Knowledge"}}
+
+			{{> "systems/skyfall/templatesV13/actor/guild/ability.hbs" schema=schema.abilities.crafting ability=system.abilities.crafting key="crafting" label="SKYFALL2.GUILD.Crafting"}}
+
+			{{> "systems/skyfall/templatesV13/actor/guild/ability.hbs" schema=schema.abilities.reputation ability=system.abilities.reputation key="reputation" label="SKYFALL2.GUILD.Reputation"}}
+		</fieldset>
+	</div>
+	{{!-- BOTTOM --}}
+	<div class="flexrow border-design-a">
+		<div class="left">
+			<div class="seals flexcol flex-start">
+				<h6 class="title">{{localize "TYPES.Item.sealPl"}}</h6>
+				<ul class="plain item-list seals">
+					{{#each items.seals as | seal i|}}
+						<li class="seal entry flexrow" data-entry-id="{{seal.id}}" data-index="{{i}}">
+							<div class="item-image">
+								<img src="{{seal.img}}" class="flex0">
+							</div>
+							<div class="item-name flexrow flex2">
+								<label>{{seal.name}}</label>
+							</div>
+							<div class="item-controls">
+								<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+								<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+							</div>
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="motto">
+				<h6 class="title">{{localize schema.motto.label}}</h6>
+				<div class="form-fields ">
+					{{formInput schema.motto value=system.motto elementType='textarea'}}
+				</div>
+			</div>
+		</div>
+		<div class="right">
+			{{> "systems/skyfall/templatesV13/actor/guild/actions.hbs"}}
+		</div>
+	</div>
+</section>

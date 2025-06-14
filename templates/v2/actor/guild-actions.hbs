@@ -1,16 +1,26 @@
 <section class="tab scrollable guild-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
-	<div class="guild-abilities">
-		<div class="form-group">
-			<label>{{localize "SKYFALL2.GUILD.GuildActionPl"}}</label>
-			<div class="form-fields">
-				<input type="text" name="system.actions.value" value="{{system.actions.value}}"> /
-				<input type="text" value="{{system.actions.max}}" disabled>
+	<div class="flexrow" style="align-self: center;">
+		<div class="skyfall-form-group stacked">
+			<div class="label">
+				<span>{{localize "SKYFALL2.GUILD.GuildActionPl"}}</span>
+			</div>
+			<div class="skyfall-form-fields ">
+				<div class="field">
+					<input type="number" name="system.actions.value" value="{{system.actions.value}}" min="0" max="{{system.actions.max}}">
+				</div>
+				<div class="field">
+					<input type="number" disabled value="{{system.actions.max}}" min="0" max="{{system.actions.max}}">
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="guild-abilities-list flexrow ">
-		{{#each items.abilities as | ability | }}
-		{{> "systems/skyfall/templates/v2/item/guild-ability-card.hbs" item=ability labels=ability.system.labels collapse=true}}
-		{{/each }}
+	<div>
+		<div class="border-corners"></div>
+		<div class="guild-abilities-list flexrow ">
+			{{#each items.abilities as | ability | }}
+				{{> "systems/skyfall/templates/v2/item/guild-ability-card.hbs" item=ability labels=ability.system.labels collapse=true}}
+			{{/each }}
+		</div>
+		<div class="border-corners bottom"></div>
 	</div>
 </section>

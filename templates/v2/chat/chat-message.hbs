@@ -5,10 +5,14 @@
 		{{/if}}
 		<h4 class="message-sender">{{alias}}</h4>
 		<span class="message-metadata">
-			<i class="fa-solid fa-clock" data-tooltip='<time class="message-timestamp">{{timeSince message.timestamp}}</time>'></i>
+			<a data-tooltip='<time class="message-timestamp">{{timeSince message.timestamp}}</time>'>
+				<i class="fa-solid fa-clock"></i>
+			</a>
 
 			{{#if canDelete}}
-				<a aria-label="{{localize 'Delete'}}" class="message-delete"><i class="fas fa-trash"></i></a>
+				<a aria-label="{{localize 'Delete'}}" class="message-delete" data-action="deleteMessage">
+					<i class="fas fa-trash"></i>
+				</a>
 			{{/if}}
 		</span>
 

@@ -1,0 +1,122 @@
+<div class="traits border-design-a small flexrow">
+	<div class="left">
+		<div class="form-group corner-frame stacked">
+			<div class="form-label">
+				<span>
+					{{localize schema.creatureType.label}}
+				</span>
+			</div>
+			<div class="form-fields">
+				{{formInput schema.creatureType value=system.creatureType}}
+			</div>
+		</div>
+		<div class="form-group corner-frame stacked">
+			<div class="form-label">
+				<span>
+					{{localize schema.size.label}}
+				</span>
+			</div>
+			<div class="form-fields">
+				{{formInput schema.size value=system.size}}
+			</div>
+		</div>
+		<div class="form-group corner-frame stacked">
+			<div class="form-label">
+				<span>
+					{{localize schema.spellcasting.label}}
+				</span>
+			</div>
+			<div class="form-fields">
+				{{formInput schema.spellcasting value=system.spellcasting}}
+			</div>
+		</div>
+		<div class="form-group corner-frame stacked">
+			<div class="form-label">
+				<span>
+					{{localize schema.details.pronouns.label}}
+				</span>
+			</div>
+			<div class="form-fields">
+				{{formInput schema.details.pronouns value=system.details.pronouns}}
+			</div>
+		</div>
+	</div>
+	<div class="right">
+		{{!-- LANGUAGES --}}
+		<div class="form-group corner-frame stacked languages">
+			<div class="form-label">
+				<a data-action="manage" data-manage="languages">
+					{{localize "SKYFALL.ACTOR.LANGUAGE"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<div class="values">
+					{{#each languages as | language |}}
+						<span class="language">{{localize language}}{{ifThen @last "" "," }}</span>
+					{{/each}}
+				</div>
+			</div>
+		</div>
+		{{!-- PROFICIENCIES --}}
+		<div class="form-group corner-frame stacked proficiencies">
+			<div class="form-label">
+				<a data-action="edit" data-field-path="system.proficiencies">
+					{{localize "SKYFALL.ACTOR.PROFICIENCIES"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<div class="values">
+					{{#each proficiencies as | proficiency |}}
+						<span class="proficiency">{{localize proficiency}}{{ifThen @last "" "," }}</span>
+					{{/each}}
+				</div>
+			</div>
+		</div>
+		{{!-- VULNERABILITY --}}
+		<div class="form-group corner-frame stacked status vulnerability">
+			<div class="form-label">
+				<a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.VulnerabilityPl"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<div class="values flexrow">
+					{{#each irv.vulnerability as | entry |}}
+						{{{reference entry.id 'span'}}}&nbsp;
+					{{/each }}
+				</div>
+			</div>
+		</div>
+
+		{{!-- RESISTANCE --}}
+		<div class="form-group corner-frame stacked status resistance">
+			<div class="form-label">
+				<a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.ResistancePl"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<div class="values flexrow">
+					{{#each irv.resistance as | entry |}}
+						{{{reference entry.id 'span'}}}&nbsp;
+					{{/each }}
+				</div>
+			</div>
+		</div>
+		{{!-- IMUNITY --}}
+		<div class="form-group corner-frame stacked status imunity">
+			<div class="form-label">
+				<a data-action="manage" data-manage="irv">
+					{{localize "SKYFALL2.MODIFIER.ImunityPl"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<div class="values flexrow">
+					{{#each irv.imunity as | entry |}}
+						{{{reference entry.id 'span'}}}&nbsp;
+					{{/each }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

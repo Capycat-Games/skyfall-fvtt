@@ -57,13 +57,6 @@ diverseKeys.reduce((obj, key) => {
 	return obj;
 }, DESCRIPTOR.DIVERSE);
 
-export const DESCRIPTORS = Object.freeze({
-	...DESCRIPTOR.ORIGIN,
-	...DESCRIPTOR.CATEGORY,
-	...DESCRIPTOR.EQUIPMENT,
-	...DESCRIPTOR.DAMAGE,
-	...DESCRIPTOR.DIVERSE
-});
 
 
 
@@ -142,4 +135,13 @@ guildAbilities.reduce((obj, key) => {
 export const GUILDDESCRIPTORS = Object.freeze({
 	...GUILDDESCRIPTOR.GUILD,
 	...GUILDDESCRIPTOR.ABILITIES,
+});
+
+
+export const DESCRIPTORS = Object.freeze({
+	...DESCRIPTOR.ORIGIN,
+	...DESCRIPTOR.CATEGORY,
+	...DESCRIPTOR.EQUIPMENT,
+	...DESCRIPTOR.DAMAGE,
+	...DESCRIPTOR.DIVERSE,
 });

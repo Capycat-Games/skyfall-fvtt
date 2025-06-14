@@ -1,3 +1,4 @@
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 /**
  * Data schema, attributes, and methods specific to Antecedente type Items.
  */

@@ -1,0 +1,32 @@
+<section class="tab guild-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="{{tab.id}}">
+
+	<div class="flexrow guild-actions">
+		<div class="form-group boxed stacked">
+			<div class="form-label">
+				<span class="label">{{localize "SKYFALL2.GUILD.GuildActionPl"}}</span>
+			</div>
+			<div class="form-fields separator">
+				<div class="field">
+					<input type="number" name="system.actions.value" value="{{system.actions.value}}" min="0" max="{{system.actions.max}}">
+				</div>
+				<div class="field">
+					<input type="number" disabled value="{{system.actions.max}}" min="0" max="{{system.actions.max}}">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="abilities">
+		<div class="border-corners"></div>
+		<div class="ability-list">
+			{{#each items.abilities as | ability | }}
+				{{{ability._enriched}}}
+				{{!-- {{> "systems/skyfall/templatesV13/item/ability/guild-card.hbs" item=ability labels=ability.system.labels collapse=true}} --}}
+			{{/each }}
+		</div>
+		<div class="border-corners bottom"></div>
+	</div>
+
+</section>

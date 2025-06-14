@@ -2,9 +2,9 @@
   "id": "skyfall",
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
-  "version": "0.9.609",
+  "version": "0.9.610",
   "manifest": "https://raw.githubusercontent.com/Capycat-Games/skyfall-fvtt/main/system.json",
-  "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.9.609-Beta.zip",
+  "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.9.610-Beta.zip",
   "url": "https://github.com/Capycat-Games/skyfall-fvtt",
   "bugs": "https://github.com/Capycat-Games/skyfall-fvtt/issues",
   "license": "LICENSE",
@@ -28,12 +28,12 @@
     }
   ],
   "compatibility": {
-    "minimum": "12",
-    "verified": "12",
-    "maximun": "12"
+    "minimum": "13",
+    "verified": "13",
+    "maximun": "13"
   },
   "esmodules": ["skyfall.mjs"],
-  "styles": ["skyfall.css"],
+  "styles": ["skyfall.css", "skyfallV13.css"],
   "languages": [
     {
       "lang": "pt",
@@ -98,36 +98,108 @@
   "packFolders": [],
   "documentTypes": {
     "Actor": {
-      "character": {},
-      "npc": {},
-      "partner": {},
-      "creation": {},
-      "guild": {}
+      "character": {
+        "htmlFields": ["biography", "details.description"]
+      },
+      "npc": {
+        "htmlFields": ["biography"]
+      },
+      "partner": {
+        "htmlFields": ["biography"]
+      },
+      "creation": {
+        "htmlFields": ["biography"]
+      },
+      "guild": {
+        "htmlFields": ["motto"]
+      }
     },
     "Item": {
-      "legacy": {},
-      "heritage": {},
-      "curse": {},
-      "background": {},
-      "class": {},
-      "path": {},
-      "feature": {},
-      "feat": {},
-      "ability": {},
-      "spell": {},
-      "weapon": {},
-      "armor": {},
-      "clothing": {},
-      "equipment": {},
-      "consumable": {},
-      "loot": {},
-      "sigil": {},
-      "seal": {},
-      "facility": {},
-      "guild-ability": {},
-      "guild-feature": {},
-      "hierarchy": {},
-      "archetype": {}
+      "legacy": {
+        "htmlFields": ["description.value"]
+      },
+      "heritage": {
+        "htmlFields": ["description.value"]
+      },
+      "curse": {
+        "htmlFields": ["description.value"]
+      },
+      "background": {
+        "htmlFields": ["description.value"]
+      },
+      "class": {
+        "htmlFields": ["description.value"]
+      },
+      "path": {
+        "htmlFields": ["description.value"]
+      },
+      "feature": {
+        "htmlFields": ["description.value"]
+      },
+      "feat": {
+        "htmlFields": ["description.value"]
+      },
+      "ability": {
+        "htmlFields": [
+          "description.value",
+          "attack.hit",
+          "attack.miss",
+          "effect.descriptive",
+          "special.descriptive"
+        ]
+      },
+      "spell": {
+        "htmlFields": [
+          "description.value",
+          "attack.hit",
+          "attack.miss",
+          "effect.descriptive",
+          "special.descriptive"
+        ]
+      },
+      "weapon": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "armor": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "clothing": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "equipment": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "consumable": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "loot": {
+        "htmlFields": ["description.value", "unidentified.description"]
+      },
+      "sigil": {
+        "htmlFields": ["effect.descriptive"]
+      },
+      "seal": {
+        "htmlFields": ["description.value"]
+      },
+      "facility": {
+        "htmlFields": ["description.value"]
+      },
+      "guild-ability": {
+        "htmlFields": [
+          "description.value",
+          "effect.descriptive",
+          "special.descriptive"
+        ]
+      },
+      "guild-feature": {
+        "htmlFields": ["description.value"]
+      },
+      "hierarchy": {
+        "htmlFields": ["description.value"]
+      },
+      "archetype": {
+        "htmlFields": ["description.value"]
+      }
     },
     "ActiveEffect": {
       "modification": {}
@@ -140,7 +212,13 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs"],
-      "paths": ["skyfall.css", "templates", "lang"]
+      "paths": [
+        "skyfall.css",
+        "skyfallV13.css",
+        "templates",
+        "templatesV13",
+        "lang"
+      ]
     }
   },
   "grid": {

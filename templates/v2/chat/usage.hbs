@@ -1,19 +1,32 @@
 <div class="skyfall chat-card usage-card ability-card {{actor.type}}" data-actor-id="{{actor.id}}" data-item-id="{{itemId}}">
 	<header class="card-header flexrow" style="width: 100%; flex: 100%;">
-		<h3 class="icon">
-			{{{item.system.labels.action.icon}}}
-		</h3>
-		{{#if (eq item.type 'spell')}}
+		{{#if (eq item.type 'guild-ability')}}
 			<h3 class="icon">
-				{{{item.system.labels.spell.icon}}}
+				{{{card.abilityIcon}}}
 			</h3>
-			{{!-- <h2>{{{item.system.labels.spell.icon}}}</h2> --}}
+			<h4 class="item-name">{{item.name}}</h4>
+			<aside class="card-aside" style="width: 10%; flex: 0 0 15%;">
+				<h4 class="icon" style="white-space: nowrap;">
+					{{ifThen costs.ep costs.ep '—' }}
+					{{{item.system.labels.action.icon}}}
+				</h4>
+			</aside>
+		{{else}}
+			<h3 class="icon">
+				{{{item.system.labels.action.icon}}}
+			</h3>
+			{{#if (eq item.type 'spell')}}
+				<h3 class="icon">
+					{{{item.system.labels.spell.icon}}}
+				</h3>
+			{{/if}}
+			<h3 class="item-name">{{item.name}}</h3>
+			<aside class="card-aside flexcol" style="width: 10%; flex: 0 0 10%;">
+				<h4>
+					{{ifThen costs.ep costs.ep '—' }} {{localize 'SKYFALL2.RESOURCE.EPAbbr'}}
+				</h4>
+			</aside>
 		{{/if}}
-		<h3 class="item-name">{{item.name}}</h3>
-		<aside class="card-aside flexcol" style="width: 10%; flex: 0 0 10%;">
-			<h4>
-				{{ifThen costs.ep costs.ep '—' }} {{localize 'SKYFALL2.RESOURCE.EPAbbr'}}
-			</h4>
 	</header>
 	<div class="item-data flexcol" style="width: 100%; flex: 100%;">
 		<div class="header">
@@ -37,9 +50,11 @@
 			<hr>
 		</a>
 		<div class="ability-properties">
-			{{#unless (eq item.system.activation.recharge null) }}
-				<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
-			{{/unless}}
+			{{#if (eq item.type "ability")}}
+				{{#unless (eq item.system.activation.recharge null) }}
+					<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
+				{{/unless}}
+			{{/if}}
 			{{#each item.system.labels.properties as | prop | }}
 				<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 			{{/each}}
@@ -49,6 +64,21 @@
 				{{{item.system.description.value}}}
 			</div>
 		{{/if}}
+		{{#if card.description}}
+			<div class="ability-properties rich">
+				{{{card.description}}}
+			</div>
+		{{/if }}
+		{{#if card.effect}}
+			<div class="ability-properties rich">
+				{{{card.effect}}}
+			</div>
+		{{/if }}
+		{{#if card.special}}
+			<div class="ability-properties rich">
+				{{{card.special}}}
+			</div>
+		{{/if }}
 	</div>
 	<ul class="list-items modifications">
 
@@ -75,7 +105,9 @@
 			{{/if}}
 		{{/each}}
 	</div>
-	<hr>
+	<div>
+		<hr>
+	</div>
 	<div class="chat-actions flexcol">
 		{{#each measuredTemplate as | temp i | }}
 			<button class="chat-action" data-place-template data-action="placeTemplate">

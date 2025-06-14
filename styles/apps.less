@@ -17,6 +17,34 @@
 /*  Sheet Styles                             */
 /* ----------------------------------------- */
 .skyfall.sheet {
+	.standard-form,
+	&.standard-form {
+		--actor-color-1: #182657;
+		--actor-color-2: #c9d1db;
+		--actor-color-3: #424f66;
+		--actor-color-4: #babecd;
+		.form-footer {
+			button {
+				* {
+					color: var(--actor-color-1);
+					i { color: var(--actor-color-1); }
+				}
+				background-color: white;
+				border: 2px solid var(--actor-color-3);
+				border-radius: 0;
+				&:hover {
+					* {
+						color: white;
+						i { color: white }
+					}
+					background-color: var(--actor-color-1);;
+				}
+			}
+		}
+	}
+}
+.skyfall.sheet {
+	gap: 0;
 	input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], select {
 		height: 22px;
 		font-size: 14px;
@@ -126,7 +154,8 @@
 /*  Journal Styles                           */
 /* ----------------------------------------- */
 .skyfall.sheet, .journal-sheet.sheet {
-	.modification-header, .modification-description {
+	.modification-header ,
+	.modification-description {
 		padding: 5px;
 		border: 1px solid black;
 		position: relative;
@@ -134,15 +163,58 @@
 		background-color: #e7e8ed;
 		color: @colorSFPlayer;
 	}
+	.modification-header  {
+		padding: 0;
+		display: flex;
+		flex-direction: row;
+		
+		.modification-name {
+			flex: 1;
+			padding: 5px;
+		}
+		.controls {
+			padding: 1px;
+			button, input {
+				--button-size: 26px;
+				--input-height: 26px;
+				&[type=checkbox] {
+					background-color: unset;
+				}
+				text-align: center;
+			}
+			flex: 0;
+			justify-content: center;
+		}
+	}
 }
 
 /* ----------------------------------------- */
-/*  Apss Styles                              */
+/*  Apps Styles                              */
 /* ----------------------------------------- */
 .skyfall {
 	.modification-header {
 		font-weight: bold;
 		background-color: @colorSFPlayerFaint;
+		.controls {
+			white-space: nowrap;
+			flex: 0;
+			button {
+				* {
+					color: var(--actor-color-1);
+					i { color: var(--actor-color-1); }
+				}
+				background-color: white;
+				border: 2px solid var(--actor-color-3);
+				border-radius: 0;
+				&:hover {
+					* {
+						color: white;
+						i { color: white }
+					}
+					background-color: var(--actor-color-1);;
+				}
+			}
+		}
 	}
 }
 
@@ -171,6 +243,7 @@
 			button {
 				background-color: @colorSFPlayer;
 				color: white;
+				span, i,
 				label {color: white;}
 			}
 			display: flex;
@@ -261,6 +334,7 @@
 		.form-footer {
 			display: flex;
 			flex-direction: row;
+			
 		}
 
 	}
@@ -279,7 +353,7 @@
 	max-width: 50px!important;
 	min-width: 50px!important;
 	width: 50px!important;
-	left: calc(100vw - 370px)!important;
+	left: calc(100vw - 420px)!important;
 	visibility: hidden;
 	.window-header { display: none; }
 	.window-content { padding: 5px; }
@@ -312,7 +386,7 @@
 
 #sidebar {
 	.actors-sidebar, .items-sidebar {
-		.directory-item.document h4 {
+		.directory-item.document .entry-name {
 			line-height: normal;
 			display: flex;
 			flex-direction: column;

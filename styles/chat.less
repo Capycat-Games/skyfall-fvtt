@@ -116,6 +116,7 @@
 		.card-header {
 			// border-image: url(./assets/sheet/card-border.svg) 1;
 			// background-color: @colorSFPlayer;
+			
 			font-family: @fontSkyfall;
 			color: white;
 			position: relative;
@@ -191,7 +192,12 @@
 			}
 			* { margin: 0; }
 		}
-
+		hr {
+			color: var(--actor-color);
+			background-image: none;
+			border: 1px solid var(--actor-color);
+			margin: 0.5em 0;
+		}
 		.chat-actions {
 			width: 100%;
 
@@ -270,9 +276,40 @@
 	}
 	&.usage-v2 {
 		gap: 0em;
+		padding: 0;
+		padding-bottom: 8px;
+		overflow: hidden;
+		.message-header {
+			padding: 8px;
+		}
+		.message-content {
+			.ability-card {
+				> * {
+					padding: 0 8px;
+				}
+				> hr {
+					padding: 0;
+				}
+			}
+		}
+		.message-header {
+			.actor-portrait {
+				flex: 0 0 56px;
+				width: 56px;
+				height: 56px;
+				object-fit: cover;
+				object-position: top;
+			}
+			.message-sender {
+				margin-left: 5px;
+				align-self: center;
+			}
+
+		}
 		.message-header,
 		.card-header {
 			background-color: var(--actor-color);
+			* { color: white; }
 		}
 		.card-header {
 			aside {
@@ -288,14 +325,15 @@
 		.dice-formula,
 		.dice-total {
 			position: relative;
-
+			border-bottom: 1px solid #999;
+			height: 26px;
+			font-size: 18px;
 			span.buttons {
 				display: flex;
 				position: absolute;
 				width: auto;
 				top: -1px;
 				white-space: nowrap;
-
 				&.left {
 					left: -2px;
 				}
@@ -303,8 +341,9 @@
 				&.right {
 					right: -1px;
 				}
-
 				button {
+					--button-size: 26px;
+					--input-height: 26px;
 					display: flex;
 					align-items: center;
 					line-height: 18px;

@@ -9,6 +9,9 @@ export default class ActorTraitsV2 extends HandlebarsApplicationMixin(DocumentSh
 
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall","sheet"],
+		window: {
+			contentClasses: ["standard-form"],
+		},
 		sheetConfig: false,
 		form: {
 			handler: this.#onSubmitDocumentForm,

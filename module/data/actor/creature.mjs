@@ -781,7 +781,11 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 	
 	async _applyDamage(roll, multiplier = 1, applyDR = false) {
 		console.groupCollapsed( 'applyDamage' );
-
+		const summary = {};
+		summary.roll = roll;
+		const isMagicalHealing =  ['heal', 'magical'].every( d => {
+			return roll.options.descriptors.includes(d);
+		});
 		// Apply changes to the ACTOR
 		const { changes } = roll.options;
 		if ( changes ) {
@@ -793,37 +797,51 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 			for (const change of changes) {
 				effect.apply(this.parent, change);
 			}
+			summary.changes = changes;
 		}
 
 		// Get current resource values
-		const { hp, ep } = this.resources;
+		const { hp, ep, shadow } = this.resources;
+		summary.current = {
+			hp: {value: hp.value, max: hp.max},
+			ep: {value: ep?.value, max: ep?.max},
+		}
 		applyDR = multiplier == -1 ? false : applyDR;
 		const dr = this.dr;
-		
+		summary.dr = dr;
 		let drTypes = this.modifiers.damage.taken;
-		const drMods = {normal: 1, imunity: 0, resistance: 0.5, vulnerability: 1.5 };
+		const drMods = {normal: 1, imunity: 0, resistance: 0.5, vulnerability: 2 };
 		drTypes = Object.entries(drTypes).reduce( (acc, dr ) => {
 				acc[dr[0]] = drMods[dr[1]];
 				return acc;
 		}, {});
-		
+		if ( shadow && isMagicalHealing ) {
+			const shadow = this.resources.shadow.value;
+			drTypes.heal = (shadow > 2 ? 1 : (shadow > 0 ? 0.5 : 0));
+		}
+
 		let damage;
 		let typeDamage = {};
 		if( roll ){
 			let defaultDamage = 'slashing';
-			typeDamage = roll.terms.reduce( (acc, t, idx) =>{
+			typeDamage = roll.terms.reduce( (acc, t, idx) => {
+
 				if ( idx == 0 && t.options.flavor ) defaultDamage = t.options.flavor;
+				if ( !t.options.flavor || t.options.flavor.startsWith("catharsis") ) {
+					t.options.flavor = defaultDamage;
+				}
 				let dType = t.options.flavor ?? defaultDamage;
 				if ( !acc[dType] ) acc[dType] = 0;
 				if( Number(t.total) ) {
-					acc[dType] += t.total;
+					const operator = roll.terms[idx - 1];
+					if ( operator && operator.operator == "-" ) acc[dType] -= t.total;
+					else acc[dType] += t.total;
 				}
 				return acc;
 			}, {});
 		}
 		
-		if ( applyDR ) damage = 0 - dr;
-		else damage = 0;
+		damage = 0;
 		const specialTypes = ['temp-hp','temp-ep', 'ep'];
 		const recovery = {
 			ep: 0,
@@ -831,6 +849,7 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 			tempEP: 0,
 		}
 		// Apply Damage Reduction for each type of damage
+		summary.damage = {}
 		for ( let [type, dmg] of Object.entries(typeDamage) ){
 			if ( specialTypes.includes(type) ) {
 				dmg = Math.floor(dmg * Number(multiplier) );
@@ -840,11 +859,20 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 				else if ( type == "temp-ep" ) recovery.tempEP -= dmg;
 			} else {
 				const typeMod = drTypes[type] ?? 1;
+				summary.damage[type] = {
+					irv: typeMod,
+					damage: dmg,
+				}
 				dmg = Math.floor(dmg * Number(multiplier) * Number(typeMod) );
 				damage += dmg;
 			}
-			
 		}
+		summary.recovery = recovery;
+		summary.damage['total'] = {
+			damage: damage
+		};
+		if ( applyDR ) damage = Math.max( damage - dr, 0 );
+		summary.damage.total.reduced = damage;
 		// Update the Actor
 		const updateData = {};
 		if ( hp ) {
@@ -861,7 +889,8 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 			updateData["system.resources.ep.temp"] = Math.max(ep.temp - deltaTempEP, recovery.tempEP);
 		}
 
-		
+		summary.updateData = updateData;
+		console.log("summary", summary);
 		console.groupEnd();
 
 		await this.parent.update(updateData);

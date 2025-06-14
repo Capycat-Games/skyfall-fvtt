@@ -14,7 +14,7 @@ import * as dice from "./module/dice/_module.mjs";
 import * as elements from "./module/apps/elements/_module.mjs"
 import EffectsMenu from "./module/apps/effects-menu.mjs";
 import * as hotbar  from "./module/helpers/hotbar.mjs";
-
+import "./module/modules.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
 import { registerHandlebarsHelpers } from "./module/helpers/handlebars.mjs";
@@ -22,6 +22,7 @@ import { registerSystemSettings } from "./module/helpers/settings.mjs";
 import AbilityTemplate from "./module/helpers/ability-template.mjs";
 import ShortRestV2 from "./module/apps/restV2.mjs";
 import TokenSkyfall from "./module/token.mjs";
+import SkyfallTokenRuler from "./module/canvas/token-ruler.mjs";
 import * as utils from "./module/helpers/utils.mjs";
 import SkyfallMigrationHelper from "./module/helpers/migration.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
@@ -90,10 +91,11 @@ Hooks.once('init', function () {
 	CONFIG.Item.documentClass = documents.SkyfallItem;
 	CONFIG.ActiveEffect.documentClass = documents.SkyfallEffect;
 	CONFIG.Token.documentClass = documents.SkyfallToken;
-	CONFIG.ChatMessage.documentClass = documents.SkyfallMessage;
-	
+	CONFIG.ChatMessage.documentClass = documents.SkyfallChatMessage;
+
 	CONFIG.ChatMessage.template = 'systems/skyfall/templates/v2/chat/chat-message.hbs';
 	CONFIG.Token.objectClass = TokenSkyfall;
+	CONFIG.Token.rulerClass = SkyfallTokenRuler;
 	CONFIG.ui.combat = CombatTrackerSkyfall;
 
 	// DATA MODEL
@@ -148,26 +150,36 @@ Hooks.once('init', function () {
 	CONFIG.Dice.rolls[0].CHAT_TEMPLATE = 'systems/skyfall/templates/v2/chat/roll.hbs';
 
 	// Register sheet application classes
-	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("skyfall", sheetsV2.CharacterSheetSkyfall, {
-		types: ["character"], label: 'TYPES.Actor.character',
+	const { DocumentSheetConfig } = foundry.applications.apps;
+	const { Actor, Item, ActiveEffect, ChatMessage } = foundry.documents;
+	
+	// Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.SkyfallCharacterSheet, {
+		// SkyfallCharacterSheet
+		types: ["character"],
+		label: 'TYPES.Actor.character',
 		makeDefault: true,
 	});
-	Actors.registerSheet("skyfall", sheetsV2.NPCSheetSkyfall, {
-		types: ["npc"], label: 'TYPES.Actor.npc',
+	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.NPCSheetSkyfall, {
+		// NPCSheetSkyfall
+		types: ["npc"],
+		label: 'TYPES.Actor.npc',
 		makeDefault: true,
 	});
-	Actors.registerSheet("skyfall", sheetsV2.PartnerSheetSkyfall, {
-		types: ["partner","creation"], label: 'TYPES.Actor.partner',
+	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.PartnerSheetSkyfall, {
+		// PartnerSheetSkyfall
+		types: ["partner","creation"],
+		label: 'TYPES.Actor.partner',
 		makeDefault: true,
 	});
-	Actors.registerSheet("skyfall", sheetsV2.GuildSheetSkyfall, {
-		types: ["guild"], label: 'TYPES.Actor.guild',
+
+	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.SkyfallGuildSheet, {
+		types: ["guild"],
+		label: 'TYPES.Actor.guild',
 		makeDefault: true,
 	});
 	
-	Items.unregisterSheet("core", ItemSheet);
-	Items.registerSheet("skyfall", sheetsV2.ItemSheetSkyfall, {
+	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.ItemSheetSkyfall, {
 		types: [
 			'legacy','heritage','curse','background','class','path','hierarchy','archetype',
 			'feature','feat',
@@ -177,27 +189,26 @@ Hooks.once('init', function () {
 		makeDefault: true,
 	});
 
-	Items.registerSheet("skyfall", sheetsV2.AbilitySheetSkyfall, {
+	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.AbilitySheetSkyfall, {
 		types: ['ability','spell'],
 		makeDefault: true,
 	});
-	Items.registerSheet("skyfall", sheetsV2.SigilSheetSkyfall, {
+	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.SigilSheetSkyfall, {
 		types: ['sigil'],
 		makeDefault: true,
 	});
-	Items.registerSheet("skyfall", sheetsV2.GuildAbilitySheetSkyfall, {
+	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.GuildAbilitySheetSkyfall, {
 		types: ['guild-ability'],
 		makeDefault: true,
 	});
-	
-	Messages.registerSheet('skyfall', sheetsV2.SkyfallAbilityModificationsConfig, {
+
+	DocumentSheetConfig.registerSheet(ChatMessage, "skyfall", sheetsV2.SkyfallAbilityModificationsConfig, {
 		types: ['usage'],
 		makeDefault: true,
 	});
-
-	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheetsV2.ActiveEffectConfig, {
+	DocumentSheetConfig.registerSheet(ActiveEffect, "skyfall", sheetsV2.SkyfallActiveEffectConfig, {
 		// types: ['modification'],
-		makeDefault :true
+		makeDefault: true
 	});
 
 	// Status Effects
@@ -304,24 +315,25 @@ Hooks.once('ready', async function () {
 	skyfall.models.settings.SceneConfigSetting.init();
 });
 
-Hooks.on("renderPlayerList", (app, html, data) => {
+Hooks.on("renderPlayers", (app, html, context, options) => {
 	if ( !game.user.isGM ) return;
-	html.find('li.player').each((i, player)=> {
-		if($(player).hasClass('gm')) return;
+	const players = html.querySelectorAll("li.player:not(.gm)");
+	for (const player of players) {
 		const userId = player.dataset.userId;
-		const character = game.users.get(userId).character;
+		const user = game.users.get(userId);
+		const character = user.character;
 		if ( !character ) return;
-		const catharsis = character.system.resources.catharsis.value;
-		const playerName = $(player).find('.player-name').text();
-		$(player).find('.player-name').text(`${playerName} (${catharsis})`);
+		const playerName = player.querySelector(".player-name");
+		// const name = `${user.name.split(' ')[0]} [${character.name.split(' ')[0]}]`
+		// playerName.innerText = name;
 		const btn = document.createElement("button");
-		btn.innerHTML = SYSTEM.icons.sfcatharsis;
+		btn.innerHTML = `${character.system.resources.catharsis.value} ${SYSTEM.icons.sfcatharsis}`;
 		btn.className = "give-catharsis";
 		btn.title =  game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
 		btn.dataset['action'] = 'catharsis';
-		player.appendChild(btn);
-	});
-	html.on('click', '.give-catharsis', _giveCatharsis.bind(this));
+		playerName.prepend(btn);
+		btn.addEventListener("click", _giveCatharsis.bind(this));
+	}
 });
 
 Hooks.on("controlToken", (token, controlled) => {
@@ -331,30 +343,6 @@ Hooks.on("controlToken", (token, controlled) => {
 		foundry.applications.instances.get(skyfall.applications.EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
 });
-
-
-Hooks.on("getSceneControlButtons", (buttons) => {
-	for (const button of buttons) {
-		if ( button.name != 'token' ) continue;
-		button.tools.push({
-			"name": "skyfall-scene-control",
-			"title": "SKYFALL2.APP.Scene",
-			"icon": "fa-solid fa-clapperboard",
-			"toggle": true,
-			"active": skyfall.ui.sceneConfig?.rendered ?? true,
-			"isActive": skyfall.ui.sceneConfig?.rendered ?? true,
-			"onClick": () => {
-				if ( skyfall.ui.sceneConfig?.rendered ) {
-					skyfall.ui.sceneConfig.close()
-				} else {
-					skyfall.ui.sceneConfig.render(true)
-				}
-			},
-			"css": "toggle active",
-		})
-	}
-});
-
 
 Hooks.on("targetToken", (user, token, target) => {
 	const actor = token.actor.clone();
@@ -366,19 +354,18 @@ Hooks.on("targetToken", (user, token, target) => {
 	}
 });
 
-Hooks.on("renderActorDirectory", (app, html, data) => {
-	const documentList = html.find('li.directory-item.document');
-	const collection = app.constructor.collection;
+Hooks.on("renderActorDirectory", (app, html, context, options) => {
+	const documentList = html.querySelectorAll("li.directory-item.document");
 	for (const li of documentList) {
-		const id = li.dataset.documentId;
-		const doc = collection.get(id);
+		const id = li.dataset.entryId;
+		const doc = app.collection.get(id);
 		const dirData = doc.system.directoryData;
 		if ( !dirData ) continue;
-		const name = li.querySelector('.document-name');
-		const span = document.createElement('span');
-		span.classList.add('document-info');
-		span.innerText = dirData;
-		name.append(span);
+		const name = li.querySelector('.entry-name');
+		const subtext = document.createElement('p');
+		subtext.classList.add('document-info');
+		subtext.innerText = dirData;
+		name.append(subtext);
 	}
 });
 
@@ -440,12 +427,13 @@ Hooks.on("createCombatant", (combatant, options, userId) => {
 });
 
 
-Hooks.on("renderChatMessage", (message, jquery, messageData) => {
+Hooks.on("renderChatMessageHTML", (message, html, context) => {
 	if ( !message.system.catharsis ) return;
-	const html = jquery[0];
+	
 	html.classList.add('skyfall');
 	html.classList.add('character');
 	html.classList.add('catharsis');
+	
 	if ( game.user.isGM ) {
 		const button = document.createElement('button');
 		button.innerHTML = SYSTEM.icons.sfcatharsis + ' ' +  game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
@@ -461,6 +449,83 @@ Hooks.on("renderChatMessage", (message, jquery, messageData) => {
 		html.querySelector('.message-content').append(button);
 	}
 });
+
+
+
+Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
+  console.log(menu, dropdowns);
+	const toggleMark = foundry.prosemirror.commands.toggleMark;
+	const wrapIn = foundry.prosemirror.commands.wrapIn;
+	if ("format" in dropdowns) {
+		dropdowns.format.entries.push({
+			action: "skyfall",
+			title: "Skyfall RPG",
+			children: [
+				{
+					// Box with background and a background banner for title. Same as Status Tooltip
+					action: "skyfall-banner-block", // .box-a
+					class: "banner-block",
+					title: "Box com Faixa",
+					node: menu.schema.nodes.section,
+					attrs: { _preserve: { class: "banner-block" } },
+					priority: 1,
+					cmd: () => {
+							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+									attrs: { _preserve: { class: "banner-block" } },
+							});
+							return true;
+					},
+				},
+				{
+					// Box with transparent background color and side border
+					action: "skyfall-info-block", // box-b
+					class: "info-block",
+					title: "Box de Informação",
+					node: menu.schema.nodes.section,
+					attrs: { _preserve: { class: "info-block" } },
+					priority: 1,
+					cmd: () => {
+							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+									attrs: { _preserve: { class: "info-block" } },
+							});
+							return true;
+					},
+				},
+				{
+					// Box without background and top-bottom border
+					action: "skyfall-content-block", //box-c
+					class: "content-block",
+					title: "Box de Conteúdo",
+					node: menu.schema.nodes.section,
+					attrs: { _preserve: { class: "content-block" } },
+					priority: 1,
+					cmd: () => {
+							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+									attrs: { _preserve: { class: "content-block" } },
+							});
+							return true;
+					},
+				},
+				{
+					// Box with hard background color and side border
+					action: "skyfall-narration-block", //box-c
+					class: "narration-block",
+					title: "Box de Narração",
+					attrs: { _preserve: { class: "narration-block" } },
+					priority: 1,
+					cmd: () => {
+							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+									attrs: { _preserve: { class: "narration-block" } },
+							});
+							return true;
+					},
+				},
+			]
+		});
+	}
+
+});
+
 
 /* -------------------------------------------- */
 /*  Helpers                                     */
@@ -574,16 +639,21 @@ async function prepareSystemStatusEffects() {
 	
 	for (const [i, ef] of CONFIG.statusEffects.entries()) {
 		ef.name = game.i18n.localize(ef.name);
+		
 		// Search and include tooltips
 		let content = undefined;
 		if ( journalConditions ) {
 			let efName = ef.name.replace(/\(\w+\)/,'').trim();
 			let page = journalConditions.pages.find( p => p.name == efName);
 			if ( page ) {
-				content = `<section class='tooltip status-effect'><h3>${efName}</h3>${page.text.content}</section>`;
+				const div = document.createElement('div');
+				div.innerHTML = page.text.content;
+				const list = div.querySelector('ul')?.outerHTML ?? "";
+				content = `<section class='tooltip status-effect'><h3>${efName}</h3>${list}</section>`;
 			}
 			ef.description = content;
 		}
+		if ( ef.id == "arcaneoverload" ) continue;
 		ef.tooltip = content;
 	}
 	// SYSTEM.conditions = {};
@@ -663,7 +733,7 @@ async function enrichReference(match, options) {
 		label = config;
 		tooltip = '';
 	}
-	
+	const TextEditor = foundry.applications.ux.TextEditor.implementation;
 	const inline = document.createElement('span');
 	inline.classList.add(style);
 	inline.dataset.applyStatus = config;

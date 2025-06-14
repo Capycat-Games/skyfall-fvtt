@@ -1,0 +1,795 @@
+/* ----------------------------------------- */
+/*  Actor Styles                             */
+/* ----------------------------------------- */
+
+.skyfallV13.sheet.actor {
+	// input
+	h1, h2, h3, h4, h5, h6 {
+		&.title {
+			font-family: var(--title-font);
+			color: var(--actor-color-1);
+			text-align: center;
+		}
+	}
+}
+
+/* ----------------------------------------- */
+/*  Character Styles                         */
+/* ----------------------------------------- */
+
+.skyfallV13.sheet.actor.character {
+	--actor-color-1: #182657;
+	--actor-color-2: #c9d1db;
+	--actor-color-3: #424f66;
+	--actor-color-4: #babecd;
+	&:not(.maximizing, .minimizing, .minimized) {
+		min-height: 710px;
+	}
+	.window-content {
+		padding: 0;
+		padding-left: 190px;
+		position: relative;
+		.rolling {
+			color: var(--actor-color-3);
+			color: red;
+		}
+		section.tab {
+			padding: 1em;
+			padding-right: var(--scroll-margin);
+			width: 100%;
+			height: 100%;
+		}
+		.character-profile {
+			position: absolute;
+			left: 0;
+			padding: 0.5em;
+			width: 190px;
+			// margin-right: 10px;
+			background-color: var(--actor-color-1);
+			display: flex;
+			flex-direction: column;
+			gap: 0.5em;
+			.profile-image {
+				width: auto;
+				margin: auto;
+				width: 120px;
+				height: 120px;
+				background-size: cover;
+				border-image: url(assets/sheet-v2/image-frame-blue-faint.svg) 10 / 10px round;
+			}
+			.charname {
+				input {
+					color: var(--actor-color-1);
+					font-family: var(--title-font);
+					background-color: rgba(0, 0, 0, 0.05);
+					text-align: center;
+					background-image: url(assets/sheet-v2/name-title-blue-faint.svg);
+					background-repeat: no-repeat;
+					background-size: 150% 34px;
+					background-position: 100% 100%;
+					border-radius: 0px;
+					padding: 0 25px 0 5px;
+				}
+			}
+			.dr-cp-hd {
+				.form-group.boxed {
+					&.dr {
+						border-right: 0;
+					}
+					&.resource.cp {
+						border-left: 0;
+					}
+				}
+				gap: 0;
+				.buttons {
+					padding: 5px;
+					gap: 5px;
+				}
+				.hitDie {
+					.die {
+						color: var(--actor-color-1);
+						background-size: contain;
+						background-position: center;
+						background-repeat: no-repeat;
+					}
+				}
+			}
+			.deathsave-shadow {
+				span {
+					font-size: 20px;
+				}
+				.form-group.shadow {
+					.form-fields {
+						gap: 0;
+						.temporary-shadow {
+							position: relative;
+							flex: 0;
+							.skyfall-icon {
+								color: var(--actor-color-2);
+							}
+							.value {
+								position: absolute;
+								font-size: 12px;
+								left: 7px;
+								top: 8px;
+							}
+						}
+					}
+				}
+			}
+		}
+		.character-actions {
+			.abilities-initiative-movement {
+				align-items: stretch;
+			}
+			.ability-scores {
+				flex: 0 0 450px;
+				background-size: 100% 100%;
+				align-items: center;
+				justify-content: space-evenly;
+				.ability {
+					display: flex;
+					flex-direction: column;
+					gap: 5px;
+					flex: 0 0 60px;
+					.score, .protection {
+						display: flex;
+						flex-direction: column;
+						flex: 0 0 58px;
+						width: 58px;
+						background-size: 100%;
+						background-size: contain;
+						background-repeat: no-repeat;
+						background-position: center;
+						color: var(--actor-color-1);
+						padding: 3px;
+					}
+					.score {
+						flex: 0 0 60px;
+						height: 60px !important;
+    				background-image: url(assets/sheet/abl-top.svg);
+						font-family: var(--title-font);
+						input {
+							display: block;
+							text-align: center;
+							color: var(--actor-color-1);
+							background-color: #f2f2f2;
+							border: none;
+							border-radius: 0;
+							padding: 3px;
+							width: 60%;
+							height: 24px;
+							margin: auto;
+						}
+					}
+					.protection {
+						a.icon {
+							position: relative;
+							font-size: 10px;
+							line-height: 14px;
+							&::before {
+								position: absolute;
+								top: -5px;
+								left: -5px;
+								width: 6px;
+								height: 6px;
+								content: "";
+								background-color: white;
+								border: 1px solid var(--actor-color-1);
+								transform: rotate(45deg);
+							}
+							&.active {
+								text-decoration: underline;
+							}
+							&.active::before {
+								background-color: var(--actor-color-1);
+							}
+						}
+						flex: 0 0 36px;
+						height: 36px !important;
+						background-image: url(assets/sheet/abl-bot.svg);
+						
+					}
+				}
+			}
+			.initiative-movement {
+				// flex: 0 0 150px;
+			}
+			.skills {
+				align-self: flex-start;
+				flex: 0 0 45%;
+				padding: 1em;
+				gap: 0;
+				.proficiency {
+					width: 70%;
+					margin: auto;
+					.label, input {
+						background-color: white;
+						color: var(--actor-color-1);
+						font-family: var(--title-font);
+						border: 2px solid var(--actor-color-1);
+						border-radius: 0;
+					}
+					input {
+						text-align: center;
+						flex: 0 0 32px;
+					}
+					.label {
+						flex: 1;
+						border-left: 0;
+					}
+				}
+				ul {
+					background-color: white;
+					color: var(--actor-color-1);
+					border: 2px solid var(--actor-color-1);
+					border-radius: 0;
+					font-family: var(--title-font);
+					li {
+						text-align: left;
+						padding: 0 0.5em;
+						.proficiency-rank {
+							flex: 0 0 2em;
+						}
+						.label {
+							flex: 3
+						}
+						.controls {
+							text-align: center;
+							position: relative;
+							input {
+								.skyfall-input-style-a;
+							}
+							&:has(input) {
+								&::after {
+									position: absolute;
+									right: 2px;
+									top: 2px;
+									font-size: 12px;
+									font-weight: 900;
+									// content: "\f013";
+								}
+								
+								&:hover {
+									&::after {
+										content: "\f013";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			.actions {
+				align-self: flex-start;
+				background-color: white;
+				color: var(--actor-color-1);
+				border: 2px solid var(--actor-color-1);
+				border: 2px solid var(--actor-color-2);
+				border-radius: 0;
+				ul.action-list {
+					.header, .filter-list {
+						background-color: var(--actor-color-1);
+						color: white;
+						font-family: var(--title-font);
+						text-align: center;
+						line-height: 2em;
+					}
+					.filter-list div {
+						border: 1px solid var(--actor-color-2);
+						border-top: 0;
+						border-bottom: 0;
+						background-color: var(--actor-color-2);
+						color: var(--actor-color-1);
+						&.active {
+							background-color: var(--actor-color-1);
+							color: white;
+						}
+						&:first-child {
+							border-left: 0;
+						}
+						&:last-child {
+							border-right: 0;
+						}
+					}
+					li {
+						margin: 0;
+						border-bottom: 2px solid var(--actor-color-2);
+						&:last-child {
+							border-bottom: 0;
+						}
+						&.item {
+							padding: 0.5em 1em;
+							a:hover {
+								color: var(--actor-color-1);
+								text-decoration: underline;
+							}
+							.item-name {
+								flex: 'auto';
+							}
+							.item-controls {
+								text-align: right;
+							}
+						}
+					}
+				}
+			}
+		}
+		.character-features {
+			&.tab {
+				padding: 0;
+			}
+			.progression {
+				padding: 1em;
+				ol.actor-progression {
+					column-fill: balance;
+					width: 100%;
+					&.root {
+						columns: 2;
+					}
+				}
+				li {
+					break-inside: avoid;
+					.entry {
+						background-color: var(--actor-color-2);
+						color: var(--actor-color-1);
+						.item-image {
+							flex: 0 0 32px;
+							width: 32px;
+							height: 32px;
+							margin-right: 5px;
+						}
+						.item-controls {
+							flex: 0;
+							text-align: right;
+							white-space: nowrap;
+						}
+					}
+					ol.nested-itens {
+						padding-left: 32px;
+						li {
+							position: relative;
+							.entry {
+								border: 2px solid var(--actor-color-2);
+								background-color: unset;
+							}
+							&::before {
+								position: absolute;
+								left: -1em;
+								top: 0;
+								content: '\2BA1';
+								color: var(--actor-color-1);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.character-abilities,
+		.character-spells {
+			ul.filter-list {
+				.skyfall-filter;
+			}
+			.ability-list {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				h2 {
+					flex: 0 0 100%;
+					margin: 0;
+					text-align: center;;
+					font-family: var(--title-font);
+					font-size: 1.5em;
+					color: var(--actor-color-1);
+				}
+				.content-embed {
+					width: 50%;
+					padding: 0.5em;
+					.ability-card {
+						.skyfall-ability-card;
+					}
+				}
+			}
+		}
+		.character-biography {
+			.biography {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+				prose-mirror {
+					flex: 1;
+					menu, button.icon.toggle {
+						background-color: var(--actor-color-1);
+						color: white;
+					}
+				}
+				.editor-content {
+					background-color: white;
+					color: var(--actor-color-1);
+					border: 2px solid var(--actor-color-2);
+				}
+			}
+		}
+		.character-inventory {
+			ol.item-list,
+			ul.item-list {
+				.skyfall-content-list;
+			}
+			.inventory {
+				overflow: visible;
+				#context-menu {
+					left: -80px;
+				}
+			}
+			.inventory-sigils {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				.content-embed {
+					flex: 0 0 50%;
+					width: 50%;
+					padding: 0.5em;
+					.ability-card {
+						.skyfall-ability-card;
+					}
+				}
+			}
+		}
+	}
+}
+
+/* ----------------------------------------- */
+/*  Guild Styles                             */
+/* ----------------------------------------- */
+
+.skyfallV13.sheet.actor.guild {
+	--actor-color-1: #182657;
+	--actor-color-2: #c9d1db;
+	--actor-color-3: #424f66;
+	--actor-color-4: #babecd;
+
+	.window-content {
+		padding: 0;
+		position: relative;
+		
+		section.guild-profile {
+			fieldset.profile {
+				flex: 0 0 30%;
+				padding: 1em;
+				.profile-image {
+					width: auto;
+					margin: auto;
+					width: 120px;
+					height: 120px;
+					background-size: cover;
+					border-image: url(assets/sheet-v2/image-frame-gray.svg) 10 / 10px round;
+				}
+				.charname {
+					input {
+						font-family: var(--title-font);
+						color: white;
+						background-color: rgba(0, 0, 0, 0.05);
+						text-align: center;
+						background-image: url(assets/sheet-v2/name-title-gray.svg);
+						background-repeat: no-repeat;
+						background-size: 150% 34px;
+						background-position: 100% 100%;
+						border-radius: 0px;
+						padding: 0 25px 0 5px;
+					}
+				}
+				.level {
+					border: 1px solid var(--actor-color-1);
+					background-color: white;
+					align-items: stretch;
+					.form-label, .form-fields {
+						border: 1px solid var(--actor-color-1);
+						color: var(--actor-color-1);
+						font-family: var(--title-font);
+						border-radius: 0;
+						input {
+							height: 24px;
+							color: var(--actor-color-1);
+							background-color: white;
+							border: none;
+							border-radius: 0;
+							text-align: center;
+						}
+					}
+					.form-label {
+						align-content: center;
+						flex: 2;
+					}
+					.form-fields {
+						flex: 1;
+						padding: 0;
+					}
+				}
+			}
+			
+			fieldset.ability-scores {
+				justify-content: space-evenly;
+				gap: 5px;
+				background-image: url(assets/sheet-v2/guild-abilities-background.png);
+				background-size: 100% 250px;
+				background-repeat: no-repeat;
+				border: none;
+				margin: 0;
+				align-items: stretch;
+				padding: 1em;
+				color: var(--actor-color-1);
+
+				.ability {
+					flex: 0 0 100px;
+					width: 100px;
+					> * { text-align: center; }
+					input {
+						.skyfall-input-style-a;
+						max-width: 30px;
+					}
+					&.cunning {
+						--ability-icon: url(assets/sheet-v2/guild-cunning.svg);
+					}
+					&.knowledge {
+						--ability-icon: url(assets/sheet-v2/guild-knowledge.svg);
+					}
+					&.crafting {
+						--ability-icon: url(assets/sheet-v2/guild-crafting.svg);
+					}
+					&.reputation {
+						--ability-icon: url(assets/sheet-v2/guild-reputation.svg);
+					}
+					* {
+						text-align: center;
+						align-items: center;
+						justify-content: center;
+					}
+					flex: 0 0 80px;
+					gap: 5px;
+					// width: 80px;
+					.value, .points {
+						.label {
+							margin-top: 1em;
+						}
+						background-size: 100%;
+						background-repeat: no-repeat;
+						background-position: center;
+					}
+					.value {
+						height: 90px;
+						background-image: url(assets/sheet-v2/guild-abilities-value.png);
+						padding-bottom: 5px;
+						position: relative;
+						> * {
+							z-index: 2;
+						}
+						&:before {
+							position: absolute;
+							z-index: 1;
+							content: "";
+							width: 100%;
+							height: 100%;
+							background-image: var(--ability-icon);
+							background-repeat: no-repeat;
+							background-position: center;
+						}
+						div {
+							align-content: center;
+							flex: 2;
+							font-size: 1.5em;
+						}
+						input {
+							border-radius: 50px;
+							width: 25px;
+							height: 25px;
+							border: 1px dashed var(--actor-color-1);
+						}
+					}
+					.points {
+						height: 110px;
+						background-image: url(assets/sheet-v2/guild-abilities-points.png);
+						.separator {
+							position: relative;
+							justify-content: space-evenly;
+							&:before {
+								position: absolute;
+								left: 0;
+								top: 0;
+								content: '0';
+								color: transparent;
+								display: block;
+								height: 80%;
+								width: calc(50% - 0px);
+								border-right: 1px solid var(--actor-color);
+								z-index: 0;
+							}
+						}
+						.income {
+							padding: 1px;
+							line-height: 1em;
+							border-top: 1px solid var(--actor-color);
+						}
+					}
+				}
+			}
+			.seals.item-list {
+				.skyfall-content-list;
+			}
+			.motto {
+				.form-fields {
+					background-image: url(assets/sheet-v2/guild-motto.svg);
+					background-repeat: no-repeat;
+					background-size: cover;
+					background-position: 100%;
+					padding: 0.5em 2em 0.5em 0.5em;
+					width: 100%;
+					height: 80px;
+					textarea {
+						background-color: unset;
+						color: white;
+						width: 100%;
+						height: 100%;
+						resize: none;
+					}
+				}
+			}
+			.border-design-a {
+				gap: 1em;
+			}
+			.right {
+				.actions {
+					align-self: flex-start;
+					background-color: white;
+					color: var(--actor-color-1);
+					border: 2px solid var(--actor-color-1);
+					border: 2px solid var(--actor-color-2);
+					border-radius: 0;
+					ul.action-list {
+						.header, .filter-list {
+							background-color: var(--actor-color-1);
+							color: white;
+							font-family: var(--title-font);
+							text-align: center;
+							line-height: 2em;
+						}
+						.filter-list div {
+							border: 1px solid var(--actor-color-2);
+							border-top: 0;
+							border-bottom: 0;
+							background-color: var(--actor-color-2);
+							color: var(--actor-color-1);
+							&.active {
+								background-color: var(--actor-color-1);
+								color: white;
+							}
+							&:first-child {
+								border-left: 0;
+							}
+							&:last-child {
+								border-right: 0;
+							}
+						}
+						li {
+							margin: 0;
+							border-bottom: 2px solid var(--actor-color-2);
+							&:last-child {
+								border-bottom: 0;
+							}
+							&.item {
+								padding: 0.5em;
+								a:hover {
+									color: var(--actor-color-1);
+									text-decoration: underline;
+								}
+								.item-name {
+									flex: 'auto';
+									margin-left: 5px;
+								}
+								.item-type {
+									font-size: 26px;
+								}
+								.item-type,
+								.item-action {
+									flex: 0;
+									white-space: nowrap;
+									line-height: 16px;
+								}
+								.item-controls {
+									text-align: right;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		section.guild-members {
+			.skyfall-border-design-b;
+			.item-list {
+				.skyfall-content-list;
+				li {
+					.item-image {
+						margin: 0;
+						flex: 0 0 48px;
+						width: 48px;
+						height: 48px;
+					}
+					.item-name {
+						padding-left: 1em;
+					}
+					.item-retired {
+						flex: 2;
+					}
+					border: 1px solid var(--actor-color-3);
+					align-items: stretch;
+					div {
+						align-content: center;
+						border: 1px solid var(--actor-color-3);
+					}
+				}
+				li.entry {
+					background-color: var(--actor-color-4);
+				}
+			}
+		}
+		section.guild-abilities {
+			flex: 1;
+			.guild-actions {
+				align-self: center;
+				align-content: center;
+				padding: 1em;
+			}
+			.abilities {
+				.skyfall-border-design-b;
+				flex: 1;
+			}
+			.ability-list {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				.content-embed {
+					flex: 0 0 50%;
+					width: 50%;
+					padding: 0.5em;
+					.ability-card {
+						.skyfall-ability-card;
+					}
+				}
+			}
+		}
+		section.guild-facilities {
+			flex: 1;
+			.blueprints {
+				padding: 1em;
+			}
+			.facilities-list {
+				.skyfall-border-design-a;
+				.item-list.facilities {
+					.skyfall-content-list;
+				}
+			}
+		}
+		section.guild-inventory {
+			flex: 1;
+			.skyfall-border-design-b;
+			.item-list {
+				.skyfall-content-list;
+			}
+		}
+	}
+}
+
+/* ----------------------------------------- */
+/*  Creation Styles                          */
+/* ----------------------------------------- */
+
+.skyfallV13.sheet.actor.creation {
+	--actor-color-1: #182657;
+	--actor-color-2: #c9d1db;
+	--actor-color-3: #424f66;
+	--actor-color-4: #babecd;
+}

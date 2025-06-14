@@ -1,0 +1,27 @@
+<div class="actions">
+	<ul class="action-list plain flexcol">
+		<li class="header"> {{localize "SKYFALL.FILTER"}}</li>
+		<li class="filter-list flexrow" data-filter-id="actions">
+			{{#each filters.actions as | action key | }}
+				<div data-action="filter" data-filter="{{key}}" class="filter-item {{ifThen action.active 'active' '' }}" data-tooltip="{{localize action.label}}">
+					{{{action.icon}}}
+				</div>
+			{{/each}}
+		</li>
+		{{#each items.abilities as | item |}}
+			<li class="item entry flexrow {{item.filters.actions}}">
+				<div class="item-type">
+					{{{item.card.abilityIcon}}}
+				</div>
+				<div class="item-name">
+					<a data-action="abilityUse" data-ability-id="{{item.id}}">
+						{{item.name}}
+					</a>
+				</div>
+				<div class="item-action">
+					{{item.card.cost}} {{{item.card.action}}}
+				</div>
+			</li>
+		{{/each}}
+	</ul>
+</div>

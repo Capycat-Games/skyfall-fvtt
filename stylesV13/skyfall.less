@@ -1,0 +1,35 @@
+// out: "../skyfallV13.css", compress: false, sourceMap: false
+@import "variables.less";
+@import "app.less";
+@import "actor.less";
+// @import "item.less";
+// @import "effects.less";
+// @import "chat.less";
+// @import "journal.less";
+.system-skyfall {
+	--title-font: "NORTHWEST";
+	--icons-font: "SkyfallIcons";
+}
+
+.skyfallV13 {
+	--title-font: "NORTHWEST";
+	--icons-font: "SkyfallIcons";
+
+	
+	.condition-reference {
+		text-decoration: underline;
+		font-style: italic;
+		font-weight: bold;
+	}
+}
+#tooltip {
+	.tooltip.status-effect {
+		h3 {
+			font-family: var(--title-font);
+			font-size: 18px;
+			line-height: 36px;
+			left: -18px;
+			padding-left: 36px;
+		}
+	}
+}

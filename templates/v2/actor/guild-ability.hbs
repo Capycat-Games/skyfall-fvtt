@@ -1,0 +1,31 @@
+<div class="ability {{key}} flexcol">
+	<div class="value flexcol">
+		<h6 data-tooltip="{{localize label}}">{{localize (concat label "Abbr")}}</h6>
+		<div data-tooltip="{{{ability.tooltip}}}">
+			{{ability.value}}
+		</div>
+		{{formInput
+			schema.bonus
+			value=ability.bonus
+			classes="bonus"
+		}}
+	</div>
+	<div class="points">
+		<h6>{{localize "SKYFALL2.Points"}}</h6>
+		<div class="separator flexrow">
+			{{formInput
+				schema.points
+				value=ability.points
+			}}
+			<input type="number" disabled value="{{ability.limit}}">
+		</div>
+		<div class="income">
+			{{ability.short}} <br>
+			{{localize "SKYFALL2.GUILD.GuildArcShortAbbr"}}
+		</div>
+		<div class="income">
+			{{ability.long}} <br>
+			{{localize "SKYFALL2.GUILD.GuildArcLongAbbr"}}
+		</div>
+	</div>
+</div>

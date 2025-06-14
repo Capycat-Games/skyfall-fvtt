@@ -1,6 +1,7 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ItemSheetV2 } = foundry.applications.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */

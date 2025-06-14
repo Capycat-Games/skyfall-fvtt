@@ -1,7 +1,7 @@
 /**
  * Extend the base Token class to implement additional system-specific logic.
  */
-export default class TokenSkyfall extends Token {
+export default class TokenSkyfall extends foundry.canvas.placeables.Token {
 
 	/**
 	 * Draw a status effect icon
@@ -12,7 +12,7 @@ export default class TokenSkyfall extends Token {
 	 */
 	async _drawEffect(src, tint) {
 		if ( !src ) return;
-		const tex = await loadTexture(src, {fallback: "icons/svg/hazard.svg"});
+		const tex = await foundry.canvas.loadTexture(src, {fallback: "icons/svg/hazard.svg"});
 		const icon = new PIXI.Sprite(tex);
 		icon.tint = tint ?? 0xFFFFFF;
 		return this.effects.addChild(icon);

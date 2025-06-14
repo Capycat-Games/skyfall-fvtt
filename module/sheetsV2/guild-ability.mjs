@@ -1,6 +1,7 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { SkyfallSheetMixin } from "./base.mjs";
 const { ItemSheetV2 } = foundry.applications.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
@@ -32,7 +33,8 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/item/guild-ability-config.hbs",
-				"systems/skyfall/templates/v2/shared/effects.hbs"
+				"systems/skyfall/templates/v2/shared/effects.hbs",
+				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
 			],
 			scrollable: [".scrollable"],
 		},

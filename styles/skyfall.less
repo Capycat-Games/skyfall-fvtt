@@ -42,13 +42,14 @@
 	> * {
 		scrollbar-width: thin;
 	}
-
-	h1 { font-size: 22px; } // 48
-	h2 { font-size: 20px; } // 32
-	h3 { font-size: 18px; } // 24
-	h4 { font-size: 16px; } // 24
-	h5 { font-size: 14px; } // 20
-	h6 { font-size: 12px; } // 24
+	.window-content, .message-content {
+		h1 { font-size: 22px; } // 48
+		h2 { font-size: 20px; } // 32
+		h3 { font-size: 18px; } // 24
+		h4 { font-size: 16px; } // 24
+		h5 { font-size: 14px; } // 20
+		h6 { font-size: 12px; } // 24
+	}
 	
 	h1, h2, h3, h4, h5, h6 {
 		font-family: @fontSkyfall;
@@ -159,12 +160,13 @@
 #players {
 	width: 220px;
 	.give-catharsis {
-		max-width: 25px;
 		line-height: 1em;
 		font-size: 12px;
 		height: 20px;
 		text-align: center;
-		padding: 0;
+		padding: 0 5px;
+		display: inline;
+		margin-right: 0.5em;
 		i { margin: 0;}
 		svg, svg image {
 			width: 16px;

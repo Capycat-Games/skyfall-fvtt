@@ -1,6 +1,6 @@
 import * as widgets from "./helpers/widgets.mjs";
 
-export default class SkyfallModificationConfig extends ActiveEffectConfig {
+export default class SkyfallModificationConfig extends foundry.applications.sheets.ActiveEffectConfig {
 	/** @override */
 	static get defaultOptions() {
 		return foundry.utils.mergeObject(super.defaultOptions, {

@@ -1,0 +1,152 @@
+<section class="tab character-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="character">
+
+	<div class="currency-capacity-arcane flexrow">
+		{{!-- CURRENCY --}}
+		<fieldset class="currency cutbg cut-square">
+			<div class="form-group stacked boxed currency">
+				<div class="form-fields">
+					<span class="label">
+						• {{localize schema.currency.t.label}}
+					</span>
+					{{formInput schema.currency.t value=system.currency.t localize=true}}
+				</div>
+				<div class="form-fields">
+					<span class="label">
+						• {{localize schema.currency.p.label}}
+					</span>
+					{{formInput schema.currency.p value=system.currency.p localize=true}}
+				</div>
+				<div class="form-fields">
+					<span class="label">
+						• {{localize schema.currency.k.label}}
+					</span>
+					{{formInput schema.currency.k value=system.currency.k localize=true}}
+				</div>
+			</div>
+		</fieldset>
+
+		{{!-- CAPACITY --}}
+		<fieldset class="capacity cutbg cut-square">
+			<div class="form-group boxed stacked capacity">
+				<div class="form-label">
+					<span class="label">
+						{{localize "SKYFALL2.Capacity"}}
+					</span>
+				</div>
+				<div class="form-fields separator">
+					{{formInput schema.capacity.value value=system.capacity.value disabled=true}}
+					{{formInput schema.capacity.max value=system.capacity.max disabled=true}}
+				</div>
+				<div class="form-fields">
+					{{formInput schema.capacity.ability value=system.capacity.ability }}
+				</div>
+			</div>
+
+		</fieldset>
+		{{!-- FRAGMENTS --}}
+		<fieldset class="fragments cutbg cut-square">
+			<div class="form-group boxed stacked fragments">
+				<div class="form-label">
+					<span>
+						{{localize "SKYFALL2.FragmentPl"}}
+					</span>
+				</div>
+				<div class="form-fields separator">
+					{{formInput schema.fragments.value value=system.fragments.value disabled=true}}
+					{{formInput schema.fragments.max value=system.fragments.max disabled=true}}
+
+				</div>
+				<div class="form-fields">
+					{{formInput schema.fragments.abl value=system.fragments.abl }}
+				</div>
+			</div>
+
+		</fieldset>
+	</div>
+
+	{{!-- ITEM LIST --}}
+	<div class="inventory scrollable">
+		<ol class="plain item-list">
+			{{#each items.inventory as | list key | }}
+				<li class="item header flexrow">
+					<div class="item-image">
+
+					</div>
+					<div class="item-name flex3">
+						<span>
+							{{#if (eq key "category") }}
+								{{localize "SKYFALL2.Name"}}
+							{{else}}
+								{{localize (concat "TYPES.Item." key "Pl")}}
+							{{/if}}
+						</span>
+					</div>
+					<div class="item-quantity">
+						<span>
+							{{localize "SKYFALL2.QuantityAbbr"}}
+						</span>
+					</div>
+					<div class="item-capacity">
+						<span>{{localize "SKYFALL2.Capacity"}}</span>
+					</div>
+					<div class="item-controls">
+						<a data-create-list>
+							{{{@root.SYSTEM.icons.create}}} {{localize "SKYFALL2.Create"}}
+						</a>
+						<a data-action="inventoryDisplay">
+							{{{ifThen (eq this.inventory 'category') '<i class="fa-solid fa-list"></i>' '<i class="fa-solid fa-layer-group"></i>' }}}
+						</a>
+					</div>
+				</li>
+				{{#each list as | item | }}
+					<li class="item draggable entry flexrow" data-entry-id="{{item.id}}">
+						<div class="item-image">
+							<img src="{{item.img}}">
+						</div>
+						<div class="item-name flexrow flex3">
+							{{ifThen item.magicName item.magicName item.name}}
+						</div>
+						<div class="item-quantity">
+							<span>
+								{{item.system.quantity}}
+							</span>
+						</div>
+						<div class="item-capacity">
+							<span>
+								{{item.system.volume}}
+							</span>
+						</div>
+						<div class="item-controls">
+							{{#unless (eq item.system.equipped undefined) }}
+								<a class="control" data-action="toggle" data-field-path="system.equipped">
+									{{#if item.system.equipped }}
+										{{{@root.SYSTEM.icons.on}}}
+									{{else }}
+										{{{@root.SYSTEM.icons.off}}}
+									{{/if}}
+								</a>
+							{{/unless}}
+							<a class="control" data-action="itemToChat">{{{@root.SYSTEM.icons.chat}}}</a>
+							<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+							<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+						</div>
+					</li>
+				{{/each}}
+			{{/each}}
+		</ol>
+	</div>
+
+	{{!-- SIGILS --}}
+	<div class="inventory-sigils flexrow ">
+		<h5 class="title flex100">{{localize "TYPES.Item.sigilPl"}}</h5>
+		{{#each items.sigils as | sigil | }}
+			{{{sigil._enriched}}}
+			{{!-- {{> "systems/skyfall/templates/v2/item/sigil-card.hbs" item=sigil labels=sigil.system.labels collapse=true}} --}}
+		{{/each }}
+	</div>
+
+
+</section>

@@ -1,0 +1,63 @@
+<section class="tab character-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="character">
+	{{!-- TOP --}}
+	<div class="abilities-initiative-movement flexrow">
+		{{!-- ABILITIES --}}
+		<fieldset class="ability-scores cutbg cut-rect-horizontal flexrow">
+			{{#each system.abilities as | ability key |}}
+				{{> "systems/skyfall/templatesV13/actor/character/ability-score.hbs" ability=ability source=(lookup @root.source.abilities key) key=key}}
+			{{/each}}
+		</fieldset>
+		<fieldset class="initiative-movement cutbg cut-square">
+			{{!-- INITIATIVE --}}
+			<div class="form-group boxed stacked initiative">
+				<div class="form-label">
+					<a data-action="roll" data-roll-type="initiative" class="{{#if (or (eq rolling.type 'initiative' ) (eq rolling.type 1)) }}active rolling{{else}}{{/if}}">
+						{{localize "SKYFALL.ACTOR.INITIATIVE"}}
+					</a>
+				</div>
+				<div class="form-fields" data-action="edit" data-field-path="system.initiative" data-tooltip='{{{system.initiative.totalTooltip}}}'>
+					<input type="number" value="{{system.initiative.total}}" disabled>
+				</div>
+			</div>
+
+			{{!-- MOVEMENT --}}
+			<div class="form-group boxed stacked movement">
+				<div class="form-label">
+					<a data-action="manage" data-manage="movement">{{localize "SKYFALL.ACTOR.MOVEMENT"}}</a>
+				</div>
+				<div class="form-fields">
+					{{#each movement as | move | }}
+						<span data-tooltip="{{localize move.label}}">
+							{{{move.icon}}} {{move.value}}
+						</span>
+					{{/each}}
+					{{#unless movement}}
+						<span>&nbsp;</span>
+					{{/unless}}
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	{{!-- BOTTOM --}}
+	<div class="skills-actions flexrow">
+		{{!-- ABILITY ACTIONS --}}
+		<fieldset class="skills cutbg cut-rect-vertical">
+			{{!-- PROFICIENCY --}}
+			<div class="proficiency flexrow">
+				<input type="number" class="slim" value="{{system.proficiency}}" disabled>
+				<span class="label">
+					{{localize "SKYFALL.ACTOR.PROFBONUSABBR"}}
+				</span>
+			</div>
+			{{!-- SKILLS --}}
+			{{> "systems/skyfall/templatesV13/actor/character/skills.hbs" skills=system.skills}}
+		</fieldset>
+
+		<div class="actions">
+			{{> "systems/skyfall/templatesV13/actor/character/actions.hbs"}}
+		</div>
+	</div>
+</section>

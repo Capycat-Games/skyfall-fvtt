@@ -19,7 +19,7 @@ export function filterObject(source, keys, onlyKeys = false) {
 }
 
 export function referenceTag(key, tagName = "span") {
-	const descriptor = SYSTEM.DESCRIPTORS[key];
+	const descriptor = SYSTEM.DESCRIPTORS[key] ?? SYSTEM.GUILDDESCRIPTORS[key] ?? SYSTEM.SIGILDESCRIPTORS[key] ?? null;
 	const statusEffect = SYSTEM.statusEffects[key];
 	if ( !descriptor && !statusEffect ) return "";
 	const reference = descriptor ?? statusEffect;

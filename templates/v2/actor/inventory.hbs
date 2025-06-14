@@ -151,7 +151,7 @@
 		<div class="inventory-sigils flexrow ">
 			<h1 class="text-center flex100">{{localize "TYPES.Item.sigilPl"}}</h1>
 			{{#each items.sigils as | sigil | }}
-				{{> "systems/skyfall/templates/v2/item/sigil-card.hbs" item=sigil labels=sigil.system.labels collapse=true}}
+				{{!-- {{> "systems/skyfall/templates/v2/item/sigil-card.hbs" item=sigil labels=sigil.system.labels collapse=true}} --}}
 			{{/each }}
 		</div>
 	{{/if}}

@@ -1,6 +1,7 @@
 import RollConfig from "../apps/roll-config.mjs";
 import D20Roll from "../dice/d20-roll.mjs";
 import SkyfallRoll from "../dice/skyfall-roll.mjs";
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 export default class SkyfallMessage extends ChatMessage {
 

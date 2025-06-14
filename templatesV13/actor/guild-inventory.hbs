@@ -1,0 +1,80 @@
+<section class="tab guild-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="{{tab.id}}">
+
+	<div class="border-corners"></div>
+
+	{{!-- ITEM LIST --}}
+	<div class="inventory scrollable">
+		<ol class="plain item-list">
+			{{#each items.inventory as | list key | }}
+				<li class="item header flexrow">
+					<div class="item-image">
+
+					</div>
+					<div class="item-name flex3">
+						<span>
+							{{#if (eq key "category") }}
+								{{localize "SKYFALL2.Name"}}
+							{{else}}
+								{{localize (concat "TYPES.Item." key "Pl")}}
+							{{/if}}
+						</span>
+					</div>
+					<div class="item-quantity">
+						<span>
+							{{localize "SKYFALL2.QuantityAbbr"}}
+						</span>
+					</div>
+					<div class="item-capacity">
+						<span>{{localize "SKYFALL2.Capacity"}}</span>
+					</div>
+					<div class="item-controls">
+						<a data-create-list>
+							{{{@root.SYSTEM.icons.create}}} {{localize "SKYFALL2.Create"}}
+						</a>
+					</div>
+				</li>
+				{{#each list as | item | }}
+					<li class="item draggable entry flexrow" data-entry-id="{{item.id}}">
+						<div class="item-image">
+							<img src="{{item.img}}">
+						</div>
+						<div class="item-name flexrow flex3">
+							{{ifThen item.magicName item.magicName item.name}}
+						</div>
+						<div class="item-quantity">
+							<span>
+								{{item.system.quantity}}
+							</span>
+						</div>
+						<div class="item-capacity">
+							<span>
+								{{item.system.capacity}}
+							</span>
+						</div>
+						<div class="item-controls">
+							{{#unless (eq item.system.equipped undefined) }}
+								<a class="control" data-action="toggle" data-field-path="system.equipped">
+									{{#if item.system.equipped }}
+										{{{@root.SYSTEM.icons.on}}}
+									{{else }}
+										{{{@root.SYSTEM.icons.off}}}
+									{{/if}}
+								</a>
+							{{/unless}}
+							<a class="control" data-action="itemToChat">{{{@root.SYSTEM.icons.chat}}}</a>
+							<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+							<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+						</div>
+					</li>
+				{{/each}}
+			{{/each}}
+		</ol>
+	</div>
+
+
+	<div class="border-corners bottom"></div>
+
+</section>

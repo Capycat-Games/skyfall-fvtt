@@ -34,9 +34,11 @@
 	{{/if}}
 
 	<div class="ability-properties">
-		{{#unless (eq item.system.activation.recharge null) }}
-			<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
-		{{/unless}}
+		{{#if (eq item.type "ability")}}
+			{{#unless (eq item.system.activation.recharge null) }}
+				<br>[{{localize "SKYFALL2.ACTIVATION.Recharge"}}]
+			{{/unless}}
+		{{/if}}
 		{{#each item.system.labels.properties as | prop | }}
 			<p><label>{{{localize prop.label}}}:</label> {{#if prop.roll}}{{prop.roll}}{{else}}{{prop.descriptive}}{{/if}}</p>
 		{{/each}}
@@ -91,7 +93,9 @@
 		{{/if}}
 	{{/each}}
 
-	<hr>
+	<div>
+		<hr>
+	</div>
 	<div class="chat-actions flexcol">
 		{{!-- PHASE 1 BUTTONS | configure - aid --}}
 		{{!-- PHASE 2 BUTTONS | NONE --}}

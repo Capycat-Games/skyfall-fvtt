@@ -2,7 +2,7 @@
  * A helper class for building MeasuredTemplates for abilities
  * @extends {MeasuredTemplate}
  */
-export default class AbilityTemplate extends MeasuredTemplate {
+export default class AbilityTemplate extends foundry.canvas.placeables.MeasuredTemplate {
 
 	/**
 	 * A factory method to create an AbilityTemplate instance using provided data from an Item instance

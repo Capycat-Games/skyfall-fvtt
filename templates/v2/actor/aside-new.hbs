@@ -7,7 +7,7 @@
 		<input name="name" type="text" value="{{actor.name}}" placeholder="Name" />
 	</div>
 
-	<fieldset class="attribute flexrow">
+	<fieldset class="attribute flexcol">
 		<div class="form-group stacked resource hp">
 			<label>
 				<a data-action="manage" data-manage="resources">
@@ -94,21 +94,21 @@
 				}}
 			</div>
 		</div>
+		<div class="rest flexrow">
+			<button data-action="manage" data-manage="short-rest">{{{SYSTEM.icons.food}}}</button>
+			<button data-action="manage" data-manage="long-rest">{{{SYSTEM.icons.tent}}}</button>
+		</div>
 		<div class="hitDie flexcol">
 			{{#each hitDies.dies as | hd |}}
 				<span class="die" style="background-image:url({{hd.icon}})">{{hd.value}}</span>
 			{{/each}}
-		</div>
-		<div class="rest flexrow">
-			<button data-action="manage" data-manage="short-rest">{{{SYSTEM.icons.food}}}</button>
-			<button data-action="manage" data-manage="long-rest">{{{SYSTEM.icons.tent}}}</button>
 		</div>
 	</fieldset>
 
 	<fieldset class="attribute">
 		<div class="form-group stacked deathsaves">
 			<label>
-				<a data-action="manage" data-manage="deathsaves">
+				<a data-action="roll" data-roll-type="deathsave">
 					{{localize "SKYFALL2.RESOURCE.DeathSave"}}
 				</a>
 			</label>

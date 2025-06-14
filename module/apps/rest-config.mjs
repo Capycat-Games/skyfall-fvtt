@@ -1,6 +1,6 @@
 
 const {HandlebarsApplicationMixin, ApplicationV2, DialogV2} = foundry.applications.api;
-
+const {renderTemplate} = foundry.applications.handlebars;
 export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 	constructor(options){
 		// options.window.title = "SKYFALL2.APP.Rest";
@@ -29,7 +29,7 @@ export default class RestConfig extends HandlebarsApplicationMixin(DialogV2) {
 	/** @inheritDoc */
 	static DEFAULT_OPTIONS = {
 		id: "rest-config",
-		classes: ["dialog","skyfall", "sheet", "rest-config"],
+		classes: ["dialog","skyfall", "sheet", "rest-config", "standard-form"],
 		tag: "dialog",
 		window: {
 			title: "SKYFALL2.APP.ShortRest",

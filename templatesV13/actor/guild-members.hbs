@@ -1,0 +1,54 @@
+<section class="tab guild-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="{{tab.id}}">
+
+	<div class="border-corners"></div>
+	<ul class="plain members item-list">
+		<li class="member header flexrow">
+			<div class="item-image"></div>
+			<div class="item-name flex3">
+				<span class="span">
+					{{localize "SKYFALL2.Name"}}
+				</span>
+			</div>
+			<div class="item-level">
+				{{localize "SKYFALL2.Level"}}
+			</div>
+			<div class="item-retired">
+				{{localize "SKYFALL2.GUILD.Retired"}}
+			</div>
+			<div class="item-controls"></div>
+		</li>
+		{{#each members as | member i|}}
+			<li class="member entry flexrow" data-entry-id="{{member.uuid}}" data-index="{{i}}">
+				<div class="item-image">
+					<img src="{{member.img}}" class="flex0">
+				</div>
+				<div class="item-name flex3 flexrow">
+					<span>
+						{{member.name}}
+					</span>
+				</div>
+				<div class="item-level">
+					<span>
+						{{member.system.level.value}}
+					</span>
+				</div>
+				<div class="item-retired">
+					<span>
+						<a data-action="retire">
+							{{{ifThen member.retired  @root.SYSTEM.icons.diamondfill @root.SYSTEM.icons.square}}}
+						</a>
+					</span>
+				</div>
+				<div class="item-controls">
+					<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+					<a class="control" data-action="deleteMember">{{{@root.SYSTEM.icons.delete}}}</a>
+				</div>
+			</li>
+		{{/each}}
+	</ul>
+	<div class="border-corners bottom"></div>
+
+</section>

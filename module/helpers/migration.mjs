@@ -7,19 +7,20 @@ export default class SkyfallMigrationHelper {
 		const currentVersion = game.settings.get('skyfall','systemMigrationVersion');
 		const migrations = Object.entries(SkyfallMigrationHelper.migrations()) ;
 		const notifyLabel = "Migrating World Document. Applying v{version}";
-		
-		SceneNavigation.displayProgressBar({
-			label: "Migrating World Document.",
+		const progressBar = ui.notifications.notify("Migrating World Document.", "info", {
+			localize: true,
+			progress: true,
 			pct: 0
 		});
+
 		let acc = 0;
 		for (const [version, migrationTransformations] of migrations) {
 			acc++;
 			if ( !foundry.utils.isNewerVersion( version, currentVersion ) ) continue;
 			console.groupCollapsed(`migration: v${version}`);
 			try {
-				SceneNavigation.displayProgressBar({
-					label: game.i18n.format(notifyLabel, version),
+				ui.notifications.update(progressBar, {
+					message: game.i18n.format(notifyLabel, version),
 					pct: ((acc / migrations.length) * 100).toFixed(0)
 				});
 				const transformations = migrationTransformations;
@@ -62,11 +63,10 @@ export default class SkyfallMigrationHelper {
 			}
 			console.groupEnd();
 		}
-		SceneNavigation.displayProgressBar({
-			label: "Migrating World Document.",
-			pct: 100
+		ui.notifications.update(progressBar, {
+			message: "Migrating World Document.",
+			pct: 1
 		});
-		
 	}
 
 	static migrations() {

@@ -1,6 +1,5 @@
-<div
-	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}"
-	data-entry-id="{{item.id}}">
+<div data-entry-id="{{item.id}}"
+	class="ability-card flexcol {{ifThen (eq item.type 'spell') item.filters.spells item.filters.abilities}} {{ifThen @root.isPlayMode '' 'editing'}}">
 
 	{{#if (eq embeddedAt "ItemSheet")}}
 		<div class="ability-header flexrow">

@@ -1,4 +1,5 @@
-import { SYSTEM } from "../../config/system.mjs";
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
+const {renderTemplate} = foundry.applications.handlebars;
 
 /**
  * Data schema, attributes, and methods specific to Ancestry type Items.
@@ -506,7 +507,7 @@ export default class Ability extends foundry.abstract.TypeDataModel {
 		this.range.icon = this.isRanged ? SYSTEM.icons.sfranged : SYSTEM.icons.melee;
 	}
 
-	async prepareCardData(options){
+	async prepareCardData(options = {}){
 		const card = {};
 		card.name = this.parent.name;
 		

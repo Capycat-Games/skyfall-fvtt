@@ -10,4 +10,11 @@
 	{{else}}
 		<h3 class="text-center">{{localize "SKYFALL2.APP.SCENE.NotStarted"}}</h3>
 	{{/if}}
+	<h6 class="text-center">
+		{{#if scene.guildArc}}
+			{{localize "SKYFALL2.GUILD.GuildArc"}}
+		{{else}}
+			{{localize "SKYFALL2.GUILD.AdventureArc"}}
+		{{/if}}
+	</h6>
 </div>

@@ -1,4 +1,5 @@
 const {HandlebarsApplicationMixin, ApplicationV2} = foundry.applications.api;
+const {renderTemplate} = foundry.applications.handlebars;
 
 import D20Roll from "../../dice/d20-roll.mjs";
 import SkyfallRoll from "../../dice/skyfall-roll.mjs";
@@ -30,7 +31,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			frame: true,
 			positioned: true,
 		},
-		classes: ["skyfall", "sheet", "modification-config"],
+		classes: ["skyfall", "sheet", "modification-config", "standard-form"],
 		position: {
 			width: 600, height: 'auto',
 			// top: 220, left: 120,
@@ -110,14 +111,24 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 		createData.weapon = weapon;
 		
 		createData.check = check;
-		createData.cost = {
-			ep: {
-				base: ability.system.activation.cost ?? 0,
+		if ( ability.type == "guild-ability" ) {
+			const resource = ability.system.type;
+			createData.cost ??= {};
+			createData.cost[resource] = {
+				base: ability.system.consume.amount ?? 0,
 				mod: 0,
-				limit: actor.system.proficiency,
-			},
-			quantity: [],
-		};
+				limit: actor.system.abilities[resource].points,
+			}
+		} else {
+			createData.cost = {
+				ep: {
+					base: ability.system.activation.cost ?? 0,
+					mod: 0,
+					limit: actor.system.proficiency,
+				},
+				quantity: [],
+			};
+		}
 		console.warn(createData.targets);
 		return new this(createData, options);
 	}
@@ -149,13 +160,23 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 
 		// GET TARGETS
 		this.manage.targets = await ModificationConfig.getTargets(this.manage.actor);
-		this.manage.cost = {
-			ep: {
-				base: this.manage.ability?.system.activation.cost ?? 0,
+		if ( this.manage.ability.type == "guild-ability" ) {
+			const resource = this.manage.ability.system.type;
+			this.manage.cost = {};
+			this.manage.cost[resource] = {
+				base: this.manage.ability?.system.consume.amount ?? 0,
 				mod: 0,
-				limit: this.manage.actor?.system.proficiency,
-			},
-			quantity: [],
+				limit: this.manage.actor?.system.abilities[resource].points,
+			}
+		} else {
+			this.manage.cost = {
+				ep: {
+					base: this.manage.ability?.system.activation.cost ?? 0,
+					mod: 0,
+					limit: this.manage.actor?.system.proficiency,
+				},
+				quantity: [],
+			}
 		}
 		
 		// this.manage.modifications = await ModificationConfig.getModifications(
@@ -233,6 +254,9 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			ability.system.descriptorsSpecial.push('skill', check.skill);
 			ability.system.identifier = `check-${check.ability}-${check.skill}`;
 		}
+		if ( check.type == "deathsave" ) {
+			ability.system.identifier = `check-deathsave`;
+		}
 		if ( check.type == "initiative" ) {
 			ability.system.descriptorsSpecial.push('initiative');
 			ability.system.identifier = `check-${check.ability}-initiative`;
@@ -250,6 +274,9 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			}
 			if ( check.type == "initiative" ) {
 				_roll.type = "initiative";
+			}
+			if ( check.type == "deathsave" ) {
+				_roll.type = "deathsave";
 			}
 		}
 	}
@@ -300,11 +327,12 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	}
 	
 	static async getAbilityRolls(actor, ability){
+		if ( !ability.system.rolls ) return [];
 		const rolls = [];
 		const RollData = foundry.utils.mergeObject(
 			actor.getRollData(), ability.getRollData()
 		);
-		const damageType = ability.system.descriptors.find( d => SYSTEM.DESCRIPTOR.DAMAGE[d] );
+		const damageType = ability.system.descriptors.find( d => d == "heal" || SYSTEM.DESCRIPTOR.DAMAGE[d] );
 		const isVersatile = ability.system.descriptors.includes( d => d == 'versatile' );
 
 		const abilityRolls = ability.system.rolls;
@@ -315,31 +343,17 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			if ( bonuses ) {
 				_roll.terms.push(...bonuses);
 			}
-			if ( ['attack'].includes(_roll.type) ) {
-				const roll = D20Roll.fromItemRoll(_roll, RollData, {});
-				for (const term of roll.terms) {
-					if ( !(term instanceof DiceTerm) ) continue;
-					term.modifiers = [...new Set([...term.modifiers, ...modifiers]) ].flat();
-					break;
+			const RollClass = ['damage'].includes(_roll.type) ? SkyfallRoll : D20Roll;
+			const roll = RollClass.fromItemRoll(_roll, RollData, {});
+			for (const term of roll.terms) {
+				if ( _roll.type == 'damage' && term.options && !term.options.flavor ) {
+					term.options.flavor = damageType;
 				}
-				rolls.push( roll );
-			} else if ( ['damage'].includes(_roll.type) ) {
-				const roll = SkyfallRoll.fromItemRoll(_roll, RollData, {});
-				for (const term of roll.terms) {
-					if ( !(term instanceof DiceTerm) ) continue;
-					term.modifiers = [...new Set([...term.modifiers, ...modifiers]) ].flat();
-					break;
-				}
-				rolls.push( roll );
-			} else if ( ['ability', 'initiative'].includes(_roll.type) ) {
-				const roll = D20Roll.fromItemRoll(_roll, RollData, {});
-				for (const term of roll.terms) {
-					if ( !(term instanceof DiceTerm) ) continue;
-					term.modifiers = [...new Set([...term.modifiers, ...modifiers]) ].flat();
-					break;
-				}
-				rolls.push( roll );
+				if ( !(term instanceof DiceTerm) ) continue;
+				term.modifiers = [...new Set([...term.modifiers, ...modifiers]) ].flat();
+				break;
 			}
+			rolls.push( roll );
 		}
 		return rolls;
 	}
@@ -555,15 +569,18 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 	static async #onSubmit(event, form, formData) {
 		const message = await this.createMessage();
 		if ( event.submitter.dataset?.action == 'roll' ) {
-			message.evaluateAll();
+			await message.evaluateAll();
 		}
 		message.consumeResources();
 	}
 
 	async createMessage(){
 		const data = this.manage;
+		console.log('createMessage', this.manage?.rolls, this.data?.rolls);
 		const cost = data.cost;
-		data.measuredTemplate = data.ability.system.getMeasuredTemplate();
+		if ( "getMeasuredTemplate" in data.ability.system ) {
+			data.measuredTemplate = data.ability.system.getMeasuredTemplate();
+		}
 		data.effects = data.effects.map( i => {
 			const ef = {
 				_id: foundry.utils.randomID(),
@@ -571,7 +588,7 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 			foundry.utils.mergeObject(ef, i);
 			return ef;
 		});
-		
+		const rolls = [];
 		for (const [i, roll] of data.rolls.entries()) {
 			const rollbonus = data.rollconfig?.roll?.[i]?.bonus ?? null;
 			if ( rollbonus ) {
@@ -594,13 +611,17 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				}
 				roll.resetFormula();
 			}
-			console.log("AAAA", roll);
-
-
 			roll.index = i;
 			roll.template = await roll.render();
+			const RollData = roll.toJSON();
+			RollData.options = roll.options;
+			if ( data.ability?.system?.descriptors ) {
+				RollData.options.descriptors = data.ability.system.descriptors;
+			}
+			RollData.template = roll.template;
+			rolls.push(RollData)
 		}
-		
+
 		const messageData = {
 			portrait: data.actor?.img,
 			origin: {
@@ -617,7 +638,15 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				if ( !mod.apply ) return acc;
 				const div = document.createElement('div');
 				div.innerHTML = mod.embed;
-				const label = game.i18n.localize(`SKYFALL2.RESOURCE.${mod.resource.toUpperCase()}Abbr`);
+				let label = "";
+				console.log(mod);
+				const resources = mod._effect.system.schema.fields.cost.fields.resource.choices;
+				if (mod._effect.parent?.type == "guild-ability") {
+					label += game.i18n.localize(`${resources[mod.resource].label}`);
+				} else {
+					label += game.i18n.localize(`${resources[mod.resource].label}ABBR`);
+				}
+				// const label = game.i18n.localize(`SKYFALL2.RESOURCE.${mod.resource.toUpperCase()}Abbr`);
 				div.querySelector('.controls').innerHTML = `<span>${mod.cost * mod.apply} ${label}</span>`;
 				acc[mod.id] = {
 					_effect: mod._effect,
@@ -635,15 +664,20 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				}
 				return acc;
 			}, {}),
-			rolls: data.rolls, //.map( i => ({original: i.original.toJSON(), evaluated: null})),
+			rolls: rolls,
 			targets: [],
 			measuredTemplate: data.measuredTemplate,
 			effects: data.effects, //.map( i => i.toJSON()),
 			costs: {
-				ep: (cost.ep.base + cost.ep.mod),
+				// ep: (cost.ep.base + cost.ep.mod),
 				quantity: [],
 			}
 		}
+		for (const [key, resource] of Object.entries(cost)) {
+			if ( key == "quantity" ) continue;
+			messageData.costs[key] = resource.base + resource.mod;
+		}
+		console.log(messageData);
 
 		if ( data.ability?.weapon ) {
 			messageData.costs.quantity.push({
@@ -652,16 +686,20 @@ export default class ModificationConfig extends HandlebarsApplicationMixin(Appli
 				value: -1,
 			});
 		}
+		if ( data.ability.system.prepareCardData instanceof Function ) {
+			messageData.card = await data.ability.system.prepareCardData();
+		}
 		const template = "systems/skyfall/templates/v2/chat/usage.hbs";
 		const content = await renderTemplate( template, messageData );
-		
 		// CREATE MESSAGE
 		console.groupEnd();
+		
 		const message = await ChatMessage.create({
 			type: 'usage',
 			system: messageData,
 			content: content,
 		});
+		console.log(messageData.rolls, message.system.rolls);
 		return message;
 	}
 }

@@ -1,4 +1,5 @@
-import Ability from "./ability.mjs";
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
+const {renderTemplate} = foundry.applications.handlebars;
 
 /**
  * Data schema, attributes, and methods specific to Spell type Items.
@@ -13,6 +14,11 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		
 		return {
+			identifier: new fields.StringField({
+				required: true,
+				initial: '',
+				label: "SKYFALL2.Identifier",
+			}),
 			type: new fields.StringField({
 				required: true,
 				blank: true,
@@ -156,9 +162,171 @@ export default class Sigil extends foundry.abstract.TypeDataModel {
 		return this.descriptors.find( i => SYSTEM.SIGILDESCRIPTOR.CLOTHING[i] );
 	}
 
+	async prepareCardData(options = {}){
+		const card = {};
+		
+		const labelDescription = (name, text) => {
+			const div = document.createElement("div");
+			const label = document.createElement("label");
+			div.innerHTML = text;
+			label.innerText = `${name}: `;
+			div.querySelector("p")?.prepend(label);
+			return div.innerHTML;
+		}
+
+		// Name
+		const PREFIX = this.type == "prefix" ? "— " : "";
+		const SUFIX = this.type == "sufix" ? "— " : "";
+		card.name = `${PREFIX}${this.parent.name}${SUFIX}`;
+		
+		// Action icon
+		card.action = SYSTEM.icons[`sf${this.activation.type}`];
+
+		// Descriptors
+		card.descriptors = this.descriptors;
+		if ( !this.infused && this.fragments.type == "permanent" ) {
+			card.charges = {
+				label: game.i18n.localize("SKYFALL2.ChargePl"),
+				value: this.charges.value,
+				max: this.charges.max,
+			}
+		}
+		if ( this.effect.descriptive ) {
+			const label = game.i18n.localize("SKYFALL.ITEM.ABILITY.EFFECT");
+			const value = await TextEditor.enrichHTML(
+				this.effect.descriptive, {
+				async: true,
+				relativeTo: this.parent,
+			});
+			card.effect = labelDescription(label, value);
+		}
+		
+		
+		// Fragments
+		{
+			const pl = this.fragments.amount > 1 ? "Pl" : "";
+			const type = game.i18n.format(
+				`SKYFALL2.FRAGMENT.${this.fragments.type.titleCase()}`, {
+				action: `${card.action} ${SYSTEM.activations[this.action].label}`
+			});
+			const formatData = {
+				amount: this.fragments.amount,
+				fragments: game.i18n.localize(`SKYFALL2.Fragment${pl}`),
+				type: type
+			}
+	
+			card.fragments = {
+				label: game.i18n.localize("SKYFALL2.FRAGMENT.Infusing"),
+				value: game.i18n.format("SKYFALL2.FRAGMENT.Infuse", formatData)
+			};
+
+		}
+		if ( this.item ) {
+			card.equipment = fromUuidSync(this.item);
+			card.equipment.magicName = card.equipment.magicName ?? card.equipment.name;
+		}
+		
+		return card;
+	}
+
+	async renderCardTemplate(options){
+		const card = await this.prepareCardData(options);
+		const cardTemplate = "systems/skyfall/templates/v2/item/sigil-card-v2.hbs";
+		const templateData = {
+			card: card,
+			SYSTEM: SYSTEM,
+			item: this.parent,
+			renderAt: options.renderAt ?? "ItemSheet",
+			anchor: this.parent.toAnchor().outerHTML,
+			collapse: true,
+		}
+		if ( game.version.startsWith('13') ){
+			let template = await foundry.applications.handlebars.renderTemplate(cardTemplate, templateData);
+			template = await TextEditor.enrichHTML(template, {
+				async: true, relativeTo: this.parent,
+			});
+			return template;
+		} else {
+			let template = await renderTemplate(cardTemplate, templateData);
+			template = await TextEditor.enrichHTML(template, {
+				async: true, relativeTo: this.parent,
+			});
+			return template;
+		}
+	}
+
+	/* -------------------------------------------- */
+	/*  Database Workflows                          */
+	/* -------------------------------------------- */
+	
+	_onUpdate(changed, options, userId) {
+		super._onUpdate(changed, options, userId);
+		if ( this.parent._enriched ) this.parent._enriched = null;
+	}
+
 	/* -------------------------------------------- */
 	/*  System Methods                              */
 	/* -------------------------------------------- */
+
+	async toEmbed(config, options={}) {
+		config.classes = "ability-embed skyfall sheet";
+		config.cite = false;
+		config.caption = false;
+		// let modifications = this.parent.effects.filter(ef => ef.type == "modification" && !ef.isTemporary).map(ef => `@EMBED[${ef.uuid}]`);
+
+		const anchor = this.parent.toAnchor();
+		anchor.classList.remove('content-link');
+		anchor.querySelector('i').remove();
+		const templateData = {
+			card: await this.prepareCardData(options),
+			SYSTEM: SYSTEM,
+			document: this.parent,
+			item: this.parent,
+			system: this,
+			anchor: anchor.outerHTML,
+			isPlayMode: true,
+			isEmbed: true,
+			isFigure: config.isFigure ?? true,
+			embeddedAt: config.embeddedAt ?? "Embedded", //isSheetEmbedded,
+			collapse: config.collapse ?? false,
+			enriched: [],
+			// modifications: modifications.join(''),
+		}
+		let abilityCard;
+		const cardTemplate = "systems/skyfall/templates/v2/item/sigil-card-v2.hbs";
+		if ( game.version.startsWith('13') ){
+			abilityCard = await foundry.applications.handlebars.renderTemplate(cardTemplate, templateData);
+		} else {
+			abilityCard = await renderTemplate(cardTemplate, templateData);
+		}
+		
+		const container = document.createElement("div");
+		container.innerHTML = await TextEditor.enrichHTML(abilityCard, {
+			async: true, relativeTo: this.parent,
+		});
+		return container.firstChild;
+	}
+
+	/**
+	 * 
+	 * @param {*} config 
+	 * @param {*} options 
+	 * @returns 
+	 */
+	async _embed(config, options={}) {
+		const container = document.createElement("div");
+		container.innerHTML = `
+			<div class="ability-header">
+				<span>action</span>
+				<h5>NOME<h5>
+				<a data-action="someAction">SOMEACTION</a>
+			</div>
+			<div class="modification-description">
+				${this.name}
+			</div>
+		`;
+		return container.children;
+	}
 
 	async abilityUse(event, item){
 		const ability = this.document ?? this.parent;

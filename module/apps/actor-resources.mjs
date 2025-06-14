@@ -8,7 +8,10 @@ export default class ActorResources extends HandlebarsApplicationMixin(DocumentS
 	}
 
 	static DEFAULT_OPTIONS = {
-		classes: ["skyfall","sheet"],
+		classes: ["skyfall", "sheet"],
+		window: {
+			contentClasses: ["standard-form"],
+		},
 		sheetConfig: false,
 		position: {
 			width: 400,

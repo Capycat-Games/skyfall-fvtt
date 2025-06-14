@@ -317,7 +317,7 @@ export default class SkyfallActor extends Actor {
 		
 		const quality = await foundry.applications.api.DialogV2.prompt({
 			content: `<form><div class="form-group"><label>${game.i18n.localize("SKYFALL2.APP.REST.Quality")}</label>${select.outerHTML}</div></form>`,
-			classes: ['skyfall', 'short-rest'],
+			classes: ['skyfall', 'sheet', 'short-rest', 'standard-form'],
 			window: {
 				title: game.i18n.localize("SKYFALL2.APP.LongRest"),
 			},

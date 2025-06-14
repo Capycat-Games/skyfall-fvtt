@@ -1,4 +1,4 @@
-
+const {renderTemplate} = foundry.applications.handlebars;
 /**
  * Data schema, attributes, and methods specific to Guild type Actors.
  */
@@ -18,16 +18,20 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 				cunning: new fields.SchemaField({
 					bonus: new fields.NumberField({
 						required: true, nullable: false, integer: true, initial: 0,
-						label: "SKYFALL2.GUILD.Cunning"
+						label: "SKYFALL2.GUILD.Cunning",
+						label: "SKYFALL2.Bonus",
 					}),
 					value: new fields.NumberField({
 						required: true, nullable: false, integer: true, initial: 0,
-						label: "SKYFALL2.GUILD.Cunning"
+						label: "SKYFALL2.GUILD.CunningAbbr",
+						label: "SKYFALL2.Value",
 					}),
 					points: new fields.NumberField({
 						required: true, nullable: false, integer: true, initial: 0,
 						label: "SKYFALL2.GUILD.CunningPoints"
-					},),
+					}),
+				}, {
+					label: "SKYFALL2.GUILD.Cunning",
 				}),
 				knowledge: new fields.SchemaField({
 					bonus: new fields.NumberField({
@@ -42,6 +46,8 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 						required: true, nullable: false, integer: true, initial: 0,
 						label: "SKYFALL2.GUILD.KnowledgePoints"
 					}),
+				}, {
+					label: "SKYFALL2.GUILD.Knowledge",
 				}),
 				crafting: new fields.SchemaField({
 					bonus: new fields.NumberField({
@@ -56,6 +62,8 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 						required: true, nullable: false, integer: true, initial: 0,
 						label: "SKYFALL2.GUILD.CraftingPoints"
 					}),
+				}, {
+					label: "SKYFALL2.GUILD.Crafting",
 				}),
 				reputation: new fields.SchemaField({
 					bonus: new fields.NumberField({
@@ -70,6 +78,8 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 						required: true, nullable: false, integer: true, initial: 0,
 						label: "SKYFALL2.GUILD.ReputationPoints"
 					}),
+				}, {
+					label: "SKYFALL2.GUILD.Reputation",
 				}),
 			}),
 			level: new fields.NumberField({required:true, initial: 1, label:"SKYFALL2.Level"}),
@@ -183,7 +193,18 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/*  Database Operations                         */
 	/* -------------------------------------------- */
-
+	
+	/** @inheritdoc */
+	async _preUpdate(changed, options, user) {
+		let allowed = super._preUpdate(changed, options, user);
+		if ( "guildArc" in options && game.user.isGM ) {
+			skyfall.ui.sceneConfig.scene.update({
+				guildArc: options.guildArc
+			});
+			skyfall.ui.sceneConfig.render();
+		}
+		return allowed;
+	}
 
 	/* -------------------------------------------- */
 	/* System Methods                               */
@@ -215,8 +236,10 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 		const content = await renderTemplate(template, messageData);
 		ChatMessage.create({
 			content: content
-		})
-		this.parent.update( updateData );
+		});
+		this.parent.update( updateData, {
+			guildArc: options.arcLength,
+		});
 	}
 
 	async endGuildArc() {
@@ -241,7 +264,9 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 		ChatMessage.create({
 			content: content
 		})
-		this.parent.update( updateData );
+		this.parent.update( updateData, {
+			guildArc: '',
+		});
 	}
 
 	// TODO

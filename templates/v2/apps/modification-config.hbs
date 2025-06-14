@@ -38,7 +38,7 @@
 		{{/each}}
 	</div>
 
-	<div class="form-group stacked text-center rollmode">
+	<div class="form-group stacked text-center rollmode {{ifThen (eq data.rolls.length 0) " hidden" "" }}">
 		<label data-tooltip="{{localize 'SKYFALL2.APP.ForceRollModeHint'}}">{{localize "SKYFALL2.APP.ForceRollMode"}}:</label>
 		<div class="form-group">
 			<label>

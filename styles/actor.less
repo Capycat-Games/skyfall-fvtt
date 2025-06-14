@@ -895,6 +895,7 @@
 			align-items: stretch;
 			text-transform: uppercase;
 			line-height: 1em;
+			font-family: NORTHWEST;
 			.item {
 				flex: auto;
 				background-color: white;
@@ -902,7 +903,7 @@
 				i { visibility: hidden; }
 				label { color: var(--actor-color); }
 				&.active {
-					label { color: white; };
+					span { color: white; };
 					background-color: var(--actor-color);
 				}
 			}
@@ -937,7 +938,7 @@
 					}
 					.protection.icon {
 						position: relative;
-						height: 145px;
+						// height: 145px;
 						background-size: 100% 145px;
 						line-height: 14px;
 						&:before {
@@ -1350,6 +1351,656 @@
 					}
 				}
 				.space { display: none; }
+			}
+		}
+	}
+}
+.skyfall.sheet.actor.guild.review {
+	--gray-color: #424f66;
+	.window-content {
+		padding: 0;
+		
+		[data-action] {
+			cursor: pointer;
+			&:hover {
+				color: var(--actor-color);
+				text-decoration: underline;
+				text-shadow: none;
+			}
+		}
+		.tab {
+			margin-top: 5px;
+			// width: 600px;
+			height: 100%;
+		}
+		input {
+			border-radius: 0px;
+			padding: 0 0.2rem;
+			&:disabled { border: none; }
+		}
+		button.btn-skyfall {
+			border-radius: 0px;
+			width: 28px;
+			height: 28px;
+			font-size: 14px;
+			padding: 2px;
+			background-color: white;
+			border: 2px solid var(--actor-color);
+			i {
+				color: var(--actor-color);
+				margin: 0;
+			}
+		}
+		button.btn-skyfall:hover {
+			box-shadow: none;
+			background-color: var(--actor-color-faint);
+		}
+		select {
+			height: 28px;
+		}
+
+		fieldset.attribute {
+			text-align: center;
+			align-items: stretch;
+			border: none;
+			width: 100%;
+			height: auto;
+			background-image: url(assets/sheet/cut-attributes.svg);
+			background-repeat: no-repeat;
+			background-size: 100%;
+			padding: 0.5rem;
+			
+			.form-group {
+				background-color: white;
+				border: 2px solid var(--actor-color);
+				&:has(.form-fields.catharsis) {
+					border-left: 1px solid var(--actor-color);
+				}
+				&:has(.form-fields.dr) {
+					border-right: 1px solid var(--actor-color);
+				}
+				label {
+					font-family: NORTHWEST;
+					font-size: 12px;
+					line-height: 1em;
+					padding: 2px;
+					min-height: 1.5em;
+    			max-height: 1.5em;
+					border-bottom: 2px solid var(--actor-color);
+					.skyfall-icon {
+						font-size: 14px;
+					}
+				}
+				.form-fields {
+					padding: 5px 0;
+					min-height: 38px;
+					justify-content: center;
+					
+					input {
+						height: 28px;
+						width: 28px;
+						max-width: 28px;
+					}
+					select {
+						height: 28px;
+					}
+					
+					input[data-temporary] {
+						border-radius: 50px;
+						z-index: 1;
+						background-color: #f2f2f2;
+						border: 1px dashed var(--actor-color);
+					}
+				}
+
+				.form-fields.separator {
+					position: relative;
+					justify-content: space-evenly;
+					&:before {
+						position: absolute;
+						left: 0;
+						top: 0;
+						content: '0';
+						color: transparent;
+						display: block;
+						height: 100%;
+						width: calc(50% - 0px);
+						border-right: 2px solid var(--actor-color);
+						z-index: 0;
+					}
+				}
+				.form-fields.input-vary {
+					flex-direction: column;
+					[data-action] {
+						text-decoration: none;
+					}
+				}
+				.form-fields:has(+ select) {
+					border-bottom: 2px solid var(--actor-color);
+				}
+				&.currency {
+					padding: 0 5px;
+					label {
+						text-align: left;
+					}
+					input {
+						min-width: 60px;
+					}
+				}
+				&.shadow {
+					.form-fields {
+						font-size: 20px;
+						.temporary-shadow {
+							position: relative;
+							.skyfall-icon {
+								color: var(--actor-color-faint);
+							}
+							.value {
+								position: absolute;
+								left: 7px;
+								top: 6px;
+								font-size: 12px;
+							}
+						}
+						
+					}
+				}
+			}
+			.hitDie {
+				flex: 0 0 30px;
+				justify-content: center;
+				.die {
+					flex: 0 0 20px;
+					background-size: contain;
+					background-position: center;
+					background-repeat: no-repeat;
+				}
+			}
+			.rest {
+				flex: 0 0 30px;
+				
+			}
+			
+		}
+		fieldset.abilities {
+			flex: 0 0 75%;
+			justify-content: space-evenly;
+			gap: 5px;
+			background-image: url(assets/sheet/cut-abilities.svg);
+			background-repeat: no-repeat;
+			background-size: 100%;
+			border: none;
+			padding: 0;
+			margin: 0;
+			.ability {
+				flex: 0 0 100px;
+				width: 100px;
+				> * { text-align: center; }
+				input {
+					max-width: 30px;
+				}
+			}
+		}
+				
+		nav.sheet-tabs {
+			border: 1px solid var(--actor-color);
+			align-items: stretch;
+			text-transform: uppercase;
+			line-height: 1em;
+			font-family: NORTHWEST;
+			.item {
+				flex: auto;
+				background-color: white;
+				border: 1px solid var(--actor-color);
+				i { visibility: hidden; }
+				label { color: var(--actor-color); }
+				&.active {
+					span { color: white; };
+					background-color: var(--actor-color);
+				}
+			}
+		}
+
+		.tab.guild-guild {
+			gap: 1em;
+			.main {
+				padding: 0 1em;
+				height: 250px;
+				.profile {
+					flex: 0 0 30%;
+				}
+				.abilities {
+					flex: 1;
+				}
+			}
+
+			// Cut BG
+			fieldset.profile {
+				background-image: url(assets/sheet/cut-skills.svg);
+				background-repeat: no-repeat;
+				background-size: 100%;
+				text-align: center;
+				align-items: center;
+				border: none;
+				.profile-img {
+					width: 125;
+					border-image: url(assets/sheet-v2/image-frame-gray.svg) 10 / 10px round;
+				}
+				.charname {
+					flex: 0 0 30px;
+					input {
+						color: white;
+						text-align: center;
+						height: 30px;
+						background-image: url(assets/sheet-v2/name-title-gray.svg);
+						background-repeat: no-repeat;
+						background-size: 150% 34px;
+						background-position: 100% 100%;
+						padding: 0 25px 0 5px;
+					}
+				}
+
+				.level {
+					margin: 5px 0;
+					border: 1px solid var(--actor-color);
+					display: flex;
+					flex-direction: row;
+					flex-wrap: nowrap;
+					& > * {
+						text-align: center;
+						align-content: center;
+						background-color: white;
+						border: 1px solid var(--actor-color);
+						flex: 0 0 40px;
+						height: 2em;
+					}
+				}
+				.guild-arc {
+					button {
+						color: var(--actor-color);
+						width: 100%;
+						height: auto;
+						line-height: 1em;
+					}
+				}
+			}
+			
+			.abilities {
+				background-image: url(assets/sheet-v2/guild-abilities-background.png);
+				background-size: 100% 250px;
+				align-items: stretch;
+				padding: 1em;
+				
+				.ability {
+					&.cunning {
+						--ability-icon: url(assets/sheet-v2/guild-cunning.svg);
+					}
+					&.knowledge {
+						--ability-icon: url(assets/sheet-v2/guild-knowledge.svg);
+					}
+					&.crafting {
+						--ability-icon: url(assets/sheet-v2/guild-crafting.svg);
+					}
+					&.reputation {
+						--ability-icon: url(assets/sheet-v2/guild-reputation.svg);
+					}
+					* {
+						text-align: center;
+						align-items: center;
+						justify-content: center;
+					}
+					flex: 0 0 80px;
+					gap: 5px;
+					// width: 80px;
+					.value, .points {
+						
+						background-size: 100%;
+						background-repeat: no-repeat;
+						background-position: center;
+					}
+					.value {
+						height: 90px;
+						background-image: url(assets/sheet-v2/guild-abilities-value.png);
+						padding-bottom: 5px;
+						position: relative;
+						> * {
+							z-index: 2;
+						}
+						&:before {
+							position: absolute;
+							z-index: 1;
+							content: "";
+							width: 100%;
+							height: 100%;
+							background-image: var(--ability-icon);
+							background-repeat: no-repeat;
+							background-position: center;
+						}
+						div {
+							align-content: center;
+							flex: 2;
+							font-size: 1.5em;
+						}
+						input {
+							border-radius: 50px;
+							width: 25px;
+							height: 25px;
+							border: 1px dashed var(--actor-color);
+						}
+					}
+					.points {
+						height: 110px;
+						background-image: url(assets/sheet-v2/guild-abilities-points.png);
+						.separator {
+							position: relative;
+							justify-content: space-evenly;
+							&:before {
+								position: absolute;
+								left: 0;
+								top: 0;
+								content: '0';
+								color: transparent;
+								display: block;
+								height: 80%;
+								width: calc(50% - 0px);
+								border-right: 1px solid var(--actor-color);
+								z-index: 0;
+							}
+						}
+						.income {
+							padding: 1px;
+							line-height: 1em;
+							border-top: 1px solid var(--actor-color);
+						}
+					}
+					// background-color: white;
+				}
+			}
+
+			
+		}
+		.tab.guild-members {
+			position: relative;
+			padding: 3em;
+			.members {
+				li {
+					background-color: var(--actor-color-faint);
+					border: 1px solid var(--gray-color);
+					align-items: stretch;
+					> * {
+						border: 1px solid var(--gray-color);
+						align-content: center;
+					}
+					&.header {
+						background-color: var(--actor-color);
+						color: white;
+						margin: 0;
+						padding: 0;
+						line-height: 2em;
+					}
+					.item-img {
+						flex: 0 0 48px;
+						img {
+							width: 48px;
+							height: 48px;
+							// margin: 5px;
+						}
+					}
+					
+					.item-name label {
+						margin-left: 5px;
+					}
+					.item-retired [data-action] {
+						font-size: 2em;
+					}
+					.item-controls {
+						text-align: center;
+					}
+				}
+			}
+		}
+		.tab.guild-actions {
+			
+		}
+		.tab.guild-facilities {
+			.blueprints {
+				height: 150px;
+			}
+			.facilities {
+				li {
+					background-color: var(--actor-color-faint);
+					border: 1px solid var(--gray-color);
+					align-items: stretch;
+					> * {
+						border: 1px solid var(--gray-color);
+						align-content: center;
+					}
+					&.header {
+						background-color: var(--actor-color);
+						* {
+							color: white;
+						}
+						margin: 0;
+						padding: 0;
+						line-height: 2em;
+					}
+					.item-img {
+						flex: 0 0 48px;
+						img {
+							width: 48px;
+							height: 48px;
+							// margin: 5px;
+						}
+					}
+					
+					.item-name label {
+						margin-left: 5px;
+					}
+					.item-retired [data-action] {
+						font-size: 2em;
+					}
+					.item-controls {
+						text-align: center;
+					}
+				}
+			}
+		}
+		.tab {
+			.frame-design {
+				flex: 1;
+				padding: 2em 3em;
+				align-items: flex-start;
+				position: relative;
+				> * {
+					z-index: 1;
+				}
+				div {
+					&.left::before, &.right::before {
+						pointer-events: none;
+						content: "";
+						position: absolute;
+						height: 100%;
+						width: 100%;
+						left: 0;
+						top: 0;
+						right: 0;
+						bottom: 0;
+						background-image: url(assets/sheet-v2/border-detail.svg);
+						background-repeat: no-repeat;
+						background-position: 100% 100%;
+						background-size: 50%;
+						z-index: 0;
+					}
+					&.left::before {
+						transform: scale(-1);
+						-webkit-transform: scale(-1);
+					}
+					&.right::before {
+	
+					}
+					h3 {
+						text-align: center;
+					}
+					.seals {
+						li {
+							background-color: var(--actor-color-faint);
+							img {
+								display: inline;
+								width: 31px;
+								height: 31px;
+								margin: 5px;
+							}
+							.control2 {
+								border: 2px solid #424f66;
+								border-radius: 50px;
+								background-color: white;
+								i { 
+									color: #424f66;
+									margin: 0;
+								}
+							}
+						}
+					}
+					.motto {
+						.form-fields {
+							background-image: url(assets/sheet-v2/guild-motto.svg);
+							background-repeat: no-repeat;
+							background-size: cover;
+							background-position: 100%;
+							padding: 0.5em 2em 0.5em 0.5em;
+							width: 100%;
+							height: 80px;
+							textarea {
+								background-color: unset;
+								color: white;
+								width: 100%;
+								height: 100%;
+								resize: none;
+							}
+						}
+					}
+				}
+			}
+
+			.skyfall-form-group.box {
+				border: 1px solid var(--gray-color);
+				background-color: white;
+				> * {
+					height: 32px;
+				}
+				* { text-align: center; }
+				.label {
+					align-content: center;
+					border: 1px solid var(--gray-color);
+					font-family: NORTHWEST;
+					span {
+						margin: 4px;
+					}
+				}
+				.skyfall-form-fields {
+					display: flex;
+					flex-direction: row;
+					.field {
+						input {
+							width: auto;
+							margin: 4px;
+						}
+						flex: 1;
+						border: 1px solid var(--gray-color);
+					}
+				}
+			}
+			.skyfall-form-group.corner {
+				margin: 1em;
+				position: relative;
+				&:before {
+					content: "";
+					position: absolute;
+					height: 80px;
+					width: 180px;
+					left: 0;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					background-image: url(assets/sheet-v2/header-b-blue.svg);
+					background-repeat: no-repeat;
+					transform: scaleX(-1);
+					z-index: -1;
+				}
+				
+				> * {
+					height: 32px;
+				}
+				* { text-align: center; }
+				.label {
+					width: 180px;
+					align-content: center;
+					font-family: NORTHWEST;
+					* { color: white; }
+					span {
+						margin: 4px;
+					}
+				}
+				.skyfall-form-fields {
+					padding: 0 1em;
+					display: flex;
+					flex-direction: row;
+					input, select, textarea {
+						border: 2px solid var(--gray-color);
+						border-radius: 0;
+						background-color: white;
+						color: black;
+					}
+					.field {
+						input {
+							width: auto;
+							margin: 4px;
+						}
+						flex: 1;
+					}
+				}
+			}
+			:has(.border-corners) {
+				position: relative;
+				flex: 1;
+				padding: 3em;
+			}
+			.border-corners {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				top: 0;
+				&::before, &::after {
+					pointer-events: none;
+					position: absolute;
+					content: "";
+					background-image: url(assets/sheet-v2/header-b-blue.svg);
+					background-repeat: no-repeat;
+					background-size: 120px;
+					width: 120px;
+					height: 120px;
+					top: 10px;
+				}
+				&::before {
+					transform: scaleX(-1);
+					left: 10px;
+				}
+				&::after {
+					right: 10px;
+				}
+				&.bottom {
+					top: unset;
+					bottom: 0;
+					&::before, &::after {
+						top: -130px;
+					}
+					&::before {
+						transform: scale(-1);
+					}
+					&::after {
+						transform: scaleY(-1);
+					}
+				}
 			}
 		}
 	}

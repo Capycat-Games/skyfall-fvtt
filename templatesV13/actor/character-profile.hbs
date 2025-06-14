@@ -1,0 +1,214 @@
+<aside class="character-profile">
+	{{!-- IMAGE --}}
+	<div class="profile-image" name="img" data-action="editImage" style="background-image: url({{actor.img}});">
+		{{!-- <img src="{{actor.img}}" name="img" data-action="editImage"> --}}
+	</div>
+
+	{{!-- NAME --}}
+	<div class="charname">
+		<input name="name" type="text" value="{{actor.name}}" placeholder="Name" />
+	</div>
+
+	{{!-- RESOURCES --}}
+	<fieldset class="resources cutbg cut-square">
+		{{!-- HP --}}
+		<div class="form-group boxed stacked resource hp">
+			<div class="form-label">
+				<a data-action="manage" data-manage="resources">
+					{{localize "SKYFALL2.RESOURCE.HP"}}
+				</a>
+			</div>
+			<div class="form-fields separator">
+				{{formInput
+					schema.resources.hp.max
+					value=system.resources.hp.max
+					dataset=(toObject 'tooltip:SKYFALL2.Total')
+					disabled=true
+				}}
+
+				{{formInput
+					schema.resources.hp.temp
+					value=system.resources.hp.temp
+					dataset=(toObject 'tooltip:SKYFALL2.Temporary' 'temporary:1')
+					classes="dashed"
+				}}
+
+				{{formInput
+					schema.resources.hp.value
+					value=system.resources.hp.value
+					max=system.resources.hp.max
+					dataset=(toObject 'tooltip:SKYFALL2.Current')
+				}}
+			</div>
+		</div>
+		{{!-- MP --}}
+		<div class="form-group boxed stacked resource hp">
+			<div class="form-label">
+				<a data-action="manage" data-manage="resources">
+					{{localize "SKYFALL2.RESOURCE.EP"}}
+				</a>
+			</div>
+			<div class="form-fields separator">
+				{{formInput
+					schema.resources.ep.max
+					value=system.resources.ep.max
+					dataset=(toObject 'tooltip:SKYFALL2.Total')
+					disabled=true
+				}}
+
+				{{formInput
+					schema.resources.ep.temp
+					value=system.resources.ep.temp
+					dataset=(toObject 'tooltip:SKYFALL2.Temporary' 'temporary:1')
+					classes="dashed"
+				}}
+
+				{{formInput
+					schema.resources.ep.value
+					value=system.resources.ep.value
+					max=system.resources.ep.max
+					dataset=(toObject 'tooltip:SKYFALL2.Current')
+				}}
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset class="flexrow dr-cp-hd cutbg cut-square">
+		{{!-- DR --}}
+		<div class="form-group boxed stacked dr">
+			<div class="form-label">
+				<span class="label">
+					{{localize schema.dr.label}}
+				</span>
+			</div>
+			<div class="form-fields">
+				<input type="number" value="{{system.dr}}" data-source-name="system.dr" data-source-value="{{source.dr}}">
+			</div>
+		</div>
+		{{!-- CP --}}
+		<div class="form-group boxed stacked resource cp">
+			<div class="form-label">
+				<span class="label">
+					{{{SYSTEM.icons.sfcatharsis}}}
+				</span>
+			</div>
+			<div class="form-fields">
+				{{formInput
+					schema.resources.catharsis.value
+					value=system.resources.catharsis.value
+					dataset=(toObject "tooltip:CATARSE")
+				}}
+			</div>
+		</div>
+		{{!-- REST --}}
+		<div class="buttons">
+			<button class="boxed" data-action="manage" data-manage="short-rest">
+				{{{SYSTEM.icons.food}}}
+			</button>
+			<button class="boxed" data-action="manage" data-manage="long-rest">
+				{{{SYSTEM.icons.tent}}}
+			</button>
+		</div>
+		{{!-- HitDie --}}
+		<div class="hitDie flexcol">
+			{{#each hitDies.dies as | hd |}}
+				<span class="die" style="background-image:url({{hd.icon}})">{{hd.value}}</span>
+			{{/each}}
+		</div>
+	</fieldset>
+
+	<fieldset class="deathsave-shadow cutbg cut-square">
+		{{!-- DEATH SAVES --}}
+		<div class="form-group boxed stacked deathsave">
+			<div class="form-label">
+				<a data-action="roll" data-roll-type="deathsave">
+					{{localize "SKYFALL2.RESOURCE.DeathSave"}}
+				</a>
+			</div>
+			<div class="form-fields flexcol">
+				<a data-action="vary" data-field-path="system.death.success" data-tooltip="{{localize 'SKYFALL2.SuccessPl'}}">
+					{{{SYSTEM.icons.heartline}}}
+					{{#with system.death}}
+						{{{ifThen (gte success 1)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+						{{{ifThen (gte success 2)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+						{{{ifThen (gte success 3)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+					{{/with}}
+				</a>
+				<a data-action="vary" data-field-path="system.death.failure" data-tooltip="{{localize 'SKYFALL2.FailurePl'}}">
+					{{{SYSTEM.icons.skull}}}
+					{{#with system.death}}
+						{{{ifThen (gte failure 1)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+						{{{ifThen (gte failure 2)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+						{{{ifThen (gte failure 3)
+							@root.SYSTEM.icons.circlefill @root.SYSTEM.icons.circle
+						}}}
+					{{/with}}
+				</a>
+			</div>
+		</div>
+		{{!-- SP --}}
+		<div class="form-group boxed stacked resource shadow">
+			<div class="form-label">
+				<a>
+					{{localize "SKYFALL2.RESOURCE.Shadow"}}
+				</a>
+			</div>
+			<div class="form-fields">
+				<a data-action="vary" data-field-path="system.resources.shadow.value">
+					{{#with system.resources.shadow}}
+						{{{ifThen (gte value 1)
+								@root.SYSTEM.icons.sfshadow @root.SYSTEM.icons.sfshadowe
+							}}}
+						{{{ifThen (gte value 2)
+								@root.SYSTEM.icons.sfshadow @root.SYSTEM.icons.sfshadowe
+							}}}
+						{{{ifThen (gte value 3)
+								@root.SYSTEM.icons.sfshadow @root.SYSTEM.icons.sfshadowe
+							}}}
+						{{{ifThen (gte value 4)
+								@root.SYSTEM.icons.sfshadow @root.SYSTEM.icons.sfshadowe
+							}}}
+						{{{ifThen (gte value 5)
+								@root.SYSTEM.icons.sfshadow @root.SYSTEM.icons.sfshadowe
+							}}}
+					{{/with}}
+				</a>
+				<a class="temporary-shadow" data-action="vary" data-field-path="system.resources.shadow.temp" data-tooltip="{{localize 'SKYFALL2.Temporary'}}">
+					{{{@root.SYSTEM.icons.sfshadow}}}
+					<span class="value">
+						{{system.resources.shadow.temp}}
+					</span>
+				</a>
+			</div>
+		</div>
+	</fieldset>
+
+	{{#unless flags.disableExperience}}
+		{{!-- LEVEL --}}
+		<fieldset class="level-xp cutbg cut-square">
+			<div class="form-group boxed stacked">
+				<div class="form-label">
+					<span class="label">
+						{{localize "SKYFALL2.Level"}} {{system.level.value}} |
+						{{localize schema.level.xp.label}}:
+					</span>
+					</a>
+				</div>
+				<div class="form-fields">
+					<input type="number" class="" disabled value="{{system.level.next}}">
+					<input type="number" name="system.level.xp" value="{{system.level.xp}}">
+				</div>
+			</div>
+		</fieldset>
+	{{/unless}}
+</aside>

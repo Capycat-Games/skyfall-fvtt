@@ -1,0 +1,17 @@
+<div class="ability">
+	<div class="ability-score score">
+		<a data-action="roll" data-roll-type="ability" data-id="{{key}}" class="{{#if (and @root.rolling (or (eq @root.rolling.abl key) (and (eq @root.rolling.abl null) (includes @root.rolling.abilities key)))) }}active rolling{{else}}{{/if}}">
+			{{localize ability.label}}
+		</a>
+		<input type="number" value="{{ability.value}}" data-source-name="system.abilities.{{key}}.value" data-source-value="{{source.value}}">
+	</div>
+
+	<div class="ability-score protection">
+		<a class="icon {{#if ability.proficient}}active{{/if}}" data-action="toggle" data-field-path="system.abilities.{{key}}.proficient">
+			{{localize "SKYFALL.ACTOR.PROTECTION"}}
+		</a>
+		<span>
+			{{ability.protection}}
+		</span>
+	</div>
+</div>

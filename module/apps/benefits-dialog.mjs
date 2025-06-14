@@ -19,6 +19,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		classes: ["dialog", "skyfall", "sheet", "benefits"],
 		tag: "dialog",
 		window: {
+			contentClasses: ["standard-form"],
 			title: "SKYFALL2.BenefitPl",
 			frame: true,
 			positioned: true,
@@ -43,6 +44,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	static PARTS = {
 		form: {
 			template: "systems/skyfall/templates/v2/apps/benefits-dialog.hbs",
+			scrollable: [""],
 		},
 		footer: {
 			template: "templates/generic/form-footer.hbs"

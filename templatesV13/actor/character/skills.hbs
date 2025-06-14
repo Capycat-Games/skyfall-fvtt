@@ -1,0 +1,41 @@
+<ul class="plain flexcol">
+	{{#each skills as | skill skillId |}}
+		{{#if (eq skillId "apti")}}
+			<li class="skill entry flexrow" data-type="skill" data-entry-id="{{skillId}}">
+				<span class="proficiency-rank">
+					<i class="fa-solid fa-minus"></i>
+				</span>
+				<span class="label">
+					{{localize skill.label}}
+				</span>
+				<div class="controls">
+					<a data-action="create" data-create="skill">{{{@root.SYSTEM.icons.create}}}</a>
+				</div>
+			</li>
+		{{else if (and (eq skill.type "apti") (eq skill.value 0))}}
+		{{else}}
+			<li class="skill entry flexrow" data-type="skill" data-entry-id="{{skillId}}">
+				<a class="proficiency-rank" data-action="vary" data-field-path="system.skills.{{skillId}}.value"
+					data-tooltip="{{localize skill.rank}}">
+					{{#if (eq skill.value 0)}}
+						{{{@root.SYSTEM.icons.square}}}
+					{{else if (eq skill.value 1)}}
+						{{{@root.SYSTEM.icons.squarefill}}}
+					{{else if (eq skill.value 2)}}
+						{{{@root.SYSTEM.icons.diamondfill}}}
+					{{/if}}
+				</a>
+				<a class="label {{#if (or (eq @root.rolling.id skillId) @root.rolling.abl) }}active rolling{{else}}{{/if}}" data-action="roll" data-roll-type="skill" data-id="{{skillId}}">
+					{{localize skill.label}}
+				</a>
+				<div class="controls fa-solid" data-action="edit" data-field-path="system.skills.{{skillId}}" data-tooltip='{{{skill.totalTooltip}}}'>
+					{{#if @root.rolling.abl }}
+						<input class="{{#if @root.rolling.abl }}rolling{{/if}}" type="number" value="{{lookup skill._roll @root.rolling.abl}}" disabled>
+					{{else}}
+						<input type="number" value="{{skill.total}}" disabled>
+					{{/if}}
+				</div>
+			</li>
+		{{/if}}
+	{{/each}}
+</ul>

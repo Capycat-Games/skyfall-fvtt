@@ -1,4 +1,4 @@
-
+const {renderTemplate} = foundry.applications.handlebars;
 export default class SceneConfigSetting extends foundry.abstract.DataModel {
 	
 	static #settingName = 'sceneConfig';
@@ -24,6 +24,12 @@ export default class SceneConfigSetting extends foundry.abstract.DataModel {
 				initial: 0,
 				label: "SKYFALL2.Catharsis"
 			}),
+			guildArc: new fields.StringField({
+				required: true,
+				blank: true,
+				choices: ["short", "long"],
+				initial: "",
+			})
 		}
 	}
 
@@ -48,8 +54,14 @@ export default class SceneConfigSetting extends foundry.abstract.DataModel {
 	/*  Data Schema                                 */
 	/* -------------------------------------------- */
 	
-	async update() {
+	async update(changes = {}) {
 		// if ( !game.user.isGM ) return;
+		console.log(changes);
+		if ( "guildArc" in changes && game.user.isGM ) {
+			this.updateSource({
+				guildArc: changes.guildArc,
+			});
+		}
 		await game.settings.set('skyfall', SceneConfigSetting.#settingName, this);
 	}
 

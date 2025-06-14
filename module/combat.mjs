@@ -3,7 +3,7 @@
  * An extension of the base CombatTracker class to override the default rollInitiative.
  * @extends {CombatTracker}
  */
-export class CombatTrackerSkyfall extends CombatTracker {
+export class CombatTrackerSkyfall extends foundry.applications.sidebar.tabs.CombatTracker {
 	/** @inheritdoc */
 	async _onCombatantControl(event) {
 		const btn = event.currentTarget;

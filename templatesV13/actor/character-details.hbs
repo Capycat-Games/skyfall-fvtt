@@ -1,0 +1,12 @@
+<section class="tab character-{{tab.id}} {{tab.cssClass}} scrollable"
+	data-tab="{{tab.id}}"
+	data-group="{{tab.group}}"
+	data-application-part="character">
+
+	{{> "systems/skyfall/templatesV13/actor/character/traits.hbs"}}
+
+	<div class="progression">
+		{{> "systems/skyfall/templatesV13/actor/character/progression.hbs" content=progression cssClass="root" }}
+	</div>
+
+</section>

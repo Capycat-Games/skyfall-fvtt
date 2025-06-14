@@ -2,10 +2,13 @@
 	{{!-- ITEM --}}
 	<div class="ability-image-and-description flexrow">
 		<img class="profile-img flex0" src="{{item.img}}" data-action="editImage" title="{{item.name}}" width="56" height="56" />
-		<div class="form-group stacked">
-			<label>{{localize "SKYFALL2.Description"}} FLAVOR</label>
-			<textarea name="system.description.flavor" rows="1">{{{item.system.description.flavor}}}</textarea>
-		</div>
+		{{formGroup schema.description.flavor
+			value=item.system.description.flavor
+			classes="stacked"
+			label="SKYFALL2.Description"
+			elementType="textarea"
+			localize=true
+		}}
 		<div class="flex100"></div>
 		{{!-- DECRIPTIONS --}}
 		<div class="form-group stacked" data-action="manage" data-manage="descriptors" data-field-path="system.descriptors">
