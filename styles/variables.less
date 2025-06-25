@@ -62,8 +62,8 @@
 @sheetBackground: url("assets/parchment.jpg") repeat;
 
 
-:root, * {
-	scrollbar-color: #182657 transparent;
+:root {
+  --color-scrollbar: #182657;
 	scrollbar-width: thin;
 }
 
@@ -81,9 +81,9 @@
   }
   
   
-  &:not(.roll-config) .window-content {
+  &:not(.roll-config, .journal-sheet) .window-content {
     background: url(./assets/sheet/background.webp) repeat white;
-    * { color: black; }
+    * { color: #000000; }
     input {
       color: #000000;
     }

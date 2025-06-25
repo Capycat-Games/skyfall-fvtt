@@ -424,7 +424,7 @@
   margin: 0.5em;
   position: relative;
   gap: 0;
-  height: 80px;
+  min-height: 80px;
   align-content: flex-start;
 }
 .skyfallV13.sheet .form-group.corner-frame::before {
@@ -464,7 +464,8 @@
   margin: auto;
   border: 2px solid var(--actor-color-2);
   text-align: left;
-  height: 2em;
+  min-height: 2em;
+  height: auto;
 }
 .skyfallV13.sheet .right .form-group.corner-frame .form-label,
 .skyfallV13.sheet .right .form-group.corner-frame .form-fields {
@@ -545,6 +546,7 @@
   --actor-color-2: #c9d1db;
   --actor-color-3: #424f66;
   --actor-color-4: #babecd;
+  --color-scrollbar: #182657;
 }
 .skyfallV13.sheet.actor.character:not(.maximizing, .minimizing, .minimized) {
   min-height: 710px;
@@ -1189,6 +1191,7 @@
   --actor-color-2: #c9d1db;
   --actor-color-3: #424f66;
   --actor-color-4: #babecd;
+  --color-scrollbar: #182657;
 }
 .skyfallV13.sheet.actor.guild .window-content {
   padding: 0;
@@ -1859,6 +1862,645 @@
   --actor-color-2: #c9d1db;
   --actor-color-3: #424f66;
   --actor-color-4: #babecd;
+  --color-scrollbar: #182657;
+}
+/* ----------------------------------------- */
+/*  Journal Styles                           */
+/* ----------------------------------------- */
+.journal-sheet.skyfall.theme-purple {
+  --theme-color-1: #652657;
+  --theme-color-2: #d1becd;
+  --theme-color-2a: rgba(101, 38, 87, 0.125);
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+  --color-scrollbar: #652657;
+  --banner-block-title: url(assets/sheet-v2/name-title-purple.svg);
+  --banner-block-symbol: url("assets/sheet-v2/name-title-purple-symbol.svg");
+  --border-image: url('assets/sheet-v2/border-white.svg');
+  --border-image-theme: url('assets/sheet-v2/border-purple.svg');
+  --box-a-title: url(assets/sheet-v2/name-title-purple.svg);
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-2.png');
+}
+.journal-sheet.skyfall.theme-darkblue {
+  --theme-color-1: #182657;
+  --theme-color-2: #c9d1db;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+  --color-scrollbar: #182657;
+  --banner-block-title: url(assets/sheet-v2/name-title-blue-faint.svg);
+  --banner-block-symbol: url("assets/sheet-v2/name-title-blue-symbol.svg");
+  --border-image: url('assets/sheet-v2/border-white.svg');
+  --border-image-theme: url('assets/sheet-v2/border-blue.svg');
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-3.png');
+  --box-a-title: url(assets/sheet/box-blue-title.svg);
+}
+.journal-sheet.skyfall.theme-darkred {
+  --theme-color-1: #750703;
+  --theme-color-2: #75070322;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+  --color-scrollbar: #750703;
+  --banner-block-title: url(assets/sheet-v2/name-title-red.svg);
+  --banner-block-symbol: url("assets/sheet-v2/name-title-red-symbol.svg");
+  --border-image: url('assets/sheet-v2/border-white.svg');
+  --border-image-theme: url('assets/sheet-v2/border-red.svg');
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-4.png');
+  --box-a-title: url(assets/sheet/box-red-title.svg);
+}
+.journal-sheet.skyfall.theme-orange {
+  --theme-color-1: #ff6400;
+  --theme-color-2: #ff640022;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+  --color-scrollbar: #ff6400;
+  --banner-block-title: url(assets/sheet-v2/name-title-orange.svg);
+  --banner-block-symbol: url("assets/sheet-v2/name-title-orange-symbol.svg");
+  --border-image: url('assets/sheet-v2/border-white.svg');
+  --border-image-theme: url('assets/sheet-v2/border-orange.svg');
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-5.png');
+  --box-a-title: url(assets/sheet/box-title-orange.svg);
+}
+.journal-sheet.skyfall h1,
+.journal-sheet.skyfall h2,
+.journal-sheet.skyfall h3,
+.journal-sheet.skyfall h4 {
+  font-family: "NORTHWEST";
+  font-weight: bold;
+  border: none;
+}
+.journal-sheet.skyfall .journal-sidebar {
+  align-self: unset;
+}
+.journal-sheet.skyfall .journal-sidebar-TODO li.page {
+  background-color: var(--theme-color-2);
+  color: var(--theme-color-3);
+}
+.journal-sheet.skyfall .journal-sidebar-TODO li.page.active {
+  color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-sidebar-TODO li.category {
+  color: white;
+  background-color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-sidebar-TODO li.category strong {
+  font-family: "NORTHWEST";
+  font-weight: bold;
+  font-size: var(--font-size-20);
+  line-height: calc(var(--line-height));
+}
+.journal-sheet.skyfall .journal-entry-content,
+.journal-sheet.skyfall .editor-content {
+  color: black;
+  font-family: "Garamond";
+  background: url(assets/sheet/background.webp) repeat white;
+}
+.journal-sheet.skyfall .journal-entry-content .journal-header,
+.journal-sheet.skyfall .editor-content .journal-header,
+.journal-sheet.skyfall .journal-entry-content .journal-header input,
+.journal-sheet.skyfall .editor-content .journal-header input {
+  color: white;
+  font-size: var(--font-size-32);
+  font-family: "NORTHWEST";
+  font-weight: bold;
+  margin: 0;
+  padding: 1rem;
+}
+.journal-sheet.skyfall .journal-entry-content .journal-header,
+.journal-sheet.skyfall .editor-content .journal-header {
+  background-color: var(--theme-color-1);
+  margin-bottom: 5px;
+}
+.journal-sheet.skyfall .journal-entry-content h1,
+.journal-sheet.skyfall .editor-content h1,
+.journal-sheet.skyfall .journal-entry-content h2,
+.journal-sheet.skyfall .editor-content h2,
+.journal-sheet.skyfall .journal-entry-content h3,
+.journal-sheet.skyfall .editor-content h3,
+.journal-sheet.skyfall .journal-entry-content h4,
+.journal-sheet.skyfall .editor-content h4 {
+  color: var(--theme-color-1);
+  border: none;
+}
+.journal-sheet.skyfall .journal-entry-content h2,
+.journal-sheet.skyfall .editor-content h2 {
+  font-size: var(--font-size-24);
+  border-bottom: 4px double var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content h5,
+.journal-sheet.skyfall .editor-content h5 {
+  font-family: "Garamond";
+  font-size: var(--font-size-20);
+  margin: 0;
+  color: var(--theme-color-1);
+  border-bottom: 2px solid var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content hr,
+.journal-sheet.skyfall .editor-content hr {
+  background-image: linear-gradient(90deg, var(--theme-color-1) 0%, var(--theme-color-1) 100%);
+}
+.journal-sheet.skyfall .journal-entry-content blockquote,
+.journal-sheet.skyfall .editor-content blockquote {
+  background-color: var(--theme-color-2);
+  border-left: var(--theme-color-1) solid 10px;
+  border-radius: 5px;
+}
+.journal-sheet.skyfall .journal-entry-content table,
+.journal-sheet.skyfall .editor-content table {
+  color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content table > *,
+.journal-sheet.skyfall .editor-content table > * {
+  font-family: "Signika";
+}
+.journal-sheet.skyfall .journal-entry-content table thead,
+.journal-sheet.skyfall .editor-content table thead {
+  background-color: var(--theme-color-1);
+  color: #FFF;
+}
+.journal-sheet.skyfall .journal-entry-content table p,
+.journal-sheet.skyfall .editor-content table p {
+  margin: 0;
+}
+.journal-sheet.skyfall .journal-entry-content table td,
+.journal-sheet.skyfall .editor-content table td,
+.journal-sheet.skyfall .journal-entry-content table th,
+.journal-sheet.skyfall .editor-content table th {
+  padding: 5px;
+}
+.journal-sheet.skyfall .journal-entry-content table.striped,
+.journal-sheet.skyfall .editor-content table.striped {
+  background-color: unset;
+}
+.journal-sheet.skyfall .journal-entry-content table.striped tr:nth-child(even),
+.journal-sheet.skyfall .editor-content table.striped tr:nth-child(even) {
+  background-color: var(--theme-color-2);
+}
+.journal-sheet.skyfall .journal-entry-content table.celled,
+.journal-sheet.skyfall .editor-content table.celled {
+  background-color: var(--theme-color-2);
+}
+.journal-sheet.skyfall .journal-entry-content table.celled tr,
+.journal-sheet.skyfall .editor-content table.celled tr {
+  background-color: unset;
+}
+.journal-sheet.skyfall .journal-entry-content table.celled td,
+.journal-sheet.skyfall .editor-content table.celled td,
+.journal-sheet.skyfall .journal-entry-content table.celled th,
+.journal-sheet.skyfall .editor-content table.celled th {
+  border: 1px solid #FFF;
+}
+.journal-sheet.skyfall .journal-entry-content table.header-row tr:nth-child(1),
+.journal-sheet.skyfall .editor-content table.header-row tr:nth-child(1),
+.journal-sheet.skyfall .journal-entry-content table.header-row th,
+.journal-sheet.skyfall .editor-content table.header-row th {
+  background-color: var(--theme-color-1);
+  color: #FFF;
+}
+.journal-sheet.skyfall .journal-entry-content table.header-col td:nth-child(1),
+.journal-sheet.skyfall .editor-content table.header-col td:nth-child(1) {
+  background-color: var(--theme-color-1);
+  color: #FFF;
+}
+.journal-sheet.skyfall .journal-entry-content table.bold-row tr:nth-child(1),
+.journal-sheet.skyfall .editor-content table.bold-row tr:nth-child(1) {
+  font-weight: bold;
+}
+.journal-sheet.skyfall .journal-entry-content table.bold-col td:nth-child(1),
+.journal-sheet.skyfall .editor-content table.bold-col td:nth-child(1) {
+  font-weight: bold;
+}
+.journal-sheet.skyfall .journal-entry-content table.text-center p,
+.journal-sheet.skyfall .editor-content table.text-center p {
+  text-align: center;
+}
+.journal-sheet.skyfall .journal-entry-content ol,
+.journal-sheet.skyfall .editor-content ol,
+.journal-sheet.skyfall .journal-entry-content ul,
+.journal-sheet.skyfall .editor-content ul {
+  list-style-image: url('assets/sheet-v2/bullet.svg');
+}
+.journal-sheet.skyfall .journal-entry-content .columns-2,
+.journal-sheet.skyfall .editor-content .columns-2 {
+  columns: 2;
+}
+.journal-sheet.skyfall .journal-entry-content .columns-2 .box-a h1,
+.journal-sheet.skyfall .editor-content .columns-2 .box-a h1,
+.journal-sheet.skyfall .journal-entry-content .columns-2 .box-a h2,
+.journal-sheet.skyfall .editor-content .columns-2 .box-a h2,
+.journal-sheet.skyfall .journal-entry-content .columns-2 .box-a h3,
+.journal-sheet.skyfall .editor-content .columns-2 .box-a h3,
+.journal-sheet.skyfall .journal-entry-content .columns-2 .box-a h4,
+.journal-sheet.skyfall .editor-content .columns-2 .box-a h4 {
+  background: var(--box-a-title) no-repeat;
+  background-size: 100% auto;
+  margin-right: 0%;
+  position: relative;
+  left: -30px;
+  padding-left: 40px;
+  padding-right: 20px;
+  font-size: 18px;
+  line-height: 20px;
+  width: calc(100% + 30px);
+  min-height: 46px;
+  align-content: center;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed img,
+.journal-sheet.skyfall .editor-content document-embed img {
+  border: none;
+  box-shadow: none;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed:has(img).small,
+.journal-sheet.skyfall .editor-content document-embed:has(img).small {
+  width: 50%;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed:has(img).right,
+.journal-sheet.skyfall .editor-content document-embed:has(img).right {
+  padding-left: 1em;
+  float: right;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed:has(img).left,
+.journal-sheet.skyfall .editor-content document-embed:has(img).left {
+  padding-right: 1em;
+  float: left;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed figcaption,
+.journal-sheet.skyfall .editor-content document-embed figcaption {
+  display: flex;
+  flex-direction: column;
+}
+.journal-sheet.skyfall .journal-entry-content document-embed figcaption .embed-caption,
+.journal-sheet.skyfall .editor-content document-embed figcaption .embed-caption {
+  color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content document-embed:has(.modification-header),
+.journal-sheet.skyfall .editor-content document-embed:has(.modification-header) {
+  font-family: 'Signika';
+}
+.journal-sheet.skyfall .journal-entry-content document-embed:has(.modification-header) .modification-header,
+.journal-sheet.skyfall .editor-content document-embed:has(.modification-header) .modification-header {
+  background-color: var(--theme-color-1);
+  color: white;
+}
+.journal-sheet.skyfall .journal-entry-content .content-link,
+.journal-sheet.skyfall .editor-content .content-link {
+  background: var(--theme-color-2);
+  color: var(--theme-color-1);
+  border: var(--theme-color-1) solid 1px;
+}
+.journal-sheet.skyfall .journal-entry-content .content-link > *,
+.journal-sheet.skyfall .editor-content .content-link > * {
+  color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content .descriptor-reference,
+.journal-sheet.skyfall .editor-content .descriptor-reference {
+  background-color: var(--theme-color-1);
+}
+.journal-sheet.skyfall .journal-entry-content .journal-page-header:has(h1),
+.journal-sheet.skyfall .editor-content .journal-page-header:has(h1) {
+  text-align: center;
+  border-image-source: var(--border-image-a);
+  border-image-slice: 30 0;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+}
+.journal-sheet.skyfall .journal-entry-content .journal-page-header:has(h1) h1,
+.journal-sheet.skyfall .editor-content .journal-page-header:has(h1) h1 {
+  font-size: var(--font-size-36);
+  line-height: 2em;
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block,
+.journal-sheet.skyfall .editor-content .banner-block {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  background-color: var(--theme-color-1);
+  border-image-source: url('assets/sheet/skyfall-border-1.png');
+  border-image-slice: 30;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: round;
+  padding: 1em;
+  color: white;
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block > *,
+.journal-sheet.skyfall .editor-content .banner-block > * {
+  font-family: "Signika";
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block h1,
+.journal-sheet.skyfall .editor-content .banner-block h1,
+.journal-sheet.skyfall .journal-entry-content .banner-block h2,
+.journal-sheet.skyfall .editor-content .banner-block h2,
+.journal-sheet.skyfall .journal-entry-content .banner-block h3,
+.journal-sheet.skyfall .editor-content .banner-block h3,
+.journal-sheet.skyfall .journal-entry-content .banner-block h4,
+.journal-sheet.skyfall .editor-content .banner-block h4 {
+  font-family: "NORTHWEST";
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block h1,
+.journal-sheet.skyfall .editor-content .banner-block h1,
+.journal-sheet.skyfall .journal-entry-content .banner-block h2,
+.journal-sheet.skyfall .editor-content .banner-block h2,
+.journal-sheet.skyfall .journal-entry-content .banner-block h3,
+.journal-sheet.skyfall .editor-content .banner-block h3,
+.journal-sheet.skyfall .journal-entry-content .banner-block h4,
+.journal-sheet.skyfall .editor-content .banner-block h4 {
+  color: var(--theme-color-1);
+  border-image-source: var(--banner-block-title);
+  border-image-slice: 10 30 10 10 fill;
+  border-image-width: 10px 30px 10px 10px;
+  border-image-repeat: stretch;
+  position: relative;
+  left: -25px;
+  padding-left: 50px;
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block h1::before,
+.journal-sheet.skyfall .editor-content .banner-block h1::before,
+.journal-sheet.skyfall .journal-entry-content .banner-block h2::before,
+.journal-sheet.skyfall .editor-content .banner-block h2::before,
+.journal-sheet.skyfall .journal-entry-content .banner-block h3::before,
+.journal-sheet.skyfall .editor-content .banner-block h3::before,
+.journal-sheet.skyfall .journal-entry-content .banner-block h4::before,
+.journal-sheet.skyfall .editor-content .banner-block h4::before {
+  background-image: var(--banner-block-symbol);
+  width: 10px;
+  height: 10px;
+}
+.journal-sheet.skyfall .journal-entry-content .banner-block > *,
+.journal-sheet.skyfall .editor-content .banner-block > * {
+  color: white;
+}
+.journal-sheet.skyfall .journal-entry-content .info-block,
+.journal-sheet.skyfall .editor-content .info-block {
+  border-image-source: var(--border-image-a);
+  border-image-slice: 0 30;
+  border-image-width: 0px 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  background-color: var(--theme-color-2a);
+  padding: 8px 16px;
+}
+.journal-sheet.skyfall .journal-entry-content .info-block > *,
+.journal-sheet.skyfall .editor-content .info-block > * {
+  font-family: "Signika";
+}
+.journal-sheet.skyfall .journal-entry-content .info-block h1,
+.journal-sheet.skyfall .editor-content .info-block h1,
+.journal-sheet.skyfall .journal-entry-content .info-block h2,
+.journal-sheet.skyfall .editor-content .info-block h2,
+.journal-sheet.skyfall .journal-entry-content .info-block h3,
+.journal-sheet.skyfall .editor-content .info-block h3,
+.journal-sheet.skyfall .journal-entry-content .info-block h4,
+.journal-sheet.skyfall .editor-content .info-block h4 {
+  font-family: "NORTHWEST";
+}
+.journal-sheet.skyfall .journal-entry-content .content-block,
+.journal-sheet.skyfall .editor-content .content-block {
+  border-image-source: var(--border-image-a);
+  border-image-slice: 30 0;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  padding: 16px;
+}
+.journal-sheet.skyfall .journal-entry-content .content-block > *,
+.journal-sheet.skyfall .editor-content .content-block > * {
+  font-family: "Signika";
+}
+.journal-sheet.skyfall .journal-entry-content .content-block h1,
+.journal-sheet.skyfall .editor-content .content-block h1,
+.journal-sheet.skyfall .journal-entry-content .content-block h2,
+.journal-sheet.skyfall .editor-content .content-block h2,
+.journal-sheet.skyfall .journal-entry-content .content-block h3,
+.journal-sheet.skyfall .editor-content .content-block h3,
+.journal-sheet.skyfall .journal-entry-content .content-block h4,
+.journal-sheet.skyfall .editor-content .content-block h4 {
+  font-family: "NORTHWEST";
+}
+.journal-sheet.skyfall .journal-entry-content .narration-block,
+.journal-sheet.skyfall .editor-content .narration-block {
+  border-image-source: url('assets/sheet/skyfall-border-1.png');
+  border-image-slice: 0 30;
+  border-image-width: 0px 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  background-color: var(--theme-color-1);
+  padding: 8px 16px;
+}
+.journal-sheet.skyfall .journal-entry-content .narration-block > *,
+.journal-sheet.skyfall .editor-content .narration-block > * {
+  font-family: "Signika";
+}
+.journal-sheet.skyfall .journal-entry-content .narration-block h1,
+.journal-sheet.skyfall .editor-content .narration-block h1,
+.journal-sheet.skyfall .journal-entry-content .narration-block h2,
+.journal-sheet.skyfall .editor-content .narration-block h2,
+.journal-sheet.skyfall .journal-entry-content .narration-block h3,
+.journal-sheet.skyfall .editor-content .narration-block h3,
+.journal-sheet.skyfall .journal-entry-content .narration-block h4,
+.journal-sheet.skyfall .editor-content .narration-block h4 {
+  font-family: "NORTHWEST";
+}
+.journal-sheet.skyfall .journal-entry-content .narration-block > *,
+.journal-sheet.skyfall .editor-content .narration-block > * {
+  color: white;
+}
+#prosemirror-dropdown [data-action=skyfall] ul {
+  color: black;
+  min-width: 150px;
+  background: url(assets/sheet/background.webp) repeat white;
+}
+#prosemirror-dropdown .banner-block {
+  background-color: #652657;
+  color: white;
+  padding-left: 0;
+}
+#prosemirror-dropdown .banner-block span {
+  color: #652657;
+  border-image-source: url(assets/sheet-v2/name-title-purple.svg);
+  border-image-slice: 3 10 3 3 fill;
+  border-image-width: 5px 15px 5px 0px;
+  border-image-repeat: stretch;
+  padding: 0 20px 0 5px;
+  width: 90%;
+}
+#prosemirror-dropdown .info-block {
+  text-align: center;
+  background-color: rgba(101, 38, 87, 0.125);
+  border-image-source: url('assets/sheet/skyfall-border-2.png');
+  border-image-slice: 0 30;
+  border-image-width: 0px 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  padding: 0px 12px;
+}
+#prosemirror-dropdown .content-block {
+  border-image-source: url('assets/sheet/skyfall-border-2.png');
+  border-image-slice: 30 0;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  padding: 8px 5px;
+}
+#prosemirror-dropdown .narration-block {
+  color: white;
+  border-image-source: url('assets/sheet/skyfall-border-1.png');
+  border-image-slice: 0 30;
+  border-image-width: 0px 8px;
+  border-image-outset: 0;
+  border-image-repeat: repeat;
+  background-color: #652657;
+  padding: 0px 12px;
+}
+.SF-ability div {
+  font-family: 'Signika';
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+  font-size: 14px;
+  width: 100%;
+  background-color: #e7e8ed;
+}
+.SF-ability div label {
+  font-weight: bold;
+  color: var(--theme-color-1);
+}
+.SF-ability div p:first-child strong:first-child {
+  font-weight: bold;
+  color: var(--theme-color-1);
+}
+.SF-ability > figure.content-embed {
+  margin: 0;
+}
+.SF-ability .ability-header {
+  background-color: var(--theme-color-1);
+  color: white;
+  font-family: "NORTHWEST";
+  align-items: center;
+}
+.SF-ability .ability-header * {
+  color: white;
+}
+.SF-ability .ability-header .skyfall-icon {
+  flex: 0 0 25px;
+  text-align: center;
+}
+.SF-ability .ability-header .cost {
+  flex: 0 0 50px;
+  text-align: center;
+}
+.SF-ability .ability-header .sf-icon {
+  filter: brightness(0) saturate(100%) invert(100);
+  font-size: 32px;
+  flex: 0;
+}
+.SF-ability .ability-description {
+  text-align: center;
+}
+.SF-ability .ability-descriptors {
+  padding: 5px;
+}
+.SF-ability .ability-descriptors label.descriptor {
+  border: 1px solid gray;
+  color: white;
+  line-height: 2em;
+}
+.SF-ability .ability-properties {
+  background-color: var(--theme-color-2);
+}
+.SF-ability .ability-properties ul,
+.SF-ability .ability-properties ol {
+  list-style-image: unset;
+}
+.SF-ability .rich label + * {
+  display: inline;
+}
+.SF-ability .rich * {
+  margin: 0;
+}
+.SF-ability .rich ul,
+.SF-ability .rich ol {
+  list-style-image: url('assets/sheet-v2/bullet.svg');
+}
+document-embed.ability-embed .content-embed {
+  padding: 0;
+}
+document-embed.ability-embed .content-embed div {
+  font-family: 'Signika';
+  padding: 5px;
+  border: 1px solid black;
+  position: relative;
+  font-size: 14px;
+  width: 100%;
+  background-color: #e7e8ed;
+}
+document-embed.ability-embed .content-embed div label {
+  font-weight: bold;
+  color: var(--theme-color-1);
+}
+document-embed.ability-embed .content-embed div p:first-child strong:first-child {
+  font-weight: bold;
+  color: var(--theme-color-1);
+}
+document-embed.ability-embed .content-embed > figure.content-embed {
+  margin: 0;
+}
+document-embed.ability-embed .content-embed .ability-header {
+  background-color: var(--theme-color-1);
+  color: white;
+  font-family: "NORTHWEST";
+  align-items: center;
+}
+document-embed.ability-embed .content-embed .ability-header * {
+  color: white;
+}
+document-embed.ability-embed .content-embed .ability-header .skyfall-icon {
+  flex: 0 0 25px;
+  text-align: center;
+}
+document-embed.ability-embed .content-embed .ability-header .cost {
+  flex: 0 0 50px;
+  text-align: center;
+}
+document-embed.ability-embed .content-embed .ability-header .sf-icon {
+  filter: brightness(0) saturate(100%) invert(100);
+  font-size: 32px;
+  flex: 0;
+}
+document-embed.ability-embed .content-embed .ability-description {
+  text-align: center;
+}
+document-embed.ability-embed .content-embed .ability-descriptors {
+  padding: 5px;
+}
+document-embed.ability-embed .content-embed .ability-descriptors label.descriptor {
+  border: 1px solid gray;
+  color: white;
+  line-height: 2em;
+}
+document-embed.ability-embed .content-embed .ability-properties {
+  background-color: var(--theme-color-2);
+}
+document-embed.ability-embed .content-embed .ability-properties ul,
+document-embed.ability-embed .content-embed .ability-properties ol {
+  list-style-image: unset;
+}
+document-embed.ability-embed .content-embed .rich label + * {
+  display: inline;
+}
+document-embed.ability-embed .content-embed .rich * {
+  margin: 0;
+}
+document-embed.ability-embed .content-embed .rich ul,
+document-embed.ability-embed .content-embed .rich ol {
+  list-style-image: url('assets/sheet-v2/bullet.svg');
+}
+document-embed.ability-embed .content-embed > .ability-card {
+  padding: 0;
 }
 .system-skyfall {
   --title-font: "NORTHWEST";

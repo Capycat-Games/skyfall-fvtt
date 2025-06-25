@@ -82,9 +82,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 	 * @returns {Promise<void>}
 	 */
 	async #onClickControl(event) {
-		// usage.hbs
 		event.preventDefault();
-		// await this.getDocuments();
 		const button = event.currentTarget;
 		button.event = event; //Pass the trigger mouse click event
 		console.log( button.dataset.action );

@@ -405,6 +405,9 @@ export default class Character extends Creature {
 		}
 		const itemOrigin = actor.items.reduce((acc, item, i) => {
 			if ( !('origin' in item.system) ) return acc;
+			if ( item.system.origin.length == 0 ) {
+				item.system.origin = [''];
+			}
 			for (let origin of item.system.origin) {
 				if ( origin == '' ) origin = `bonus-${i}`;
 				acc.push({item: item, id: origin});
@@ -473,6 +476,7 @@ export default class Character extends Creature {
 				type: type,
 				level: level,
 			});
+			
 			progression[root] = obj;
 			const index = rootItems.indexOf(root);
 			const multiclass = type == 'class' && obj.item ? obj.item.system.initial : false;
@@ -481,12 +485,14 @@ export default class Character extends Creature {
 			else if ( obj.classLevel == 7 ) rootItems.splice(index + 1, 0, 'path-02');
 		}
 		itemOrigin.reduce((acc, v) => {
+			
 			acc[v.id] = {
 				_id: v.id, item: v.item, empty: true,
 			};
 			return acc;
 		}, progression.bonus.children.feature);
-		
+		console.log(itemOrigin);
+		console.log(progression);
 		// console.groupEnd();
 		return progression;
 	}

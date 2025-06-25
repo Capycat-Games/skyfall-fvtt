@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.9.611 - BETA
+
+- Personagem. Corrigido. Exibição de items sem fonte na progressão de niveis.
+- Personagem. Corrigido. Dano e Recuperação de vida respeitam valores minimos e máximos.
+- Journal. Atualizado. Design das páginas.
+- Editor. Adicionado. Menu Skyfall com templates para caixas de texto do livro.
+
 ## 0.9.610 - BETA
 
 - Sistema - Atualizado. Compatibilidade com a v13.

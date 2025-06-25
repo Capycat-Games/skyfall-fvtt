@@ -369,6 +369,49 @@ Hooks.on("renderActorDirectory", (app, html, context, options) => {
 	}
 });
 
+Hooks.on("getHeaderControlsJournalEntrySheet", (app, options) => {
+	if ( !game.user.isGM ) return;
+	app.options.actions.cssClasses = async (event, target) => {
+		const { DialogV2 } = foundry.applications.api;
+		const current = app.document.getFlag('skyfall', "cssClasses") ?? "";
+		const field = new foundry.data.fields.StringField({
+			label: "Css Classes",
+			initial: current,
+		}).toFormGroup({}, {name: 'cssClasses'}).outerHTML;
+		let cssClasses = await DialogV2.prompt({
+			window: { title: "EDIT CLASSES" },
+			content: field,
+			ok: {
+				label: "Submit",
+				callback: (event, button, dialog) => button.form.elements.cssClasses.value
+			}
+		});
+		cssClasses = cssClasses.replace(/([^a-zA-Z0-9 \-\_])/g, '');
+		app.document.setFlag('skyfall', "cssClasses", cssClasses);
+	}
+	
+	options.push({
+		action: "cssClasses",
+		icon: "fa-brands fa-css",
+		label: "Css Classes",
+		visible: true,
+	});
+});
+
+Hooks.on("renderJournalEntrySheet", (app, html, context, options) => {
+	const skyfallCssClasses = app.document.getFlag("skyfall", "cssClasses") ?? "";
+	if ( skyfallCssClasses ) {
+		html.classList.add(...skyfallCssClasses.split(' '));
+	}
+});
+
+Hooks.on("renderJournalEntryPageTextSheet", (app, html, context, options) => {
+	const skyfallCssClasses = app.document.parent.getFlag("skyfall", "cssClasses") ?? "";
+	if ( skyfallCssClasses ) {
+		html.classList.add(...skyfallCssClasses.split(' '));
+	}
+});
+
 Hooks.on("renderDialog", (app, jquery, data) => {
 	let html = jquery[0];
 	if (html.querySelector("#document-create")) {

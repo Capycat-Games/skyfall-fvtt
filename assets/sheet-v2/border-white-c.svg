@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
+  <path d="M 207.143 86.445 L 216.995 96.297 L 207.143 106.149 L 197.291 96.297 Z" bx:shape="n-gon 207.143 96.297 9.852 9.852 4 0 1@5df5c772" style="stroke: white; fill: none;"></path>
+  <path d="M 226.798 86.486 L 236.65 96.338 L 226.798 106.19 L 216.946 96.338 Z" bx:shape="n-gon 226.798 96.338 9.852 9.852 4 0 1@78c4cd41" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 246.503 86.483 L 256.355 96.335 L 246.503 106.187 L 236.651 96.335 Z" bx:shape="n-gon 246.503 96.335 9.852 9.852 4 0 1@c53a97bc" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 207.165 106.11 L 217.017 115.962 L 207.165 125.814 L 197.313 115.962 Z" bx:shape="n-gon 207.165 115.962 9.852 9.852 4 0 1@f885b4f4" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 246.525 106.148 L 256.377 116 L 246.525 125.852 L 236.673 116 Z" bx:shape="n-gon 246.525 116 9.852 9.852 4 0 1@63907131" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 207.147 125.838 L 216.999 135.69 L 207.147 145.542 L 197.295 135.69 Z" bx:shape="n-gon 207.147 135.69 9.852 9.852 4 0 1@6d9f16d3" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 226.802 125.879 L 236.654 135.731 L 226.802 145.583 L 216.95 135.731 Z" bx:shape="n-gon 226.802 135.731 9.852 9.852 4 0 1@de64efe4" style="stroke: white; fill: none; stroke-width: 1;"></path>
+  <path d="M 246.507 125.876 L 256.359 135.728 L 246.507 145.58 L 236.655 135.728 Z" bx:shape="n-gon 246.507 135.728 9.852 9.852 4 0 1@97a26c24" style="stroke: white; fill: none; stroke-width: 1;"></path>
+</svg>

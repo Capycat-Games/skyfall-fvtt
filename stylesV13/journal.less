@@ -1,0 +1,517 @@
+/* ----------------------------------------- */
+/*  Journal Styles                           */
+/* ----------------------------------------- */
+
+.journal-sheet.skyfall.theme-purple {
+	--theme-color-1: #652657;
+	--theme-color-2: #d1becd;
+	--theme-color-2a: rgba(101, 38, 87, 0.125);
+	--theme-color-3: #424f66;
+	--theme-color-4: #babecd;
+	--color-scrollbar: #652657;
+
+	--banner-block-title: url(assets/sheet-v2/name-title-purple.svg);
+	--banner-block-symbol: url("assets/sheet-v2/name-title-purple-symbol.svg");
+	
+	--border-image: url('assets/sheet-v2/border-white.svg');
+	--border-image-theme: url('assets/sheet-v2/border-purple.svg');
+	
+	--box-a-title: url(assets/sheet-v2/name-title-purple.svg);
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-2.png');
+}
+.journal-sheet.skyfall.theme-darkblue {
+	--theme-color-1: #182657;
+  --theme-color-2: #c9d1db;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+
+	--color-scrollbar: #182657;
+
+	--banner-block-title: url(assets/sheet-v2/name-title-blue-faint.svg);
+	--banner-block-symbol: url("assets/sheet-v2/name-title-blue-symbol.svg");
+	
+	--border-image: url('assets/sheet-v2/border-white.svg');
+	--border-image-theme: url('assets/sheet-v2/border-blue.svg');
+
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-3.png');
+	--box-a-title: url(assets/sheet/box-blue-title.svg)
+}
+.journal-sheet.skyfall.theme-darkred {
+	--theme-color-1: #750703;
+  --theme-color-2: #75070322;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+
+	--color-scrollbar: #750703;
+
+	--banner-block-title: url(assets/sheet-v2/name-title-red.svg);
+	--banner-block-symbol: url("assets/sheet-v2/name-title-red-symbol.svg");
+	
+	--border-image: url('assets/sheet-v2/border-white.svg');
+	--border-image-theme: url('assets/sheet-v2/border-red.svg');
+
+	--box-background: url('assets/sheet/box-purple.png');
+	--border-image-a: url('assets/sheet/skyfall-border-4.png');
+	--box-a-title: url(assets/sheet/box-red-title.svg)
+}
+
+.journal-sheet.skyfall.theme-orange {
+	--theme-color-1: #ff6400;
+  --theme-color-2: #ff640022;
+  --theme-color-3: #424f66;
+  --theme-color-4: #babecd;
+
+	--color-scrollbar: #ff6400;
+
+	--banner-block-title: url(assets/sheet-v2/name-title-orange.svg);
+	--banner-block-symbol: url("assets/sheet-v2/name-title-orange-symbol.svg");
+	
+	--border-image: url('assets/sheet-v2/border-white.svg');
+	--border-image-theme: url('assets/sheet-v2/border-orange.svg');
+
+  --box-background: url('assets/sheet/box-purple.png');
+  --border-image-a: url('assets/sheet/skyfall-border-5.png');
+  --box-a-title: url(assets/sheet/box-title-orange.svg);
+}
+
+.journal-sheet.skyfall {
+	h1, h2, h3, h4 {
+		font-family: "NORTHWEST";
+		font-weight: bold;
+		border: none;
+	}
+	.journal-sidebar {
+		align-self: unset;
+	}
+	.journal-sidebar-TODO {
+		li.page {
+			background-color: var(--theme-color-2);
+			color: var(--theme-color-3);
+			&.active {
+				color: var(--theme-color-1);
+			}
+		}
+		li.category {
+			color: white;
+			background-color: var(--theme-color-1);
+			strong {
+				font-family: "NORTHWEST";
+				font-weight: bold;
+				font-size: var(--font-size-20);
+				line-height: calc(var(--line-height));
+			}
+		}
+	}
+	
+	.journal-entry-content, .editor-content {
+		color: black;
+		font-family: "Garamond";
+		background: url(./assets/sheet/background.webp) repeat white;
+		.journal-header, .journal-header input {
+			color: white;
+			font-size: var(--font-size-32);
+			font-family: "NORTHWEST";
+			font-weight: bold;
+			margin: 0;
+			padding: 1rem;
+		}
+		.journal-header {
+			background-color: var(--theme-color-1);
+			margin-bottom: 5px;
+		}
+		h1, h2, h3, h4 {
+			color: var(--theme-color-1);
+			border: none;
+		}
+		h2 {
+			font-size: var(--font-size-24); // 22px;
+			border-bottom: 4px double var(--theme-color-1);
+		}
+		h5 {
+			font-family: "Garamond";
+			font-size: var(--font-size-20); // 22px;
+			margin: 0;
+			color: var(--theme-color-1);
+			border-bottom: 2px solid var(--theme-color-1);
+		}
+		
+		hr {
+			background-image: linear-gradient(90deg, var(--theme-color-1) 0%, var(--theme-color-1) 100%);
+		}
+		blockquote {
+			background-color: var(--theme-color-2);
+			border-left: var(--theme-color-1) solid 10px;
+			border-radius: 5px;
+		}
+		table {
+			> * {
+				font-family: "Signika";
+			}
+			color: var(--theme-color-1);
+			thead {
+				background-color: var(--theme-color-1);
+				color: #FFF;
+			}
+			p {
+				margin: 0;
+			}
+			td, th {
+				padding: 5px;
+			}
+			&.striped {
+				background-color: unset;
+				tr:nth-child(even) {
+					background-color: var(--theme-color-2);
+				}
+			}
+			&.celled {
+				background-color: var(--theme-color-2);
+				tr {
+					background-color: unset;
+				}
+				td, th {
+					border: 1px solid #FFF;
+				}
+			}
+			&.header-row {
+				tr:nth-child(1), th {
+					background-color: var(--theme-color-1);
+					color: #FFF;
+				}
+			}
+			&.header-col {
+				td:nth-child(1) {
+					background-color: var(--theme-color-1);
+					color: #FFF;
+				}
+			}
+			&.bold-row {
+				tr:nth-child(1) {
+					font-weight: bold;
+				}
+			}
+			&.bold-col {
+				td:nth-child(1) {
+					font-weight: bold;
+				}
+			}
+			&.text-center {
+				p {
+					text-align: center;
+				}
+			}
+		}
+		ol, ul {
+			list-style-image: url('assets/sheet-v2/bullet.svg');
+		}
+		.columns-2 {
+			columns: 2;
+			.box-a {
+				h1, h2, h3, h4 {
+					background: var(--box-a-title) no-repeat;
+					background-size: 100% auto;
+					margin-right: 0%;
+					position: relative;
+					left: -30px;
+					padding-left: 40px;
+					padding-right: 20px;
+					font-size: 18px;
+					line-height: 20px;
+					width: calc(100% + 30px);
+					min-height: 46px;
+					align-content: center;
+				}
+			}
+		}
+		document-embed {
+			img {
+				border: none;
+				box-shadow: none;
+			}
+			&:has(img) {
+				
+				&.small {
+					width: 50%;
+				}
+				&.right {
+					padding-left: 1em;
+					float: right;
+				}
+				&.left {
+					padding-right: 1em;
+					float: left;
+				}
+			}
+			figcaption {
+				display: flex;
+				flex-direction: column;
+				.embed-caption {
+					color: var(--theme-color-1);
+				}
+				
+			}
+			
+		}
+		document-embed:has(.modification-header)  {
+			font-family: 'Signika';
+			.modification-header {
+				background-color: var(--theme-color-1);
+				color: white;
+			}
+		}
+		
+		.content-link {
+			background: var(--theme-color-2);
+			color: var(--theme-color-1);
+			> * {
+				color: var(--theme-color-1);
+			}
+			border: var(--theme-color-1) solid 1px;
+		}
+		.descriptor-reference {
+			background-color: var(--theme-color-1);
+		}
+		.journal-page-header:has(h1) {
+			h1 {
+				font-size: var(--font-size-36);
+				line-height: 2em;
+			}
+			text-align: center;
+			border-image-source: var(--border-image-a);
+			border-image-slice: 30 0;
+			border-image-width: 10px;
+			border-image-outset: 0;
+			border-image-repeat: round;
+		}
+		// Box with background and a background banner for title. Same as Status Tooltip
+		// OLD .box-a
+		.banner-block {
+			> * {
+				font-family: "Signika";
+			}
+			h1, h2, h3, h4 {
+				font-family: "NORTHWEST";
+			}
+			background-color: var(--theme-color-1);
+			position: relative;
+			width: calc(100% - 20px);
+			margin-left: 10px;
+			h1, h2, h3, h4 {
+				color: var(--theme-color-1);
+				// background-image: var(--box-a-title);
+				// background: var(--box-a-title) 0% 0 space, var(--box-a-title) center no-repeat;
+				border-image-source: var(--banner-block-title);
+				border-image-slice: 10 30 10 10 fill;
+				border-image-width: 10px 30px 10px 10px;
+				border-image-repeat: stretch;
+				position: relative;
+				left: -25px;
+				padding-left: 50px;
+				&::before {
+					// content: "";
+					background-image: var(--banner-block-symbol);
+					width: 10px;
+					height: 10px;
+				}
+			}
+			background-color: var(--theme-color-1);
+			border-image-source: url('assets/sheet/skyfall-border-1.png');
+			// border-image-source: var(--border-image);
+			border-image-slice: 30;
+			border-image-width: 10px;
+			border-image-outset: 0;
+			border-image-repeat: round;
+
+			padding: 1em;
+			color: white;
+			> * { color: white; }
+		}
+		// Box with transparent background color and side border
+		// OLD .box-b
+		.info-block {
+			> * {
+				font-family: "Signika";
+			}
+			h1, h2, h3, h4 {
+				font-family: "NORTHWEST";
+			}
+			border-image-source: var(--border-image-a);
+			border-image-slice: 0 30;
+			border-image-width: 0px 8px;
+			border-image-outset: 0;
+			border-image-repeat: repeat;
+			background-color: var(--theme-color-2a);
+			padding: 8px 16px;
+		}
+		// Box without background and top-bottom border
+		// OLD .box-c
+		.content-block {
+			> * {
+				font-family: "Signika";
+			}
+			h1, h2, h3, h4 {
+				font-family: "NORTHWEST";
+			}
+			border-image-source: var(--border-image-a);
+			border-image-slice: 30 0;
+			border-image-width: 8px;
+			border-image-outset: 0;
+			border-image-repeat: repeat;
+			padding: 16px;
+		}
+		// Box with hard background color and side border
+		// OLD .box-c
+		.narration-block {
+			> * {
+				font-family: "Signika";
+			}
+			h1, h2, h3, h4 {
+				font-family: "NORTHWEST";
+			}
+			> * {
+				color: white;
+			}
+			border-image-source: url('assets/sheet/skyfall-border-1.png');
+			border-image-slice: 0 30;
+			border-image-width: 0px 8px;
+			border-image-outset: 0;
+			border-image-repeat: repeat;
+			background-color: var(--theme-color-1);
+			padding: 8px 16px;
+		}
+	}
+	
+}
+
+#prosemirror-dropdown {
+	[data-action=skyfall] ul {
+		color: black;
+		min-width: 150px;
+		background: url(./assets/sheet/background.webp) repeat white;
+	}
+	.banner-block {
+		background-color: #652657;
+		color: white;
+		padding-left: 0;
+		span {
+			color: #652657;
+			border-image-source: url(assets/sheet-v2/name-title-purple.svg);
+			border-image-slice: 3 10 3 3 fill;
+			border-image-width: 5px 15px 5px 0px;
+			border-image-repeat: stretch;
+			padding: 0 20px 0 5px;
+			width: 90%;
+		}
+	}
+	.info-block {
+		text-align: center;
+		background-color: rgba(101, 38, 87, 0.125);
+		border-image-source: url('assets/sheet/skyfall-border-2.png');
+		border-image-slice: 0 30;
+		border-image-width: 0px 8px;
+		border-image-outset: 0;
+		border-image-repeat: repeat;
+		padding: 0px 12px;
+	}
+	.content-block {
+		border-image-source: url('assets/sheet/skyfall-border-2.png');
+		border-image-slice: 30 0;
+		border-image-width: 8px;
+		border-image-outset: 0;
+		border-image-repeat: repeat;
+		padding: 8px 5px;
+	}
+	.narration-block {
+		color: white;
+		border-image-source: url('assets/sheet/skyfall-border-1.png');
+		border-image-slice: 0 30;
+		border-image-width: 0px 8px;
+		border-image-outset: 0;
+		border-image-repeat: repeat;
+		background-color: #652657;
+		padding: 0px 12px;
+	}
+}
+
+
+.SF-ability {
+	div {
+		font-family: 'Signika';
+		padding: 5px;
+		border: 1px solid black;
+		position: relative;
+		font-size: 14px;
+		// flex: 0;
+		width: 100%;
+		background-color: #e7e8ed;
+		label {
+			font-weight: bold;
+			color: var(--theme-color-1);
+		}
+		p:first-child strong:first-child {
+			font-weight: bold;
+			color: var(--theme-color-1);
+		}
+	}
+	> figure.content-embed {
+		margin: 0;
+	}
+	.ability-header {
+		background-color: var(--theme-color-1);
+		color: white;
+		font-family: "NORTHWEST";
+		align-items: center;
+		* {
+			color: white;
+		}
+		.skyfall-icon {
+			flex: 0 0 25px;
+			text-align: center;
+		}
+		.cost {
+			flex: 0 0 50px;
+			text-align: center;
+		}
+		.sf-icon {
+			filter: brightness(0) saturate(100%) invert(100);
+			font-size: 32px;
+			flex: 0;
+		}
+	}
+	.ability-description {
+		text-align: center;
+	}
+	.ability-descriptors {
+		padding: 5px;
+
+		label.descriptor {
+			border: 1px solid gray;
+			color: white;
+			line-height: 2em;
+		}
+	}
+	.ability-properties {
+		background-color: var(--theme-color-2);
+		ul, ol {
+			list-style-image: unset;
+		}
+	}
+	.rich {
+		label + * {
+			display: inline;
+		}
+		* { margin: 0; }
+		ul, ol {
+			list-style-image: url('assets/sheet-v2/bullet.svg');
+		}
+	}
+}
+document-embed.ability-embed .content-embed {
+	.SF-ability;
+	> .ability-card {
+		padding: 0;
+	}
+	padding: 0;
+}

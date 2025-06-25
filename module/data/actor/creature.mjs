@@ -877,16 +877,17 @@ export default class Creature extends foundry.abstract.TypeDataModel {
 		const updateData = {};
 		if ( hp ) {
 			const deltaTemp = damage > 0 ? Math.min(hp.temp, damage) : 0;
-			const deltaHP = Math.clamp(damage - deltaTemp, -hp.max, hp.max * 2);
-
-			updateData["system.resources.hp.value"] = hp.value - deltaHP;
+			const deltaHP = damage - deltaTemp;
+			
+			updateData["system.resources.hp.value"] = Math.clamp(hp.value - deltaHP, -hp.max, hp.max);
 			updateData["system.resources.hp.temp"] = Math.max(hp.temp - deltaTemp, recovery.tempHP);
 		}
 		if ( ep ) {
 			const deltaTempEP = recovery.ep > 0 ? Math.min((ep.temp ?? 0), recovery.ep) : 0;
-			const deltaEP = Math.clamp(recovery.ep - deltaTempEP, 0, (ep.max ?? 0));
-			updateData["system.resources.ep.value"] = ep.value - deltaEP;
+			const deltaEP = recovery.ep - deltaTempEP;
+			updateData["system.resources.ep.value"] = Math.clamp(ep.value - deltaEP, 0, ep.max);
 			updateData["system.resources.ep.temp"] = Math.max(ep.temp - deltaTempEP, recovery.tempEP);
+			console.log(updateData);
 		}
 
 		summary.updateData = updateData;
