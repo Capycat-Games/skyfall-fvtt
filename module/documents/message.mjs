@@ -1,22 +1,24 @@
 
 export default class SkyfallChatMessage extends ChatMessage {
-	
+
 
 	/* -------------------------------------------- */
 	/*  Rendering                                   */
 	/* -------------------------------------------- */
 
 	/** @inheritDoc */
-	async renderHTML(options={}) {
+	async renderHTML(options = {}) {
 		const html = await super.renderHTML(options);
 		const messageDocs = await this.system.getDocuments();
 		const cssClasses = ['skyfall'];
-		if ( this.type ) cssClasses.push(this.type);
-		if ( messageDocs.actor?.type ) cssClasses.push(messageDocs.actor.type);
-		
-		if ( this.system.constructor?.metadata?.cssClasses ) {{
-			cssClasses.push(this.system.constructor?.metadata?.cssClasses);
-		}}
+		if (this.type) cssClasses.push(this.type);
+		if (messageDocs.actor?.type) cssClasses.push(messageDocs.actor.type);
+
+		if (this.system.constructor?.metadata?.cssClasses) {
+			{
+				cssClasses.push(this.system.constructor?.metadata?.cssClasses);
+			}
+		}
 		$(html)[0].classList.add(...cssClasses);
 
 		this.addTokenPortrait(html);
@@ -25,12 +27,12 @@ export default class SkyfallChatMessage extends ChatMessage {
 
 		const itemName = html.querySelector('.card-header > .item-name');
 		console.log("CHATMESSAGE", itemName);
-		if( itemName?.innerText.length <= 10 ) itemName.classList.add("fonts22");
-		else if ( itemName?.innerText.length <= 15 ) itemName.classList.add("fonts20");
-		else if ( itemName?.innerText.length <= 20 ) itemName.classList.add("fonts18");
-		else if ( itemName?.innerText.length <= 25 ) itemName.classList.add("fonts16");
-		else if ( itemName?.innerText.length <= 30 ) itemName.classList.add("fonts14");
-		else if ( itemName ) itemName.classList.add("fonts12");
+		if (itemName?.innerText.length <= 10) itemName.classList.add("fonts22");
+		else if (itemName?.innerText.length <= 15) itemName.classList.add("fonts20");
+		else if (itemName?.innerText.length <= 20) itemName.classList.add("fonts18");
+		else if (itemName?.innerText.length <= 25) itemName.classList.add("fonts16");
+		else if (itemName?.innerText.length <= 30) itemName.classList.add("fonts14");
+		else if (itemName) itemName.classList.add("fonts12");
 
 		return html;
 	}
@@ -40,7 +42,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 		html.querySelectorAll("[data-action]").forEach((button) => {
 			button.addEventListener("click", this.#onClickControl.bind(this));
 		});
-		
+
 		html.querySelectorAll("[data-context-menu]").forEach((element) => {
 			control.addEventListener("click", event => {
 				event.preventDefault();
@@ -51,7 +53,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 				}));
 			});
 		});
-		
+
 		html.querySelectorAll("[data-apply-rest]").forEach((element) => {
 			element.addEventListener("click", this.#applyRest.bind(this));
 		});
@@ -61,18 +63,18 @@ export default class SkyfallChatMessage extends ChatMessage {
 		html.querySelectorAll("[data-place-template]").forEach((element) => {
 			element.addEventListener("click", this.#placeTemplate.bind(this));
 		});
-		
+
 	}
-	
-	addTokenPortrait(html){
-		if ( this.system.portrait ) {
+
+	addTokenPortrait(html) {
+		if (this.system.portrait) {
 			const image = document.createElement('img');
 			image.src = this.system.portrait;
 			image.classList.add('actor-portrait');
 			image.width = 28;
 			image.heigth = 28;
 			//  `<img src="${this.system.portrait}" width=28 heigth=28>`
-			html.querySelector(".message-header")?.prepend( image );
+			html.querySelector(".message-header")?.prepend(image);
 		}
 	}
 
@@ -85,26 +87,26 @@ export default class SkyfallChatMessage extends ChatMessage {
 		event.preventDefault();
 		const button = event.currentTarget;
 		button.event = event; //Pass the trigger mouse click event
-		console.log( button.dataset.action );
-		switch ( button.dataset.action ) {
+		console.log(button.dataset.action);
+		switch (button.dataset.action) {
 			case "evaluate":
 				this.#evaluateRoll(event, button);
 				break;
 			case "catharsis":
 				this.#applyCatharsis(event, button);
 				break;
-				case "applyDamage":
-					this.#applyDamage(event, button);
-					break;
+			case "applyDamage":
+				this.#applyDamage(event, button);
+				break;
 			case "placeTemplate":
 				this.#placeTemplate(event, button);
 				break;
 			case "applyEffect":
 				const effId = button.dataset.effectId;
-				let eff = this.system.effects.find( ef => ef._id == effId );
+				let eff = this.system.effects.find(ef => ef._id == effId);
 				for (const tkn of canvas.tokens.controlled) {
-					if ( SYSTEM.conditions[eff.id] ) {
-						tkn.actor.toggleStatusEffect( eff.id );
+					if (SYSTEM.conditions[eff.id]) {
+						tkn.actor.toggleStatusEffect(eff.id);
 					} else {
 						tkn.actor.createEmbeddedDocuments('ActiveEffect', [eff]);
 					}
@@ -117,25 +119,25 @@ export default class SkyfallChatMessage extends ChatMessage {
 	}
 
 
-	
-	async #applyRest(event, target){
+
+	async #applyRest(event, target) {
 		event.preventDefault();
 		const button = event.currentTarget;
 		const actorId = button.closest('.rest-card').dataset.actorId;
 		const actor = game.actors.get(actorId);
 		const messageId = button.closest('.chat-message').dataset.messageId;
 		const message = game.messages.get(messageId);
-		if ( !actor || actor.isOwnser ) return;
+		if (!actor || actor.isOwnser) return;
 		actor.shortRest(message);
 	}
-	
-	async consumeResources(){
-		if ( game.userId != this.author.id ) return;
-		const {actor, item} = await this.system.getDocuments();
+
+	async consumeResources() {
+		if (game.userId != this.author.id) return;
+		const { actor, item } = await this.system.getDocuments();
 		const content = ""
 		const updateData = {};
 		const costs = this.system.costs;
-		
+
 		for (const [key, resource] of Object.entries(costs)) {
 			switch (key) {
 				case 'hp':
@@ -158,7 +160,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 				case 'knowledge':
 				case 'crafting':
 				case 'reputation':
-					if ( resource > 0 ) {
+					if (resource > 0) {
 						const ability = foundry.utils.getProperty(actor, `system.abilities.${key}`);
 						updateData[`system.abilities.${key}.points`] = ability.points - resource;
 					}
@@ -173,23 +175,23 @@ export default class SkyfallChatMessage extends ChatMessage {
 			updateData[`system.actions.value`] = actions - item.system.activation.cost;
 		}
 		// Consumable with uses
-		if ( costs.uses ) {
+		if (costs.uses) {
 			// updateData['items'] ??= [];
 		}
 		// Consumable
-		if ( costs.quantity ) {
+		if (costs.quantity) {
 			for (const consumeItem of costs.quantity) {
 				const ammo = actor.items.get(consumeItem.id);
 				const weapon = actor.items.get(this.system.origin.weapon);
 				const currAmmo = foundry.utils.getProperty(ammo, consumeItem.path);
 				const currWeaponAmmo = foundry.utils.getProperty(weapon, 'system.reload.value');
 				updateData['items'] ??= [];
-				if ( !consumeItem.id ) continue;
+				if (!consumeItem.id) continue;
 				updateData['items'].push({
 					_id: consumeItem.id,
 					[consumeItem.path]: currAmmo + consumeItem.value
 				});
-				if ( !weapon.id ) continue;
+				if (!weapon.id) continue;
 				updateData['items'].push({
 					_id: weapon.id,
 					'system.reload.value': currWeaponAmmo + consumeItem.value
@@ -198,8 +200,8 @@ export default class SkyfallChatMessage extends ChatMessage {
 		}
 		// SIGIL
 		const sigil = item?.type == "sigil" ? item : null;
-		if ( sigil ) { //sigil
-			if ( sigil.system.charges.value == 0 ) {
+		if (sigil) { //sigil
+			if (sigil.system.charges.value == 0) {
 				return ui.notifications.error(
 					game.i18n.format("NOTIFICATION.NotEnougthResource", {
 						resource: game.i18n.localize("SKYFALL2.RESOURCE.ChargePl"),
@@ -214,7 +216,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 			});
 		}
 		const recharge = item?.type == "ability" ? this._ability : null;
-		if ( recharge && actor.type == 'npc' ) {
+		if (recharge && actor.type == 'npc') {
 			updateData['items'] ??= [];
 			updateData['items'].push({
 				"_id": recharge.id,
@@ -228,9 +230,9 @@ export default class SkyfallChatMessage extends ChatMessage {
 	}
 
 	hasCriticalRoll() {
-		return this.rolls.some( r => r.options?.type == "attack"  && r.options?.criticalHit);
+		return this.rolls.some(r => r.options?.type == "attack" && r.options?.criticalHit);
 	}
-	async evaluateAll(){
+	async evaluateAll() {
 		const rolls = this.system.rolls;
 		console.log(this, rolls);
 		for (const [i, roll] of Object.entries(rolls)) {
@@ -239,39 +241,49 @@ export default class SkyfallChatMessage extends ChatMessage {
 			await this.evaluateRoll(i, critical);
 		}
 	}
-	
-	async evaluateRoll(index, critical = false){
+
+	async evaluateRoll(index, critical = false) {
 		const message = this;
 		const systemRolls = message.system.rolls;
 		const messageRolls = [];
-		const {actor, item} = await this.system.getDocuments();
+		const { actor, item } = await this.system.getDocuments();
 		const content = document.createElement('div');
 		const rollsDiv = document.createElement('div');
 		content.innerHTML = message.content;
 		let amplify = 0;
 		for await (const [i, roll] of systemRolls.entries()) {
-			const r = (roll instanceof SkyfallRoll ? roll : SkyfallRoll.fromData(roll) );
+			const r = (roll instanceof SkyfallRoll ? roll : SkyfallRoll.fromData(roll));
 			r.index = i;
-			if ( index == i ) {
-				if ( r.options.type == 'damage' && critical ) {
+			if (index == i) {
+				if (r.options.type == 'damage' && critical) {
 					r.alter(2);
+					if (r.options.descriptors?.includes('lethal')) {
+						const { faces, flavor } = r.terms[0];
+						const lethal = new SkyfallRoll(`1d${faces}[${flavor}||lethal]`);
+						r.terms.push(
+							new foundry.dice.terms.OperatorTerm({ operator: '+' }),
+							lethal.terms[0],
+							// new foundry.dice.terms.DiceTerm({ number: 1, faces: faces, options: { flavor: flavor, source: 'lethal' } }),
+						);
+						r.resetFormula();
+					}
 				}
 				await r.evaluate();
-				if ( r.options.type == 'attack' ) {
-					const criticalTarget = roll.options.critical?.range ?? 20; 
-					if ( r.dice[0].total >= criticalTarget ) {
+				if (r.options.type == 'attack') {
+					const criticalTarget = roll.options.critical?.range ?? 20;
+					if (r.dice[0].total >= criticalTarget) {
 						message.system.rolls[i].options.criticalHit = true;
 					}
 					amplify = r.terms[0].total;
 					for (const [ii, roll2] of message.system.rolls.entries()) {
-						roll2.terms = roll2.terms.filter( t => ((t.options.amplify ?? 0 ) <= amplify) );
+						roll2.terms = roll2.terms.filter(t => ((t.options.amplify ?? 0) <= amplify));
 						// roll2.formula = roll2.resetFormula();
 					}
-				} else if ( r.options.type == 'deathsave' && actor ) {
+				} else if (r.options.type == 'deathsave' && actor) {
 					const death = foundry.utils.getProperty(actor, "system.death");
-					if ( death ) {
+					if (death) {
 						const updateData = {}
-						if ( r.total >= 10 ) {
+						if (r.total >= 10) {
 							updateData['system.death.success'] = death.success + 1;
 						} else {
 							updateData['system.death.failure'] = death.failure + 1;
@@ -284,18 +296,18 @@ export default class SkyfallChatMessage extends ChatMessage {
 			const RolldData = r.toJSON();
 			RolldData.template = r.template;
 			systemRolls[i] = RolldData;
-			if ( r._evaluated ) {
+			if (r._evaluated) {
 				messageRolls.push(r);
 			}
-			
+
 
 			const rdiv = document.createElement('div');
 			rdiv.innerHTML = r.template;
 			rollsDiv.append(rdiv);
 		}
-		
+
 		content.querySelectorAll('.modifications .hidden[data-amplify]')
-			.forEach( i => Number(i.dataset.amplify) <= amplify ? i.classList.remove('hidden') : null);
+			.forEach(i => Number(i.dataset.amplify) <= amplify ? i.classList.remove('hidden') : null);
 		content.querySelector('.rolls').innerHTML = rollsDiv.innerHTML;
 		console.log(systemRolls, messageRolls);
 		await message.update({
@@ -304,8 +316,8 @@ export default class SkyfallChatMessage extends ChatMessage {
 			"rolls": messageRolls, //rolls.filter( i => i._evaluated ?? i.evaluated),
 		});
 	}
-	
-	async #evaluateRoll(event, target){
+
+	async #evaluateRoll(event, target) {
 		event.preventDefault();
 		event.stopPropagation();
 		const index = target.dataset.roll;
@@ -319,12 +331,12 @@ export default class SkyfallChatMessage extends ChatMessage {
 		event.preventDefault();
 		event.stopPropagation();
 		let actor;
-		if ( !game.user.isGM && canvas.tokens.controlled) {
+		if (!game.user.isGM && canvas.tokens.controlled) {
 			actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
-			if ( !actor ) ui.notifications.warn("Nenhum personagem selecionado");
+			if (!actor) ui.notifications.warn("Nenhum personagem selecionado");
 			const current = actor.system.resources.catharsis.value;
-			if ( current == 0 ) return ui.notifications.info("Catarse Insuficiente");
-			actor.update({"system.resources.catharsis.value": current - 1});
+			if (current == 0) return ui.notifications.info("Catarse Insuficiente");
+			actor.update({ "system.resources.catharsis.value": current - 1 });
 		}
 
 		const button = event.currentTarget;
@@ -337,8 +349,8 @@ export default class SkyfallChatMessage extends ChatMessage {
 		const message = game.messages.get(chatCardId);
 		const roll = message.rolls[rollIndex];
 		roll.index = rollIndex;
-		await roll.applyCatharsis({operator});
-		
+		await roll.applyCatharsis({ operator });
+
 		// Update the chat content swapping the modified roll;
 		const content = document.createElement('div');
 		content.innerHTML = message.content;
@@ -349,14 +361,14 @@ export default class SkyfallChatMessage extends ChatMessage {
 		message.rolls.splice(rollIndex, 1, roll);
 		updateData['rolls'] = message.rolls;
 		updateData['content'] = content.innerHTML;
-		if ( !foundry.utils.isEmpty(updateData) ) {
-			if ( !game.user.isGM && game.userId != this.author.id ) {
+		if (!foundry.utils.isEmpty(updateData)) {
+			if (!game.user.isGM && game.userId != this.author.id) {
 				await skyfall.socketHandler.emit("RollCatharsis", {
 					id: message.id,
 					updateData: updateData,
 				});
 				ChatMessage.create({
-					content: game.i18n.format("SKYFALL2.MESSAGE.ActorHasGivenCatharsis",{
+					content: game.i18n.format("SKYFALL2.MESSAGE.ActorHasGivenCatharsis", {
 						actor: actor?.name,
 						target: message.alias,
 						roll: roll.options.flavor,
@@ -369,8 +381,8 @@ export default class SkyfallChatMessage extends ChatMessage {
 			}
 		}
 	}
-	
-	
+
+
 	#applyDamage(event) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -380,13 +392,13 @@ export default class SkyfallChatMessage extends ChatMessage {
 		const chatCardId = button.closest(".chat-message").dataset.messageId;
 		const rollIndex = button.closest("[data-roll-index]").dataset.rollIndex;
 		const message = game.messages.get(chatCardId);
-		const roll =  message.rolls[rollIndex];
-		
+		const roll = message.rolls[rollIndex];
+
 		for (const token of canvas.tokens.controlled) {
-			token.actor.applyDamage( roll , modifier, true );
+			token.actor.applyDamage(roll, modifier, true);
 		}
 	}
-	
+
 	/**
 	* Retrieve AbilityTemplate data and Draw on Canvas
 	* @param {Event} event   The originating click event
@@ -405,7 +417,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 			square: 'square',
 			line: 'square',
 		}
-		if ( !templates ) return;
+		if (!templates) return;
 		const templateData = {
 			t: templates[templates.t],
 			user: game.user.id,
@@ -418,46 +430,46 @@ export default class SkyfallChatMessage extends ChatMessage {
 		};
 		// Return the template constructed from the item data
 		const cls = CONFIG.MeasuredTemplate.documentClass;
-		const template = new cls(templateData, {parent: canvas.scene});
+		const template = new cls(templateData, { parent: canvas.scene });
 		const object = new game.skyfall.canvas.AbilityTemplate(template);
-		
+
 		// object.item = item;
 		// object.actorSheet = item.actor?.sheet || null;
-		
+
 		object.drawPreview();
 		// template.drawPreview();
 		return;
 		// if( !item ) return;
 		// const template = game.skyfall.canvas.AbilityTemplate.fromItem(item);
-		
+
 		// if ( template ) {
 		// 	template.drawPreview();
 		// }
 	}
 
-	
+
 	/* -------------------------------------------- */
 	/*  System Methods                              */
 	/* -------------------------------------------- */
-	
+
 
 	/* -------------------------------------------- */
 	/*  Database Workflows                          */
 	/* -------------------------------------------- */
-	
+
 	/** @inheritDoc */
 	_onUpdate(changed, options, userId) {
-		const update =  super._onUpdate(changed, options, userId);
-		const initRolls = this.rolls.filter( r => r.options.type == "initiative");
+		const update = super._onUpdate(changed, options, userId);
+		const initRolls = this.rolls.filter(r => r.options.type == "initiative");
 		const combat = game.combats.active;
-		if ( initRolls.length > 0 && combat ) {
+		if (initRolls.length > 0 && combat) {
 			const actor = fromUuidSync(this.system?.origin?.actor);
 			const combatants = combat.combatants.filter(
 				(c) => c.actorId === actor.id && c.initiative == null
 			);
 			for (const combatant of combatants) {
 				const roll = initRolls.pop();
-				if ( roll ) {
+				if (roll) {
 					combatant.update({
 						initiative: roll.total,
 					});

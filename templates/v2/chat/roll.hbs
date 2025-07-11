@@ -21,15 +21,22 @@
 				{{/if}}
 			</span>
 			{{!-- {{formula}} --}}
-			{{#each roll.terms as | t |}}
-				{{#if t.operator }}
-					{{t.operator}}
-				{{else}}
-					<span data-tooltip="{{t.options.data}} {{t.options.source}}" style2="border-color: greenyellow; padding: 2px 3px">
-						{{t.expression}}
+			{{formula}}
+			{{#if false}}
+				<div class="formula-box">
+					<span class="formula">
+						{{#each roll.terms as | t |}}
+							{{#if t.operator }}
+								{{t.operator}}
+							{{else}}
+								<span data-tooltip="{{t.options.data}} {{t.options.source}}" style2="border-color: greenyellow; padding: 2px 3px">
+									{{t.expression}}
+								</span>
+							{{/if}}
+						{{/each}}
 					</span>
-				{{/if}}
-			{{/each}}
+				</div>
+			{{/if}}
 			<span class="buttons right">
 				{{#if roll._evaluated }}
 					<button data-tooltip="{{localize 'SKYFALL2.MESSAGE.AddCatharsis'}}" data-action="catharsis" data-catharsis="+" data-apply-catharsis="+">

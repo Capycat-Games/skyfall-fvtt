@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.9.612 - BETA
+
+- Mensagem de Habilidade. Corrigido. Texto da habilidade aparecia duplicado.
+- Mensagem de Habilidade. Corrigido. Formula de rolagem é exibida de forma resumida para evitar que o texto saia da área ou sobreponha os botões.
+- Roll - Adicionado. Automação do descritor Letal.
+
 ## 0.9.611 - BETA
 
 - Personagem. Corrigido. Exibição de items sem fonte na progressão de niveis.

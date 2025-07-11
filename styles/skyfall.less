@@ -18,20 +18,46 @@
 }
 
 // OVERWRITE LIGHT/DARK THEME
-.skyfall.sheet.character, .skyfall.sheet.npc, .skyfall.sheet {
+.skyfall.sheet.character,
+.skyfall.sheet.npc,
+.skyfall.sheet {
 	.window-content {
-		input, select { background-color: rgba(0,0,0,.05);}
-		input.slim {padding: 5px 0; text-align: center;}
-		h1, h2, h3, h4, h5, h6 {
+
+		input,
+		select {
+			background-color: rgba(0, 0, 0, .05);
+		}
+
+		input.slim {
+			padding: 5px 0;
+			text-align: center;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			line-height: normal;
 			text-shadow: none;
 		}
+
 		prose-mirror {
 			.editor-menu {
-				* { color: var(--color-light-3); }
-				:hover * { color: black; }
+				* {
+					color: var(--color-light-3);
+				}
+
+				:hover * {
+					color: black;
+				}
+
 				background: #302831;
-				* { background: #302831; }
+
+				* {
+					background: #302831;
+				}
 			}
 		}
 	}
@@ -39,16 +65,47 @@
 
 .skyfall {
 	--actor-color: @colorSFOther ;
-	.window-content, .message-content {
-		h1 { font-size: 22px; } // 48
-		h2 { font-size: 20px; } // 32
-		h3 { font-size: 18px; } // 24
-		h4 { font-size: 16px; } // 24
-		h5 { font-size: 14px; } // 20
-		h6 { font-size: 12px; } // 24
+
+	.window-content,
+	.message-content {
+		h1 {
+			font-size: 22px;
+		}
+
+		// 48
+		h2 {
+			font-size: 20px;
+		}
+
+		// 32
+		h3 {
+			font-size: 18px;
+		}
+
+		// 24
+		h4 {
+			font-size: 16px;
+		}
+
+		// 24
+		h5 {
+			font-size: 14px;
+		}
+
+		// 20
+		h6 {
+			font-size: 12px;
+		}
+
+		// 24
 	}
-	
-	h1, h2, h3, h4, h5, h6 {
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		font-family: @fontSkyfall;
 		margin: 0;
 		border-bottom: none;
@@ -61,22 +118,22 @@
 		color: white;
 		text-transform: uppercase;
 		opacity: 0.6;
-		
+
 		&.active {
 			opacity: 1;
 		}
-		
+
 		input[type="checkbox"] {
 			display: none;
 		}
 	}
-	
+
 	.text-center {
 		text-align: center;
 	}
-	
-	
-	&.standard-form .form-group:hover > label {
+
+
+	&.standard-form .form-group:hover>label {
 		color: black !important;
 	}
 
@@ -85,18 +142,21 @@
 		// * { color: black; }
 		// background-image: url(./assets/sheet/background.webp);
 	}
-	
+
 	.background {
 		background-image: url(./assets/sheet/background-cut.png);
 		background-size: cover;
 	}
+
 	.border-1 {
 		border-image: url(./assets/sheet/skyfall-border-1.png) 30 / 10px round;
 		padding: 12px;
 	}
+
 	.border {
 		border-image: url(./assets/sheet/border.svg) 1;
-		&.player { }
+
+		&.player {}
 
 		border-image-repeat: stretch;
 		border-image-outset: 0;
@@ -104,28 +164,36 @@
 		border-image-width: 10px;
 		padding: 10px;
 	}
+
 	.list-items {
 		list-style: none;
 		padding: 0;
+
 		li {
 			align-items: center;
 		}
+
 		.item-controls {
 			text-align: center;
 		}
 	}
+
 	.sf-icon {
 		display: inline-flex;
 		align-self: center;
 	}
-	
-	.sf-icon svg, .sf-icon svg image {
+
+	.sf-icon svg,
+	.sf-icon svg image {
 		width: 1em;
 		height: 1em;
 	}
-	ol, ul {
+
+	ol,
+	ul {
 		&.columns-2 {
 			columns: 2;
+
 			li {
 				break-after: auto;
 			}
@@ -133,18 +201,20 @@
 	}
 }
 
-.skyfall, .skyfall-core {
+.skyfall,
+.skyfall-core {
 	.condition-reference {
 		text-decoration: underline;
 		font-style: italic;
 		font-weight: bold;
 	}
+
 	.descriptor-reference {
 		font-weight: bold;
 		background-color: var(--actor-color);
 		padding: 1px 5px;
 		text-transform: uppercase;
-		color: white!important;
+		color: white !important;
 	}
 }
 
@@ -156,6 +226,7 @@
 
 #players {
 	width: 220px;
+
 	.give-catharsis {
 		line-height: 1em;
 		font-size: 12px;
@@ -164,8 +235,13 @@
 		padding: 0 5px;
 		display: inline;
 		margin-right: 0.5em;
-		i { margin: 0;}
-		svg, svg image {
+
+		i {
+			margin: 0;
+		}
+
+		svg,
+		svg image {
 			width: 16px;
 			height: 16px;
 		}
@@ -180,11 +256,18 @@ aside[role=tooltip],
 		background-color: @colorSFOther;
 		padding: 1em;
 	}
+
 	section.status-effect {
 		color: white;
 		text-align: left;
 		position: relative;
-		h1, h2, h3, h4, h5, h6 {
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			position: relative;
 			border-bottom: none;
 			background: url(assets/sheet/box-purple-title.png) no-repeat;
@@ -194,21 +277,33 @@ aside[role=tooltip],
 			padding-left: 1.5em;
 			color: @colorSFOther;
 		}
-		ol, ul { 
+
+		ol,
+		ul {
 			list-style: none;
 			padding: 0;
 		}
 	}
-	
+
 	.property-summary {
-		ul, ol {
+
+		ul,
+		ol {
 			list-style: none;
 			margin: 0;
 			padding: 0;
+
 			&.ability-tooltip {
 				min-width: 130px;
-				li .name { text-align: left; }
-				li .value { max-width: 30%; }
+
+				li .name {
+					text-align: left;
+				}
+
+				li .value {
+					max-width: 30%;
+				}
+
 				li:last-child {
 					border-top: 1px solid white;
 				}
@@ -221,8 +316,13 @@ aside[role=tooltip],
 			flex: 100%;
 			text-align: right;
 		}
+
 		font-size: 1em;
-		i { flex: 0 0 1em; }
+
+		i {
+			flex: 0 0 1em;
+		}
+
 		hr {
 			border-top: 2px solid white;
 			border-bottom: 2px solid white;
@@ -233,45 +333,62 @@ aside[role=tooltip],
 .skyfall {
 	&.sheet #context-menu {
 		background-color: white;
+
 		* {
 			color: black;
 		}
+
 		li {
 			line-height: 14px;
 			font-size: 14px;
-			
-			&:hover * { color: white; }
+
+			&:hover * {
+				color: white;
+			}
 		}
 	}
+
 	dropdown-tags {
 		&.descriptors {
 			.tags-dropdown {
 				background-color: white;
 			}
-			.tag, .checkbox {
+
+			.tag,
+			.checkbox {
 				padding: 0 4px;
 				margin: 2px 2px;
 				background-color: @colorSFPlayer;
 				color: white;
-				* { color: white; }
+
+				* {
+					color: white;
+				}
+
 				text-transform: uppercase;
 			}
+
 			.checkbox {
 				opacity: 0.6;
+
 				:has(input:checked) {
 					opacity: 1;
 				}
 			}
+
 			fieldset {
 				border: none;
 				padding: 5px;
+
 				legend {}
 			}
 		}
 	}
+
 	multi-select {
 		flex-direction: column-reverse;
 	}
+
 	&.sheet {
 		.plain {
 			li .item-name img {

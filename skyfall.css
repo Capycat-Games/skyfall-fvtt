@@ -3163,23 +3163,23 @@ dropdown-tags .tags-dropdown fieldset legend {
 .chat-message.blind {
   --chat-bg-color: #f5eaf5;
 }
-.chat-message:has( .skyfall ),
+.chat-message:has(.skyfall),
 .chat-message.skyfall {
   background: url(assets/sheet/background.webp) repeat;
   background-color: var(--chat-bg-color);
 }
-.chat-message:has( .skyfall ).character,
+.chat-message:has(.skyfall).character,
 .chat-message.skyfall.character,
-.chat-message:has( .skyfall ).guild,
+.chat-message:has(.skyfall).guild,
 .chat-message.skyfall.guild,
-.chat-message:has( .skyfall ).creation,
+.chat-message:has(.skyfall).creation,
 .chat-message.skyfall.creation {
   --actor-color: #182657;
   color: #182657;
 }
-.chat-message:has( .skyfall ).npc,
+.chat-message:has(.skyfall).npc,
 .chat-message.skyfall.npc,
-.chat-message:has( .skyfall ).partner,
+.chat-message:has(.skyfall).partner,
 .chat-message.skyfall.partner {
   --actor-color: #750703;
   color: #750703;
@@ -3205,10 +3205,10 @@ dropdown-tags .tags-dropdown fieldset legend {
 .chat-message.skyfall.catharsis .message-content *:not(button) {
   text-align: left !important;
 }
-.chat-message:has( .usage-card ) {
+.chat-message:has(.usage-card) {
   position: relative;
 }
-.chat-message:has( .usage-card ) .header-overlay {
+.chat-message:has(.usage-card) .header-overlay {
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -3216,36 +3216,36 @@ dropdown-tags .tags-dropdown fieldset legend {
   width: 100%;
   height: 100%;
 }
-.chat-message:has( .usage-card ) .header-overlay.character,
-.chat-message:has( .usage-card ) .header-overlay.guild,
-.chat-message:has( .usage-card ) .header-overlay.creation {
+.chat-message:has(.usage-card) .header-overlay.character,
+.chat-message:has(.usage-card) .header-overlay.guild,
+.chat-message:has(.usage-card) .header-overlay.creation {
   background: url(assets/sheet/chat-header-player.svg) no-repeat;
   background-size: 140%;
   background-position: 30% -75px;
 }
-.chat-message:has( .usage-card ) .header-overlay.npc,
-.chat-message:has( .usage-card ) .header-overlay.partner {
+.chat-message:has(.usage-card) .header-overlay.npc,
+.chat-message:has(.usage-card) .header-overlay.partner {
   background: url(assets/sheet/chat-header-foe.svg) no-repeat;
   background-size: 140%;
   background-position: 30% -75px;
 }
-.chat-message:has( .usage-card ).character {
+.chat-message:has(.usage-card).character {
   --actor-color: #182657;
   color: #182657;
 }
-.chat-message:has( .usage-card ).npc {
+.chat-message:has(.usage-card).npc {
   --actor-color: #750703;
   color: #750703;
 }
-.chat-message:has( .usage-card ) .message-header {
+.chat-message:has(.usage-card) .message-header {
   color: white;
   z-index: 2;
 }
-.chat-message:has( .character ) .descriptor-reference,
-.chat-message:has( .guild ) .descriptor-reference {
+.chat-message:has(.character) .descriptor-reference,
+.chat-message:has(.guild) .descriptor-reference {
   background-color: #182657;
 }
-.chat-message:has( .npc ) .descriptor-reference {
+.chat-message:has(.npc) .descriptor-reference {
   background-color: #750703;
 }
 .skyfall.usage-card {
@@ -3479,6 +3479,24 @@ dropdown-tags .tags-dropdown fieldset legend {
   min-height: unset;
   line-height: 1em;
   text-align: center;
+}
+.skyfall .roll-entry-v2 .dice-formula .formula-box {
+  position: relative;
+  width: calc(100% - 6rem);
+  height: inherit;
+  margin: 0 3rem;
+  display: block;
+  overflow: hidden;
+}
+.skyfall .roll-entry-v2 .dice-formula .formula-box .formula {
+  position: absolute;
+  white-space: nowrap;
+  transform: translateX(0);
+  transition: 1s;
+  left: 0;
+}
+.skyfall .roll-entry-v2 .dice-formula .formula-box:hover .formula {
+  transform: translateX(calc(calc(100% - 6rem) - 110%));
 }
 .skyfall .roll-entry-v2 .dice-formula,
 .skyfall .roll-entry-v2 .dice-total {
@@ -4095,7 +4113,7 @@ dropdown-tags .tags-dropdown fieldset legend {
   background-color: var(--actor-color);
   padding: 1px 5px;
   text-transform: uppercase;
-  color: white!important;
+  color: white !important;
 }
 #logo .cls-1 {
   fill: #182657;

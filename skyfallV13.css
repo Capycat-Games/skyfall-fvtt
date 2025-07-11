@@ -444,6 +444,7 @@
 .skyfallV13.sheet .form-group.corner-frame .form-label {
   padding: 5px 2em;
   font-family: NORTHWEST;
+  font-weight: 500;
 }
 .skyfallV13.sheet .form-group.corner-frame .form-fields {
   padding: 0 1em;
@@ -1929,7 +1930,7 @@
 .journal-sheet.skyfall h3,
 .journal-sheet.skyfall h4 {
   font-family: "NORTHWEST";
-  font-weight: bold;
+  font-weight: 500;
   border: none;
 }
 .journal-sheet.skyfall .journal-sidebar {
@@ -1948,7 +1949,7 @@
 }
 .journal-sheet.skyfall .journal-sidebar-TODO li.category strong {
   font-family: "NORTHWEST";
-  font-weight: bold;
+  font-weight: 500;
   font-size: var(--font-size-20);
   line-height: calc(var(--line-height));
 }
@@ -1965,7 +1966,7 @@
   color: white;
   font-size: var(--font-size-32);
   font-family: "NORTHWEST";
-  font-weight: bold;
+  font-weight: 500;
   margin: 0;
   padding: 1rem;
 }

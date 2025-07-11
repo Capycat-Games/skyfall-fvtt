@@ -1,5 +1,5 @@
 // Configuration
-import {SYSTEM} from "./module/config/system.mjs";
+import { SYSTEM } from "./module/config/system.mjs";
 globalThis.SYSTEM = SYSTEM;
 
 // Import Modules.
@@ -13,7 +13,7 @@ import * as sheetsV2 from "./module/sheetsV2/_module.mjs";
 import * as dice from "./module/dice/_module.mjs";
 import * as elements from "./module/apps/elements/_module.mjs"
 import EffectsMenu from "./module/apps/effects-menu.mjs";
-import * as hotbar  from "./module/helpers/hotbar.mjs";
+import * as hotbar from "./module/helpers/hotbar.mjs";
 import "./module/modules.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './module/helpers/templates.mjs';
@@ -27,7 +27,7 @@ import * as utils from "./module/helpers/utils.mjs";
 import SkyfallMigrationHelper from "./module/helpers/migration.mjs";
 import TestApp from "./module/apps/dialogV2-Test.mjs";
 import { CombatTrackerSkyfall } from "./module/combat.mjs";
-import {SkyfallHooks} from "./module/hooks/hooks.mjs";
+import { SkyfallHooks } from "./module/hooks/hooks.mjs";
 import SkyfallSocketHandler from "./module/helpers/socket.mjs";
 
 globalThis.skyfall = {
@@ -60,7 +60,7 @@ globalThis.skyfall = {
 	macros: hotbar,
 	i18n: {
 		localize: (value) => { return game.i18n.localize(value) },
-		format: (stringId, data={}) => {
+		format: (stringId, data = {}) => {
 			for (const [key, value] of Object.entries(data)) {
 				data[key] = game.i18n.localize("" + value);
 			}
@@ -73,19 +73,19 @@ globalThis.SkyfallRoll = dice.SkyfallRoll;
 
 Hooks.once('init', function () {
 	console.log(`Initializing Skyfall Game System`);
-  game.system.CONST = SYSTEM;
+	game.system.CONST = SYSTEM;
 	globalThis.skyfall = game.skyfall = Object.assign(game.system, globalThis.skyfall);
 
 	// Register System Settings
 	registerSystemSettings();
-	
+
 	// Add custom constants for configuration.
 	CONFIG.SKYFALL = SYSTEM;
 	CONFIG.time.roundTime = 6;
 	CONFIG.ActiveEffect.legacyTransferral = false;
 	CONFIG.Combat.initiative.formula = '1d20 + @dex';
 	CONFIG.Combat.initiative.decimals = 2;
-	
+
 	// Define system Document classes
 	CONFIG.Actor.documentClass = documents.SkyfallActor;
 	CONFIG.Item.documentClass = documents.SkyfallItem;
@@ -105,8 +105,8 @@ Hooks.once('init', function () {
 	CONFIG.Actor.dataModels["partner"] = models.actor.Partner;
 	CONFIG.Actor.dataModels["creation"] = models.actor.Creation;
 	// CONFIG.Actor.dataModels["party"] = models.actor.Party;
-	
-	
+
+
 	CONFIG.Item.dataModels["legacy"] = models.item.Legacy;
 	CONFIG.Item.dataModels["heritage"] = models.item.Heritage;
 	CONFIG.Item.dataModels["curse"] = models.item.Curse;
@@ -152,7 +152,7 @@ Hooks.once('init', function () {
 	// Register sheet application classes
 	const { DocumentSheetConfig } = foundry.applications.apps;
 	const { Actor, Item, ActiveEffect, ChatMessage } = foundry.documents;
-	
+
 	// Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
 	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.SkyfallCharacterSheet, {
 		// SkyfallCharacterSheet
@@ -168,7 +168,7 @@ Hooks.once('init', function () {
 	});
 	DocumentSheetConfig.registerSheet(Actor, "skyfall", sheetsV2.PartnerSheetSkyfall, {
 		// PartnerSheetSkyfall
-		types: ["partner","creation"],
+		types: ["partner", "creation"],
 		label: 'TYPES.Actor.partner',
 		makeDefault: true,
 	});
@@ -178,19 +178,19 @@ Hooks.once('init', function () {
 		label: 'TYPES.Actor.guild',
 		makeDefault: true,
 	});
-	
+
 	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.ItemSheetSkyfall, {
 		types: [
-			'legacy','heritage','curse','background','class','path','hierarchy','archetype',
-			'feature','feat',
-			'weapon','armor','clothing','equipment','consumable','loot',
-			'facility','seal'
+			'legacy', 'heritage', 'curse', 'background', 'class', 'path', 'hierarchy', 'archetype',
+			'feature', 'feat',
+			'weapon', 'armor', 'clothing', 'equipment', 'consumable', 'loot',
+			'facility', 'seal'
 		],
 		makeDefault: true,
 	});
 
 	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.AbilitySheetSkyfall, {
-		types: ['ability','spell'],
+		types: ['ability', 'spell'],
 		makeDefault: true,
 	});
 	DocumentSheetConfig.registerSheet(Item, "skyfall", sheetsV2.SigilSheetSkyfall, {
@@ -214,7 +214,7 @@ Hooks.once('init', function () {
 	// Status Effects
 	CONFIG.statusEffects = SYSTEM.statusEffects;
 	// CONFIG.specialStatusEffects.INVISIBLE = "INVISIBLE";
-	
+
 	// Preload Handlebars templates.
 	// preloadHandlebarsTemplates();
 	// HELPERS
@@ -247,34 +247,34 @@ function registerFonts() {
 	CONFIG.fontDefinitions['SkyfallIcons'] = {
 		editor: true,
 		fonts: [
-			{urls: [`${path}skyfall-icons.ttf`], weight:'400'}
+			{ urls: [`${path}skyfall-icons.ttf`], weight: '400' }
 		]
 	}
 
 	CONFIG.fontDefinitions['Skyfall'] = {
 		editor: true,
 		fonts: [
-			{urls: [`${path}NORTHWEST-Bold.woff`], weight:'400'},
-			{urls: [`${path}NORTHWEST-Light.woff`], weight:'200'},
-			{urls: [`${path}NORTHWEST-Bold.woff`], weight:'700'}
+			{ urls: [`${path}NORTHWEST-Bold.woff`], weight: '400' },
+			{ urls: [`${path}NORTHWEST-Light.woff`], weight: '200' },
+			{ urls: [`${path}NORTHWEST-Bold.woff`], weight: '700' }
 		]
 	}
 
 	CONFIG.fontDefinitions['SkyfallRust'] = {
 		editor: true,
 		fonts: [
-			{urls: [`${path}NORTHWEST-RegularRust.otf`], weight:'400'},
-			{urls: [`${path}NORTHWEST-LightRust.otf`], weight:'200'},
-			{urls: [`${path}NORTHWEST-BoldRust.otf`], weight:'700'}
+			{ urls: [`${path}NORTHWEST-RegularRust.otf`], weight: '400' },
+			{ urls: [`${path}NORTHWEST-LightRust.otf`], weight: '200' },
+			{ urls: [`${path}NORTHWEST-BoldRust.otf`], weight: '700' }
 		]
 	}
-	
+
 	CONFIG.fontDefinitions['Garamond'] = {
 		editor: true,
 		fonts: [
-			{urls: [`${path}GARAMOND-Regular.otf`], weight:'400'},
+			{ urls: [`${path}GARAMOND-Regular.otf`], weight: '400' },
 			// {urls: [`${path}GARAMOND-Italic.otf`], italic: true},
-			{urls: [`${path}GARAMOND-Bold.otf`], weight:'700'},
+			{ urls: [`${path}GARAMOND-Bold.otf`], weight: '700' },
 		]
 	}
 }
@@ -287,8 +287,8 @@ function registerFonts() {
 /* -------------------------------------------- */
 
 Hooks.once("i18nInit", async function () {
-	
-	
+
+
 
 });
 
@@ -298,38 +298,38 @@ Hooks.once('ready', async function () {
 	Hooks.on('hotbarDrop', (bar, data, slot) => onDropCreateMacro(data, slot));
 
 	for (const [key, desc] of Object.entries(SYSTEM.DESCRIPTORS)) {
-		SYSTEM.DESCRIPTORS[key].label = game.i18n.localize( desc.label );
+		SYSTEM.DESCRIPTORS[key].label = game.i18n.localize(desc.label);
 	}
-	
+
 	prepareSystemLocalization();
 	prepareSystemStatusEffects();
 
 	// Re-Prepare Guild Data now that all member shall have been prepared;
-	game.actors.filter( i => i.type == 'guild').map( i => i.prepareData() );
+	game.actors.filter(i => i.type == 'guild').map(i => i.prepareData());
 
 	const svg = await fetchSVG("systems/skyfall/assets/skyfall-logo-h.svg");
 	svg.id = "logo";
 	$("#logo").replaceWith(svg);
 	// $(".ui-left")[0].insertAdjacentElement('afterbegin', svg);
-	
+
 	skyfall.models.settings.SceneConfigSetting.init();
 });
 
 Hooks.on("renderPlayers", (app, html, context, options) => {
-	if ( !game.user.isGM ) return;
-	const players = html.querySelectorAll("li.player:not(.gm)");
+	if (!game.user.isGM) return;
+	const players = html.querySelectorAll("#players-active li.player:not(.gm)");
 	for (const player of players) {
 		const userId = player.dataset.userId;
 		const user = game.users.get(userId);
 		const character = user.character;
-		if ( !character ) return;
+		if (!character) return;
 		const playerName = player.querySelector(".player-name");
 		// const name = `${user.name.split(' ')[0]} [${character.name.split(' ')[0]}]`
 		// playerName.innerText = name;
 		const btn = document.createElement("button");
 		btn.innerHTML = `${character.system.resources.catharsis.value} ${SYSTEM.icons.sfcatharsis}`;
 		btn.className = "give-catharsis";
-		btn.title =  game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
+		btn.title = game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
 		btn.dataset['action'] = 'catharsis';
 		playerName.prepend(btn);
 		btn.addEventListener("click", _giveCatharsis.bind(this));
@@ -337,8 +337,8 @@ Hooks.on("renderPlayers", (app, html, context, options) => {
 });
 
 Hooks.on("controlToken", (token, controlled) => {
-	if ( controlled && token?.actor) {
-		new skyfall.applications.EffectsMenu({document: token.actor}).render(true);
+	if (controlled && token?.actor) {
+		new skyfall.applications.EffectsMenu({ document: token.actor }).render(true);
 	} else {
 		foundry.applications.instances.get(skyfall.applications.EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
@@ -346,9 +346,9 @@ Hooks.on("controlToken", (token, controlled) => {
 
 Hooks.on("targetToken", (user, token, target) => {
 	const actor = token.actor.clone();
-	actor.updateSource({'ownership.default': 1 });
+	actor.updateSource({ 'ownership.default': 1 });
 	actor.ownership.default = 1;
-	if ( target ) new skyfall.applications.EffectsMenu({document: actor }).render(true);
+	if (target) new skyfall.applications.EffectsMenu({ document: actor }).render(true);
 	else {
 		foundry.applications.instances.get(skyfall.applications.EffectsMenu.DEFAULT_OPTIONS.id)?.close();
 	}
@@ -360,7 +360,7 @@ Hooks.on("renderActorDirectory", (app, html, context, options) => {
 		const id = li.dataset.entryId;
 		const doc = app.collection.get(id);
 		const dirData = doc.system.directoryData;
-		if ( !dirData ) continue;
+		if (!dirData) continue;
 		const name = li.querySelector('.entry-name');
 		const subtext = document.createElement('p');
 		subtext.classList.add('document-info');
@@ -370,14 +370,14 @@ Hooks.on("renderActorDirectory", (app, html, context, options) => {
 });
 
 Hooks.on("getHeaderControlsJournalEntrySheet", (app, options) => {
-	if ( !game.user.isGM ) return;
+	if (!game.user.isGM) return;
 	app.options.actions.cssClasses = async (event, target) => {
 		const { DialogV2 } = foundry.applications.api;
 		const current = app.document.getFlag('skyfall', "cssClasses") ?? "";
 		const field = new foundry.data.fields.StringField({
 			label: "Css Classes",
 			initial: current,
-		}).toFormGroup({}, {name: 'cssClasses'}).outerHTML;
+		}).toFormGroup({}, { name: 'cssClasses' }).outerHTML;
 		let cssClasses = await DialogV2.prompt({
 			window: { title: "EDIT CLASSES" },
 			content: field,
@@ -389,7 +389,7 @@ Hooks.on("getHeaderControlsJournalEntrySheet", (app, options) => {
 		cssClasses = cssClasses.replace(/([^a-zA-Z0-9 \-\_])/g, '');
 		app.document.setFlag('skyfall', "cssClasses", cssClasses);
 	}
-	
+
 	options.push({
 		action: "cssClasses",
 		icon: "fa-brands fa-css",
@@ -400,14 +400,14 @@ Hooks.on("getHeaderControlsJournalEntrySheet", (app, options) => {
 
 Hooks.on("renderJournalEntrySheet", (app, html, context, options) => {
 	const skyfallCssClasses = app.document.getFlag("skyfall", "cssClasses") ?? "";
-	if ( skyfallCssClasses ) {
+	if (skyfallCssClasses) {
 		html.classList.add(...skyfallCssClasses.split(' '));
 	}
 });
 
 Hooks.on("renderJournalEntryPageTextSheet", (app, html, context, options) => {
 	const skyfallCssClasses = app.document.parent.getFlag("skyfall", "cssClasses") ?? "";
-	if ( skyfallCssClasses ) {
+	if (skyfallCssClasses) {
 		html.classList.add(...skyfallCssClasses.split(' '));
 	}
 });
@@ -415,40 +415,40 @@ Hooks.on("renderJournalEntryPageTextSheet", (app, html, context, options) => {
 Hooks.on("renderDialog", (app, jquery, data) => {
 	let html = jquery[0];
 	if (html.querySelector("#document-create")) {
-		if( !app.data.title.match('Item') ) return;
+		if (!app.data.title.match('Item')) return;
 		const select = html.querySelector("select[name=type]");
 		if (select) {
 			select.innerHTML = '';
 			const documentTypes = {
 				character: [
-					'legacy','heritage','curse','background','class','path',
-					'feature','feat','ability','spell'
+					'legacy', 'heritage', 'curse', 'background', 'class', 'path',
+					'feature', 'feat', 'ability', 'spell'
 				],
 				equipment: [
-					'armor','weapon','clothing','sigil','equipment','consumable','loot'
+					'armor', 'weapon', 'clothing', 'sigil', 'equipment', 'consumable', 'loot'
 				],
 				guild: [
-					'seal','facility','guild-ability'
+					'seal', 'facility', 'guild-ability'
 				],
 				npc: [
-					'hierarchy','archetype',
+					'hierarchy', 'archetype',
 				],
 			}
 			for (const [key, arr] of Object.entries(documentTypes)) {
 				const optgroup = document.createElement('optgroup');
-				if ( key == 'equipment' ) {
+				if (key == 'equipment') {
 					optgroup.label = game.i18n.localize("SKYFALL2.Inventory");
 				} else optgroup.label = game.i18n.localize(`TYPES.Actor.${key}`);
 				arr.map(
-					i => ({type: i, label: game.i18n.localize(CONFIG.Item.typeLabels[i])})
+					i => ({ type: i, label: game.i18n.localize(CONFIG.Item.typeLabels[i]) })
 				).sort(
-					(a,b) => (a.label > b.label ? 1 : (a.label < b.label ? -1 : 0))
-				).map( i => {
+					(a, b) => (a.label > b.label ? 1 : (a.label < b.label ? -1 : 0))
+				).map(i => {
 					const opt = document.createElement('option');
 					opt.value = i.type;
 					opt.text = i.label;
 					optgroup.append(opt);
-				} );
+				});
 				select.append(optgroup);
 			}
 		}
@@ -456,39 +456,39 @@ Hooks.on("renderDialog", (app, jquery, data) => {
 });
 
 Hooks.on("createCombatant", (combatant, options, userId) => {
-	if ( game.userId != userId ) return;
-	if ( combatant.actor?.type == 'npc' && combatant.parent)  {
+	if (game.userId != userId) return;
+	if (combatant.actor?.type == 'npc' && combatant.parent) {
 		const actor = combatant.actor;
-		if ( !actor.system.isBoss ) return;
+		if (!actor.system.isBoss) return;
 		const combat = combatant.parent;
-		const bosses = combat.combatants.filter(i => i.actorId == combatant.actorId );
-		if ( bosses.length >= 3 ) return;
-		if ( actor.items.find(i => i.system.identifier ) ) {
-			combatant.clone({name: `${combatant.name}`}, {save: true, addSource: true});
+		const bosses = combat.combatants.filter(i => i.actorId == combatant.actorId);
+		if (bosses.length >= 3) return;
+		if (actor.items.find(i => i.system.identifier)) {
+			combatant.clone({ name: `${combatant.name}` }, { save: true, addSource: true });
 		}
 	}
 });
 
 
 Hooks.on("renderChatMessageHTML", (message, html, context) => {
-	if ( !message.system.catharsis ) return;
-	
+	if (!message.system.catharsis) return;
+
 	html.classList.add('skyfall');
 	html.classList.add('character');
 	html.classList.add('catharsis');
-	
-	if ( game.user.isGM ) {
+
+	if (game.user.isGM) {
 		const button = document.createElement('button');
-		button.innerHTML = SYSTEM.icons.sfcatharsis + ' ' +  game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
+		button.innerHTML = SYSTEM.icons.sfcatharsis + ' ' + game.i18n.localize("SKYFALL2.RESOURCE.GiveCatharsis");
 		button.addEventListener('click', (event) => {
 			const actorId = message.speaker.actor;
 			const actor = game.actors.get(actorId);
-			if ( actor && actor.type == 'character' ) {
+			if (actor && actor.type == 'character') {
 				const catharsis = actor.system.resources.catharsis.value;
-				actor.update({"system.resources.catharsis.value": catharsis + 1});
-				ChatMessage.create({content: `${actor.name} recebeu 1 Ponto de Catarse`});
+				actor.update({ "system.resources.catharsis.value": catharsis + 1 });
+				ChatMessage.create({ content: `${actor.name} recebeu 1 Ponto de Catarse` });
 			}
-		 });
+		});
 		html.querySelector('.message-content').append(button);
 	}
 });
@@ -496,7 +496,7 @@ Hooks.on("renderChatMessageHTML", (message, html, context) => {
 
 
 Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
-  console.log(menu, dropdowns);
+	console.log(menu, dropdowns);
 	const toggleMark = foundry.prosemirror.commands.toggleMark;
 	const wrapIn = foundry.prosemirror.commands.wrapIn;
 	if ("format" in dropdowns) {
@@ -513,10 +513,10 @@ Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
 					attrs: { _preserve: { class: "banner-block" } },
 					priority: 1,
 					cmd: () => {
-							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
-									attrs: { _preserve: { class: "banner-block" } },
-							});
-							return true;
+						menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+							attrs: { _preserve: { class: "banner-block" } },
+						});
+						return true;
 					},
 				},
 				{
@@ -528,10 +528,10 @@ Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
 					attrs: { _preserve: { class: "info-block" } },
 					priority: 1,
 					cmd: () => {
-							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
-									attrs: { _preserve: { class: "info-block" } },
-							});
-							return true;
+						menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+							attrs: { _preserve: { class: "info-block" } },
+						});
+						return true;
 					},
 				},
 				{
@@ -543,10 +543,10 @@ Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
 					attrs: { _preserve: { class: "content-block" } },
 					priority: 1,
 					cmd: () => {
-							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
-									attrs: { _preserve: { class: "content-block" } },
-							});
-							return true;
+						menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+							attrs: { _preserve: { class: "content-block" } },
+						});
+						return true;
 					},
 				},
 				{
@@ -557,10 +557,10 @@ Hooks.on("getProseMirrorMenuDropDowns", (menu, dropdowns) => {
 					attrs: { _preserve: { class: "narration-block" } },
 					priority: 1,
 					cmd: () => {
-							menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
-									attrs: { _preserve: { class: "narration-block" } },
-							});
-							return true;
+						menu._toggleBlock(menu.schema.nodes.section, wrapIn, {
+							attrs: { _preserve: { class: "narration-block" } },
+						});
+						return true;
 					},
 				},
 			]
@@ -578,12 +578,12 @@ function _giveCatharsis(event) {
 	event.preventDefault();
 	const button = event.currentTarget;
 	const userId = button.closest('li').dataset.userId;
-	const character = game.users.get(userId).character; 
+	const character = game.users.get(userId).character;
 	const catharsis = character.system.resources.catharsis.value;
 	Promise.all([
-		character.update({"system.resources.catharsis.value": catharsis + 1}),
-		ChatMessage.create({content: `${character.name} recebeu 1 Ponto de Catarse`}),
-	]).then(() => ui.players.render() );
+		character.update({ "system.resources.catharsis.value": catharsis + 1 }),
+		ChatMessage.create({ content: `${character.name} recebeu 1 Ponto de Catarse` }),
+	]).then(() => ui.players.render());
 }
 
 /**
@@ -613,15 +613,15 @@ function fetchSVG(src) {
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-async function onDropCreateMacro(data, slot){
-	if ( data.action && data.action in skyfall.macros ) {
+async function onDropCreateMacro(data, slot) {
+	if (data.action && data.action in skyfall.macros) {
 		return skyfall.macros[data.action](data, slot);
 	}
 }
 async function createItemMacro(data, slot) {
 	// return;
 	// First, determine if this is a valid owned item.
-	if ( data.action && data.action in skyfall.macros ) {
+	if (data.action && data.action in skyfall.macros) {
 		return skyfall.macros[data.action](data, slot);
 	}
 	if (data.type !== 'Item') return;
@@ -653,7 +653,7 @@ async function createItemMacro(data, slot) {
 
 async function prepareSystemLocalization() {
 	const _sys = foundry.utils.flattenObject(SYSTEM)
-	const keys = Object.keys( _sys ).filter( k => k.match(/(label|abbr)$/) )
+	const keys = Object.keys(_sys).filter(k => k.match(/(label|abbr)$/))
 	for (const key of keys) {
 		const content = foundry.utils.getProperty(SYSTEM, key);
 		foundry.utils.setProperty(SYSTEM, key, game.i18n.localize(content))
@@ -662,33 +662,33 @@ async function prepareSystemLocalization() {
 
 async function prepareSystemStatusEffects() {
 	let journalConditions = false;
-	if ( !journalConditions && game.modules.has("skyfall-core") ) {
+	if (!journalConditions && game.modules.has("skyfall-core")) {
 		journalConditions = await fromUuid(
 			"Compendium.skyfall-core.rules.JournalEntry.zpszVy5Kw4e06ims"
 		);
-		
+
 	}
-	if ( !journalConditions && game.modules.has("skyfall-fastplay") ) {
+	if (!journalConditions && game.modules.has("skyfall-fastplay")) {
 		journalConditions = await fromUuid(
 			"Compendium.skyfall-fastplay.JournalEntry.zpszVy5Kw4e06ims"
 		);
 	}
-	if ( !journalConditions ) { //BETA
+	if (!journalConditions) { //BETA
 		journalConditions = await fromUuid(
 			"Compendium.skyfall.rules.JournalEntry.P0sOgiGUvx9ApJPW"
 		);
 	}
-	if ( journalConditions ) skyfall.rules.conditions = journalConditions;
-	
+	if (journalConditions) skyfall.rules.conditions = journalConditions;
+
 	for (const [i, ef] of CONFIG.statusEffects.entries()) {
 		ef.name = game.i18n.localize(ef.name);
-		
+
 		// Search and include tooltips
 		let content = undefined;
-		if ( journalConditions ) {
-			let efName = ef.name.replace(/\(\w+\)/,'').trim();
-			let page = journalConditions.pages.find( p => p.name == efName);
-			if ( page ) {
+		if (journalConditions) {
+			let efName = ef.name.replace(/\(\w+\)/, '').trim();
+			let page = journalConditions.pages.find(p => p.name == efName);
+			if (page) {
 				const div = document.createElement('div');
 				div.innerHTML = page.text.content;
 				const list = div.querySelector('ul')?.outerHTML ?? "";
@@ -696,11 +696,11 @@ async function prepareSystemStatusEffects() {
 			}
 			ef.description = content;
 		}
-		if ( ef.id == "arcaneoverload" ) continue;
+		if (ef.id == "arcaneoverload") continue;
 		ef.tooltip = content;
 	}
 	// SYSTEM.conditions = {};
-	SYSTEM.statusEffects.reduce((acc,ef) => {
+	SYSTEM.statusEffects.reduce((acc, ef) => {
 		acc[ef.id] = ef;
 		return acc;
 	}, SYSTEM.conditions)
@@ -732,12 +732,12 @@ function rollItemMacro(itemUuid) {
 	});
 }
 
-function registerCustomEnrichers(){
+function registerCustomEnrichers() {
 	CONFIG.TextEditor.enrichers.push({
 		pattern:
 			/\[\[\/?(?<type>rr|rollrequest|damage) (?<config>[^\]]+)\]\](?:{(?<label>[^}]+)})?/gi,
 		enricher: enrichRollRequest
-	},{
+	}, {
 		pattern:
 			/&(?<type>Reference)\[(?<config>[^\]]+)](?:{(?<label>[^}]+)})?/gi,
 		enricher: enrichReference
@@ -749,23 +749,23 @@ function registerCustomEnrichers(){
 
 async function enrichReference(match, options) {
 	let { type, config } = match.groups;
-	
+
 	let reference = SYSTEM.DESCRIPTORS[config] ?? SYSTEM.SIGILDESCRIPTORS[config] ?? SYSTEM.GUILDDESCRIPTORS[config] ?? SYSTEM.conditions[config] ?? null;
 	let style, tooltip, label;
-	if ( reference ) {
+	if (reference) {
 		tooltip = game.i18n.localize(reference.tooltip ?? reference.hint ?? reference.description);
 		label = game.i18n.localize(reference.label);
 	}
-	
-	if ( SYSTEM.DESCRIPTORS[config] || SYSTEM.SIGILDESCRIPTORS[config] || SYSTEM.GUILDDESCRIPTORS[config] ) {
+
+	if (SYSTEM.DESCRIPTORS[config] || SYSTEM.SIGILDESCRIPTORS[config] || SYSTEM.GUILDDESCRIPTORS[config]) {
 		style = "descriptor-reference";
 	}
-	else if ( SYSTEM.conditions[config] ) {
+	else if (SYSTEM.conditions[config]) {
 		style = "condition-reference";
 		const journalConditions = skyfall.rules.conditions;
-		if ( journalConditions ) {
-			const page = journalConditions.pages.find( p => p.name == label );
-			if ( page ) {
+		if (journalConditions) {
+			const page = journalConditions.pages.find(p => p.name == label);
+			if (page) {
 				tooltip = `<section class="tooltip status-effect" ><h3>${label}</h3>${page.text.content}</section>`;
 			}
 		} else {
@@ -792,10 +792,10 @@ function enrichRollRequest(match, options) {
 	config = config.replace(/:(\w+)/gi, `[$1]`);
 	const rollConfigs = config.split(" ").reduce((acc, c) => {
 		let cKeyVal = c.split('=');
-		acc[ cKeyVal[0] ] = cKeyVal[1];
+		acc[cKeyVal[0]] = cKeyVal[1];
 		return acc;
 	}, {});
-	if ( !label ) label = functions.rollTitle(rollConfigs);
+	if (!label) label = functions.rollTitle(rollConfigs);
 	const inline = document.createElement('a');
 	inline.classList.add("inline-roll-request");
 	inline.classList.add("roll-config");
@@ -805,24 +805,24 @@ function enrichRollRequest(match, options) {
 	inline.dataset.skill = rollConfigs.skill;
 	inline.dataset.formula = rollConfigs.formula;
 	inline.dataset.protection = rollConfigs.protection;
-	
+
 	inline.innerHTML = `<i class="fa-solid fa-dice-d20"></i> ${label}`;
-	
+
 	return inline;
 }
 
 async function applyStatus(event) {
 	const target = event.target.closest('[data-apply-status]');
-	if ( !target ) return;
-	const {applyStatus} = target.dataset;
-	if ( !applyStatus || !SYSTEM.conditions[applyStatus] ) return;
+	if (!target) return;
+	const { applyStatus } = target.dataset;
+	if (!applyStatus || !SYSTEM.conditions[applyStatus]) return;
 	event.stopPropagation();
 	const effect = SYSTEM.conditions[applyStatus];
-	const actors = canvas.tokens.controlled.map( i => i.actor );
+	const actors = canvas.tokens.controlled.map(i => i.actor);
 	for (const actor of actors) {
-		if ( effect.system?.stackable ) {
-			const current = actor.effects.find( ef => ef.id.startsWith(applyStatus) );
-			if ( current ) {
+		if (effect.system?.stackable) {
+			const current = actor.effects.find(ef => ef.id.startsWith(applyStatus));
+			if (current) {
 				await current.update({
 					"system.stack": current.system.stack + 1,
 				});
@@ -835,9 +835,9 @@ async function applyStatus(event) {
 	}
 }
 
-async function rollConfig(event){
+async function rollConfig(event) {
 	const target = event.target.closest('[data-action="roll-config"]');
-  if ( !target ) return;
+	if (!target) return;
 	event.stopPropagation();
 	const roll = await new applications.RollConfig({
 		type: target.dataset.type,

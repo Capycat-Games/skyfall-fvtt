@@ -3,20 +3,31 @@
 /* ----------------------------------------- */
 .chat-message {
 	--chat-bg-color: white;
-	&.whisper { --chat-bg-color: #e8e8ef; }
-	&.blind { --chat-bg-color: #f5eaf5; }
+
+	&.whisper {
+		--chat-bg-color: #e8e8ef;
+	}
+
+	&.blind {
+		--chat-bg-color: #f5eaf5;
+	}
 }
-	
-.chat-message:has( .skyfall ),
+
+.chat-message:has(.skyfall),
 .chat-message.skyfall {
 	// background: url(./assets/sheet/background.webp) repeat white;
 	background: url(./assets/sheet/background.webp) repeat;
 	background-color: var(--chat-bg-color);
-	&.character, &.guild, &.creation {
+
+	&.character,
+	&.guild,
+	&.creation {
 		--actor-color: @colorSFPlayer;
 		color: @colorSFPlayer;
 	}
-	&.npc, &.partner {
+
+	&.npc,
+	&.partner {
 		--actor-color: @colorSFFoe;
 		color: @colorSFFoe;
 	}
@@ -26,11 +37,13 @@
 	.dsn-hide {
 		display: flex !important;
 	}
+
 	&.catharsis {
 		.message-header {
 			position: relative;
 			z-index: 2;
 			color: white;
+
 			&::before {
 				content: "";
 				width: calc(100% + 10px);
@@ -42,6 +55,7 @@
 				z-index: -1;
 			}
 		}
+
 		.message-content *:not(button) {
 			text-align: left !important;
 		}
@@ -49,8 +63,9 @@
 }
 
 
-.chat-message:has( .usage-card ) {
+.chat-message:has(.usage-card) {
 	position: relative;
+
 	.header-overlay {
 		overflow: hidden;
 		position: absolute;
@@ -58,16 +73,22 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		&.character, &.guild, &.creation {
+
+		&.character,
+		&.guild,
+		&.creation {
 			background: url(./assets/sheet/chat-header-player.svg) no-repeat;
 			background-size: 140%;
 			background-position: 30% -75px;
 		}
-		&.npc, &.partner {
+
+		&.npc,
+		&.partner {
 			background: url(./assets/sheet/chat-header-foe.svg) no-repeat;
 			background-size: 140%;
 			background-position: 30% -75px;
 		}
+
 		// background: url(./assets/sheet/chat-header-playerfoe.svg) no-repeat;
 	}
 
@@ -77,6 +98,7 @@
 		--actor-color: @colorSFPlayer;
 		color: @colorSFPlayer;
 	}
+
 	&.npc {
 		--actor-color: @colorSFFoe;
 		color: @colorSFFoe;
@@ -93,15 +115,17 @@
 		color: white;
 		z-index: 2;
 	}
-	
+
 }
-.chat-message:has( .character ),
-.chat-message:has( .guild ) {
+
+.chat-message:has(.character),
+.chat-message:has(.guild) {
 	.descriptor-reference {
 		background-color: @colorSFPlayer;
 	}
 }
-.chat-message:has( .npc ) {
+
+.chat-message:has(.npc) {
 	.descriptor-reference {
 		background-color: @colorSFFoe;
 	}
@@ -110,13 +134,14 @@
 .skyfall {
 	&.usage-card {
 		position: relative;
+
 		// color: @colorSFPlayer;
 		// padding: 0 10px 10px 10px;
 		// padding-top: 20px;
 		.card-header {
 			// border-image: url(./assets/sheet/card-border.svg) 1;
 			// background-color: @colorSFPlayer;
-			
+
 			font-family: @fontSkyfall;
 			color: white;
 			position: relative;
@@ -128,33 +153,59 @@
 			top: -10px;
 			align-items: center;
 			align-content: center;
+
 			// margin-bottom: 1em;
 			.icon {
 				flex: 0;
 			}
-			h1, h2, h3, h4, h5, h6 {
+
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
 				margin: 0;
 			}
+
 			.item-name {
 				margin-left: 10px;
 				line-height: 1em;
 				font-size: 20px;
 			}
-			.fonts22 { font-size: 22px; }
-			.fonts20 { font-size: 20px; }
-			.fonts18 { font-size: 18px; }
-			.fonts16 { font-size: 16px; }
-			.fonts14 { font-size: 14px; }
-			.fonts12 { font-size: 12px; }
+
+			.fonts22 {
+				font-size: 22px;
+			}
+
+			.fonts20 {
+				font-size: 20px;
+			}
+
+			.fonts18 {
+				font-size: 18px;
+			}
+
+			.fonts16 {
+				font-size: 16px;
+			}
+
+			.fonts14 {
+				font-size: 14px;
+			}
+
+			.fonts12 {
+				font-size: 12px;
+			}
 
 			// background-color: @colorSFPlayer;
 			// background-image: linear-gradient(45deg, #182657, #182657);
 			background-size: 100%;
 			// background-color: rgb(24,38,87);
-			
+
 			// background-image: linear-gradient(180deg, rgba(24,38,87,1) 0%, rgba(24,38,87,1) 0%);
 		}
-		
+
 		.card-aside {
 			// background-color: @colorSFPlayer;
 			color: white;
@@ -167,6 +218,7 @@
 
 		.ability-descriptors {
 			line-height: var(--font-size-20);
+
 			label.descriptor {
 				font-size: 12px;
 				padding: 2px;
@@ -177,27 +229,35 @@
 		.ability-properties {
 			p {
 				margin: 0;
+
 				label {
 					font-weight: bold;
 				}
 			}
 
 		}
+
 		.rich {
 			label {
 				font-weight: bold;
 			}
-			label + * {
+
+			label+* {
 				display: inline;
 			}
-			* { margin: 0; }
+
+			* {
+				margin: 0;
+			}
 		}
+
 		hr {
 			color: var(--actor-color);
 			background-image: none;
 			border: 1px solid var(--actor-color);
 			margin: 0.5em 0;
 		}
+
 		.chat-actions {
 			width: 100%;
 
@@ -205,6 +265,7 @@
 				display: flex;
 				flex-direction: row;
 				padding-left: 0px;
+
 				img {
 					flex: 0 0 32px;
 					background-color: black;
@@ -215,8 +276,11 @@
 
 		.roll-entry {
 			position: relative;
-			.dice-formula, .dice-total {
+
+			.dice-formula,
+			.dice-total {
 				position: relative;
+
 				button {
 					width: 28px;
 					min-height: 26px;
@@ -225,9 +289,21 @@
 					line-height: 22px;
 					position: absolute;
 					padding: 0;
-					i { margin: 0; }
-					.sf-icon { vertical-align: middle; }
-					svg, svg image { width: 16px; height: 16px;}
+
+					i {
+						margin: 0;
+					}
+
+					.sf-icon {
+						vertical-align: middle;
+					}
+
+					svg,
+					svg image {
+						width: 16px;
+						height: 16px;
+					}
+
 					// Top Buttons
 					&[data-apply-catharsis="-"],
 					&[data-apply-catharsis="+"],
@@ -235,25 +311,31 @@
 						top: -1px;
 						right: 0;
 					}
+
 					&[data-apply-catharsis="-"] {
 						left: 0;
 					}
+
 					// Bottom Buttons
-					&[data-apply-damage="-1"], 
-					&[data-apply-damage="0.5"], 
-					&[data-apply-damage="1"], 
+					&[data-apply-damage="-1"],
+					&[data-apply-damage="0.5"],
+					&[data-apply-damage="1"],
 					&[data-apply-damage="2"] {
 						bottom: -1px;
 					}
+
 					&[data-apply-damage="1"] {
 						left: 0;
 					}
+
 					&[data-apply-damage="0.5"] {
 						left: 30px;
 					}
+
 					&[data-apply-damage="-1"] {
 						right: 0;
 					}
+
 					&[data-apply-damage="2"] {
 						right: 30px;
 					}
@@ -261,12 +343,27 @@
 			}
 		}
 
-		.roll-btns { 
+		.roll-btns {
 			position: absolute;
-			&.top { top: 15px }
-			&.bottom { bottom: 0px }
-			&.left { float: left; left: 0px }
-			&.right { float: right; right: 0px }
+
+			&.top {
+				top: 15px
+			}
+
+			&.bottom {
+				bottom: 0px
+			}
+
+			&.left {
+				float: left;
+				left: 0px
+			}
+
+			&.right {
+				float: right;
+				right: 0px
+			}
+
 			button {
 				width: 28px;
 				font-size: 14px;
@@ -274,24 +371,29 @@
 			}
 		}
 	}
+
 	&.usage-v2 {
 		gap: 0em;
 		padding: 0;
 		padding-bottom: 8px;
+
 		// overflow: hidden;
 		.message-header {
 			padding: 8px;
 		}
+
 		.message-content {
 			.ability-card {
-				> * {
+				>* {
 					padding: 0 8px;
 				}
-				> hr {
+
+				>hr {
 					padding: 0;
 				}
 			}
 		}
+
 		.message-header {
 			.actor-portrait {
 				flex: 0 0 56px;
@@ -300,17 +402,23 @@
 				object-fit: cover;
 				object-position: top;
 			}
+
 			.message-sender {
 				margin-left: 5px;
 				align-self: center;
 			}
 
 		}
+
 		.message-header,
 		.card-header {
 			background-color: var(--actor-color);
-			* { color: white; }
+
+			* {
+				color: white;
+			}
 		}
+
 		.card-header {
 			aside {
 				min-height: unset;
@@ -321,6 +429,29 @@
 	}
 
 	.roll-entry-v2 {
+		.dice-formula {
+			.formula-box {
+				position: relative;
+				width: calc(100% - 6rem);
+				height: inherit;
+				margin: 0 3rem;
+				display: block;
+				overflow: hidden;
+
+				.formula {
+					position: absolute;
+					white-space: nowrap;
+					transform: translateX(0);
+					transition: 1s;
+					left: 0;
+				}
+
+			}
+
+			.formula-box:hover .formula {
+				transform: translateX(calc(calc(100% - 6rem) - 110%));
+			}
+		}
 
 		.dice-formula,
 		.dice-total {
@@ -328,12 +459,14 @@
 			border-bottom: 1px solid #999;
 			height: 26px;
 			font-size: 18px;
+
 			span.buttons {
 				display: flex;
 				position: absolute;
 				width: auto;
 				top: -1px;
 				white-space: nowrap;
+
 				&.left {
 					left: -2px;
 				}
@@ -341,6 +474,7 @@
 				&.right {
 					right: -1px;
 				}
+
 				button {
 					--button-size: 26px;
 					--input-height: 26px;
@@ -357,18 +491,21 @@
 						align-content: center;
 					}
 
-					.sf-icon, .sf-icon > svg, .sf-icon svg > image {
+					.sf-icon,
+					.sf-icon>svg,
+					.sf-icon svg>image {
 						height: 100%;
 					}
 				}
 			}
 		}
+
 		.critical {
 			.dice-total {
 				// color: green;
 				// background-color: rgba(218, 165, 32, 0.5);
 				// background-color: rgba(0, 128, 0, 0.5);
-				
+
 			}
 		}
 	}
