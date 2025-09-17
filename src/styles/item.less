@@ -4,25 +4,31 @@
 
 .skyfall.sheet {
 	--actor-color: @colorSFPlayer;
+
 	aside {
 		align-self: flex-start;
 	}
+
 	.window-content {
 		.tab {
+
 			// &.item-benefits,
 			&.item-description {
 				min-height: 400px;
 				align-content: flex-start;
 				flex-direction: row;
+
 				aside {
 					flex: 0 0 150px;
 				}
+
 				.description {
 					flex: 1;
 					flex-direction: column;
 				}
 			}
 		}
+
 		header.sheet-header {
 			align-items: flex-start;
 		}
@@ -30,7 +36,7 @@
 		:has(> .ability) {
 			overflow-y: hidden;
 		}
-		
+
 		.ability {
 			flex-wrap: nowrap;
 			max-height: 600px;
@@ -39,27 +45,29 @@
 				overflow-y: scroll;
 				min-width: 300px
 			}
-			
+
 			.sheet-card {
 				width: 420px;
 				flex: 0 0 420px;
 				.SF-ability;
-				> div {
+
+				>div {
 					width: 95%;
 				}
-				
+
 				.sheet-card hr {
 					display: none;
 				}
 			}
-			
 
-			.sheet-card hr, .section-edit hr {
+
+			.sheet-card hr,
+			.section-edit hr {
 				flex: 0;
 			}
 		}
-		.legacy {
-		}
+
+		.legacy {}
 
 		.item .item-icon {
 			background-size: cover;
@@ -71,19 +79,25 @@
 		.heritage-tabs {
 			flex: 0 0 100px;
 		}
-		.heritage-list, .item-heritage .heritage {
+
+		.heritage-list,
+		.item-heritage .heritage {
 			min-height: 200px;
 		}
+
 		.heritage-list {
 			flex: 0 0 100px;
 			margin-right: 10px;
+
 			.active {
 				text-shadow: 0 0 8px var(--color-shadow-primary)
 			}
+
 			.chosen {
 				font-weight: bold;
 			}
 		}
+
 		.item-upgrades {
 			.sigil-drop-area {
 				min-height: 100px;
@@ -92,14 +106,18 @@
 		}
 	}
 }
+
 .skyfall.sheet.application.item {
 	overflow: visible;
-	.window-content{
+
+	.window-content {
 		overflow: visible;
 		padding: 10px;
+
 		nav.tabs {
 			gap: 5px;
 		}
+
 		.sigils {
 			gap: 10px;
 		}
@@ -107,7 +125,10 @@
 }
 
 .skyfall.sheet {
-	&.ability, &.sigil, &.guild-ability {
+
+	&.ability,
+	&.sigil,
+	&.guild-ability {
 		.ability-card {
 			--scroll-margin: 0.05rem;
 			min-width: 400px;
@@ -115,23 +136,29 @@
 			max-height: 80vh;
 		}
 	}
+
 	.item-benefits {
 		max-height: 70vh;
 	}
+
 	.benefits {
 		// height: 400px;
 		--scroll-margin: 0.50rem;
+
 		header {
-			background-color: rgba(0,0,0,.2);
+			background-color: rgba(0, 0, 0, .2);
 			padding: 0 1em;
 		}
+
 		.entry fieldset {
 			padding: 0;
 		}
 	}
+
 	prose-mirror .editor-content2 {
 		[data-field] {
 			--content-label: attr(data-label);
+
 			p:first-child::before {
 				content: var(--content-label);
 				content: attr(data-label);
@@ -139,12 +166,20 @@
 				margin-right: 3px;
 			}
 		}
+
 		[data-field="attack-hit2"] p:first-child::before {
 			content: attr(data-label); // "Acerto:";
 			font-weight: bold;
 		}
 	}
+
+	prose-mirror .editor-content {
+		.ability-header {
+			background-color: var(--actor-color-1);
+		}
+	}
 }
+
 .skyfall.sheet.ability {
 	.window-content {
 		padding: 0;
@@ -152,29 +187,36 @@
 		flex-direction: row;
 		// max-height: 600px;
 		max-width: 850px;
+
 		.ability-card {
 			color: @colorSFPlayer;
 			max-width: 400px;
 			.SF-ability;
-			
+
 		}
+
 		.ability-configuration {
 			color: black;
 			min-width: 420px;
 			width: 420px;
 			max-width: 420px;
+
 			// input, select { color: white;}
 			.profile-img {
 				margin-right: 1em;
 			}
-			section.tab, div.tab {
+
+			section.tab,
+			div.tab {
 				// flex: 0 0 550px;
 				max-height: calc(80vh - 40px);
 			}
+
 			.ability-config.scrollable {
 				--scroll-margin: 0;
 				margin-right: 0 !important;
 				padding-right: 0 !important;
+
 				textarea {
 					padding: 5px;
 					min-height: 30px;

@@ -1,15 +1,16 @@
 
-const {HandlebarsApplicationMixin, ApplicationV2, DialogV2} = foundry.applications.api;
+const { HandlebarsApplicationMixin, ApplicationV2, DialogV2 } = foundry.applications.api;
 
 export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2) {
-	constructor(options){
+	constructor(options) {
 		options.title ??= "SKYFALL2.Level";
+		options.position = { width: 600 };
 		super(options);
 		this.item = options.item;
 		this.grant = options.grant;
 		this.level = options.level ?? 0;
 		this.steps = [];
-		
+		console.log(this);
 		this.prepareBenefits();
 	}
 
@@ -26,7 +27,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 			minimizable: false
 		},
 		position: {
-			width: 600,
+			width: 800,
 			height: "auto"
 		},
 		buttons: [
@@ -50,13 +51,13 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 			template: "templates/generic/form-footer.hbs"
 		}
 	};
-		
+
 	async loadItems(list, sync) {
 		const arr = [];
-		if ( list instanceof Set ) list = list.toObject();
+		if (list instanceof Set) list = list.toObject();
 		for (const entry of list) {
-			const content = {id: entry._id};
-			if(sync) content.item = fromUuidSync(entry.uuid ?? entry);
+			const content = { id: entry._id };
+			if (sync) content.item = fromUuidSync(entry.uuid ?? entry);
 			else content.item = await fromUuid(entry.uuid ?? entry);
 			arr.push(content);
 		}
@@ -64,37 +65,37 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	}
 
 
-	async prepareBenefits(){
+	async prepareBenefits() {
 		const item = this.item;
 		const grantId = this.grant?.startsWith(item.type) ? '' : this.grant;
 		const actor = this.item.parent.toObject(true);
 		let level = this.level;
-		if ( !level && ['class','path'].includes(item.type) ) {
-			if ( grantId ) {
-				level = item.system.benefits.find( i => i._id == grantId ).level;
+		if (!level && ['class', 'path'].includes(item.type)) {
+			if (grantId) {
+				level = item.system.benefits.find(i => i._id == grantId).level;
 			} else {
 				level = item.system.level;
 			}
 		}
 		let benefits = [];
-		if ( grantId ) {
-			let grant = item.system.benefits.find( i => i._id == grantId );
+		if (grantId) {
+			let grant = item.system.benefits.find(i => i._id == grantId);
 			await this.addGrant(grant, item);
 			return;
-		} else if ( level ) {
+		} else if (level) {
 			benefits = item.system._benefits[level];
 		} else {
 			benefits = item.system._benefits;
 		}
 		// const benefits = level ? item.system._benefits[level] : item.system._benefits;
 		for (const [key, data] of Object.entries(benefits)) {
-			if ( key == 'grant' && data.length ) {
+			if (key == 'grant' && data.length) {
 				for (const grant of data) {
 					// if ( grantId && grant._id != grantId ) continue;
 					await this.addGrant(grant, item);
 				}
-			} else if ( data.length ) {
-				data.map( d => {
+			} else if (data.length) {
+				data.map(d => {
 					d.item = fromUuidSync(d.uuid)
 					d.id = d._id;
 				});
@@ -108,24 +109,24 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		}
 	}
 
-	async addGrant(grant, item){
+	async addGrant(grant, item) {
 		const type = grant.granting; // TODO
 		const mode = grant.quantity > 1 ? 'checkbox' : 'radio';
-		const query = grant.query.split(/,|;/).map(i=> i.trim());
+		const query = grant.query.split(/,|;/).map(i => i.trim());
 		let grantList = [];
-		if ( type == 'feat' ) {
+		if (type == 'feat') {
 			// const featIdentifiers = item.parent.items.filter(i => query.includes(i.type) ).map( i => i.system.identifier);
 			// query.push(...featIdentifiers);
-			item.parent.items.filter( i => { 
+			item.parent.items.filter(i => {
 				return query.includes(i.system.identifier) || query.includes(i.type);
 			}).reduce((acc, i) => {
-				let feats = i.system.feats.toObject().filter( f => {
-					return !acc.find( i => i.uuid == f );
-				}).map( f => ({
+				let feats = i.system.feats.toObject().filter(f => {
+					return !acc.find(i => i.uuid == f);
+				}).map(f => ({
 					uuid: f,
 					item: fromUuidSync(f)
 				}));
-				if ( feats.length ) {
+				if (feats.length) {
 					const type = game.i18n.localize(`TYPES.Item.${i.type}`);
 					feats[0].groupLabel = `${type} - ${i.name}`;
 				}
@@ -133,13 +134,13 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 				return acc;
 			}, grantList);
 		}
-		if ( type == 'spell' ) {
+		if (type == 'spell') {
 			// LIST SPELLS
 		}
-		if ( type == 'path' ) {
+		if (type == 'path') {
 			const pack = game.packs.get('skyfall-core.character-creation');
-			if ( pack ) {
-				pack.index.filter( i => i.type == type).reduce((acc, i) => {
+			if (pack) {
+				pack.index.filter(i => i.type == type).reduce((acc, i) => {
 					acc.push({
 						uuid: i.uuid,
 						item: i,
@@ -148,7 +149,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 				}, grantList);
 				// grantList.push(...pack.index.filter( i => i.type == type));
 			} else {
-				game.items.filter( i => i.type == type).reduce((acc, i) => {
+				game.items.filter(i => i.type == type).reduce((acc, i) => {
 					acc.push({
 						uuid: i.uuid,
 						item: i,
@@ -158,20 +159,20 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 				// grantList.push(...game.items.filter( i => i.type == type));
 			}
 		}
-		if ( type == 'asi' ) {
+		if (type == 'asi') {
 			// LIST SPELLS
 		}
-		
+
 		this.addStep({
 			title: game.i18n.localize(`TYPES.Item.${type}Pl`),
 			list: grantList,
 			originId: grant._id,
 			mode: mode,
 		});
-		
+
 	}
-	
-	async addStep({title, list, mode, originId=null, sync=true}) {
+
+	async addStep({ title, list, mode, originId = null, sync = true }) {
 		this.steps.push({
 			title: title,
 			mode: mode,
@@ -203,7 +204,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	/* -------------------------------------------- */
 
 	static _onClickButton(event, target) {
-		if ( target.dataset.action == 'ok' ) this._onSubmit(target, event);
+		if (target.dataset.action == 'ok') this._onSubmit(target, event);
 	}
 
 	/**
@@ -214,7 +215,7 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 	static async #onEdit(event, target) {
 		const itemId = target.closest("[data-entry-id]")?.dataset.entryId;
 		const document = await fromUuid(itemId);
-		if ( !document ) return;
+		if (!document) return;
 		document.sheet.render(true);
 	}
 
@@ -224,8 +225,8 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 		const form = target.closest('dialog').querySelector('form');
 		const fd = new FormDataExtended(form);
 		const steps = Object.values(foundry.utils.expandObject(fd.object).create);
-		const content = steps.map( s => s.filter(Boolean).map(i => i.split('|')) ).flat();
-
+		const content = steps.map(s => s.filter(Boolean).map(i => i.split('|'))).flat();
+		console.log(content);
 		const toCreate = [];
 		for (const [grantId, uuid] of content) {
 			const item = await fromUuid(uuid);
@@ -233,8 +234,10 @@ export default class BenefitsDialog extends HandlebarsApplicationMixin(DialogV2)
 			itemData._stats.compendiumSource = item.uuid;
 			console.warn('system.origin', [grantId]);
 			itemData.system.origin = [grantId],
-			toCreate.push(itemData);
+				toCreate.push(itemData);
 		}
+		console.log(toCreate);
+		// return;
 		await this.item.parent.createEmbeddedDocuments("Item", toCreate);
 		// this.render();
 		await this.options.submit?.(fd.object);

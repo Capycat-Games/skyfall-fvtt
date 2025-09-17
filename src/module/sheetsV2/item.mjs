@@ -6,7 +6,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall", "item", "standard-form"],
-		position: {width: 520, height: "auto"},
+		position: { width: 520, height: "auto" },
 		window: {
 			resizable: true,
 			controls: [
@@ -29,7 +29,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			promptBenefitsDialog: ItemSheetSkyfall.#promptBenefitsDialog,
 		}
 	};
-	
+
 	/** @override */
 	static PARTS = {
 		header: {
@@ -74,7 +74,6 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			templates: [
 				"systems/skyfall/templates/v2/item/benefits-list.hbs",
 				"systems/skyfall/templates/v2/item/benefits/grant.hbs",
-				"systems/skyfall/templates/v2/item/deprecated.hbs",
 			],
 			scrollable: ["", ".scrollable"]
 		},
@@ -82,30 +81,24 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			template: "systems/skyfall/templates/v2/shared/effects.hbs",
 			scrollable: [""],
 		},
-		deprecated: {
-			template: "systems/skyfall/templates/v2/item/item-deprecated.hbs",
-			scrollable: [""],
-		},
 	};
 
 	/** @override */
 	static TABS = {
-		description: {id: "description", group: "primary", label: "SKYFALL.DESCRIPTION", cssClass: 'active'},
-		traits: {id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS"},
-		upgrades: {id: "upgrades", group: "primary", label: "SKYFALL.TAB.UPGRADES"},
-		features: {id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES"},
-		heritage: {id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE"},
-		benefits: {id: "benefits", group: "primary", label: "SKYFALL2.BenefitPl"},
-		abilities: {id: "abilities", group: "primary", label: "TYPES.Item.abilityPl"},
-		feats: {id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS"},
-		effects: {id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS"},
-		deprecated: {id: "deprecated", group: "primary", label: "", icon: "fa-solid fa-trash"}
+		description: { id: "description", group: "primary", label: "SKYFALL.DESCRIPTION", cssClass: 'active' },
+		traits: { id: "traits", group: "primary", label: "SKYFALL.ITEM.LEGACY.TRAITS" },
+		upgrades: { id: "upgrades", group: "primary", label: "SKYFALL.TAB.UPGRADES" },
+		features: { id: "features", group: "primary", label: "SKYFALL.ITEM.LEGACY.FEATURES" },
+		heritage: { id: "heritage", group: "primary", label: "SKYFALL.ITEM.LEGACY.HERITAGE" },
+		benefits: { id: "benefits", group: "primary", label: "SKYFALL2.BenefitPl" },
+		abilities: { id: "abilities", group: "primary", label: "TYPES.Item.abilityPl" },
+		feats: { id: "feats", group: "primary", label: "SKYFALL.ITEM.FEATS" },
+		effects: { id: "effects", group: "primary", label: "SKYFALL.TAB.EFFECTS" },
 	};
 
 	/** @override */
 	tabGroups = {
 		primary: "description",
-		heritage: "heritage1",
 	};
 
 	/**
@@ -114,7 +107,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	 */
 	#getTabs() {
 		return Object.values(this.constructor.TABS).reduce((acc, v) => {
-			if ( !this.tabs.includes(v.id) ) return acc;
+			if (!this.tabs.includes(v.id)) return acc;
 			const isActive = this.tabGroups[v.group] === v.id;
 			acc[v.id] = {
 				...v,
@@ -130,12 +123,12 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		if ( this.document.system._typeOptions ) {
+		if (this.document.system._typeOptions) {
 			const { sheet } = this.document.system._typeOptions;
-			
+
 			options.parts = sheet.parts;
 			this.tabs = sheet.tabs;
-			if ( this.document.type == 'class' && this.tabGroups.primary == 'description' ) {
+			if (this.document.type == 'class' && this.tabGroups.primary == 'description') {
 				this.tabGroups.primary = 'traits';
 			}
 			return;
@@ -148,51 +141,51 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'consumable':
 			case 'equipment':
 				options.parts = [
-					"header","tabs","description","traits","upgrades","effects", "deprecated"
+					"header", "tabs", "description", "traits", "upgrades", "effects"
 				];
 				this.tabs = [
-					"description","traits", "upgrades", "effects", "deprecated"
+					"description", "traits", "upgrades", "effects"
 				];
 				break;
 			case 'heritage':
 				options.parts = [
-					"header","tabs","description","benefits","effects"
+					"header", "tabs", "description", "benefits", "effects"
 				];
-				this.tabs = ["description","benefits","effects"];
+				this.tabs = ["description", "benefits", "effects"];
 				break;
 			case 'background':
 				options.parts = [
-					"header","tabs","description","benefits","effects"
+					"header", "tabs", "description", "benefits", "effects"
 				];
-				this.tabs = ["description","benefits","effects"];
+				this.tabs = ["description", "benefits", "effects"];
 				break;
 			case 'class':
 				options.parts = [
-					"header","tabs","traits","features","feats","benefits","effects"
+					"header", "tabs", "traits", "features", "feats", "benefits", "effects"
 				];
-				this.tabs = ["traits","features","feats","benefits","effects"];
+				this.tabs = ["traits", "features", "feats", "benefits", "effects"];
 				this.tabGroups.primary = 'benefits';
 				break;
 			case 'curse':
 			case 'path':
 				options.parts = [
-					"header","tabs","description","features","benefits","feats","effects"
+					"header", "tabs", "description", "features", "benefits", "feats", "effects"
 				];
-				this.tabs = ["description","features","feats","benefits","effects"];
+				this.tabs = ["description", "features", "feats", "benefits", "effects"];
 				break;
 			case 'feature':
 			case 'feat':
 				options.parts = [
-					"header","tabs","description","benefits","feats","effects","deprecated"
+					"header", "tabs", "description", "benefits", "feats", "effects"
 				];
-				this.tabs = ["description","feats","benefits","effects","deprecated"];
+				this.tabs = ["description", "feats", "benefits", "effects"];
 				break;
 			case 'facility':
 			case 'seal':
 				options.parts = [
-					"header","tabs","description","effects"
+					"header", "tabs", "description", "effects"
 				];
-				this.tabs = ["description","effects"];
+				this.tabs = ["description", "effects"];
 				break;
 		}
 	}
@@ -201,14 +194,14 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/* ---------------------------------------- */
 	/* DRAG AND DROP HANDLERS                   */
 	/* ---------------------------------------- */
-	
+
 	_parseDropFolder(uuid, itemType) {
 		const folder = fromUuidSync(uuid);
-		if ( !folder.contents.every( i => i.type == itemType) ) {
-			ui.notifications.error("SKYFALL2.NOTIFICATION.FolderItemsSameType", {localize: true});
+		if (!folder.contents.every(i => i.type == itemType)) {
+			ui.notifications.error("SKYFALL2.NOTIFICATION.FolderItemsSameType", { localize: true });
 			return [];
 		}
-		return folder.contents.map( i => i.uuid);
+		return folder.contents.map(i => i.uuid);
 	}
 
 	_isDropBenefits(fieldPath) {
@@ -225,51 +218,52 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		event.preventDefault();
 		if (!this.isEditable) return;
 		const target = event.target;
-		const {fieldPath} = target.closest("[data-field-path]")?.dataset ?? {};
-		const {itemType} = target.closest("[data-item-type]")?.dataset ?? {};
-		
-		if ( fieldPath && !foundry.utils.hasProperty(this.document, fieldPath) ) return;
+		const { fieldPath } = target.closest("[data-field-path]")?.dataset ?? {};
+		const { itemType } = target.closest("[data-item-type]")?.dataset ?? {};
+
+		if (fieldPath && !foundry.utils.hasProperty(this.document, fieldPath)) return;
 		const items = [];
-		const {type, uuid} = TextEditor.getDragEventData(event);;
-		if ( type == "Folder" ){
-			items.push( ...this._parseDropFolder(uuid, itemType) );
-		} else if ( type == "Item" ){
+		const { type, uuid } = TextEditor.getDragEventData(event);;
+		if (type == "Folder") {
+			items.push(...this._parseDropFolder(uuid, itemType));
+		} else if (type == "Item") {
 			items.push(uuid);
-		} else if ( type == "ActiveEffect" ) {
+		} else if (type == "ActiveEffect") {
 			return super._onDrop(event);
 		}
-		if ( items.length == 0 ) return;
-		
-		if ( this._isDropBenefits(fieldPath) ) {
-			const {level} = target.closest("[data-level]")?.dataset ?? {};
+		if (items.length == 0) return;
+
+		if (this._isDropBenefits(fieldPath)) {
+			const { level } = target.closest("[data-level]")?.dataset ?? {};
 			await this._onDropGranted(items, fieldPath, itemType, level);
-		} else if ( itemType == 'sigil' ) {
+		} else if (itemType == 'sigil') {
 			this._onDropSigils(items, fieldPath, itemType);
 		}
 	}
 
-	async _onDropSigils(items, fieldPath, itemType){
-		const type = this.document.type == 'armor' && this.document.subtype == 'shield' ? 'shield' : this.document.type;
+	async _onDropSigils(items, fieldPath, itemType) {
+		const type = this.document.type == 'armor' && this.document.system.type == 'shield' ? 'shield' : this.document.type;
 		const item = await fromUuid(items.pop());
-		
-		if ( !item || type != item.system.equipment ) {
-			return ui.notifications.error("NOTIFICATION.InvalidItemSigil",{localize: true});
+
+		if (!item || type != item.system.equipment) {
+			console.log(item, type);
+			return ui.notifications.error("NOTIFICATIONS.InvalidItemSigil", { localize: true });
 		}
 		const updateData = {};
 		updateData[fieldPath] = foundry.utils.getProperty(this.document, fieldPath);
-		if ( updateData[fieldPath].find(i => i.uuid == item.uuid) ) {
-			return ui.notifications.error("NOTIFICATION.DuplicatedItemSigil",{localize: true});
+		if (updateData[fieldPath].find(i => i.uuid == item.uuid)) {
+			return ui.notifications.error("NOTIFICATIONS.DuplicatedItemSigil", { localize: true });
 		}
 		updateData[fieldPath].push({
 			uuid: item.uuid,
 			parentUuid: '',
 			infused: false,
 		});
-		
-		if ( this.document.isEmbedded ) {
+
+		if (this.document.isEmbedded) {
 			const sigil = item.toObject();
 			sigil.system.item = this.document.uuid;
-			const created = await	this.document.actor.createEmbeddedDocuments("Item", [sigil]);
+			const created = await this.document.actor.createEmbeddedDocuments("Item", [sigil]);
 			updateData[fieldPath].pop();
 			updateData[fieldPath].push({
 				uuid: item.uuid,
@@ -282,12 +276,12 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		}
 	}
 
-	async _onDropGranted(items, fieldPath, itemType, level){
+	async _onDropGranted(items, fieldPath, itemType, level) {
 		let uuids = [];
-		if ( fieldPath == 'system.feats' ) {
+		if (fieldPath == 'system.feats') {
 			uuids = items;
 		} else {
-			uuids = items.map( uuid => ({uuid: uuid, type: itemType, level: (level || 0)}) );
+			uuids = items.map(uuid => ({ uuid: uuid, type: itemType, level: (level || 0) }));
 		}
 		// return;
 		const updateData = {};
@@ -305,18 +299,18 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	async _preparePartContext(partId, context) {
 		const doc = this.document;
-		switch ( partId ) {
+		switch (partId) {
 			case "description":
-				// context.tab = context.tabs.behaviors;
-				// break;
+			// context.tab = context.tabs.behaviors;
+			// break;
 			case "debug":
-				// context.tab = context.tabs.behaviors;
-				// break;
+			// context.tab = context.tabs.behaviors;
+			// break;
 			case "effects":
-				// context.tab = context.tabs.behaviors;
-				// break;
+			// context.tab = context.tabs.behaviors;
+			// break;
 			default:
-				if ( context.tabs[partId] ){
+				if (context.tabs[partId]) {
 					context.tab = context.tabs[partId];
 				}
 		}
@@ -332,7 +326,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		const enrichmentOptions = {
 			secrets: doc.isOwner, async: true, relativeTo: doc, rollData: rollData
 		}
-		
+
 		const context = {
 			document: doc,
 			item: doc,
@@ -341,8 +335,8 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			source: src.system,
 			benefits: doc.system._benefits,
 			SYSTEM: SYSTEM,
-			effects: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'base') ),
-			modifications: prepareActiveEffectCategories( this.item.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
+			effects: prepareActiveEffectCategories(this.item.effects.filter(ef => ef.type == 'base')),
+			modifications: prepareActiveEffectCategories(this.item.effects.filter(ef => ef.type == 'modification'), 'modification'),
 			enriched: {
 				description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
 			},
@@ -359,18 +353,18 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			},
 		};
 		await this._getDataFields(context),
-		await this._typeContext(context);
+			await this._typeContext(context);
 		// console.log(context);
 		context.user.isDeveloper = game.user.getFlag('skyfall', 'developer');
 		return context;
 	}
-	
-	async itemsFromUUIDS(list){
+
+	async itemsFromUUIDS(list) {
 		list = list.features ?? list;
 		const acc = [];
-		for (const uuid of list ) {
+		for (const uuid of list) {
 			const item = fromUuidSync(uuid);
-			if ( !item ) continue;
+			if (!item) continue;
 			acc.push(item);
 		}
 		return acc;
@@ -378,43 +372,43 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 	async _typeContext(context) {
 		// Prepare Descriptors
-		if ( 'descriptors' in context.system ){
+		if ('descriptors' in context.system) {
 			await this.getDescriptors(context);
 		}
-		if ( 'features' in context.system ){ // DEPRECATE
+		if ('features' in context.system) { // DEPRECATE
 			context.features = [];
-			for (const feature of this.document.system.features ) {
+			for (const feature of this.document.system.features) {
 				const item = fromUuidSync(feature.uuid);
-				if ( !item ) continue;
+				if (!item) continue;
 				context.features.push(item);
 			}
 		}
-		if ( 'featuresAdv' in context.system ){ // DEPRECATE
+		if ('featuresAdv' in context.system) { // DEPRECATE
 			context.featuresAdv = [];
-			for (const uuid of this.document.system.featuresAdv ) {
+			for (const uuid of this.document.system.featuresAdv) {
 				const item = fromUuidSync(uuid);
-				if ( !item ) continue;
+				if (!item) continue;
 				context.featuresAdv.push(item);
 			}
 		}
-		if ( 'feats' in context.system ){
+		if ('feats' in context.system) {
 			context.feats = [];
-			for (const uuid of this.document.system.feats ) {
+			for (const uuid of this.document.system.feats) {
 				const item = fromUuidSync(uuid);
-				if ( !item ) continue;
+				if (!item) continue;
 				context.feats.push(item);
 			}
 		}
-		if ( 'abilities' in context.system ){  // DEPRECATE
+		if ('abilities' in context.system) {  // DEPRECATE
 			context.abilities = [];
-			for (const uuid of this.document.system.abilities ) {
+			for (const uuid of this.document.system.abilities) {
 				const item = fromUuidSync(uuid);
-				if ( !item ) continue;
+				if (!item) continue;
 				context.abilities.push(item);
 			}
 		}
 		// if ( 'container' in context.system )
-			// TODO CONTAINER
+		// TODO CONTAINER
 
 		switch (this.document.type) {
 			case 'loot':
@@ -430,7 +424,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			case 'legacy':
 				context.heritages = {};
 				for (const [key, heritage] of Object.entries(context.system.heritages)) {
-					if ( heritage.chosen ) context.heritage ??= key;
+					if (heritage.chosen) context.heritage ??= key;
 					context.heritages[key] = {};
 					context.heritages[key].name = heritage.name;
 					context.heritages[key].chosen = heritage.chosen;
@@ -440,7 +434,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 					context.heritages[key].features = [];
 					for (const uuid of features) {
 						let item = fromUuidSync(uuid);
-						if ( !item ) continue;
+						if (!item) continue;
 						context.heritages[key].features.push(item);
 					}
 				}
@@ -463,20 +457,20 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	}
 	/* ---------------------------------------- */
 
-	async _getDataFields(context){
+	async _getDataFields(context) {
 		const doc = this.document;
 		const schema = doc.system.schema;
 		const dataFields = foundry.utils.flattenObject(doc.system.toObject());
-		
+
 		for (const fieldPath of Object.keys(dataFields)) {
 			dataFields[fieldPath] = schema.getField(fieldPath);
-			if ( dataFields[fieldPath] instanceof foundry.data.fields.ArrayField ) {
-				const {name, element} = dataFields[fieldPath];
-				if( element instanceof foundry.data.fields.SchemaField ) {
+			if (dataFields[fieldPath] instanceof foundry.data.fields.ArrayField) {
+				const { name, element } = dataFields[fieldPath];
+				if (element instanceof foundry.data.fields.SchemaField) {
 					dataFields[`_${name}`] = element.fields;
 				}
-				
-			} else if ( dataFields[fieldPath] instanceof foundry.data.fields.HTMLField ) {
+
+			} else if (dataFields[fieldPath] instanceof foundry.data.fields.HTMLField) {
 				const key = fieldPath.split('.').pop();
 				const html = foundry.utils.getProperty(doc.system, fieldPath);
 				context.enriched[key] ??= await TextEditor.enrichHTML(html, {
@@ -492,33 +486,33 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			acc[key] = true;
 			return acc;
 		}, {});
-		
+
 		context.descriptors = {};
 		context._selOpts['descriptors'] = {};
-		
+
 		for (const [category, descriptors] of Object.entries(SYSTEM.DESCRIPTOR)) {
-			if ( types.length && !types.includes(category) ) continue;
+			if (types.length && !types.includes(category)) continue;
 			for (const [id, desc] of Object.entries(descriptors)) {
 				context._selOpts['descriptors'][category] ??= {};
 				context._selOpts['descriptors'][category][desc.id] = {
-					...desc, 
+					...desc,
 					value: (context.system.descriptors.includes(desc.id))
 				}
 			}
 			foundry.utils.mergeObject(context.descriptors, context._selOpts['descriptors'][category]);
 		}
 		for (const desc of context.system.descriptors) {
-			if ( desc in context.descriptors ) continue;
+			if (desc in context.descriptors) continue;
 			context._selOpts['descriptors']["ORIGIN"][desc] = {
 				id: desc, hint: "", type: ["origin"], label: desc.toUpperCase(), value: true
 			}
 		}
 	}
-	
 
-	async _getConsume(context){
-		if ( !this.document.actor ) return;
-		const items = this.document.actor.items.filter( i => i.type == 'consumable' );
+
+	async _getConsume(context) {
+		if (!this.document.actor) return;
+		const items = this.document.actor.items.filter(i => i.type == 'consumable');
 		context._selOpts.ammunition = items.reduce((acc, i) => {
 			acc.push({
 				id: i.id,
@@ -529,7 +523,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		//context._selOpts.ammo = 
 	}
 
-	async _getSigils(context){
+	async _getSigils(context) {
 		context.sigils = {
 			prefix: [],
 			sufix: [],
@@ -537,7 +531,7 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		const sigils = this.document.system.sigils;
 		for (const sigilData of sigils) {
 			const sigil = await fromUuid(sigilData.parentUuid || sigilData.uuid);
-			if ( !sigil ) {
+			if (!sigil) {
 				context.sigils['prefix'].push({
 					id: '', uuid: (sigilData.parentUuid || sigilData.uuid), name: 'error', label: 'error', infused: false
 				});
@@ -560,8 +554,8 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
-		
-		if ( formData.object["system.reload.actions"] ) {
+
+		if (formData.object["system.reload.actions"]) {
 			formData.object["system.reload.actions"] = formData.object["system.reload.actions"].filter(Boolean);
 		}
 		const submitData = this._prepareSubmitData(event, form, formData);
@@ -586,21 +580,21 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	static async #infuse(event, target) {
 		const uuid = target.closest('li').dataset.uuid;
 		const parsed = foundry.utils.parseUuid(uuid);
-		if ( parsed.embedded.includes("Item") ) {
+		if (parsed.embedded.includes("Item")) {
 			const item = await fromUuid(uuid);
 			const current = foundry.utils.getProperty(item, 'system.fragments.value');
-			await item.update({"system.fragments.value": !current });
+			await item.update({ "system.fragments.value": !current });
 		} else {
 			const sigils = this.document.system.sigils;
 			const updateData = {};
-			updateData['system.sigils'] = sigils.reduce( (acc, sigil) => {
-				if ( sigil.uuid == uuid ) {
+			updateData['system.sigils'] = sigils.reduce((acc, sigil) => {
+				if (sigil.uuid == uuid) {
 					sigil.infused = !sigil.infused;
 				}
 				acc.push(sigil);
 				return acc;
 			}, []);
-			await this.document.update( updateData );
+			await this.document.update(updateData);
 		}
 		this.render();
 	}
@@ -610,26 +604,26 @@ export default class ItemSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		const sigils = this.document.system.sigils;
 		const deleteDocuments = [];
 		const updateData = {};
-		updateData['system.sigils'] = sigils.reduce( (acc, sigil) => {
-			if ( sigil.uuid == uuid || sigil.parentUuid == uuid ) {
-				if ( sigil.parentUuid ) {
+		updateData['system.sigils'] = sigils.reduce((acc, sigil) => {
+			if (sigil.uuid == uuid || sigil.parentUuid == uuid) {
+				if (sigil.parentUuid) {
 					const partenId = foundry.utils.parseUuid(sigil.parentUuid);
-					if( partenId ) deleteDocuments.push( partenId.id );
+					if (partenId) deleteDocuments.push(partenId.id);
 				}
 				return acc;
 			}
 			acc.push(sigil);
 			return acc;
 		}, []);
-		this.document.update( updateData );
-		if ( this.document.actor ) {
+		this.document.update(updateData);
+		if (this.document.actor) {
 			this.document.actor.deleteEmbeddedDocuments("Item", deleteDocuments);
 		}
 	}
 
 	static async #promptBenefitsDialog(event, target) {
 		const document = this.document;
-		let {BenefitsDialog} = skyfall.applications;
-		BenefitsDialog.prompt({item: document})
+		let { BenefitsDialog } = skyfall.applications;
+		BenefitsDialog.prompt({ item: document })
 	}
 }

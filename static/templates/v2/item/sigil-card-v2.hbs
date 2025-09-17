@@ -16,6 +16,10 @@
 			<a class="control ability" data-action="abilityUse" data-ability-id="{{item.id}}">
 				<h5>{{card.name}}</h5>
 			</a>
+			{{#if card.equipment}}
+			{{else}}
+				<a class="isEditing flex0" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+			{{/if}}
 		</div>
 	{{~else if (eq embeddedAt "Embedded")}}
 		<div class="ability-header flexrow">

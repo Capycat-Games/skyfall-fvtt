@@ -1,4 +1,4 @@
-const {renderTemplate} = foundry.applications.handlebars;
+const { renderTemplate } = foundry.applications.handlebars;
 /**
  * Data schema, attributes, and methods specific to Guild type Actors.
  */
@@ -82,20 +82,20 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 					label: "SKYFALL2.GUILD.Reputation",
 				}),
 			}),
-			level: new fields.NumberField({required:true, initial: 1, label:"SKYFALL2.Level"}),
+			level: new fields.NumberField({ required: true, initial: 1, label: "SKYFALL2.Level" }),
 			actions: new fields.SchemaField({
-				value: new fields.NumberField({required:true, initial: 1, label:"SKYFALL2.ActionPl"}),
+				value: new fields.NumberField({ required: true, initial: 1, label: "SKYFALL2.ActionPl" }),
 			}),
-			motto: new fields.HTMLField({required: true, label: "SKYFALL2.GUILD.Motto"}),
-			blueprints: new fields.StringField({required: true, label: "SKYFALL2.GUILD.BlueprintsPl"}),
+			motto: new fields.HTMLField({ required: true, label: "SKYFALL2.GUILD.Motto" }),
+			blueprints: new fields.StringField({ required: true, label: "SKYFALL2.GUILD.BlueprintsPl" }),
 			members: new fields.ArrayField(new fields.SchemaField({
-				uuid: new fields.DocumentUUIDField({type: "Actor", label:"SKYFALL2.GUILD.Member"}),
-				founder: new fields.BooleanField({required: true, initial: false, label:"SKYFALL2.GUILD.Founder"}),
-				retired: new fields.BooleanField({required: true, initial: false, label:"SKYFALL2.GUILD.Retired"}),
+				uuid: new fields.DocumentUUIDField({ type: "Actor", label: "SKYFALL2.GUILD.Member" }),
+				founder: new fields.BooleanField({ required: true, initial: false, label: "SKYFALL2.GUILD.Founder" }),
+				retired: new fields.BooleanField({ required: true, initial: false, label: "SKYFALL2.GUILD.Retired" }),
 			}))
 		}
 	}
-	
+
 	static migrateData(source) {
 		return super.migrateData(source);
 	}
@@ -130,14 +130,14 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 
 			this.abilities[abl].limit = 0;
 			this.abilities[abl].limitBonus = 0;
-			
+
 		}
 	}
 
 	/** @inheritDoc */
 	async prepareDerivedData() {
 		const actor = this.parent;
-		if ( !actor ) return;
+		if (!actor) return;
 		const members = [];
 		const pathAbilities = {
 			war: 'crafting',
@@ -147,57 +147,57 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 		this.level = 0;
 		for (const member of this.members) {
 			const document = fromUuidSync(member.uuid);
-			if ( !document ) continue;
-			const level = document.system.classes.reduce( (acc, i) =>  acc + i.system.level, 0);
-			this.level = Math.max( this.level, level );
-			
+			if (!document) continue;
+			const level = document.system.classes.reduce((acc, i) => acc + i.system.level, 0);
+			this.level = Math.max(this.level, level);
+
 			let highestClass;
-			for (const cls of document.system.classes ) {
+			for (const cls of document.system.classes) {
 				highestClass ??= cls;
-				if ( cls.system.level > highestClass.system.level ) highestClass = cls;
+				if (cls.system.level > highestClass.system.level) highestClass = cls;
 			}
-			if ( highestClass ) {
+			if (highestClass) {
 				const clsAbility = highestClass.system.guild.ability;
-				this.abilities[clsAbility].members += (level >= 9 ? 3 : (level >= 5 ? 2 : 1 ));
+				this.abilities[clsAbility].members += (level >= 9 ? 3 : (level >= 5 ? 2 : 1));
 			}
-			
-			for (const path of document.system.paths ) {
+
+			for (const path of document.system.paths) {
 				const pathAbility = pathAbilities[path.system.type];
 				this.abilities[pathAbility].members += 1;
 			}
 		}
-			
+
 		// Guild Group Actions
-		this.actions.max = (this.level >= 12 ? 4 : (this.level >= 8 ? 3 : (this.level >= 4 ? 2 : 1 ) ));
+		this.actions.max = (this.level >= 12 ? 4 : (this.level >= 8 ? 3 : (this.level >= 4 ? 2 : 1)));
 		// const paths = document.items.find( i => i.type == 'path');
-		
+
 		for (const [key, abl] of Object.entries(this.abilities)) {
 			abl.value = abl.value + abl.members + abl.seals + abl.facilities + abl.bonus;
-			if ( key == 'reputation' ) abl.value += this.level;
-			abl.value = Math.max( abl.value, 0 );
-			abl.limit = ( this.level * 5 ) + 5 + abl.limitBonus; 
+			if (key == 'reputation') abl.value += this.level;
+			abl.value = Math.max(abl.value, 0);
+			abl.limit = (this.level * 5) + 5 + abl.limitBonus;
 
 			abl.short = 2 * abl.value;
 			abl.long = 5 * abl.value;
 			continue;
 			this.abilities[abl].value = this.abilities[abl].value + this.abilities[abl].members + this.abilities[abl].facilities + this.abilities[abl].seals + this.abilities[abl].bonus;
-			
+
 		}
 	}
-	
+
 	getRollData() {
 		return { ...this };
 	}
 
-	
+
 	/* -------------------------------------------- */
 	/*  Database Operations                         */
 	/* -------------------------------------------- */
-	
+
 	/** @inheritdoc */
 	async _preUpdate(changed, options, user) {
 		let allowed = super._preUpdate(changed, options, user);
-		if ( "guildArc" in options && game.user.isGM ) {
+		if ("guildArc" in options && game.user.isGM) {
 			skyfall.ui.sceneConfig.scene.update({
 				guildArc: options.guildArc
 			});
@@ -209,35 +209,35 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/* System Methods                               */
 	/* -------------------------------------------- */
-	
-	async startGuildArc( options ) {
+
+	async startGuildArc(options) {
 		// Produce Guild Points
 		const messageData = {};
 		const updateData = {};
 		messageData.points = {};
 		messageData.phase = 'start';
-		for (const [ key, abl ] of Object.entries( this.abilities )) {
+		for (const [key, abl] of Object.entries(this.abilities)) {
 			const points = {};
 			points.stored = abl.points;
-			points.earned = Math.min( abl[ options.arcLength ], abl.limit )
+			points.earned = Math.min(abl[options.arcLength], abl.limit)
 			points.total = points.stored + points.earned;
 			points.label = game.i18n.localize(`SKYFALL2.GUILD.${key.titleCase()}`);
-			points.icon = SYSTEM.icons.on;
+			points.icon = SYSTEM.icons[`sf${key}`];
 			messageData.points[key] = points;
 			updateData[`system.abilities.${key}.points`] = points.total;
 		}
-		
+
 		// Restore Actions
 		updateData[`system.actions.value`] = this.actions.max;
 		messageData.actions = this.actions.max;
-		
+
 		// MESSAGE
 		let template = `systems/${SYSTEM.id}/templates/v2/chat/guild-arc.hbs`;
 		const content = await renderTemplate(template, messageData);
 		ChatMessage.create({
 			content: content
 		});
-		this.parent.update( updateData, {
+		this.parent.update(updateData, {
 			guildArc: options.arcLength,
 		});
 	}
@@ -247,13 +247,13 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 		const updateData = {};
 		messageData.points = {};
 		messageData.phase = 'end';
-		for (const [ key, abl ] of Object.entries( this.abilities )) {
+		for (const [key, abl] of Object.entries(this.abilities)) {
 			const points = {};
 			points.stored = abl.points;
 			points.limit = abl.limit;
-			points.total = Math.min( abl.points, abl.limit );
+			points.total = Math.min(abl.points, abl.limit);
 			points.label = game.i18n.localize(`SKYFALL2.GUILD.${key.titleCase()}`);
-			points.icon = SYSTEM.icons.on;
+			points.icon = SYSTEM.icons[`sf${key}`];
 			messageData.points[key] = points;
 			updateData[`system.abilities.${key}.points`] = points.total;
 		}
@@ -264,12 +264,12 @@ export default class Guild extends foundry.abstract.TypeDataModel {
 		ChatMessage.create({
 			content: content
 		})
-		this.parent.update( updateData, {
+		this.parent.update(updateData, {
 			guildArc: '',
 		});
 	}
 
 	// TODO
-	async _applyConsuption() {}
-	
+	async _applyConsuption() { }
+
 }

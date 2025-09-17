@@ -60,9 +60,16 @@
 		</div>
 
 		<div>
-			{{formInput schema.description.value value=system.description.value enriched=enriched.description documentUUID=document.uuid toggled=true height=400 localize=true}}
+			{{formInput
+				schema.description.value
+				value=system.description.value
+				enriched=enriched.description
+				documentUUID=document.uuid
+				toggled=true
+				height=400
+				localize=true
+			}}
 
-			{{!-- {{editor @root.enriched.description target="system.description.value" button=true editable=@root.editable engine="prosemirror" collaborate=false}} --}}
 			{{#if (isDefined system.origin)}}
 				{{#if (eq document.type 'class') }}
 				{{~else if (includes 'legacy' 'curse' 'background' @root.document.type) }}

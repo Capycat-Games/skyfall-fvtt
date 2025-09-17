@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "npm run rollup && npm run less",
-    "build:watch": "npm run rollupcw && npm run less",
-    "less": "lessc src/styles/skyfall.less dist/skyfall.css && lessc src/stylesV13/skyfall.less dist/skyfallV13.css",
+    "build": "npm run rollup && npm run less && npm run less2",
+    "build:watch": "npm run rollupcw",
+    "less": "lessc src/styles/skyfall.less dist/skyfall.css",
+    "less2": "lessc src/stylesV13/skyfall.less dist/skyfallV13.css",
     "rollup": "npx rollup --config",
     "rollupcw": "npx rollup --config --watch",
     "lint": "eslint skyfall.mjs src/module/**/* static/templates/**/*",

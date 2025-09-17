@@ -7,7 +7,7 @@ const TEMPLATES = `systems/skyfall/templatesV13`;
 export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
-		window:{
+		window: {
 			resizable: true,
 		},
 		classes: ["skyfallV13", "actor", "guild", "standard-form"],
@@ -59,16 +59,16 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 
 	/** @override */
 	static TABS = {
-		profile: {id: "profile", group: "actor", label: "SKYFALL.TAB.GUILD", cssClass: 'active'},
-		members: {id: "members", group: "actor", label: "SKYFALL2.GUILD.MemberPl"},
-		abilities: {id: "abilities", group: "actor", label: "SKYFALL.TAB.ACTIONS"},
-		facilities: {id: "facilities", group: "actor", label: "SKYFALL2.GUILD.FacilityPl"},
-		inventory: {id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
-		effects: {id: "effects", group: "actor", label: "SKYFALL.TAB.EFFECTS" },
+		profile: { id: "profile", group: "actor", label: "SKYFALL.TAB.GUILD", cssClass: 'active' },
+		members: { id: "members", group: "actor", label: "SKYFALL2.GUILD.MemberPl" },
+		abilities: { id: "abilities", group: "actor", label: "SKYFALL.TAB.ACTIONS" },
+		facilities: { id: "facilities", group: "actor", label: "SKYFALL2.GUILD.FacilityPl" },
+		inventory: { id: "inventory", group: "actor", label: "SKYFALL.TAB.INVENTORY" },
+		effects: { id: "effects", group: "actor", label: "SKYFALL.TAB.EFFECTS" },
 	};
 
 	filters = {
-		actions: { 
+		actions: {
 			cunning: {
 				active: true,
 				icon: SYSTEM.icons.sfcunning,
@@ -108,12 +108,12 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		const controls = [].concat(this.options.window.controls);
 		// Portrait image
 		const img = this.actor.img;
-		if ( img === CONST.DEFAULT_TOKEN ) controls.findSplice(c => c.action === "showPortraitArtwork");
+		if (img === CONST.DEFAULT_TOKEN) controls.findSplice(c => c.action === "showPortraitArtwork");
 
 		// Token image
 		const pt = this.actor.prototypeToken;
 		const tex = pt.texture.src;
-		if ( pt.randomImg || [null, undefined, CONST.DEFAULT_TOKEN].includes(tex) ) {
+		if (pt.randomImg || [null, undefined, CONST.DEFAULT_TOKEN].includes(tex)) {
 			controls.findSplice(c => c.action === "showTokenArtwork");
 		}
 		return controls;
@@ -125,12 +125,12 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		if (this.document.limited) return;
 		options.parts = ["tabs", "profile", "members", "abilities", "facilities", "inventory", "effects"];
 	}
-	
+
 	/** @override */
 	async _preparePartContext(partId, context) {
 		const doc = this.document;
-		
-		switch ( partId ) {
+
+		switch (partId) {
 			case "tabs":
 			case "profile":
 			case "members":
@@ -138,7 +138,7 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 			case "facilities":
 			case "effects":
 			default:
-				if ( context.tabs[partId] ){
+				if (context.tabs[partId]) {
 					context.tab = context.tabs[partId];
 				}
 		}
@@ -166,8 +166,8 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 			SYSTEM: SYSTEM,
 			filters: this.filters,
 			currentArc: skyfall.ui.sceneConfig.scene.guildArc,
-			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
-			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
+			effects: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'base')),
+			modifications: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'modification'), 'modification'),
 			enriched: {
 				motto: await TextEditor.enrichHTML(doc.system.motto, enrichmentOptions),
 			},
@@ -182,7 +182,7 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 				element: foundry.applications.elements
 			}
 		};
-		
+
 		// Prepare data
 		this._prepareSystemData(context);
 		// // 
@@ -197,8 +197,8 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		return context;
 	}
 
-	_prepareSystemData(context){
-		
+	_prepareSystemData(context) {
+
 	}
 
 	async _prepareItems(context) {
@@ -211,10 +211,10 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 			features: [],
 			inventory: {},
 		}
-		const inventory = ['weapon','armor','equipment','clothing','loot','consumable'];
-		for (const item of this.document.items ) {
-			if ( inventory.includes(item.type) ) {
-				if ( this.inventory == 'category' ) {
+		const inventory = ['weapon', 'armor', 'equipment', 'clothing', 'loot', 'consumable'];
+		for (const item of this.document.items) {
+			if (inventory.includes(item.type)) {
+				if (this.inventory == 'category') {
 					items.inventory[item.type] ??= [];
 					items.inventory[item.type].push(item);
 				} else {
@@ -222,9 +222,9 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 					items.inventory.category.push(item);
 				}
 			}
-			if ( item.type == 'guild-ability' ) {
+			if (item.type == 'guild-ability') {
 				item.card = await item.system.prepareCardData();
-				if ( !item._enriched ) {
+				if (!item._enriched) {
 					try {
 						const embedded = await item.toEmbed({
 							isFigure: false,
@@ -232,7 +232,7 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 							embeddedAt: "ActorSheet",
 						}, {
 						});
-						if ( embedded ) {
+						if (embedded) {
 							item._enriched = embedded.innerHTML;
 						}
 					} catch (error) {
@@ -245,15 +245,15 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 				items.abilities.push(item);
 				items.actions.push(item);
 			}
-			if ( item.type == 'seal' ) items.seals.push(item);
-			if ( item.type == 'sigil' ) items.sigils.push(item);
-			if ( item.type == 'facility' ) items.facilities.push(item);
-			if ( item.type == 'feature' ) items.features.push(item);
+			if (item.type == 'seal') items.seals.push(item);
+			if (item.type == 'sigil') items.sigils.push(item);
+			if (item.type == 'facility') items.facilities.push(item);
+			if (item.type == 'feature') items.features.push(item);
 		}
 		context.items = items;
 	}
 
-	_prepareFilters(context){
+	_prepareFilters(context) {
 		let valid = (filters, key) => {
 			return filters[key] && !filters[key].active;
 		}
@@ -263,9 +263,9 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 			for (const item of Object.values(list)) {
 				console.groupCollapsed(`Filter: ${item.name}`);
 				let show = true;
-				if ( item.type != "guild-ability" ) continue;
+				if (item.type != "guild-ability") continue;
 				const ability = item.system.type;
-				if ( ability && valid(filters, ability) ) show = false;
+				if (ability && valid(filters, ability)) show = false;
 				item.filters ??= {};
 				item.filters[key] = show ? '' : 'hidden';
 				console.groupEnd();
@@ -274,11 +274,11 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		}
 	}
 
-	async _prepareAbilities(context){
+	async _prepareAbilities(context) {
 		const level = context.system.level;
-		for (const [key, abl] of Object.entries( context.system.abilities )) {
+		for (const [key, abl] of Object.entries(context.system.abilities)) {
 			const ol = skyfall.utils.createHTMLElement({
-				tag:'ol', cssClasses: ['plain','ability-tooltip']
+				tag: 'ol', cssClasses: ['plain', 'ability-tooltip']
 			});
 			const properties = {
 				members: "SKYFALL2.GUILD.MemberPl",
@@ -289,32 +289,32 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 				value: "SKYFALL2.Total",
 			};
 			for (const [prop, label] of Object.entries(properties)) {
-				if ( prop == 'level' && key != 'reputation' ) continue;
+				if (prop == 'level' && key != 'reputation') continue;
 				let name = skyfall.utils.createHTMLElement({
-					tag:'div', cssClasses: ['name'], content: game.i18n.localize(label)
+					tag: 'div', cssClasses: ['name'], content: game.i18n.localize(label)
 				});
 				let value = skyfall.utils.createHTMLElement({
-					tag:'div', cssClasses: ['value'],
-					content: ( key == 'reputation' && prop == 'level' ? level : `${abl[prop]}` )
+					tag: 'div', cssClasses: ['value'],
+					content: (key == 'reputation' && prop == 'level' ? level : `${abl[prop]}`)
 				});
 				let _li = skyfall.utils.createHTMLElement({
-					tag:'li', cssClasses: ['flexrow']
+					tag: 'li', cssClasses: ['flexrow']
 				});
 				_li.append(name, value);
 				ol.append(_li);
 			}
-			abl.tooltip =  `<section class='property-summary'>${ol.outerHTML}</section>`;
-			abl.tooltip = abl.tooltip.replaceAll('"',"'");
+			abl.tooltip = `<section class='property-summary'>${ol.outerHTML}</section>`;
+			abl.tooltip = abl.tooltip.replaceAll('"', "'");
 		}
 	}
 
-	async _prepareMembers(context){
+	async _prepareMembers(context) {
 		context.members = [];
-		for (const member of context.system.members ) {
+		for (const member of context.system.members) {
 			const actor = await fromUuid(member.uuid);
 			actor.founder = member.founder;
 			actor.retired = member.retired;
-			context.members.push( actor );
+			context.members.push(actor);
 		}
 	}
 
@@ -323,7 +323,7 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		const guild = this.document;
 		let members = guild.system.members;
 		members[index].founder = !members[index].founder;
-		guild.update({"system.members": members});
+		guild.update({ "system.members": members });
 	}
 
 	static async #retireMember(event, target) {
@@ -331,48 +331,48 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 		const guild = this.document;
 		let members = guild.system.members;
 		members[index].retired = !members[index].retired;
-		guild.update({"system.members": members});
+		guild.update({ "system.members": members });
 	}
 
 	static async #removeMember(event, target) {
 		const index = target.closest('li').dataset.index;
 		const guild = this.document;
-		let members = guild.system.members.filter( (m, i) => i != index );
-		guild.update({"system.members": members});
+		let members = guild.system.members.filter((m, i) => i != index);
+		guild.update({ "system.members": members });
 	}
 
 	async _onDrop(event) {
 		event.preventDefault();
 		const target = event.target;
-		const {type, uuid} = TextEditor.getDragEventData(event);
+		const { type, uuid } = TextEditor.getDragEventData(event);
 		if (!this.isEditable) return;
-		if ( type == "Actor" ){
+		if (type == "Actor") {
 			const actor = fromUuidSync(uuid);
-			if ( actor.type != 'character' ) return;
+			if (actor.type != 'character') return;
 			this._onDropMember(uuid);
 		} else return super._onDrop(event);
 	}
 
-	_onDropMember( uuid ){
-		if ( !uuid.startsWith("Actor") ) {
+	_onDropMember(uuid) {
+		if (!uuid.startsWith("Actor")) {
 			ui.notifications.warn("SKYFALL2.NOTIFICATIONS.GuildMemberNotSync")
 			return;
 		};
-		const actor = fromUuidSync( uuid );
-		if ( actor.type != 'character' ) {
+		const actor = fromUuidSync(uuid);
+		if (actor.type != 'character') {
 			ui.notifications.warn("SKYFALL2.NOTIFICATIONS.GuildMemberNotSync")
 			return;
 		}
-		if ( !actor ) {
+		if (!actor) {
 			ui.notifications.warn("SKYFALL2.NOTIFICATIONS.GuildMemberNotSync")
 			return;
 		}
 		let member = this.document.system.members;
-		member.push({uuid: uuid})
-		this.document.update({"system.members": member});
+		member.push({ uuid: uuid })
+		this.document.update({ "system.members": member });
 	}
 
-	static #inventoryDisplay(event, target){
+	static #inventoryDisplay(event, target) {
 		this.inventory = this.inventory != 'default' ? 'default' : 'category';
 		this.render();
 	}
@@ -385,12 +385,12 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 	static #itemToChat(event, target) {
 		const itemId = target.closest("[data-entry-id]").dataset.entryId;
 		const item = this.document.items.get(itemId);
-		if ( !item ) return;
+		if (!item) return;
 		item.toMessage();
 	}
-	
+
 	/* Guild Arc */
-	
+
 	static async #startArc(event, target) {
 		const { DialogV2 } = foundry.applications.api;
 		const arcLength = await DialogV2.wait({
@@ -409,11 +409,12 @@ export default class SkyfallGuildSheet extends SkyfallSheetMixin(ActorSheetV2) {
 				}
 			]
 		});
-		
-		if ( !arcLength ) return;
-		this.document.system.startGuildArc({
+
+		if (!arcLength) return;
+		await this.document.system.startGuildArc({
 			arcLength: arcLength
 		});
+		this.render();
 	}
 
 	static async #endArc(event, target) {

@@ -64,6 +64,7 @@ export default class D20Roll extends SkyfallRoll {
 
 
 	async configureDialog({ title, type, ability = 'str', options }) {
+		return console.error("deprecated");
 		// Render the Dialog inner HTML
 		const content = await renderTemplate(this.constructor.TEMPLATE, {
 			title: title,

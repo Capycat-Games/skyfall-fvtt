@@ -1,7 +1,7 @@
 const { Coin, DiceTerm, Die, FunctionTerm, NumericTerm, OperatorTerm, ParentheticalTerm, RollTerm } =
 	foundry.dice.terms;
 const { renderTemplate } = foundry.applications.handlebars;
-import RollConfig from "../apps/roll-config.mjs";
+// import RollConfig from "../apps/roll-config.mjs";
 
 const _terms = foundry.dice.terms;
 /**
@@ -104,6 +104,7 @@ export default class SkyfallRoll extends Roll {
 	}
 
 	async configureDialog() {
+		return console.error("deprecated");
 		return new RollConfig({ roll: this }).render(true);
 	}
 
@@ -219,7 +220,8 @@ export default class SkyfallRoll extends Roll {
 		// Create a new roll and verify that the formula is valid before attempting simplification.
 		let roll;
 		try {
-			roll = new Roll(this._formula, this.data);
+			// Should be using _formula?
+			roll = new Roll(this.formula, this.data);
 		} catch (err) {
 			console.warn(`Unable to simplify formula '${formula}': ${err}`);
 			return;

@@ -6,16 +6,16 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall", "sigil", "ability", "item"],
-		position: {width: "auto", height: "auto"},
+		position: { width: "auto", height: "auto" },
 		form: {
 			handler: this.#onSubmitDocumentForm,
 			submitOnChange: true,
 		},
 		actions: {
-			
+
 		}
 	};
-	get docType () {
+	get docType() {
 		return this.document?.type ?? ''
 	}
 	_sheetMode = 1;
@@ -32,7 +32,6 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				"systems/skyfall/templates/v2/item/ability-config.hbs",
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
-				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
 			],
 			scrollable: [".scrollable"],
 		},
@@ -43,8 +42,8 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 	/** @override */
 	static TABS = {
-		config: {id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active'},
-		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"}
+		config: { id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active' },
+		effects: { id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS" }
 	};
 
 	/** @override */
@@ -52,20 +51,20 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 		configuration: "config"
 	};
 
-	
+
 	/** @override */
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		options.parts = ["ability","configuration"]//,"tabs","config","effects"];
+		options.parts = ["ability", "configuration"]//,"tabs","config","effects"];
 	}
 
 	/** @override */
 	async _preparePartContext(partId, context) {
-		if ( context.tabs[partId] ){
+		if (context.tabs[partId]) {
 			context.tab = context.tabs[partId];
-		} else if ( this.tabGroups[partId] ){
-			context.tab = context.tabs[ this.tabGroups[partId] ];
+		} else if (this.tabGroups[partId]) {
+			context.tab = context.tabs[this.tabGroups[partId]];
 		}
 		return context;
 	}
@@ -88,8 +87,8 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 			source: src.system,
 			schema: this._getDataFields(),
 			SYSTEM: SYSTEM,
-			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
-			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
+			effects: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'base')),
+			modifications: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'modification'), 'modification'),
 			enriched: {
 				// description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
 			},
@@ -106,7 +105,7 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 				element: foundry.applications.elements
 			}
 		};
-		this.getDescriptors(context, ['RANK',"GEAR","CLOTHING"]);
+		this.getDescriptors(context, ['RANK', "GEAR", "CLOTHING"]);
 		await this.getEnrichedFields(context);
 		// await this.getModificationsEmbeds(context);
 		// console.log(context);
@@ -116,14 +115,14 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 	/* ---------------------------------------- */
 
-	async getModificationsEmbeds(context){
-		const embedded = context.modifications.modification.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
-		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
+	async getModificationsEmbeds(context) {
+		const embedded = context.modifications.modification.effects.map(ef => `@Embed[${ef.uuid}]`).join(' ');
+		context.enriched.modifications = await TextEditor.enrichHTML(embedded, {});
 	}
 
-	async getEnrichedFields(context){
+	async getEnrichedFields(context) {
 		const effect = context.system.effect.descriptive;
-		if ( effect ) context.enriched.effect = await TextEditor.enrichHTML(effect,{});
+		if (effect) context.enriched.effect = await TextEditor.enrichHTML(effect, {});
 	}
 
 	/* ---------------------------------------- */
@@ -132,7 +131,7 @@ export default class SigilSheetSkyfall extends SkyfallSheetMixin(ItemSheetV2) {
 
 	/** @overwrite */
 	static async #onSubmitDocumentForm(event, form, formData) {
-		if ( formData.object["system.components"] ) {
+		if (formData.object["system.components"]) {
 			formData.object["system.components"] = formData.object["system.components"].filter(Boolean);
 		}
 		const submitData = this._prepareSubmitData(event, form, formData);

@@ -2,6 +2,7 @@ import copy from '@guanghechen/rollup-plugin-copy';
 
 const staticFiles = [
 	'assets',
+	'icons',
 	'fonts',
 	'lang',
 	'templates',

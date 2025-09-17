@@ -1,4 +1,3 @@
-
 /* ----------------------------------------- */
 /*  Fonts                                    */
 /* ----------------------------------------- */
@@ -14,8 +13,14 @@
   src: url('./fonts/NORTHWEST-Bold.woff');
   descent-override: 50%;
 }
-.skyfall-icon { font-family: SkyfallIcons; }
-.skyfall-font { font-family: NORTHWEST; }
+
+.skyfall-icon {
+  font-family: SkyfallIcons;
+}
+
+.skyfall-font {
+  font-family: NORTHWEST;
+}
 
 @fontSkyfall: NORTHWEST;
 @iconsSKyfall: SkyfallIcons;
@@ -64,26 +69,39 @@
 
 :root {
   --color-scrollbar: #182657;
-	scrollbar-width: thin;
+  scrollbar-width: thin;
 }
 
 .skyfall {
   // SKYFALL
   --actor-color: #652657;
   --actor-color-faint: #d1becd;
-  &.character, &.creation, &.guild {
+
+  &.character,
+  &.creation,
+  &.guild {
     --actor-color: #182657;
     --actor-color-faint: #babecd;
   }
-  &.npc, &.partner {
+
+  &.npc,
+  &.partner {
     --actor-color: #750703;
     --actor-color-faint: #75070322;
   }
-  
-  
+
+
   &:not(.roll-config, .journal-sheet) .window-content {
     background: url(./assets/sheet/background.webp) repeat white;
-    * { color: #000000; }
+
+    * {
+      color: #000000;
+    }
+
+    .input-element-tags .tag * {
+      color: #FFF;
+    }
+
     input {
       color: #000000;
     }
@@ -95,39 +113,65 @@
 /* ----------------------------------------- */
 
 .flexrow {
-  &.space-around { justify-content: space-around; }
-  &.space-evenly { justify-content: space-evenly; }
-  &.space-between { justify-content: space-between; }
-  &.flex-start { align-self: flex-start; }
-  &.nowrap { flex-wrap: nowrap }
+  &.space-around {
+    justify-content: space-around;
+  }
+
+  &.space-evenly {
+    justify-content: space-evenly;
+  }
+
+  &.space-between {
+    justify-content: space-between;
+  }
+
+  &.flex-start {
+    align-self: flex-start;
+  }
+
+  &.nowrap {
+    flex-wrap: nowrap
+  }
+
   .flex0 {
     display: flex;
   }
-  .flex100{
+
+  .flex100 {
     flex: 0 0 100%;
   }
+
   .flex-right {
     margin-left: auto;
   }
+
   .flex-left {
     margin-right: auto;
   }
 }
-.flexcol{
-  &.flex-start { align-self: flex-start; }
+
+.flexcol {
+  &.flex-start {
+    align-self: flex-start;
+  }
+
   .flex0 {
     display: flex;
   }
-  .flex100{
+
+  .flex100 {
     flex: 0 0 100%;
   }
+
   .flex-top {
     margin-bottom: auto;
   }
+
   .flex-bottom {
     margin-top: auto;
   }
 }
+
 //   .flex4 { flex: 4; }
 //   // .flexF { flex: 100%; }
 
@@ -143,32 +187,50 @@
 //   .flex-center { justify-content: center; }
 // }
 .SF-item-list {
+
   // .item-list
-  ol, ul {
-		* { text-align: center; }
-		li .item-name, li .item-name * {
-			text-align: left;
-		}
-		li.header {
-			background-color: @colorSFPlayer;
-			background-color: var(--actor-color);
-			padding: 5px;
-			* { color: white  }
-		}
-		li.entry {
-			background-color: @colorSFPlayerFaint;
-			img { margin-right: 5px;}
-			&.draggable { cursor: default; }
-		}
-		.item-controls {
-			flex: 0 0 80px;
+  ol,
+  ul {
+    * {
+      text-align: center;
+    }
+
+    li .item-name,
+    li .item-name * {
+      text-align: left;
+    }
+
+    li.header {
+      background-color: @colorSFPlayer;
+      background-color: var(--actor-color);
+      padding: 5px;
+
+      * {
+        color: white
+      }
+    }
+
+    li.entry {
+      background-color: @colorSFPlayerFaint;
+
+      img {
+        margin-right: 5px;
+      }
+
+      &.draggable {
+        cursor: default;
+      }
+    }
+
+    .item-controls {
+      flex: 0 0 80px;
       text-align: right;
-		}
-	}
+    }
+  }
 }
 
 .SF-ability {
-  
+
   div {
     padding: 5px;
     border: 1px solid black;
@@ -177,43 +239,53 @@
     // flex: 0;
     width: 100%;
     background-color: #e7e8ed;
+
     label {
       font-weight: bold;
       color: @colorSFPlayer;
     }
+
     p:first-child strong:first-child {
       font-weight: bold;
       color: @colorSFPlayer;
     }
   }
-  > figure.content-embed {
+
+  >figure.content-embed {
     margin: 0;
   }
+
   .ability-header {
     background-color: @colorSFPlayer;
     color: white;
     font-family: @fontSkyfall;
     align-items: center;
+
     * {
       color: white;
     }
+
     .skyfall-icon {
       flex: 0 0 25px;
       text-align: center;
     }
+
     .cost {
       flex: 0 0 50px;
       text-align: center;
     }
+
     .sf-icon {
-			filter: brightness(0) saturate(100%) invert(100);
-			font-size: 32px;
-			flex: 0;
-		}
+      filter: brightness(0) saturate(100%) invert(100);
+      font-size: 32px;
+      flex: 0;
+    }
   }
+
   .ability-description {
     text-align: center;
   }
+
   .ability-descriptors {
     padding: 5px;
 
@@ -223,26 +295,41 @@
       line-height: 2em;
     }
   }
+
   .ability-properties {
     background-color: @colorSFPlayerFaint;
   }
+
   .rich {
-    label + * {
+    label+* {
       display: inline;
     }
-    * { margin: 0; }
+
+    * {
+      margin: 0;
+    }
   }
 }
+
 .SF-status-effects {
+
   //.status-effects
   .status-list {
     column-count: 3;
+
     .item {
       background-color: var(--actor-color-faint);
       border: 2px solid var(--actor-color);
       padding: 4px 8px 6px 8px;
-      * { color: white; }
-      * { color: var(--actor-color); }
+
+      * {
+        color: white;
+      }
+
+      * {
+        color: var(--actor-color);
+      }
+
       img {
         vertical-align: sub;
         width: 20px;
@@ -250,9 +337,11 @@
         border: none;
         margin-right: 5px;
       }
+
       &:first-child {
         margin-top: 0px;
       }
+
       // font-size: 12px;
     }
   }
@@ -260,8 +349,10 @@
 
 figure.content-embed.ability-embed {
   .SF-ability;
-  > .ability-card {
+
+  >.ability-card {
     padding: 0;
   }
+
   padding: 0;
 }

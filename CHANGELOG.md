@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 1.0.1
+- Ficha de Personagem. Corrigido. Items na aba de Características não eram arrastáveis.
+- Ficha de Personagem. Corrigido. Um bug fazia com que somente a primeira Herança do Legado era aninhada, enquanto as outras eram colocadas em "Bônus".
+- Ficha de Personagem. Corrigido. Arrastar uma Classe para um Personagem com multiclasse substituia um nível de classe ao invez de subir um nível.
+- Ficha de Personagem. Adicionado. Botão para excluir Sigilos Não vinculados a items.
+- Ficha de Item. Corrigido. Com tema escuro ativo os Links eram apresentados com Texto e Fundo escuro.
+- Ficha de Item. Corrigido. Escudos não aceitavam nenhum Sigilo.
+- Ficha de Item. Corrigido. Cabeçalho de Habilidades embeddadas estavam com Texto e Fundo claros.
+- Janela de Beneficios. Corrigido. A largura foi aumentada par que os textos não se sobreponham.
+- Configuração de Uso de Habilidades. Adicionado. Armas Leves utilizam o melhor atributo entre Força e Destreza.
+- Ficha de Guilda. Corrigido. Encerrar Arco não atualizava a ficha da Guilda, fazendo com que o botão de Encerrar Arco deixa-se de funcionar até que a ficha fosse reaberta.
+- Mensagem de Arco de Guilda. Corrigido. Icones de Atributo.
+- CombatTracker. Corrigido. Rolagem de Iniciativa não era executada ao rolar pela botão no combate.
+
 ## 0.9.612 - BETA
 
 - Mensagem de Habilidade. Corrigido. Texto da habilidade aparecia duplicado.

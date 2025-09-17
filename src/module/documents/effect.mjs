@@ -1,5 +1,5 @@
 const TextEditor = foundry.applications.ux.TextEditor.implementation;
-const {renderTemplate} = foundry.applications.handlebars;
+const { renderTemplate } = foundry.applications.handlebars;
 export default class SkyfallEffect extends ActiveEffect {
 	tooltip;
 	/* -------------------------------------------- */
@@ -15,24 +15,24 @@ export default class SkyfallEffect extends ActiveEffect {
 		const special = this.system.specialDuration;
 		return special || (duration > 0) || (this.statuses.size > 0);
 	}
-	
+
 	get statusName() {
-		if ( this.isGroup ) {
+		if (this.isGroup) {
 			let labels = [];
-			for (const [key, value] of Object.entries( this.system.group ) ) {
-				if ( !value ) continue;
+			for (const [key, value] of Object.entries(this.system.group)) {
+				if (!value) continue;
 				labels.push(SYSTEM.protectedGroup[key].label);
 			}
 			return `${this.name} (${labels.join(', ')})`;
-		} else if ( this.isStack ) return `${this.name} ${this.stack}`
+		} else if (this.isStack) return `${this.name} ${this.stack}`
 		else return this.name;
 	}
 
 	get statusGroupLabels() {
-		if ( this.isGroup ) {
+		if (this.isGroup) {
 			let labels = [];
-			for (const [key, value] of Object.entries( this.system.group ) ) {
-				if ( !value ) continue;
+			for (const [key, value] of Object.entries(this.system.group)) {
+				if (!value) continue;
 				labels.push(SYSTEM.protectedGroup[key].label);
 			}
 			return labels;
@@ -44,27 +44,27 @@ export default class SkyfallEffect extends ActiveEffect {
 		return SYSTEM.conditions[id] ?? null;
 	}
 	get isGroup() {
-		return ( 'group' in this.system && this.system.group )
+		return ('group' in this.system && this.system.group)
 	}
 
 	get isStack() {
-		return ( 'stack' in this.system )
+		return ('stack' in this.system)
 	}
-	get stack(){
+	get stack() {
 		return this.system.stack ?? false;
 	}
-	set stack(value){
-		if ( !this.isStack ) return console.warn("Effect is not stackable");
-		return this.update({"system.stack": this.stack + value});
+	set stack(value) {
+		if (!this.isStack) return console.warn("Effect is not stackable");
+		return this.update({ "system.stack": this.stack + value });
 	}
 
-	get cost(){
-		if ( this.type != 'modification' ) return null;
+	get cost() {
+		if (this.type != 'modification') return null;
 		const cost = this.system.cost; // {value: 1, resource:'ep', label: ``};
 		const schema = this.system.schema;
-		
+
 		// if ( !Number(cost.value) ) cost.label = ``;
-		if ( this.system.apply.type.includes('amplify') ) cost.label = ``;
+		if (this.system.apply.type.includes('amplify')) cost.label = ``;
 		else {
 			cost.label = `+${cost.value} `;
 			const resources = schema.fields.cost.fields.resource.choices;
@@ -77,16 +77,16 @@ export default class SkyfallEffect extends ActiveEffect {
 		return cost;
 	}
 
-	get modTypes(){
-		if ( this.type != 'modification' ) return null;
+	get modTypes() {
+		if (this.type != 'modification') return null;
 		const { type, amplifyThreshold } = this.system.apply;
 		let labels = [];
 		for (const t of type) {
 			const label = game.i18n.localize(`SKYFALL2.MODIFICATION.TYPE.${t.titleCase()}`);
-			if ( t == 'amplify' ) labels.push( `${label} ${amplifyThreshold}+` );
+			if (t == 'amplify') labels.push(`${label} ${amplifyThreshold}+`);
 			else labels.push(`[${label}]`);
 		}
-		return {label: `${labels.join(' & ')}`.toUpperCase()};
+		return { label: `${labels.join(' & ')}`.toUpperCase() };
 	}
 
 	/* -------------------------------------------- */
@@ -100,7 +100,7 @@ export default class SkyfallEffect extends ActiveEffect {
 
 	/** @override */
 	prepareBaseData() {
-		
+
 	}
 
 	/** @override */
@@ -109,18 +109,18 @@ export default class SkyfallEffect extends ActiveEffect {
 		const systemData = actorData.system;
 		const flags = actorData.flags.skyfall || {};
 
-		if ( this.isStack ) {
+		if (this.isStack) {
 			this.tooltip = this.description.replace(`<h3>${this.name}</h3>`, `<h3>${this.statusName}</h3>`);
-		} else if ( this.isGroup ) {
-			const labels = this.statusGroupLabels?.map(l => `<label>${game.i18n.localize(l)}</label>` ) ?? '';
+		} else if (this.isGroup) {
+			const labels = this.statusGroupLabels?.map(l => `<label>${game.i18n.localize(l)}</label>`) ?? '';
 			this.tooltip = this.description.replace(`<h3>${this.name}</h3>`, `<h3>${this.name}</h3><p>${labels}</p>`);
 		} else {
 			this.tooltip = this.description;
 		}
 		// this.tooltip = `<div>${this.tooltip}</div>`;
 	}
-	
-	getRollData(){
+
+	getRollData() {
 		const data = this;
 		return data;
 	}
@@ -138,12 +138,12 @@ export default class SkyfallEffect extends ActiveEffect {
 	 * @throws    An error if there's not status effect in `CONFIG.statusEffects` with the given status ID,
 	 *            and if the status has implicit statuses but doesn't have a static _id.
 	 */
-	static async fromStatusEffect(statusData, options={}) {
-		if ( typeof statusData === "string" ) statusData = CONFIG.statusEffects.find(e => e.id === statusData);
-		if ( foundry.utils.getType(statusData) !== "Object" ) return;
+	static async fromStatusEffect(statusData, options = {}) {
+		if (typeof statusData === "string") statusData = CONFIG.statusEffects.find(e => e.id === statusData);
+		if (foundry.utils.getType(statusData) !== "Object") return;
 		const createData = {
 			...foundry.utils.deepClone(statusData),
-			_id: statusData.id.padEnd(16,0),
+			_id: statusData.id.padEnd(16, 0),
 			disabled: false,
 			name: game.i18n.localize(statusData.name),
 			statuses: [statusData.id, ...statusData.statuses ?? []],
@@ -157,36 +157,36 @@ export default class SkyfallEffect extends ActiveEffect {
 	/** @inheritDoc */
 	async _preCreate(data, options, user) {
 		let allowed = await super._preCreate(data, options, user);
-		if ( allowed !== false ) allowed = this._stackEffect(data);
-		if ( allowed !== false ) allowed = this._groupEffect(data);
+		if (allowed !== false) allowed = this._stackEffect(data);
+		if (allowed !== false) allowed = this._groupEffect(data);
 		return allowed;
 	}
 
-	_stackEffect(data){
-		if ( !this.isStack ) return true;
+	_stackEffect(data) {
+		if (!this.isStack) return true;
 		// parent has status; TODO: When a AE has this in statuses;
 		// if ( !(this.parent.statuses?.has( data.id )) ) return true;
 		// status Exists
-		const effect = this.parent.effects.find(ef => ef.id.startsWith( data.id ) );
-		if ( !effect ) return true;
+		const effect = this.parent.effects.find(ef => ef.id.startsWith(data.id));
+		if (!effect) return true;
 		effect.stack = 1;
 		return false;
 	}
 
-	async _groupEffect(data){
+	async _groupEffect(data) {
 		// is Group?
-		if ( !this.isGroup ) return true;
+		if (!this.isGroup) return true;
 		// if ( !(this.parent.statuses?.has( data.statuses[0] )) ) return true;
 		//.find(ef => ef.statuses.has( data.statuses[0] ) );
-		const effect = this.parent?.effects.find(ef => ef.id.startsWith(data.id) || ef.id == data.id );
-		const id = data.id ?? data._id.replaceAll('0','');
+		const effect = this.parent?.effects.find(ef => ef.id.startsWith(data.id) || ef.id == data.id);
+		const id = data.id ?? data._id.replaceAll('0', '');
 
 		let content = '';
 		for (const group of Object.values(SYSTEM.protectedGroup)) {
 			let checked = effect?.system.group[group.id] ? 'checked' : '';
 			content += `<div class="form-group "><div class="form-fields"><label for="${group.id}">${group.label}</label><input type="checkbox" name="${group.id}" ${checked}></div></div>`;
 		}
-		
+
 		const groups = await Dialog.prompt({
 			title: effect?.name ?? data.name,
 			content: `<form><div style="columns:3;">` + content + `</div></form>`,
@@ -198,18 +198,18 @@ export default class SkyfallEffect extends ActiveEffect {
 				}
 				return group;
 			},
-			options: {width: 300}
+			options: { width: 300 }
 		});
-		const statuses = [].concat( (effect?.statuses.toObject() ?? data.statuses ?? []) );
-		
+		const statuses = [].concat((effect?.statuses.toObject() ?? data.statuses ?? []));
+
 		for (const key in groups) {
-			if ( !groups[key] ) continue;
-			statuses.push( id + '-' + key );
+			if (!groups[key]) continue;
+			statuses.push(id + '-' + key);
 		}
-		
-		this.updateSource({"system.group": groups, statuses: statuses});
-		if ( !effect ) return true;
-		effect.update({"system.group": groups, statuses: statuses});
+
+		this.updateSource({ "system.group": groups, statuses: statuses });
+		if (!effect) return true;
+		effect.update({ "system.group": groups, statuses: statuses });
 		return false;
 	}
 
@@ -235,52 +235,55 @@ export default class SkyfallEffect extends ActiveEffect {
 	// }
 
 	/* -------------------------------------------- */
-  /*  Methods                                     */
-  /* -------------------------------------------- */
-	
+	/*  Methods                                     */
+	/* -------------------------------------------- */
+
 	apply(actor, change) {
-		let allowed = this.applyRollData( change );
-		if ( !allowed ) return;
-		return super.apply( actor, change );
+		let allowed = this.applyRollData(change);
+		if (!allowed) return;
+		return super.apply(actor, change);
 	}
-	
-	applyRollData( change ){
+
+	applyRollData(change) {
 		const parent = this.parent;
 		const granparent = this.parent ? this.parent.parent : null;
-		if ( change.key.startsWith('@') ) {
+		if (change.key.startsWith('@')) {
 			change.key = change.key.replace('@', 'system.');
 		}
 
-		if ( change.key.startsWith('_') ) {
+		if (change.key.startsWith('_')) {
 			change.key = change.key.replace('_', 'system._');
 		}
-		if ( !granparent ) return true;
-		if ( change.key.startsWith('?') ) {
-			const data = change.key.replace('?','').split(':').map( i => i.trim());
+		if (!granparent) return true;
+		if (change.key.startsWith('?')) {
+			const data = change.key.replace('?', '').split(':').map(i => i.trim());
 			change.condition = data[0];
 			change.key = data[1];
-			change.condition = Roll.replaceFormulaData( change.condition, parent.getRollData() );
+			change.condition = Roll.replaceFormulaData(change.condition, parent.getRollData());
+			console.log("CHANGE CONDITION", change);
 		}
-		change.value = Roll.replaceFormulaData( change.value, parent.getRollData());
-		if ( granparent.documentName == "Actor" ) {
-			change.value = Roll.replaceFormulaData( change.value, granparent.getRollData());
-			if ( change.condition ) {
-				change.condition = Roll.replaceFormulaData( change.condition, granparent.getRollData() );
+		change.value = Roll.replaceFormulaData(change.value, parent.getRollData());
+		if (granparent.documentName == "Actor") {
+			change.value = Roll.replaceFormulaData(change.value, granparent.getRollData());
+			if (change.condition) {
+				change.condition = Roll.replaceFormulaData(change.condition, granparent.getRollData());
+				// Replace again for cases where we need the @@spellcasting attribute
+				change.condition = Roll.replaceFormulaData(change.condition, granparent.getRollData());
 			}
 		}
-		
-		if ( change.condition && Roll.safeEval(change.condition) === false ) return false;
-		else if ( change.condition ) { 
-			if ( change.key.startsWith('_') ) {
+
+		if (change.condition && Roll.safeEval(change.condition) === false) return false;
+		else if (change.condition) {
+			if (change.key.startsWith('_')) {
 				change.key = change.key.replace('_', 'system._');
 			}
-			if ( change.key.startsWith('@') ) {
+			if (change.key.startsWith('@')) {
 				change.key = change.key.replace('@', 'system.');
 			}
 		}
 		try {
 			const roll = new Roll(change.value);
-			if ( roll.isDeterministic ) change.value = roll.evaluateSync().total;
+			if (roll.isDeterministic) change.value = roll.evaluateSync().total;
 			return true;
 		} catch (error) {
 			return true;
@@ -292,19 +295,19 @@ export default class SkyfallEffect extends ActiveEffect {
 	/* -------------------------------------------- */
 
 	/** @inheritDoc */
-	async _buildEmbedHTML(config, options={}) {
+	async _buildEmbedHTML(config, options = {}) {
 		config.caption = false;
 		config.cite = false;
 		const embed = await super._buildEmbedHTML(config, options);
-		
-		if ( !embed ) {
-			if ( this.type === "modification" ) return this._embedModification(config, options);
+
+		if (!embed) {
+			if (this.type === "modification") return this._embedModification(config, options);
 			// else if ( this.type === "base" ) return this._embedBase(config, options);
 		}
 		return embed;
 	}
 
-	async _embedModification(config, options={}) {
+	async _embedModification(config, options = {}) {
 		const container = document.createElement("div");
 		const description = await TextEditor.enrichHTML(this.description, {
 			async: true, relativeTo: this
@@ -319,15 +322,15 @@ export default class SkyfallEffect extends ActiveEffect {
 				${description}
 			</div>
 		`;
-		if ( config.controls ) {
+		if (config.controls) {
 			const applyMulti = this.system.cost.multiple;
 			const controls = document.createElement('div');
-			controls.classList.add('controls','flexrow');
+			controls.classList.add('controls', 'flexrow');
 			const input = document.createElement('input');
 			input.type = applyMulti ? 'number' : 'checkbox';
 			input.name = `effects.${this.id}.apply`;
 			input.setAttribute('value', (applyMulti ? 0 : 1));
-			if ( applyMulti ) {
+			if (applyMulti) {
 				const button = document.createElement('button');
 				button.type = 'button';
 				button.dataset.action = 'applyVary';
@@ -337,7 +340,7 @@ export default class SkyfallEffect extends ActiveEffect {
 				button.innerHTML = SYSTEM.icons.minus;
 				controls.append(button);
 				controls.append(input);
-				
+
 				const button2 = button.cloneNode();
 				button2.dataset.vary = '+';
 				button2.innerHTML = SYSTEM.icons.create;
@@ -358,14 +361,14 @@ export default class SkyfallEffect extends ActiveEffect {
 		// INHERIT PARENT DESCRIPTORS?
 		return await renderTemplate(
 			"systems/skyfall/templates/v2/apps/effect-tooltip.hbs", {
-				effect: this,
-				description: await TextEditor.enrichHTML(this.description, {
-					async: true, relativeTo: this
-				}),
-				cssClasses: ["skyfall", "effect-tooltip"]
-			}
+			effect: this,
+			description: await TextEditor.enrichHTML(this.description, {
+				async: true, relativeTo: this
+			}),
+			cssClasses: ["skyfall", "effect-tooltip"]
+		}
 		);
-		
+
 		// {} ;
 	}
 

@@ -1,17 +1,17 @@
 // import RollConfiguration from "../data/other/roll-config.mjs";
 import SkyfallRoll from "../dice/skyfall-roll.mjs";
 
-const {HandlebarsApplicationMixin, ApplicationV2, DialogV2} = foundry.applications.api;
+const { HandlebarsApplicationMixin, ApplicationV2, DialogV2 } = foundry.applications.api;
 
 export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2) {
-	constructor(options={}) {
+	constructor(options = {}) {
 		super(options);
-		this.system = new skyfall.models.other.RollConfiguration({rollMode:game.settings.get("core", "rollMode")});
+		this.system = new skyfall.models.other.RollConfiguration({ rollMode: game.settings.get("core", "rollMode") });
 		this._reset(options);
-		if ( options.skipConfig ) this._roll();
+		if (options.skipConfig) this._roll();
 	}
 
-	_reset(options){
+	_reset(options) {
 		this.actor ??= options.actor ?? game.canvas.tokens.controlled[0]?.actor ?? null;
 		this.target = this._getTarget();
 		this.message ??= options.message ? game.messages.get(options.message) : null;
@@ -23,7 +23,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		this._prepareTransforms(options);
 	}
 
-	_configFromRoll(roll){
+	_configFromRoll(roll) {
 		this.config = {
 			type: roll.options.type,
 			ability: roll.options.ability,
@@ -33,7 +33,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		}
 	}
 
-	_configFromRequest( options ){
+	_configFromRequest(options) {
 		// if ( foundry.utils.getType(options.ability) == 'string' ) {
 		// 	this.rollData['mod'] = 5 ?? Number(options.ability) ?? `${options.ability}`;
 		// 	options.ability = `@mod`;
@@ -50,14 +50,14 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		}
 	}
 
-	_prepareTerms(){
-		if ( ['damage','catharsis'].includes(this.config.type) ) {
-			this.config.formula = this.config.formula.replace('-','+-');
+	_prepareTerms() {
+		if (['damage', 'catharsis'].includes(this.config.type)) {
+			this.config.formula = this.config.formula.replace('-', '+-');
 			this.config.formula.split('+').reduce((acc, term) => {
 				let t = new RollSF(term, this.rollData).terms[0];
 				acc.push({
 					expression: t.options.data ? `@${t.options.data}` : t.expression,
-					label:`Base`,
+					label: `Base`,
 					flavor: t.flavor,
 					options: {
 						flavor: t.flavor,
@@ -70,18 +70,18 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 			}, this.system.terms);
 		} else {
 			// this.terms.push({expression:'1d20',label:'d20',flavor:'d20'});
-			if ( this.ability?.id ){
+			if (this.ability?.id) {
 				this.system.terms.push({
-					expression:`@${this.ability.id}`,
-					label:`${this.ability.label}`,
-					flavor:'ability',
+					expression: `@${this.ability.id}`,
+					label: `${this.ability.label}`,
+					flavor: 'ability',
 					preview: this.rollData[this.ability.id] ?? 0,
 					//this.actor.getRollData()[this.ability.id] ?? 0,
 					active: true,
 				});
-			} else if ( this.config.ability == "@mod" ) {
+			} else if (this.config.ability == "@mod") {
 				this.system.terms.push({
-					expression:`@mod`,
+					expression: `@mod`,
 					label: `Modificador`,
 					flavor: 'ability',
 					preview: this.rollData['mod'] ?? 0,
@@ -89,27 +89,27 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 					active: true,
 				});
 			}
-			if ( this.skill ){
+			if (this.skill) {
 				this.system.terms.push({
 					expression: `@${this.skill.id}`,
-					label:`${this.skill.label}`,
-					flavor:'proficiency',
+					label: `${this.skill.label}`,
+					flavor: 'proficiency',
 					preview: this.rollData[this.skill.id] ?? 0,
 					//this.actor.getRollData()[this.skill.id] ?? 0,
 					active: true,
 				});
 			}
-			if ( this.config.type == "attack" ){
+			if (this.config.type == "attack") {
 				this.system.terms.push({
 					expression: `@prof`,
-					label:`Proficiência`,
-					flavor:'proficiency',
+					label: `Proficiência`,
+					flavor: 'proficiency',
 					preview: this.rollData['prof'] ?? 0,
 					//this.actor.getRollData()['prof'] ?? 0,
 					active: true,
 				});
 			}
-			if ( this.config.bonus ){
+			if (this.config.bonus) {
 				this.system.terms.push({
 					expression: this.config.bonus,
 					label: `Bonus`,
@@ -121,11 +121,11 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		}
 	}
 
-	_prepareTransforms(){
+	_prepareTransforms() {
 		const keep = this._hasKeep();
-		if ( ['catharsis'].includes(this.config.type) ) {
+		if (['catharsis'].includes(this.config.type)) {
 
-		} else if ( ['damage'].includes(this.config.type) ) {
+		} else if (['damage'].includes(this.config.type)) {
 			this.system.transformers.push({
 				label: "Crítico",
 				expression: ["d*2"], //"critical",
@@ -157,29 +157,29 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		}
 	}
 
-	_hasKeep(){
-		let result =  0;
+	_hasKeep() {
+		let result = 0;
 		const rollMods = foundry.utils.getProperty(this.actor, `system.modifiers.roll.${this.config.type}.mod`) ?? [];
 		const statuses = this.target?.statuses ?? new Set();
-		
+
 		// KEYUP
 		result += this.options.advantageConfig ? this.options.advantageConfig : 0;
 		result += rollMods.includes("kh") ? 1 : 0;
 		result += rollMods.includes("kl") ? -1 : 0;
-		if ( this.config.protection ) {
-			result += statuses.has( `protected-${this.config.protection}` ) ? -1 : 0;
-			result += statuses.has( `protected-all` ) ? -1 : 0;
-			result += statuses.has( `unprotected-${this.config.protection}` ) ? 1 : 0;
-			result += statuses.has( `unprotected-all` ) ? 1 : 0;
-			if ( ["str","dex","con"].includes(this.config.protection) ) {
-				result += statuses.has( `protected-physical` ) ? -1 : 0;
-				result += statuses.has( `unprotected-physical` ) ? 1 : 0;
-			} else if ( ["int","wis","cha"].includes(this.config.protection) ) {
-				result += statuses.has( `protected-mental` ) ? -1 : 0;
-				result += statuses.has( `unprotected-mental` ) ? 1 : 0;
+		if (this.config.protection) {
+			result += statuses.has(`protected-${this.config.protection}`) ? -1 : 0;
+			result += statuses.has(`protected-all`) ? -1 : 0;
+			result += statuses.has(`unprotected-${this.config.protection}`) ? 1 : 0;
+			result += statuses.has(`unprotected-all`) ? 1 : 0;
+			if (["str", "dex", "con"].includes(this.config.protection)) {
+				result += statuses.has(`protected-physical`) ? -1 : 0;
+				result += statuses.has(`unprotected-physical`) ? 1 : 0;
+			} else if (["int", "wis", "cha"].includes(this.config.protection)) {
+				result += statuses.has(`protected-mental`) ? -1 : 0;
+				result += statuses.has(`unprotected-mental`) ? 1 : 0;
 			}
 		}
-		return Math.clamp(-1, result , 1);
+		return Math.clamp(-1, result, 1);
 	}
 
 	static DEFAULT_OPTIONS = {
@@ -205,7 +205,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	system;
-	config = {type: null, ability: null, skill:null, formula:null, rollIndex:null};
+	config = { type: null, ability: null, skill: null, formula: null, rollIndex: null };
 	ability;
 	skill;
 	actor;
@@ -225,7 +225,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	get title() {
 		return game.i18n.localize("SKYFALL2.APP.RollConfig");
 	}
-	
+
 	/* -------------------------------------------- */
 	/*  Rendering                                   */
 	/* -------------------------------------------- */
@@ -237,7 +237,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	}
 
 	/** @override */
-	async _prepareContext(_options={}) {
+	async _prepareContext(_options = {}) {
 		const context = {
 			SYSTEM: SYSTEM,
 			terms: this.system.terms,
@@ -259,23 +259,23 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 				})),
 			},
 			buttons: [
-				{type: "button", action:"roll", icon: "fas fa-check", label: "SKYFALL2.Confirm"}
+				{ type: "button", action: "roll", icon: "fas fa-check", label: "SKYFALL2.Confirm" }
 			]
 		}
 		// console.log(context);
 		return context;
 	}
 
-	_getTarget(){
+	_getTarget() {
 		const token = game.user.targets.first();
-		if ( !token ) return null;
+		if (!token) return null;
 		const target = {}
 		target.name = token.name;
 		target.statuses = token.actor.statuses;
 		// target.transformers = target.statuses.map( t => SYSTEM.rollTransformers[t] ).filter(Boolean);
 		return target
 
-		const targets = game.user.targets.reduce( acc, t => acc.push({name:t.name, statuses: t.actor.statuses}),[]);
+		const targets = game.user.targets.reduce(acc, t => acc.push({ name: t.name, statuses: t.actor.statuses }), []);
 		for (const token of targets) {
 			token.actor.statuses
 		}
@@ -284,7 +284,7 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 	/*  Event Listeners and Handlers                */
 	/* -------------------------------------------- */
 
-	static #onAddTerm (event, target) {
+	static #onAddTerm(event, target) {
 		const label = target.closest('li').querySelector('input[name=label]');
 		const expression = target.closest('li').querySelector('input[name=expression]');
 		const flavor = target.closest('li').querySelector('input[name=flavor]');
@@ -297,20 +297,20 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		this.render();
 	}
 
-	static #onDeleteTerm (event, target) {
+	static #onDeleteTerm(event, target) {
 		this.system.terms.splice(target.dataset.delete, 1);
 		this.render();
 	}
-	static #onAddModifier (event, target) {
+	static #onAddModifier(event, target) {
 
 	}
-	static #onDeleteModifier (event, target) {
+	static #onDeleteModifier(event, target) {
 		this.system.transformers.splice(target.dataset.delete, 1);
 		this.render();
 	}
 
-	static #onCheck(event, target){
-		if ( !foundry.utils.hasProperty(this.system, target.name) ) return;
+	static #onCheck(event, target) {
+		if (!foundry.utils.hasProperty(this.system, target.name)) return;
 		const prop = foundry.utils.getProperty(this.system, target.name);
 		foundry.utils.setProperty(this.system, target.name, !prop);
 		this.render();
@@ -322,82 +322,82 @@ export default class RollConfig extends HandlebarsApplicationMixin(ApplicationV2
 		this._roll();
 		this.close();
 	}
-	
-	async _roll(){
+
+	async _roll() {
 		// this.config.type
 		let roll;
-		if ( ['damage'].includes(this.config.type) ) {
+		if (['damage'].includes(this.config.type)) {
 			roll = new RollSF([
-				...this.system.terms.filter(t => t.active )
-			].map(t => `${t.expression}${t.options?.flavor?'['+t.options.flavor+']':''}`).join('+'), this.rollData, this.config);
+				...this.system.terms.filter(t => t.active)
+			].map(t => `${t.expression}${t.options?.flavor ? '[' + t.options.flavor + ']' : ''}`).join('+'), this.rollData, this.config);
 			// this.actor.getRollData()
 			// TODO APPLY TRANSFORMERS
-			const trns = this.system.transformers.filter(t => t.active );
+			const trns = this.system.transformers.filter(t => t.active);
 			for (const transformer of trns) {
-				if ( transformer.expression == "d*2" ) roll.alter(2);
+				if (transformer.expression == "d*2") roll.alter(2);
 			}
-		} else if ( ['catharsis'].includes(this.config.type) ) {
+		} else if (['catharsis'].includes(this.config.type)) {
 			roll = new RollSF([
-				...this.system.terms.filter(t => t.active )
-			].map(t => t.expression ).join('+'), this.rollData, this.config);
-		
+				...this.system.terms.filter(t => t.active)
+			].map(t => t.expression).join('+'), this.rollData, this.config);
+
 		} else {
 			roll = new RollSF([
-				{expression:"1d20"},
-				...this.system.terms.filter(t => t.active )
+				{ expression: "1d20" },
+				...this.system.terms.filter(t => t.active)
 			].map(t => t.expression).join('+'), this.rollData, this.config);
 			// this.actor.getRollData()
 			// TODO APPLY TRANSFORMERS
-			const trns = this.system.transformers.filter(t => t.active );
+			const trns = this.system.transformers.filter(t => t.active);
 			for (const transformer of trns) {
-	
-				if ( transformer.expression == "disadvantage" ) roll.advantage({mod:"kl"})
-				else if ( transformer.expression == "advantage" ) {
-					roll.advantage({mod:"kh"});
-					if ( transformer.expression == "advantage+" ) roll.advantage({mod:"kh",extra:true});
+
+				if (transformer.expression == "disadvantage") roll.advantage({ mod: "kl" })
+				else if (transformer.expression == "advantage") {
+					roll.advantage({ mod: "kh" });
+					if (transformer.expression == "advantage+") roll.advantage({ mod: "kh", extra: true });
 				}
 			}
 		}
 		// Initiative
-		if ( this.config.type == 'initiative') {
+		if (this.config.type == 'initiative') {
 			try {
 				const partner = this.actor.type == 'partner';
 				roll.options.flavor = skyfall.utils.rollTitle(this.config);
 				await roll.evaluate();
-				if ( !partner ) roll.toMessage({}, {rollMode: this.system.rollMode});
+				if (!partner) roll.toMessage({}, { rollMode: this.system.rollMode });
 				let combat = game.combats.active;
 				if (!combat) return;
-				const boss = ( this.actor.type == 'npc' && this.actor.system.isBoss );
-				
+				const boss = (this.actor.type == 'npc' && this.actor.system.isBoss);
+
 				let combatant = combat.combatants.find(
-					(c) => ( c.initiative == null && ((boss && c.initiative == null && c.actor.id === this.actor.id ) || (!boss && c.actor.id === this.actor.id )) )
+					(c) => (c.initiative == null && ((boss && c.initiative == null && c.actor.id === this.actor.id) || (!boss && c.actor.id === this.actor.id)))
 				);
-				if ( !combatant || combatant.initiative != null ) return;
-				combat.setInitiative(combatant.id, (partner ? 0 : roll.total ));
+				if (!combatant || combatant.initiative != null) return;
+				// combat.setInitiative(combatant.id, (partner ? 0 : roll.total ));
 				console.log(`Foundry VTT | Iniciativa Atualizada para ${combatant._id} (${combatant.actor.name})`);
-				
+
 			} catch (error) {
 				console.warn(`Foundry VTT | Erro ao adicionar a Iniciativa, ${combatant._id} (${combatant.actor.name})`);
 			}
 		}
-		else if ( this.message?.type == 'usage' && this.config.rollIndex !== null ) { //this.message?.type == 'usage' && 
+		else if (this.message?.type == 'usage' && this.config.rollIndex !== null) { //this.message?.type == 'usage' && 
 			// TODO Evaluate and ADD to a existing message;
 			roll.options.flavor = skyfall.utils.rollTitle(this.config);
 			await roll.evaluate();
 			this.message._updateRoll(roll, this.config.rollIndex);
 			return;
-		} else if ( this.options.createMessage ) roll.toMessage({}, {rollMode: this.system.rollMode});
+		} else if (this.options.createMessage) roll.toMessage({}, { rollMode: this.system.rollMode });
 		return roll;
 	}
 
-	static #onReset (event, target) {
+	static #onReset(event, target) {
 		this._reset(this.options);
 	}
 
 	static async #onSubmit(event, form, formData) {
 		let updateSource = formData.object;
 		updateSource = foundry.utils.mergeObject(updateSource, foundry.utils.flattenObject(this.system.toObject()));
-		
+
 		this.system.updateSource(updateSource);
 		this.render();
 		return;
