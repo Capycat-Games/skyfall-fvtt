@@ -1,17 +1,9 @@
+# Build Artifacts
+dist/
+
 # IDE
-.idea/
-.vs/
 .vscode/
+.notes/
 
 # Node Modules
 node_modules/
-npm-debug.log
-
-# Foundry
-*.lock
-jsconfig.json
-foundry
-
-# Skyfall
-build/
-_notes/
