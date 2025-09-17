@@ -1,11 +1,29 @@
 /* ----------------------------------------- */
 /*  Application Styles                       */
 /* ----------------------------------------- */
+
+.skyfall.sheet {
+	.input-element-tags .tag {
+		color: white;
+
+		* {
+			color: white;
+		}
+	}
+
+	.content-link {
+		background: #ddd;
+		border: 1px solid #444;
+		color: #222;
+	}
+}
+
 .skyfall {
 	nav.tabs {
 		.item {
 			color: black;
 		}
+
 		.item.active {
 			color: black;
 			// text-shadow: 0 0 8px @colorSFPlayer;
@@ -17,44 +35,66 @@
 /*  Sheet Styles                             */
 /* ----------------------------------------- */
 .skyfall.sheet {
+
 	.standard-form,
 	&.standard-form {
 		--actor-color-1: #182657;
 		--actor-color-2: #c9d1db;
 		--actor-color-3: #424f66;
 		--actor-color-4: #babecd;
+
 		.form-footer {
 			button {
 				* {
 					color: var(--actor-color-1);
-					i { color: var(--actor-color-1); }
+
+					i {
+						color: var(--actor-color-1);
+					}
 				}
+
 				background-color: white;
 				border: 2px solid var(--actor-color-3);
 				border-radius: 0;
+
 				&:hover {
 					* {
 						color: white;
-						i { color: white }
+
+						i {
+							color: white
+						}
 					}
-					background-color: var(--actor-color-1);;
+
+					background-color: var(--actor-color-1);
+					;
 				}
 			}
 		}
 	}
 }
+
 .skyfall.sheet {
 	gap: 0;
-	input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], select {
+
+	input[type="text"],
+	input[type="number"],
+	input[type="password"],
+	input[type="date"],
+	input[type="time"],
+	input[type="search"],
+	select {
 		height: 22px;
 		font-size: 14px;
 	}
+
 	.item-controls {
 		white-space: nowrap;
 		flex: 0;
 		font-size: 14px;
 		text-align: right;
 	}
+
 	.effects-list {
 		img {
 			width: 32px;
@@ -62,20 +102,29 @@
 			flex: 0;
 			margin-right: 10px;
 		}
-		.effect-name { flex: 1 }
-		.effect-source, .effect-duration {
+
+		.effect-name {
+			flex: 1
+		}
+
+		.effect-source,
+		.effect-duration {
 			flex: 0 0 150px;
 			text-align: center;
 		}
+
 		.effect-controls {
 			flex: 0 0 80px;
 			white-space: nowrap;
-			}
+		}
 	}
-	.editor, .editor-content {
+
+	.editor,
+	.editor-content {
 		min-height: 100px;
 		min-height: 6em;
 	}
+
 	.editor.prosemirror {
 		min-height: 150px;
 	}
@@ -85,34 +134,41 @@
 			display: none;
 
 		}
-		.tags-options + .chosen-tags {
+
+		.tags-options+.chosen-tags {
 			align-self: flex-end;
 		}
-	
+
 		.tags-options:hover,
-		.field-tag:focus + .tags-options {
+		.field-tag:focus+.tags-options {
 			display: flex;
 			background-color: white;
 			z-index: 3;
 			position: absolute;
 			height: 200px;
 			top: 2em;
-			/*bottom: -210px*/;
+			/*bottom: -210px*/
+			;
 			overflow-y: auto;
 			right: 10px;
 			width: 350px;
 		}
 	}
 
-	.modification-effects, .base-effects {
+	.modification-effects,
+	.base-effects {
 		.list-items {
-			.item, .items-header {
+
+			.item,
+			.items-header {
 				.effect-name {
 					flex: 2;
 				}
 			}
+
 			.item {
 				align-content: center;
+
 				img {
 					width: 36px;
 					flex: 0 0 36px;
@@ -121,17 +177,20 @@
 			}
 		}
 	}
-	
+
 	.filter-list {
 		list-style: none;
 		padding: 0;
+
 		image {
 			filter: invert(0%) contrast(0%) brightness(0%);
 		}
+
 		li.filter-item {
 			cursor: pointer;
 			opacity: 0.5;
 		}
+
 		li.active {
 			// text-shadow: 0 0 10px var(--color-shadow-primary);
 			opacity: 1;
@@ -144,8 +203,8 @@
 /* ----------------------------------------- */
 .skyfall.dialog.benefits {
 	li.item-header h4 {
-		background-color: rgba(0,0,0,.05);
-		
+		background-color: rgba(0, 0, 0, .05);
+
 	}
 }
 
@@ -153,8 +212,10 @@
 /* ----------------------------------------- */
 /*  Journal Styles                           */
 /* ----------------------------------------- */
-.skyfall.sheet, .journal-sheet.sheet {
-	.modification-header ,
+.skyfall.sheet,
+.journal-sheet.sheet {
+
+	.modification-header,
 	.modification-description {
 		padding: 5px;
 		border: 1px solid black;
@@ -163,25 +224,32 @@
 		background-color: #e7e8ed;
 		color: @colorSFPlayer;
 	}
-	.modification-header  {
+
+	.modification-header {
 		padding: 0;
 		display: flex;
 		flex-direction: row;
-		
+
 		.modification-name {
 			flex: 1;
 			padding: 5px;
 		}
+
 		.controls {
 			padding: 1px;
-			button, input {
+
+			button,
+			input {
 				--button-size: 26px;
 				--input-height: 26px;
+
 				&[type=checkbox] {
 					background-color: unset;
 				}
+
 				text-align: center;
 			}
+
 			flex: 0;
 			justify-content: center;
 		}
@@ -195,23 +263,35 @@
 	.modification-header {
 		font-weight: bold;
 		background-color: @colorSFPlayerFaint;
+
 		.controls {
 			white-space: nowrap;
 			flex: 0;
+
 			button {
 				* {
 					color: var(--actor-color-1);
-					i { color: var(--actor-color-1); }
+
+					i {
+						color: var(--actor-color-1);
+					}
 				}
+
 				background-color: white;
 				border: 2px solid var(--actor-color-3);
 				border-radius: 0;
+
 				&:hover {
 					* {
 						color: white;
-						i { color: white }
+
+						i {
+							color: white
+						}
 					}
-					background-color: var(--actor-color-1);;
+
+					background-color: var(--actor-color-1);
+					;
 				}
 			}
 		}
@@ -219,11 +299,14 @@
 }
 
 .skyfall {
+
 	&.modification-config,
 	&.ability-modification-config {
+
 		.modification.header,
-		.modifications > .modification {
+		.modifications>.modification {
 			position: relative;
+
 			.controls {
 				position: relative;
 				float: right;
@@ -233,29 +316,39 @@
 				display: flex;
 				flex-wrap: nowrap;
 				flex: 0 0 90px;
-				button, input {
+
+				button,
+				input {
 					flex: 0 0 30px;
 					max-width: 30px;
 				}
 			}
 		}
+
 		.form-footer {
 			button {
 				background-color: @colorSFPlayer;
 				color: white;
-				span, i,
-				label {color: white;}
+
+				span,
+				i,
+				label {
+					color: white;
+				}
 			}
+
 			display: flex;
 			flex-direction: row;
 		}
 	}
+
 	&.item-usage-config {
-		.header > * {
+		.header>* {
 			label {
 				align-content: center;
 				margin-left: 5px;
 			}
+
 			img {
 				flex: 0;
 			}
@@ -263,18 +356,23 @@
 
 		.modifications {
 			border: 1px dashed black;
-			
+
 			.modification {
-				> * {
+				>* {
 					padding: 5px;
 					align-content: center;
 				}
+
 				.controls {
 					flex-wrap: nowrap;
+
 					input {
 						// width: auto;
 						flex: 1;
-					};
+					}
+
+					;
+
 					button {
 						flex: 0;
 						width: 16px;
@@ -284,24 +382,29 @@
 						padding: 0 2px;
 					}
 				}
-				.controls, .cost {
+
+				.controls,
+				.cost {
 					text-align: center;
 					flex: 0 0 70px;
 				}
+
 				.name {
 					text-align: center;
 					flex: 0 0 70px;
 				}
-				.description {
 
-				}
+				.description {}
 			}
 		}
 	}
 }
+
 .skyfall {
 	&.rest-config {
-		input, .entry > div {
+
+		input,
+		.entry>div {
 			text-align: center;
 		}
 	}
@@ -310,10 +413,12 @@
 .skyfall.scene-control {
 	.window-content {
 		padding: 5px;
+
 		.table-catharsis {
 			flex-wrap: wrap;
 			justify-content: center;
 			gap: 2px;
+
 			.die {
 				font-size: 32px;
 				height: 32px;
@@ -323,25 +428,29 @@
 				background-position: center;
 				background-repeat: no-repeat;
 				text-align: center;
-				svg, svg image {
+
+				svg,
+				svg image {
 					height: 32px;
 					width: 32px;
 				}
 			}
 		}
-		
+
 
 		.form-footer {
 			display: flex;
 			flex-direction: row;
-			
+
 		}
 
 	}
+
 	footer {
 		button {
 			background-color: @colorSFPlayer;
-			> * {
+
+			>* {
 				line-height: 1.5em;
 				color: white !important;
 			}
@@ -350,13 +459,20 @@
 }
 
 .skyfall.effects-menu {
-	max-width: 50px!important;
-	min-width: 50px!important;
-	width: 50px!important;
-	left: calc(100vw - 420px)!important;
+	max-width: 50px !important;
+	min-width: 50px !important;
+	width: 50px !important;
+	left: calc(100vw - 420px) !important;
 	visibility: hidden;
-	.window-header { display: none; }
-	.window-content { padding: 5px; }
+
+	.window-header {
+		display: none;
+	}
+
+	.window-content {
+		padding: 5px;
+	}
+
 	.effect {
 		visibility: visible;
 		position: relative;
@@ -367,6 +483,7 @@
 		width: 40px;
 		height: 40px;
 		background-size: cover;
+
 		.stack {
 			position: absolute;
 			background-color: red;
@@ -385,12 +502,15 @@
 /* ----------------------------------------- */
 
 #sidebar {
-	.actors-sidebar, .items-sidebar {
+
+	.actors-sidebar,
+	.items-sidebar {
 		.directory-item.document .entry-name {
 			line-height: normal;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+
 			.document-info {
 				white-space: break-spaces;
 				font-size: x-small;

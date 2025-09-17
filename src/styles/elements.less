@@ -4,18 +4,23 @@ dropdown-tags {
 	flex-direction: row;
 	flex-wrap: wrap;
 	position: relative;
-	> * {
+
+	>* {
 		display: flex;
 		flex: 1;
 	}
+
 	input {
 		z-index: 3;
 	}
+
 	button {
-		flex:0;
+		flex: 0;
 		align-items: center;
 	}
-	.input-element-tags, .tags-dropdown {
+
+	.input-element-tags,
+	.tags-dropdown {
 		flex: 0 0 100%;
 	}
 
@@ -23,36 +28,43 @@ dropdown-tags {
 		* {
 			font-size: 16px;
 		}
+
 		&.active {
 			display: flex;
 		}
+
 		display: none;
 		background-color: var(--input-background-color);
 		z-index: 2;
 		margin-top: 2em;
 		position: absolute;
-		
+
 		flex-direction: row;
 		flex-wrap: wrap;
 		gap: 0.2em;
+
 		.checkbox {
 			cursor: pointer;
 			text-align: center;
 			display: flex;
 			flex: 0;
 			white-space: nowrap;
+
 			input {
 				display: none;
 			}
 		}
+
 		.checkbox:has(input:checked) {
 			opacity: 1;
 		}
+
 		fieldset {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
 			flex: 0 0 100%;
+
 			legend {
 				float: left;
 				color: gray;

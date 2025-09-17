@@ -9,13 +9,13 @@ export default class InitiativeData extends SkyfallDataModel {
 		return {
 			abilities: new _fields.ArrayField(
 				new fields.StringField({}), {
-					choices: skyfall.utils.keyPairObject(
-						SYSTEM.abilitiesCore, 'abbr'
-					),
-					initial: ['dex'],
-					type: "checkboxes",
-					label: "SKYFALL2.AbilityPl",
-				}
+				choices: skyfall.utils.keyPairObject(
+					SYSTEM.abilitiesCore, 'abbr'
+				),
+				initial: ['dex'],
+				type: "checkboxes",
+				label: "SKYFALL2.AbilityPl",
+			}
 			),
 			bonus: new fields.NumberField({
 				required: true,
@@ -30,12 +30,12 @@ export default class InitiativeData extends SkyfallDataModel {
 			}),
 		}
 	}
-	
+
 	/* -------------------------------------------- */
 	/*  Getters/Setters                             */
 	/* -------------------------------------------- */
-	
-	get sheet(){
+
+	get sheet() {
 		return new ActorConfigurationSheet({
 			document: this.document,
 			fieldPath: this.schema.fieldPath,
@@ -47,21 +47,21 @@ export default class InitiativeData extends SkyfallDataModel {
 	/* -------------------------------------------- */
 	/*  System Operations                           */
 	/* -------------------------------------------- */
-	
+
 	get roll() {
 		const rollData = this.document.getRollData();
 		const bonuses = [...this.bonuses];
 		const terms = [];
-		terms.push( `${this.bonus}[||bonus]` );
-		terms.push( ...bonuses.map( i => `${i.value ?? 0}[||${i.source ?? '-'}]`));
-		
-		const roll = new SkyfallRoll( terms.join(' + '), rollData );
+		terms.push(`${this.bonus}[||bonus]`);
+		terms.push(...bonuses.map(i => `${i.value ?? 0}[||${i.source ?? '-'}]`));
+
+		const roll = new SkyfallRoll(terms.join(' + '), rollData);
 		return roll;
 	}
 
 	get total() {
 		const roll = this.roll;
-		if ( !roll.isDeterministic ) {
+		if (!roll.isDeterministic) {
 			ui.notifications.error("SKYFALL.RESOURCE.NonDeterministic", {
 				localize: true
 			});
@@ -73,12 +73,12 @@ export default class InitiativeData extends SkyfallDataModel {
 	/* -------------------------------------------- */
 	/*  Apply Effect                                */
 	/* -------------------------------------------- */
-	
+
 	apply() {
-		
+
 	}
-	
+
 	_prepareData() {
-		
+
 	}
 }

@@ -1044,6 +1044,7 @@
     "Granting": "Concedendo",
     "Search": "Busca",
     "Create": "Criar",
+    "Delete": "Excluir",
     "Type": "Tipo",
     "Size": "Tamanho",
     "Value": "Valor",
@@ -1682,7 +1683,9 @@
     },
     "ChangePriority": "Prioridade"
   },
-  "NOTIFICATION": {
+  "NOTIFICATIONS": {
+    "SigilDropOnActor": "Sígilos devem ser arrastados para a ficha de items.",
+    "ConsumableNotFound": "Consumível não encontrado.",
     "InvalidItemSigil": "Este Sígilo não é compatível com este item.",
     "DuplicatedItemSigil": "O item já possuí o Sígilo",
     "NotEnougthResource": "Não há {resource} o suficiente.",

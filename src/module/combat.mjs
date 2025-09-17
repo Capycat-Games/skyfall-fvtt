@@ -5,16 +5,34 @@
  */
 export class CombatTrackerSkyfall extends foundry.applications.sidebar.tabs.CombatTracker {
 	/** @inheritdoc */
-	async _onCombatantControl(event) {
-		const btn = event.currentTarget;
-		const combatantId = btn.closest(".combatant").dataset.combatantId;
-		const combatant = this.viewed.combatants.get(combatantId);
-		if ( (btn.dataset.control === "rollInitiative") && combatant?.actor ) {
+	async _onCombatantControl(event, target) {
+		if (target.dataset.action === "rollInitiative") {
+			console.log(event, target);
+			const combatantId = target.closest(".combatant").dataset.combatantId;
+			const combatant = this.viewed.combatants.get(combatantId);
+			const { ModificationConfig } = skyfall.applications;
 			const combat = combatant.parent;
 			const combatants = combat.combatants.filter(i => i.actorId == combatant.actorId);
 			for (const combatant of combatants) {
-				if ( combatant.initiative != null ) continue;
-				combatant.actor.rollInitiative();
+				if (combatant.initiative != null) continue;
+
+				const MODCONFIG = await ModificationConfig.fromData({
+					actor: combatant.actor.uuid,
+					ability: 'dex',
+					check: {
+						type: "initiative",
+						id: "dex",
+						abl: "dex",
+						abilities: ["dex"],
+						ability: "dex"
+					},
+					rollconfig: {
+						rollmode: (event.altKey ? 'disadvantage' : (event.ctrlKey ? 'advantage' : null)),
+					},
+					appliedMods: [],
+					effects: [],
+				});
+				MODCONFIG.render(true);
 			}
 			return;
 		}

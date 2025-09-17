@@ -1,6 +1,6 @@
 <ol class="plain {{cssClass}}">
 	{{#each content as | data | }}
-		<li class="flexrow type-{{data.type}} {{ifThen data.item '' 'empty'}}" data-entry-id="{{data.item._id}}"
+		<li class="flexrow type-{{data.type}} {{ifThen data.item 'draggable' 'empty'}}" data-entry-id="{{data.item._id}}"
 			data-source-id="{{data.id}}">
 			<div class="entry flexrow type-{{data.type}}  {{ifThen data.item '' 'empty'}}">
 				<div class="item-name flexrow">

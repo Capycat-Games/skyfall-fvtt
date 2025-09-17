@@ -7,16 +7,16 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 	/** @override */
 	static DEFAULT_OPTIONS = {
 		classes: ["skyfall", "guild-ability", "ability", "item"],
-		position: {width: "auto", height: "auto"},
+		position: { width: "auto", height: "auto" },
 		form: {
 			handler: this.#onSubmitDocumentForm,
 			submitOnChange: true,
 		},
 		actions: {
-			
+
 		}
 	};
-	get docType () {
+	get docType() {
 		return this.document?.type ?? ''
 	}
 	_sheetMode = 1;
@@ -34,7 +34,6 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 				"systems/skyfall/templates/v2/item/sigil-config.hbs",
 				"systems/skyfall/templates/v2/item/guild-ability-config.hbs",
 				"systems/skyfall/templates/v2/shared/effects.hbs",
-				"systems/skyfall/templates/v2/item/item-deprecated.hbs",
 			],
 			scrollable: [".scrollable"],
 		},
@@ -42,8 +41,8 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 
 	/** @override */
 	static TABS = {
-		config: {id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active'},
-		effects: {id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS"}
+		config: { id: "config", group: "configuration", label: "SKYFALL.CONFIG", cssClass: 'active' },
+		effects: { id: "effects", group: "configuration", label: "SKYFALL.TAB.EFFECTS" }
 	};
 
 	/** @override */
@@ -51,20 +50,20 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 		configuration: "config"
 	};
 
-	
+
 	/** @override */
 	_configureRenderOptions(options) {
 		super._configureRenderOptions(options);
 		if (this.document.limited) return;
-		options.parts = ["ability","configuration"];
+		options.parts = ["ability", "configuration"];
 	}
 
 	/** @override */
 	async _preparePartContext(partId, context) {
-		if ( context.tabs[partId] ){
+		if (context.tabs[partId]) {
 			context.tab = context.tabs[partId];
-		} else if ( this.tabGroups[partId] ){
-			context.tab = context.tabs[ this.tabGroups[partId] ];
+		} else if (this.tabGroups[partId]) {
+			context.tab = context.tabs[this.tabGroups[partId]];
 		}
 		return context;
 	}
@@ -87,8 +86,8 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 			source: src.system,
 			schema: this._getDataFields(),
 			SYSTEM: SYSTEM,
-			effects: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'base') ),
-			modifications: prepareActiveEffectCategories( doc.effects.filter(ef=> ef.type == 'modification'), 'modification' ),
+			effects: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'base')),
+			modifications: prepareActiveEffectCategories(doc.effects.filter(ef => ef.type == 'modification'), 'modification'),
 			enriched: {
 				// description: await TextEditor.enrichHTML(doc.system.description.value, enrichmentOptions),
 			},
@@ -105,7 +104,7 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 				element: foundry.applications.elements
 			}
 		};
-		this.getDescriptors( context );
+		this.getDescriptors(context);
 		await this.getEnrichedFields(context);
 		await this.getModificationsEmbeds(context);
 		// console.log(context);
@@ -118,16 +117,16 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 		context.descriptors = {
 			guild: {
 				"id": "guild",
-				"type": [ "guild" ],
+				"type": ["guild"],
 				"label": game.i18n.localize("TYPES.Actor.guild"),
 				"hint": game.i18n.localize("TYPES.Actor.guild"),
 				"value": true
 			},
 		};
-		for (const abl of ['cunning','knowledge','crafting','reputation']) {
+		for (const abl of ['cunning', 'knowledge', 'crafting', 'reputation']) {
 			context.descriptors[abl] = {
 				"id": abl,
-				"type": [ "guild" ],
+				"type": ["guild"],
 				"label": game.i18n.localize(`SKYFALL2.GUILD.${abl.titleCase()}`),
 				"hint": game.i18n.localize(`SKYFALL2.GUILD.${abl.titleCase()}`),
 				"value": context.system.type == abl
@@ -135,14 +134,14 @@ export default class GuildAbilitySheetSkyfall extends SkyfallSheetMixin(ItemShee
 		}
 	}
 
-	async getModificationsEmbeds(context){
-		const embedded = context.modifications.modification.effects.map( ef => `@Embed[${ef.uuid}]` ).join(' ');
-		context.enriched.modifications = await TextEditor.enrichHTML(embedded,{});
+	async getModificationsEmbeds(context) {
+		const embedded = context.modifications.modification.effects.map(ef => `@Embed[${ef.uuid}]`).join(' ');
+		context.enriched.modifications = await TextEditor.enrichHTML(embedded, {});
 	}
 
-	async getEnrichedFields(context){
+	async getEnrichedFields(context) {
 		const effect = context.system.effect.descriptive;
-		if ( effect ) context.enriched.effect = await TextEditor.enrichHTML(effect,{});
+		if (effect) context.enriched.effect = await TextEditor.enrichHTML(effect, {});
 	}
 
 	/* ---------------------------------------- */

@@ -35,7 +35,10 @@ globalThis.skyfall = {
 	applications,
 	documents,
 	models,
-	sheets,
+	sheets: {
+		...sheets,
+		...sheetsV2,
+	},
 	dice: {
 		SkyfallRoll: dice.SkyfallRoll,
 		D20Roll: dice.D20Roll,
@@ -332,7 +335,7 @@ Hooks.on("renderPlayers", (app, html, context, options) => {
 		btn.title = game.i18n.localize('SKYFALL2.RESOURCE.GiveCatharsis');
 		btn.dataset['action'] = 'catharsis';
 		playerName.prepend(btn);
-		btn.addEventListener("click", _giveCatharsis.bind(this));
+		btn.addEventListener("click", _giveCatharsis.bind(app));
 	}
 });
 

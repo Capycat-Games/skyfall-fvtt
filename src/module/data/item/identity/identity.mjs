@@ -3,7 +3,7 @@ const TextEditor = foundry.applications.ux.TextEditor.implementation;
  * Data schema, attributes, and methods specific to Antecedente type Items.
  */
 export default class Identity extends foundry.abstract.TypeDataModel {
-	
+
 	/* -------------------------------------------- */
 	/*  Type Options                                */
 	/* -------------------------------------------- */
@@ -13,16 +13,16 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 			type: 'identity',
 			unique: false,
 			parentTypes: [],
-			benefitTypes: {feature: [], heritage: [], ability: [], grant: []},
+			benefitTypes: { feature: [], heritage: [], ability: [], grant: [] },
 			sheet: {
-				parts: ["header","tabs","description","benefits","feats","effects","deprecated"],
-				tabs: ["description","benefits","feats","effects","deprecated"],
+				parts: ["header", "tabs", "description", "benefits", "feats", "effects"],
+				tabs: ["description", "benefits", "feats", "effects"],
 				tabGroups: 'description',
 			}
 		}
 	}
 
-	get _typeOptions () {
+	get _typeOptions() {
 		return this.#typeOptions();
 	}
 
@@ -33,7 +33,7 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 		const fields = foundry.data.fields;
 		return {
 			description: new fields.SchemaField({
-				value: new fields.HTMLField({required: true, blank: true}),
+				value: new fields.HTMLField({ required: true, blank: true }),
 			}),
 			identifier: new fields.StringField({
 				required: true,
@@ -45,17 +45,17 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 					required: true,
 					initial: '',
 				}), {
-					label: "SKYFALL2.Origin",
+				label: "SKYFALL2.Origin",
 			}),
 			aquisition: new fields.ArrayField(
 				new fields.StringField({
 					required: true,
 					initial: '',
 				}), {
-					label: "SKYFALL2.Origin",
+				label: "SKYFALL2.Origin",
 			}),
 			features: new fields.SetField(new fields.SchemaField({
-				uuid: new fields.StringField({required: true}, {validate: Identity.validateUuid}),
+				uuid: new fields.StringField({ required: true }, { validate: Identity.validateUuid }),
 				level: new fields.NumberField({
 					required: true,
 					integer: true,
@@ -64,25 +64,25 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 					label: 'SKYFALL2.Level',
 				}),
 			})),
-			abilities: new fields.SetField(new fields.StringField({required: true}, {validate: Identity.validateUuid})),
+			abilities: new fields.SetField(new fields.StringField({ required: true }, { validate: Identity.validateUuid })),
 			featGroup: new fields.StringField({
 				required: true,
 				initial: '',
 				label: "SKYFALL2.FeatGroup",
 			}),
-			feats: new fields.SetField(new fields.StringField({required: true}, {validate: Identity.validateUuid})),
+			feats: new fields.SetField(new fields.StringField({ required: true }, { validate: Identity.validateUuid })),
 			benefits: new fields.ArrayField(
-				this._schemaBenefits({level:1}),
+				this._schemaBenefits({ level: 1 }),
 			),
-			favorite: new fields.BooleanField({initial: false}),
+			favorite: new fields.BooleanField({ initial: false }),
 			grantDebug2: new fields.ArrayField(
-				this._schemaBenefits({level:1}),
+				this._schemaBenefits({ level: 1 }),
 			),
 		}
 	}
-	
-	static migrateData(source){
-		if ( 'origin' in source && source.origin instanceof String ) {
+
+	static migrateData(source) {
+		if ('origin' in source && source.origin instanceof String) {
 			source.origin = [source.origin];
 		}
 	}
@@ -91,8 +91,8 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/*  Schema Factory                              */
 	/* -------------------------------------------- */
-	
-	static _schemaBenefits(options = {level: null}){
+
+	static _schemaBenefits(options = { level: null }) {
 		const fields = foundry.data.fields;
 		return new fields.SchemaField({
 			_id: new fields.StringField({
@@ -111,8 +111,8 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 				label: 'SKYFALL2.Type',
 			}),
 			uuid: new fields.StringField(
-				{required: true},
-				{validate: Identity.validateUuid}
+				{ required: true },
+				{ validate: Identity.validateUuid }
 			),
 			granting: new fields.StringField({
 				required: true,
@@ -141,13 +141,13 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 			}),
 		})
 	}
-	
-	
+
+
 	/* -------------------------------------------- */
 	/*  Getters & Setters                           */
 	/* -------------------------------------------- */
-	
-	get _benefits () {
+
+	get _benefits() {
 		const data = this.toObject(true);
 		let benefits = this._typeOptions.benefitTypes;
 		const content = data.benefits;
@@ -166,33 +166,33 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/*  Database Operations                         */
 	/* -------------------------------------------- */
-	
+
 	async _preCreate(data, options, user) {
-		if ( user.id != game.user.id) return false;
+		if (user.id != game.user.id) return false;
 		console.warn('Identity._preCreate');
 		let allowed = true;
-		if ( allowed ) allowed = await this._allowCreation();
-		if ( allowed ) allowed = await this.parent.system.identityOrigin();
+		if (allowed) allowed = await this._allowCreation();
+		if (allowed) allowed = await this.parent.system.identityOrigin();
 		return allowed;
 	}
 
-	async _allowCreation(){
-		if ( !this.parent.isEmbedded ) return true;
-		const {type, unique, parentTypes, benefitTypes} = this._typeOptions;
+	async _allowCreation() {
+		if (!this.parent.isEmbedded) return true;
+		const { type, unique, parentTypes, benefitTypes } = this._typeOptions;
 		const actor = this.parent.parent;
 		const identifier = this.identifier;
-		const existingItems = actor.items.filter( i => i.type == type );
-		const existingIdentifier = existingItems.find( i => i.system.identifier == identifier );
+		const existingItems = actor.items.filter(i => i.type == type);
+		const existingIdentifier = existingItems.find(i => i.system.identifier == identifier);
 		const { DialogV2 } = foundry.applications.api;
 		// Allow creation on Actor
-		if ( parentTypes.length && !parentTypes.includes(actor.type) ){
+		if (parentTypes.length && !parentTypes.includes(actor.type)) {
 			ui.notifications.warn(
 				game.i18n.localize("SKYFALL2.NOTIFICATION.InvalidParentType")
 			);
 			return false;
 		}
 		let allowed = true;
-		if ( unique && existingItems.length ) {
+		if (unique && existingItems.length) {
 			// UI: DUPLICATE ALERT / REPLACE PROMPT
 			allowed = await DialogV2.confirm({
 				content: game.i18n.format("SKYFALL2.DIALOG.OverwriteExistingItem", {
@@ -200,21 +200,21 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 					type: game.i18n.localize(`TYPES.Item.${type}`),
 				})
 			});
-			if ( allowed ) {
+			if (allowed) {
 				const existing = existingItems.find(Boolean);
 				await actor.deleteEmbeddedDocuments("Item", [existing.id]);
 			}
 			return allowed;
 		}
-		if ( identifier && existingIdentifier ) {
-			if ( type == 'class' ) {
+		if (identifier && existingIdentifier) {
+			if (type == 'class') {
 				const nextLevel = existingIdentifier.system.level + 1;
 				existingIdentifier.system.levelUp(nextLevel);
 				return false;
-			} else if ( type == 'path' ) {
+			} else if (type == 'path') {
 				const pathOrigin = existingIdentifier.system.origin;
 				pathOrigin.push('path-02');
-				existingIdentifier.update({'system.origin': pathOrigin});
+				existingIdentifier.update({ 'system.origin': pathOrigin });
 				return false;
 			} else {
 				// UI: DUPLICATE ALERT / REPLACE PROMPT
@@ -224,7 +224,7 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 						type: game.i18n.localize(`TYPES.Item.${type}`),
 					})
 				});
-				if ( allowed ) {
+				if (allowed) {
 					await actor.deleteEmbeddedDocuments("Item", [existingIdentifier.id]);
 				}
 				return allowed;
@@ -234,26 +234,26 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 	}
 
 	async identityOrigin() {
-		if ( !this.parent.isEmbedded ) return true;
+		if (!this.parent.isEmbedded) return true;
 		return true;
 	}
-	
+
 
 	_onCreate(data, options, userId) {
-		if ( userId != game.user.id) return false;
-		
+		if (userId != game.user.id) return false;
+
 		this._promptBenefitsDialog();
 	}
-	
-	_promptBenefitsDialog(){
-		if ( !this.parent.isEmbedded ) return;
-		const benefits = this.benefits.filter(i=> {
+
+	_promptBenefitsDialog() {
+		if (!this.parent.isEmbedded) return;
+		const benefits = this.benefits.filter(i => {
 			return (this.level ? i.level == this.level : true);
 		});
-		if ( !benefits.length ) return;
+		if (!benefits.length) return;
 		console.warn("Identity._promptBenefitsDialog");
 		const { BenefitsDialog } = skyfall.applications
-		BenefitsDialog.prompt({item: this.parent, level: this.level});
+		BenefitsDialog.prompt({ item: this.parent, level: this.level });
 
 	}
 	// async _preUpdate(changed, options, user) {}
@@ -262,7 +262,7 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 	/* -------------------------------------------- */
 	/*  Type Methods                                */
 	/* -------------------------------------------- */
-	
+
 	getRollData() {
 		return {}
 	}
@@ -272,40 +272,40 @@ export default class Identity extends foundry.abstract.TypeDataModel {
 	 * @param {string} uuid     The candidate value
 	 */
 	static validateUuid(uuid) {
-		const {documentType, documentId} = foundry.utils.parseUuid(uuid);
-		if ( CONST.DOCUMENT_TYPES.includes(documentType) || !foundry.data.validators.isValidId(documentId) ) {
+		const { documentType, documentId } = foundry.utils.parseUuid(uuid);
+		if (CONST.DOCUMENT_TYPES.includes(documentType) || !foundry.data.validators.isValidId(documentId)) {
 			throw new Error(`"${uuid}" is not a valid UUID string`);
 		}
 	}
 
-	async toEmbed(config, options={}) {
+	async toEmbed(config, options = {}) {
 		let content = await this._buildEmbedHTML(config, options);
-		if ( !content ) return null;
+		if (!content) return null;
 		// if ( content.match(this.parent._id) !== null ) return '<span>ERROR</span>';
 		let embed;
-		if ( config.inline ) embed = await this._createInlineEmbed(content, config, options);
+		if (config.inline) embed = await this._createInlineEmbed(content, config, options);
 		else embed = await this._createInlineEmbed(content, config, options);
-		if ( embed ) {
+		if (embed) {
 			embed.classList.add("content-embed");
 			embed.dataset.uuid = this.uuid;
 			embed.dataset.contentEmbed = "";
-			if ( config.classes ) embed.classList.add(...config.classes.split(" "));
+			if (config.classes) embed.classList.add(...config.classes.split(" "));
 		}
 		return embed;
 	}
 
-	async _buildEmbedHTML(config, options={}) {
+	async _buildEmbedHTML(config, options = {}) {
 		return this.description.value;
 	}
 
-	async _createInlineEmbed( content, config, options ) {
+	async _createInlineEmbed(content, config, options) {
 		const html = document.createElement('div');
 		html.innerHTML = await TextEditor.enrichHTML(content, {
 			...options, //async: true, 
 			relativeTo: this.parent
 		});
 		const anchor = this.parent.toAnchor();
-		if ( this.parent.type == 'heritage' ) {
+		if (this.parent.type == 'heritage') {
 			const title = document.createElement('h3');
 			title.innerHTML = anchor;
 			html.querySelector('div').prepend(title);

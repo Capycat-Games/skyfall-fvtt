@@ -32,7 +32,16 @@
 			{{/if}}
 		</div>
 		<div class="flex100"></div>
-		{{formGroup schema.description.value value=system.description.value height=250 localize=true}}
+		{{#if isEditable}}
+			{{formGroup
+				schema.description.value
+				value=system.description.value
+				height=250
+				localize=true
+			}}
+		{{else}}
+			{{{enriched.description}}}
+		{{/if}}
 	</div>
 	{{!-- ACTIVATION --}}
 	<fieldset>

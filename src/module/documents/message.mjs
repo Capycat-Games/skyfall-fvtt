@@ -203,7 +203,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 		if (sigil) { //sigil
 			if (sigil.system.charges.value == 0) {
 				return ui.notifications.error(
-					game.i18n.format("NOTIFICATION.NotEnougthResource", {
+					game.i18n.format("NOTIFICATIONS.NotEnougthResource", {
 						resource: game.i18n.localize("SKYFALL2.RESOURCE.ChargePl"),
 					})
 				)
@@ -254,6 +254,7 @@ export default class SkyfallChatMessage extends ChatMessage {
 		for await (const [i, roll] of systemRolls.entries()) {
 			const r = (roll instanceof SkyfallRoll ? roll : SkyfallRoll.fromData(roll));
 			r.index = i;
+			console.log(r);
 			if (index == i) {
 				if (r.options.type == 'damage' && critical) {
 					r.alter(2);
