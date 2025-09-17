@@ -1,9 +1,8 @@
 {
   "name": "skyfall",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "//": "TODO: add build compendiums",
   "scripts": {
     "build": "npm run rollup && npm run less",
     "build:watch": "npm run rollupcw && npm run less",
