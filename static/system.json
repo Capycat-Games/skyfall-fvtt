@@ -3,23 +3,26 @@
   "title": "Skyfall RPG",
   "description": "Sistema de Skyfall RPG para o FoundryVTT!",
   "version": "0.9.612",
-  "manifest": "https://raw.githubusercontent.com/Capycat-Games/skyfall-fvtt/main/system.json",
-  "download": "https://github.com/Capycat-Games/skyfall-fvtt/archive/refs/tags/v0.9.612-Beta.zip",
-  "url": "https://github.com/Capycat-Games/skyfall-fvtt",
-  "bugs": "https://github.com/Capycat-Games/skyfall-fvtt/issues",
+  "url": "https://github.com/VHPaiva/skyfall-fvtt/",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{MANIFEST}#",
   "license": "LICENSE",
   "readme": "README.md",
   "changelog": "CHANGELOG.md",
-  "background": "systems/skyfall/assets/skyfall.jpg",
+  
   "authors": [
     {
-      "name": "Capycat Games"
+      "name": "Capycat Games",
+      "discord": "capycatgames",
+      "server": "https://discord.com/invite/capycat-games-557241818664665109"
     },
     {
       "name": "Vizael",
       "discord": "vizael"
     }
   ],
+  
+  "background": "systems/skyfall/assets/skyfall.jpg",
   "media": [
     {
       "type": "setup",
@@ -30,7 +33,7 @@
   "compatibility": {
     "minimum": "13",
     "verified": "13",
-    "maximun": "13"
+    "maximum": "13"
   },
   "esmodules": ["skyfall.mjs"],
   "styles": ["skyfall.css", "skyfallV13.css"],
@@ -46,56 +49,6 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": [
-    {
-      "name": "characters",
-      "label": "Heróis (Beta)",
-      "system": "skyfall",
-      "path": "packs/characters",
-      "type": "Actor",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      },
-      "flags": {}
-    },
-    {
-      "name": "foes",
-      "label": "Ameaças (Beta)",
-      "system": "skyfall",
-      "path": "packs/foes",
-      "type": "Actor",
-      "ownership": {
-        "ASSISTANT": "OWNER"
-      },
-      "flags": {}
-    },
-    {
-      "name": "items",
-      "label": "Items (Beta)",
-      "system": "skyfall",
-      "path": "packs/items",
-      "type": "Item",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      },
-      "flags": {}
-    },
-    {
-      "name": "rules",
-      "label": "Regras (Beta)",
-      "system": "skyfall",
-      "path": "packs/rules",
-      "type": "JournalEntry",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      },
-      "flags": {}
-    }
-  ],
-  "packFolders": [],
   "documentTypes": {
     "Actor": {
       "character": {
@@ -214,10 +167,7 @@
       "extensions": ["css", "hbs"],
       "paths": [
         "skyfall.css",
-        "skyfallV13.css",
-        "templates",
-        "templatesV13",
-        "lang"
+        "templates"
       ]
     }
   },

@@ -1,0 +1,86 @@
+<section class="tab scrollable guild-{{tab.id}} {{tab.cssClass}} flexcol" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<div class="header flexrow">
+		<img class="profile-img" src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" height="100" width="100"/>
+		<h2 class="flex2">
+			<input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
+		</h2>
+		<h1 class="level text-center">
+			<small>{{localize "SKYFALL2.Level"}}</small>
+			<br>{{system.level}}
+		</h1>
+	</div>
+	<div class="abilities flexrow text-center">
+		<div class="ability">
+			<h6>{{localize schema.abilities.cunning.value.label}}</h6>
+			<span data-tooltip="{{{system.abilities.cunning.tooltip}}}">
+				{{system.abilities.cunning.value}}
+			</span>
+			<input type="number" name="system.abilities.cunning.bonus" value="{{system.abilities.cunning.bonus}}">
+			<hr>
+			<h6>{{localize schema.abilities.cunning.points.label}}</h6>
+			<input type="number" name="system.abilities.cunning.points" value="{{system.abilities.cunning.points}}">
+			<label data-tooltip="{{localize 'SKYFALL2.GUILD.AbilityPointsHint'}}"> {{system.abilities.cunning.short}} | {{system.abilities.cunning.long}}  ( {{system.abilities.cunning.limit}} )</label>
+		</div>
+		<div class="ability">
+			<h6>{{localize schema.abilities.knowledge.value.label}}</h6>
+			<span data-tooltip="{{{system.abilities.knowledge.tooltip}}}">
+				{{system.abilities.knowledge.value}}
+			</span>
+			<input type="number" name="system.abilities.knowledge.bonus" value="{{system.abilities.knowledge.bonus}}">
+			<hr>
+			<h6>{{localize schema.abilities.knowledge.points.label}}</h6>
+			<input type="number" name="system.abilities.knowledge.points" value="{{system.abilities.knowledge.points}}">
+			<label data-tooltip="{{localize 'SKYFALL2.GUILD.AbilityPointsHint'}}"> {{system.abilities.knowledge.short}} | {{system.abilities.knowledge.long}}  ( {{system.abilities.knowledge.limit}} )</label>
+		</div>
+		<div class="ability">
+			<h6>{{localize schema.abilities.crafting.value.label}}</h6>
+			<span data-tooltip="{{{system.abilities.crafting.tooltip}}}">
+				{{system.abilities.crafting.value}}
+			</span>
+			<input type="number" name="system.abilities.crafting.bonus" value="{{system.abilities.crafting.bonus}}">
+			<hr>
+			<h6>{{localize schema.abilities.crafting.points.label}}</h6>
+			<input type="number" name="system.abilities.crafting.points" value="{{system.abilities.crafting.points}}">
+			<label data-tooltip="{{localize 'SKYFALL2.GUILD.AbilityPointsHint'}}"> {{system.abilities.crafting.short}} | {{system.abilities.crafting.long}} ( {{system.abilities.crafting.limit}} ) </label>
+		</div>
+		<div class="ability">
+			<h6>{{localize schema.abilities.reputation.value.label}}</h6>
+			<span data-tooltip="{{{system.abilities.reputation.tooltip}}}">
+				{{system.abilities.reputation.value}}
+			</span>
+			<input type="number" name="system.abilities.reputation.bonus" value="{{system.abilities.reputation.bonus}}">
+			<hr>
+			<h6>{{localize schema.abilities.reputation.points.label}}</h6>
+			<input type="number" name="system.abilities.reputation.points" value="{{system.abilities.reputation.points}}">
+			<label data-tooltip="{{localize 'SKYFALL2.GUILD.AbilityPointsHint'}}"> {{system.abilities.reputation.short}} | {{system.abilities.reputation.long}} ( {{system.abilities.reputation.limit}} )</label>
+		</div>
+	</div>
+	<div class="flexrow">
+		<div class="seals flexcol flex-start">
+			<h3>{{localize "TYPES.Item.sealPl"}}</h3>
+			<ul class="plain seals">
+				{{#each items.seals as | seal i|}}
+				<li class="seal flexrow" data-entry-id="{{seal.id}}" data-index="{{i}}">
+					<div class="item-name flexrow flex2">
+						<img src="{{seal.img}}" class="flex0" width="36" height="36" >
+						{{seal.name}}
+					</div>
+					<div class="item-controls">
+						<a class="control" data-action="edit">{{{@root.SYSTEM.icons.edit}}}</a>
+						<a class="control" data-action="delete">{{{@root.SYSTEM.icons.delete}}}</a>
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div class="motto">
+			{{formField schema.motto value=system.motto enriched=enriched.motto documentUUID=document.uuid toggled=true height=170 localize=true}}
+		</div>
+	</div>
+	{{#if user.isGM}}
+	<div class="guild-arc flex0">
+		<button data-action="startArc">{{localize "SKYFALL2.GUILD.StartGuildArc"}}</button>
+		<button data-action="endArc">{{localize "SKYFALL2.GUILD.EndGuildArc"}}</button>
+	</div>
+	{{/if}}
+</section>
